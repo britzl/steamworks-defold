@@ -1,0 +1,16 @@
+function init(self)
+	for k,v in pairs(_G.steamworks or {}) do
+		print(k,v)
+	end
+	steamworks.init()
+	
+	steamworks.get_stat_value()
+end
+
+function final(self)
+	steamworks.final()
+end
+
+function update(self, dt)
+	steamworks.update()
+end
