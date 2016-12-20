@@ -7,6 +7,7 @@
 #include <extension/extension.h>
 #include <script/script.h>  // DM_LUA_STACK_CHECK, CheckHashOrString, PushBuffer, Ref, Unref"
 #include <dlib/log.h>
+#include "./steam_api.h"
 
 
 #define LIB_NAME "steamworks"
@@ -14,7 +15,10 @@
 
 #define DLIB_LOG_DOMAIN LIB_NAME
 
-#include "./steam_api.h"
+#define DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT 0
+#define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
+#define DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE 2
+
 
 struct SteamworksListener {
   SteamworksListener() {
@@ -147,20 +151,16 @@ static CSteamID* GetSteamID(lua_State* L, int index) {
 static int IsLoggedInUserId(lua_State* L, int index) {
   printf("IsLoggedInUserId %d\n", index);
   if (lua_isnoneornil(L, index)) {
-    printf("lua_isnoneornil\n");
     return 1;
   }
   if (lua_gettop(L) == 0) {
-    printf("lua_gettop == 0\n");
     return 1;
   }
   if (lua_isstring(L, index)) {
     CSteamID* id = GetSteamID(L, index);
     if (steamUser->GetSteamID().ConvertToUint64() == id->ConvertToUint64()) {
-      printf("same id\n");
       return 1;
     }
-    printf("different ids\n");
   }
   return 0;
 }
@@ -207,12 +207,6 @@ static int GetAchievementInfo(lua_State* L) {
     return 2;
   }
 
-  uint32 num = steamUserStats->GetNumAchievements();
-  printf("num ach %d\n", num);
-
-  const char* name = steamUserStats->GetAchievementName(0);
-  printf("name %s\n", name);
-
   bool achieved;
   uint32 unlockTime;
   const char* achievementId = lua_tostring(L, lua_gettop(L));
@@ -237,12 +231,32 @@ static int GetAchievementInfo(lua_State* L) {
 }
 
 static int GetAchievementNames(lua_State* L) {
+  printf("GetAchievementNames\n");
+
+  if (steamUserStats == NULL) {
+    lua_pushnil(L);
+    lua_pushstring(L, "steamUserStats is nil");
+    return 2;
+  }
+
+  int top = lua_gettop(L);
+
+  lua_newtable(L);
+
+  uint32 num = steamUserStats->GetNumAchievements();
+  for (int i = 0; i < num; i++) {
+    const char* name = steamUserStats->GetAchievementName(i);
+    lua_pushinteger(L, i);
+    lua_pushstring(L, name);
+    lua_rawset(L, -3);
+  }
+
+  assert(top + 1 == lua_gettop(L));
+
   return 1;
 }
 
 static int GetUserInfo(lua_State* L) {
-  printf("GetUserInfo\n");
-
   if (steamFriends == NULL || steamUser == NULL) {
     lua_pushnil(L);
     lua_pushstring(L, "steamFriends or steamUser is nil");
@@ -284,8 +298,39 @@ static int GetUserInfo(lua_State* L) {
   return 1;
 }
 
-static int GetStatValue(lua_State* L) {
-  printf("GetStatValue\n");
+static int GetUserStatValue(lua_State* L) {
+  if (steamUser == NULL) {
+    lua_pushnil(L);
+    lua_pushstring(L, "steamUser is nil");
+    return 2;
+  }
+
+  luaL_checktype(L, 1, LUA_TSTRING);
+  const char* statName = lua_tostring(L, 1);
+
+  luaL_checktype(L, 2, LUA_TNUMBER);
+  const int type = lua_tointeger(L, 2);
+
+  int32 top = lua_gettop(L);
+
+  switch (type) {
+    case DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT:
+      int statValueInt;
+      steamUserStats->GetStat(statName, &statValueInt);
+      lua_pushinteger(L, statValueInt);
+      break;
+    case DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT:
+    case DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE:
+      float statValueFloat;
+      steamUserStats->GetStat(statName, &statValueFloat);
+      lua_pushnumber(L, statValueFloat);
+      break;
+    default:
+      luaL_error(L, "Unknown stat type");
+  }
+
+  assert(top + 1 == lua_gettop(L));
+
   return 1;
 }
 
@@ -298,14 +343,24 @@ static const luaL_reg Module_methods[] = {
     { "get_achievement_info", GetAchievementInfo },
     { "get_achievement_names", GetAchievementNames },
     { "get_user_info", GetUserInfo },
-    { "get_stat_value", GetStatValue },
+    { "get_user_stat_value", GetUserStatValue },
     { "set_listener", SetListener },
-    {0, 0}
+    { 0, 0 }
 };
 
 static void LuaInit(lua_State* L) {
     int top = lua_gettop(L);
     luaL_register(L, MODULE_NAME, Module_methods);
+
+    #define SETCONSTANT(name, val) \
+    lua_pushnumber(L, (lua_Number) val); \
+    lua_setfield(L, -2, #name);
+
+    SETCONSTANT(STAT_TYPE_INT, DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT);
+    SETCONSTANT(STAT_TYPE_FLOAT, DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT);
+    SETCONSTANT(STAT_TYPE_AVERAGERATE, DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE);
+
+    #undef SETCONSTANT
 
     lua_pop(L, 1);
     assert(top == lua_gettop(L));
