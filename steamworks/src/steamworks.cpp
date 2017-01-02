@@ -336,6 +336,58 @@ static int GetUserStatValue(lua_State* L) {
 
 
 
+static int SetUserStatValue(lua_State* L) {
+  if (steamUser == NULL) {
+    lua_pushnil(L);
+    lua_pushstring(L, "steamUser is nil");
+    return 2;
+  }
+
+  luaL_checktype(L, 1, LUA_TSTRING);
+  const char* statName = lua_tostring(L, 1);
+
+  luaL_checktype(L, 2, LUA_TNUMBER);
+  const int type = lua_tointeger(L, 2);
+
+  if (type == DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT) {
+    luaL_checktype(L, 3, LUA_TNUMBER);
+    const int statValueInt = lua_tointeger(L, 3);
+
+    steamUserStats->SetStat(statName, statValueInt);
+  } else if (type == DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT) {
+    luaL_checktype(L, 3, LUA_TNUMBER);
+    const float statValueFloat = lua_tonumber(L, 3);
+
+    steamUserStats->SetStat(statName, statValueFloat);
+  } else if (type == DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE) {
+    luaL_checktype(L, 3, LUA_TNUMBER);
+    const float countThisSession = lua_tonumber(L, 3);
+
+    luaL_checktype(L, 4, LUA_TNUMBER);
+    double sessionLength = lua_tonumber(L, 4);
+
+    steamUserStats->UpdateAvgRateStat(statName, countThisSession, sessionLength);
+  } else {
+    luaL_error(L, "Unknown stat type");
+  }
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
+static int ShowGameOverlay(lua_State* L) {
+  if (steamFriends == NULL) {
+    lua_pushnil(L);
+    lua_pushstring(L, "steamFriends is nil");
+    return 2;
+  }
+
+  steamFriends->ActivateGameOverlay("Achievements");
+
+  lua_pushboolean(L, 1);
+  return 1;
+}
+
 static const luaL_reg Module_methods[] = {
     { "init", Init },
     { "update", Update },
@@ -344,7 +396,9 @@ static const luaL_reg Module_methods[] = {
     { "get_achievement_names", GetAchievementNames },
     { "get_user_info", GetUserInfo },
     { "get_user_stat_value", GetUserStatValue },
+    { "set_user_stat_value", SetUserStatValue },
     { "set_listener", SetListener },
+    //{ "show_game_overlay", ShowGameOverlay },
     { 0, 0 }
 };
 

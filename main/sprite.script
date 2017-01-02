@@ -2,9 +2,56 @@ function init(self)
 	for k,v in pairs(_G.steamworks or {}) do
 		print(k,v)
 	end
+	print("calling init")
 	steamworks.init()
 	
-	steamworks.get_stat_value()
+	pprint(steamworks)
+	
+	steamworks.set_listener(function(self, event)
+		print("listener", self, event)
+		if event == "OnUserStatsReceived" then
+			
+			local names = steamworks.get_achievement_names()
+			for _,name in ipairs(names or {}) do
+				print("Achievement", name)
+				local info = steamworks.get_achievement_info(name)
+				if info then
+					pprint(info)
+				end
+			end
+
+			print("calling get_user_stat_value")
+			print("NumGames", steamworks.get_user_stat_value("NumGames", steamworks.STAT_TYPE_INT))
+			print("NumWins", steamworks.get_user_stat_value("NumWins", steamworks.STAT_TYPE_INT))
+			print("NumLosses", steamworks.get_user_stat_value("NumLosses", steamworks.STAT_TYPE_INT))
+			print("FeetTraveled", steamworks.get_user_stat_value("FeetTraveled", steamworks.STAT_TYPE_FLOAT))
+			print("MaxFeetTraveled", steamworks.get_user_stat_value("MaxFeetTraveled", steamworks.STAT_TYPE_FLOAT))
+			print("AverageSpeed", steamworks.get_user_stat_value("AverageSpeed", steamworks.STAT_TYPE_AVERAGERATE))
+			
+			print("updating NumGames, FeetTraveled, AverageSpeed")
+			local numGames = steamworks.get_user_stat_value("NumGames", steamworks.STAT_TYPE_INT)
+			local feetTraveled = steamworks.get_user_stat_value("FeetTraveled", steamworks.STAT_TYPE_FLOAT)
+			steamworks.set_user_stat_value("NumGames", steamworks.STAT_TYPE_INT, numGames + 1)
+			steamworks.set_user_stat_value("FeetTraveled", steamworks.STAT_TYPE_FLOAT, feetTraveled + 2.5)
+			steamworks.set_user_stat_value("AverageSpeed", steamworks.STAT_TYPE_AVERAGERATE, 2.5, 0.5)
+			print("NumGames", steamworks.get_user_stat_value("NumGames", steamworks.STAT_TYPE_INT))
+			print("FeetTraveled", steamworks.get_user_stat_value("FeetTraveled", steamworks.STAT_TYPE_FLOAT))
+			print("AverageSpeed", steamworks.get_user_stat_value("AverageSpeed", steamworks.STAT_TYPE_AVERAGERATE))
+		end
+	end)
+	
+
+	print("calling get user info")
+	local me = steamworks.get_user_info()
+	if me then
+		pprint(me)
+	end
+	local me_again = steamworks.get_user_info("76561198014113096")
+	if me_again then
+		pprint(me_again)
+	end
+	
+	print("end of init()")
 end
 
 function final(self)
