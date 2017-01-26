@@ -7,8 +7,8 @@ function init(self)
 	
 	pprint(steamworks)
 	
-	steamworks.set_listener(function(self, event)
-		print("listener", self, event)
+	steamworks.set_listener(function(self, event, result)
+		print("listener", self, event, result)
 		if event == "OnUserStatsReceived" then
 			
 			local names = steamworks.get_achievement_names()
@@ -37,6 +37,8 @@ function init(self)
 			print("NumGames", steamworks.get_user_stat_value("NumGames", steamworks.STAT_TYPE_INT))
 			print("FeetTraveled", steamworks.get_user_stat_value("FeetTraveled", steamworks.STAT_TYPE_FLOAT))
 			print("AverageSpeed", steamworks.get_user_stat_value("AverageSpeed", steamworks.STAT_TYPE_AVERAGERATE))
+		else
+			pprint(result)
 		end
 	end)
 	
@@ -51,6 +53,7 @@ function init(self)
 		pprint(me_again)
 	end
 	
+	steamworks.request_leaderboard_info()
 	print("end of init()")
 end
 

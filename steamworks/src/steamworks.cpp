@@ -19,6 +19,10 @@
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE 2
 
+static ISteamFriends *steamFriends;
+static ISteamUser *steamUser;
+static ISteamUserStats *steamUserStats;
+
 
 struct SteamworksListener {
   SteamworksListener() {
@@ -33,9 +37,9 @@ struct SteamworksListener {
 
 static SteamworksListener steamworksListener;
 
-static void NotifyListener(const char* event) {
+static int VerifyListener() {
   if (steamworksListener.m_Callback == LUA_NOREF) {
-    return;
+    return 0;
   }
 
   lua_State* L = steamworksListener.m_L;
@@ -51,6 +55,16 @@ static void NotifyListener(const char* event) {
     dmLogError("Could not run Steamworks callback because the instance has been deleted.");
     lua_pop(L, 2);
     assert(top == lua_gettop(L));
+    return 0;
+  }
+  return 1;
+}
+
+static void NotifyListener(const char* event) {
+  lua_State* L = steamworksListener.m_L;
+  int top = lua_gettop(L);
+
+  if (!VerifyListener()) {
     return;
   }
 
@@ -60,6 +74,32 @@ static void NotifyListener(const char* event) {
   if (ret != 0) {
     dmLogError("Error running Steamworks callback: %s", lua_tostring(L, -1));
     lua_pop(L, 1);
+  }
+  assert(top == lua_gettop(L));
+}
+
+static void NotifyListener(const char* event, LeaderboardFindResult_t *result) {
+  lua_State* L = steamworksListener.m_L;
+  int top = lua_gettop(L);
+
+  if (!VerifyListener()) {
+    return;
+  }
+
+  lua_pushstring(L, event);
+
+  lua_newtable(L);
+
+  lua_pushstring(L, steamUserStats->GetLeaderboardName(result->m_hSteamLeaderboard));
+  lua_setfield(L, -2, "leaderboardName");
+
+  lua_pushnumber(L, steamUserStats->GetLeaderboardEntryCount(result->m_hSteamLeaderboard));
+  lua_setfield(L, -2, "entryCount");
+
+  int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+  if (ret != 0) {
+    dmLogError("Error running Steamworks callback: %s", lua_tostring(L, -1));
+    lua_pop(L, 2);
   }
   assert(top == lua_gettop(L));
 }
@@ -92,6 +132,9 @@ class SteamCallbackWrapper {
     STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsStored, UserStatsStored_t, m_CallbackUserStatsStored);
     STEAM_CALLBACK(SteamCallbackWrapper, OnAchievementStored, UserAchievementStored_t, m_CallbackAchievementStored);
     STEAM_CALLBACK(SteamCallbackWrapper, OnPS3TrophiesInstalled, PS3TrophiesInstalled_t, m_CallbackPS3TrophiesInstalled);
+
+    void OnFindLeaderboard(LeaderboardFindResult_t *pFindLearderboardResult, bool bIOFailure);
+    CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_SteamCallResultCreateLeaderboard;
 };
 
 SteamCallbackWrapper::SteamCallbackWrapper()
@@ -118,11 +161,11 @@ void SteamCallbackWrapper::OnPS3TrophiesInstalled(PS3TrophiesInstalled_t *pCallb
   printf("SteamCallbackWrapper::OnPS3TrophiesInstalled\n");
   NotifyListener("OnPS3TrophiesInstalled");
 }
+void SteamCallbackWrapper::OnFindLeaderboard(LeaderboardFindResult_t *pFindLeaderboardResult, bool bIOFailure) {
+  printf("SteamCallbackWrapper::OnFindLeaderboard\n");
+  NotifyListener("OnFindLeaderboard", pFindLeaderboardResult);
+}
 
-
-static ISteamFriends *steamFriends;
-static ISteamUser *steamUser;
-static ISteamUserStats *steamUserStats;
 static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
 
 /**
@@ -299,9 +342,9 @@ static int GetUserInfo(lua_State* L) {
 }
 
 static int GetUserStatValue(lua_State* L) {
-  if (steamUser == NULL) {
+  if (steamUserStats == NULL) {
     lua_pushnil(L);
-    lua_pushstring(L, "steamUser is nil");
+    lua_pushstring(L, "steamUserStats is nil");
     return 2;
   }
 
@@ -337,9 +380,9 @@ static int GetUserStatValue(lua_State* L) {
 
 
 static int SetUserStatValue(lua_State* L) {
-  if (steamUser == NULL) {
+  if (steamUserStats == NULL) {
     lua_pushnil(L);
-    lua_pushstring(L, "steamUser is nil");
+    lua_pushstring(L, "steamUserStats is nil");
     return 2;
   }
 
@@ -388,6 +431,30 @@ static int ShowGameOverlay(lua_State* L) {
   return 1;
 }
 
+
+static int RequestLeaderboardInfo(lua_State* L) {
+  printf("RequestLeaderboardInfo\n");
+  if (steamUserStats == NULL) {
+    lua_pushnil(L);
+    lua_pushstring(L, "steamUserStats is nil");
+    return 2;
+  }
+
+  SteamAPICall_t hSteamAPICall = steamUserStats->FindOrCreateLeaderboard(
+     "Quickest Win",
+     k_ELeaderboardSortMethodAscending,
+     k_ELeaderboardDisplayTypeTimeSeconds);
+
+  if ( hSteamAPICall != 0 ) {
+    printf("hSteamAPICall is NOT 0\n");
+    // set the function to call when this API call has completed
+    steamCallbackWrapper->m_SteamCallResultCreateLeaderboard.Set(hSteamAPICall, steamCallbackWrapper, &SteamCallbackWrapper::OnFindLeaderboard);
+  } else {
+    printf("hSteamAPICall is 0\n");
+  }
+  return 0;
+}
+
 static const luaL_reg Module_methods[] = {
     { "init", Init },
     { "update", Update },
@@ -397,6 +464,7 @@ static const luaL_reg Module_methods[] = {
     { "get_user_info", GetUserInfo },
     { "get_user_stat_value", GetUserStatValue },
     { "set_user_stat_value", SetUserStatValue },
+    { "request_leaderboard_info", RequestLeaderboardInfo },
     { "set_listener", SetListener },
     //{ "show_game_overlay", ShowGameOverlay },
     { 0, 0 }
