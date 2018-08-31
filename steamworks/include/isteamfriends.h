@@ -80,7 +80,7 @@ enum EFriendFlags
 	k_EFriendFlagRequestingInfo = 0x100,
 	k_EFriendFlagIgnored		= 0x200,
 	k_EFriendFlagIgnoredFriend	= 0x400,
-	k_EFriendFlagSuggested		= 0x800,
+	// k_EFriendFlagSuggested		= 0x800,	// not used
 	k_EFriendFlagChatMember		= 0x1000,
 	k_EFriendFlagAll			= 0xFFFF,
 };
@@ -388,6 +388,9 @@ public:
 	virtual SteamAPICall_t IsFollowing( CSteamID steamID ) = 0;
 	CALL_RESULT( FriendsEnumerateFollowingList_t )
 	virtual SteamAPICall_t EnumerateFollowingList( uint32 unStartIndex ) = 0;
+
+	virtual bool IsClanPublic( CSteamID steamIDClan ) = 0;
+	virtual bool IsClanOfficialGameGroup( CSteamID steamIDClan ) = 0;
 };
 
 #define STEAMFRIENDS_INTERFACE_VERSION "SteamFriends015"
