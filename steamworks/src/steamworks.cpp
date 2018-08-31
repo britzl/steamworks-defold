@@ -5,7 +5,10 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
+#if !defined(DM_PLATFORM_WIN32)
+//#include <unistd.h>
+#endif
+
 #include "steam_api.h"
 #include "luautils.h"
 
@@ -168,16 +171,6 @@ static int IsLoggedInUserId(lua_State* L, int index) {
 	return 0;
 }
 
-/**
- * Print the contents of the stack
- */
-static void PrintStack(lua_State* L) {
-	int n = lua_gettop(L);
-	for (int i = 1; i <= n; i++)  {
-		dmLogDebug("STACK %d %s\r\n", i, lua_tostring(L, i));
-	}
-}
-
 
 static int Init(lua_State* L) {
 	dmLogInfo("Init");
@@ -248,7 +241,7 @@ static int GetAchievementNames(lua_State* L) {
 	lua_newtable(L);
 
 	uint32 num = steamUserStats->GetNumAchievements();
-	for (int i = 0; i < num; i++) {
+	for (uint32 i = 0; i < num; i++) {
 		const char* name = steamUserStats->GetAchievementName(i);
 		lua_pushinteger(L, i);
 		lua_pushstring(L, name);

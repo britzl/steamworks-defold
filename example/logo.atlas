@@ -1,5 +1,5 @@
 images {
-  image: "/main/images/logo.png"
+  image: "/example/images/logo.png"
 }
 margin: 0
 extrude_borders: 0
