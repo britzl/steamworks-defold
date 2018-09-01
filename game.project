@@ -4,7 +4,7 @@ version = 0.1
 bundle_resources = /steamworks/bundle/
 
 [bootstrap]
-main_collection = /examples/main/main.collectionc
+main_collection = /examples/matchmaking/matchmaking.collectionc
 
 [input]
 game_binding = /input/game.input_bindingc

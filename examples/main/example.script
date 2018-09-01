@@ -10,7 +10,7 @@ function init(self)
 	
 	steamworks.set_listener(function(self, event, result)
 		print("EVENT!! " .. event)
-		print("listener", self, event, result)
+		print("Listener: ", event, result)
 		pprint(result)
 		if event == "OnUserStatsReceived" then
 			
@@ -41,8 +41,6 @@ function init(self)
 			print("NumGames", steamworks.get_user_stat_value("NumGames", steamworks.STAT_TYPE_INT))
 			print("FeetTraveled", steamworks.get_user_stat_value("FeetTraveled", steamworks.STAT_TYPE_FLOAT))
 			print("AverageSpeed", steamworks.get_user_stat_value("AverageSpeed", steamworks.STAT_TYPE_AVERAGERATE))
-		else
-			pprint(result)
 		end
 	end)
 	

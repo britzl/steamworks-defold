@@ -30,6 +30,7 @@
 static ISteamFriends *steamFriends;
 static ISteamUser *steamUser;
 static ISteamUserStats *steamUserStats;
+static ISteamMatchmaking *steamMatchmaking;
 
 
 
@@ -71,7 +72,40 @@ static void NotifyListener(const char* event, GameOverlayActivated_t *result) {
 		
 	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 	if (ret != 0) {
-		lua_pop(L, 2);
+		lua_pop(L, 1);
+	}
+	assert(top == lua_gettop(L));
+}
+
+static void NotifyListener(const char* event, LobbyChatMsg_t *result) {
+
+	lua_State* L = steamworksListener.m_L;
+	if (!L) {
+		return;
+	}
+	int top = lua_gettop(L);
+
+	lua_pushlistener(L, steamworksListener);
+	lua_pushstring(L, event);
+	lua_newtable(L);
+	lua_pushnumber(L, result->m_ulSteamIDLobby);
+	lua_setfield(L, -2, "lobbyID");
+	lua_pushnumber(L, result->m_ulSteamIDUser);
+	lua_setfield(L, -2, "senderID");
+	lua_pushnumber(L, result->m_eChatEntryType);
+	lua_setfield(L, -2, "chatEntryType");
+	
+	char pvData[2048];
+	int cubData=sizeof(pvData);	
+	
+	steamMatchmaking->GetLobbyChatEntry(result->m_ulSteamIDLobby, result->m_iChatID, NULL, pvData, cubData, NULL);
+	
+	lua_pushstring(L, pvData);
+	lua_setfield(L, -2, "chatEntry");	
+	
+	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+	if (ret != 0) {
+		lua_pop(L, 3);
 	}
 	assert(top == lua_gettop(L));
 }
@@ -158,7 +192,7 @@ void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallb
 // Networking
 void SteamCallbackWrapper::OnLobbyChatMsg(LobbyChatMsg_t *pCallback) {
 	dmLogInfo("SteamCallbackWrapper::OnLobbyChatMsg\n");
-	NotifyListener("OnLobbyChatMsg");
+	NotifyListener("OnLobbyChatMsg", pCallback);
 }
 
 // User Stats
