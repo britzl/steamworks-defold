@@ -3,7 +3,8 @@ function init(self)
 		print(k,v)
 	end
 	print("calling init")
-	steamworks.init()
+	local status, error = pcall(steamworks.init)
+	if not status then print("Error: " .. error) return end
 	
 	pprint(steamworks)
 	
