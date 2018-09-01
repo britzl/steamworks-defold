@@ -52,6 +52,30 @@ static void NotifyListener(const char* event) {
 	assert(top == lua_gettop(L));
 }
 
+
+// General
+
+static void NotifyListener(const char* event, GameOverlayActivated_t *result) {
+
+	lua_State* L = steamworksListener.m_L;
+	if (!L) {
+		return;
+	}
+	int top = lua_gettop(L);
+
+	lua_pushlistener(L, steamworksListener);
+	lua_pushstring(L, event);
+	lua_newtable(L);
+	lua_pushnumber(L, result->m_bActive);
+	lua_setfield(L, -2, "isActive");
+		
+	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+	if (ret != 0) {
+		lua_pop(L, 2);
+	}
+	assert(top == lua_gettop(L));
+}
+
 static void NotifyListener(const char* event, LeaderboardFindResult_t *result) {
 
 	lua_State* L = steamworksListener.m_L;
@@ -92,6 +116,14 @@ static int SetListener(lua_State* L) {
 class SteamCallbackWrapper {
 	public:
 		SteamCallbackWrapper();
+		
+		// General
+		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
+		
+		// Networking
+		STEAM_CALLBACK(SteamCallbackWrapper, OnLobbyChatMsg, LobbyChatMsg_t, m_CallbackLobbyChatMsg);
+		
+		// User Stats
 		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsReceived, UserStatsReceived_t, m_CallbackUserStatsReceived);
 		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsStored, UserStatsStored_t, m_CallbackUserStatsStored);
 		STEAM_CALLBACK(SteamCallbackWrapper, OnAchievementStored, UserAchievementStored_t, m_CallbackAchievementStored);
@@ -102,12 +134,34 @@ class SteamCallbackWrapper {
 };
 
 SteamCallbackWrapper::SteamCallbackWrapper() :
+
+	// General
+	m_CallbackGameOverlayActivated(this, &SteamCallbackWrapper::OnGameOverlayActivated),
+	
+
+	// Networking
+	m_CallbackLobbyChatMsg(this, &SteamCallbackWrapper::OnLobbyChatMsg),
+
+	// User Stats
 	m_CallbackUserStatsReceived(this, &SteamCallbackWrapper::OnUserStatsReceived),
 	m_CallbackUserStatsStored(this, &SteamCallbackWrapper::OnUserStatsStored),
 	m_CallbackAchievementStored(this, &SteamCallbackWrapper::OnAchievementStored),
 	m_CallbackPS3TrophiesInstalled(this, &SteamCallbackWrapper::OnPS3TrophiesInstalled) {
 }
 
+// General
+void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated\n");
+	NotifyListener("OnGameOverlayActivated", pCallback);
+}
+
+// Networking
+void SteamCallbackWrapper::OnLobbyChatMsg(LobbyChatMsg_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnLobbyChatMsg\n");
+	NotifyListener("OnLobbyChatMsg");
+}
+
+// User Stats
 void SteamCallbackWrapper::OnUserStatsReceived(UserStatsReceived_t *pCallback) {
 	dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived\n");
 	NotifyListener("OnUserStatsReceived");

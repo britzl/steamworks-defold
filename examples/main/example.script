@@ -9,7 +9,9 @@ function init(self)
 	pprint(steamworks)
 	
 	steamworks.set_listener(function(self, event, result)
+		print("EVENT!! " .. event)
 		print("listener", self, event, result)
+		pprint(result)
 		if event == "OnUserStatsReceived" then
 			
 			local names = steamworks.get_achievement_names()
@@ -20,6 +22,7 @@ function init(self)
 					pprint(info)
 				end
 			end
+
 
 			print("calling get_user_stat_value")
 			print("NumGames", steamworks.get_user_stat_value("NumGames", steamworks.STAT_TYPE_INT))
