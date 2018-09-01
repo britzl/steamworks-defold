@@ -9,8 +9,7 @@ function init(self)
 	pprint(steamworks)
 	
 	steamworks.set_listener(function(self, event, result)
-		print("EVENT!! " .. event)
-		print("Listener: ", event, result)
+		print("Listener Event: ", event, "\nResult:")
 		pprint(result)
 		if event == "OnUserStatsReceived" then
 			

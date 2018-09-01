@@ -54,7 +54,7 @@ static void NotifyListener(const char* event) {
 }
 
 
-// General
+// ISteamFriends
 
 static void NotifyListener(const char* event, GameOverlayActivated_t *result) {
 
@@ -72,10 +72,12 @@ static void NotifyListener(const char* event, GameOverlayActivated_t *result) {
 		
 	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 	if (ret != 0) {
-		lua_pop(L, 1);
+		lua_pop(L, 2);
 	}
 	assert(top == lua_gettop(L));
 }
+
+// ISteamMatchmaking
 
 static void NotifyListener(const char* event, LobbyChatMsg_t *result) {
 
@@ -105,7 +107,7 @@ static void NotifyListener(const char* event, LobbyChatMsg_t *result) {
 	
 	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 	if (ret != 0) {
-		lua_pop(L, 3);
+		lua_pop(L, 2);
 	}
 	assert(top == lua_gettop(L));
 }
