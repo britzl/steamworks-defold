@@ -1,0 +1,292 @@
+--- GENERATED CODE - DO NOT MODIFY
+-- {{metadata.serviceFullName}} ({{metadata.uid}})
+
+local M = {}
+
+M.metadata = {
+	api_version = "{{metadata.apiVersion}}",
+	json_version = "{{metadata.jsonVersion}}",
+	protocol = "{{metadata.protocol}}",
+	checksum_format = "{{metadata.checksumFormat}}",
+	endpoint_prefix = "{{metadata.endpointPrefix}}",
+	service_abbreviation = "{{metadata.serviceAbbreviation}}",
+	service_full_name = "{{metadata.serviceFullName}}",
+	signature_version = "{{metadata.signatureVersion}}",
+	target_prefix = "{{metadata.targetPrefix}}",
+	timestamp_format = "{{metadata.timestampFormat}}",
+	global_endpoint = "{{metadata.globalEndpoint}}",
+	uid = "{{metadata.uid}}",
+}
+
+local keys = {}
+local asserts = {}
+
+{{#shapes.structure}}
+keys.{{name}} = { {{#members}}["{{name}}"] = true, {{/members}}nil }
+
+function asserts.Assert{{name}}(struct)
+	assert(struct)
+	assert(type(struct) == "table", "Expected {{name}} to be of type 'table'"){{#required}}
+	assert(struct["{{name}}"], "Expected key {{name}} to exist in table"){{/required}}{{#members}}
+	if struct["{{name}}"] then asserts.Assert{{shape}}(struct["{{name}}"]) end{{/members}}
+	for k,_ in pairs(struct) do
+		assert(keys.{{name}}[k], "{{name}} contains unknown key " .. tostring(k))
+	end
+end
+
+--- Create a structure of type {{name}}
+{{#documentation}}-- {{documentation}}{{/documentation}}
+-- @param args Table with arguments in key-value form.
+-- Valid keys:
+{{#members}}-- * {{name}} [{{shape}}] {{documentation}}
+{{/members}}{{#required}}-- Required key: {{name}}
+{{/required}}
+-- @return {{name}} structure as a key-value pair table
+function M.{{name}}(args)
+	assert(args, "You must provide an argument table when creating {{name}}")
+    local query_args = { {{#query_string_members}}
+        ["{{locationName}}"] = args["{{name}}"],{{/query_string_members}}
+    }
+    local uri_args = { {{#uri_members}}
+        ["&#123;{{locationName}}&#125;"] = args["{{name}}"],{{/uri_members}}
+    }
+    local header_args = { {{#header_members}}
+        ["{{locationName}}"] = args["{{name}}"],{{/header_members}}
+    }
+	local all_args = { {{#members}}
+		["{{name}}"] = args["{{name}}"],{{/members}}
+	}
+	asserts.Assert{{name}}(all_args)
+	return {
+        all = all_args,
+        query = query_args,
+        uri = uri_args,
+        headers = header_args,
+    }
+end
+
+{{/shapes.structure}}
+{{#shapes.string}}
+function asserts.Assert{{name}}(str)
+	assert(str)
+	assert(type(str) == "string", "Expected {{name}} to be of type 'string'"){{#max}}
+	assert(#str <= {{max}}, "Expected string to be max {{max}} characters"){{/max}}{{#min}}
+	assert(#str >= {{min}}, "Expected string to be min {{min}} characters"){{/min}}{{#pattern}}
+	assert(str:match("{{pattern}}"), "Expected string to match pattern '{{pattern}}'"){{/pattern}}
+end
+
+{{#documentation}}-- {{documentation}}{{/documentation}}
+function M.{{name}}(str)
+	asserts.Assert{{name}}(str)
+	return str
+end
+
+{{/shapes.string}}
+{{#shapes.float}}
+function asserts.Assert{{name}}(float)
+	assert(float)
+	assert(type(float) == "number", "Expected {{name}} to be of type 'number'")
+end
+
+function M.{{name}}(float)
+	asserts.Assert{{name}}(float)
+	return float
+end
+
+{{/shapes.float}}
+{{#shapes.double}}
+function asserts.Assert{{name}}(double)
+	assert(double)
+	assert(type(double) == "number", "Expected {{name}} to be of type 'number'")
+end
+
+function M.{{name}}(double)
+	asserts.Assert{{name}}(double)
+	return double
+end
+
+{{/shapes.double}}
+{{#shapes.long}}
+function asserts.Assert{{name}}(long)
+	assert(long)
+	assert(type(long) == "number", "Expected {{name}} to be of type 'number'")
+	assert(long % 1 == 0, "Expected a whole integer number")
+end
+
+function M.{{name}}(long)
+	asserts.Assert{{name}}(long)
+	return long
+end
+
+{{/shapes.long}}
+{{#shapes.integer}}
+function asserts.Assert{{name}}(integer)
+	assert(integer)
+	assert(type(integer) == "number", "Expected {{name}} to be of type 'number'")
+	assert(integer % 1 == 0, "Expected a while integer number"){{#max}}
+	assert(integer <= {{max}}, "Expected integer to be max {{max}}"){{/max}}{{#min}}
+	assert(integer >= {{min}}, "Expected integer to be min {{min}}"){{/min}}
+end
+
+function M.{{name}}(integer)
+	asserts.Assert{{name}}(integer)
+	return integer
+end
+
+{{/shapes.integer}}
+{{#shapes.boolean}}
+function asserts.Assert{{name}}(boolean)
+	assert(boolean)
+	assert(type(boolean) == "boolean", "Expected {{name}} to be of type 'boolean'")
+end
+
+function M.{{name}}(boolean)
+	asserts.Assert{{name}}(boolean)
+	return boolean
+end
+
+{{/shapes.boolean}}
+{{#shapes.map}}
+function asserts.Assert{{name}}(map)
+	assert(map)
+	assert(type(map) == "table", "Expected {{name}} to be of type 'table'")
+	for k,v in pairs(map) do
+		asserts.Assert{{key.shape}}(k)
+		asserts.Assert{{value.shape}}(v)
+	end
+end
+
+function M.{{name}}(map)
+	asserts.Assert{{name}}(map)
+	return map
+end
+
+{{/shapes.map}}
+{{#shapes.timestamp}}
+function asserts.Assert{{name}}(timestamp)
+	assert(timestamp)
+	assert(type(timestamp) == "string", "Expected {{name}} to be of type 'string'")
+end
+
+function M.{{name}}(timestamp)
+	asserts.Assert{{name}}(timestamp)
+	return timestamp
+end
+
+{{/shapes.timestamp}}
+{{#shapes.blob}}
+function asserts.Assert{{name}}(blob)
+	assert(blob)
+	assert(type(string) == "string", "Expected {{name}} to be of type 'string'"){{#max}}
+	assert(#blob <= {{max}}, "Expected blob to be max {{max}}"){{/max}}{{#min}}
+	assert(#blob >= {{min}}, "Expected blob to be max {{min}}"){{/min}}
+end
+
+function M.{{name}}(blob)
+	asserts.Assert{{name}}(blob)
+	return blob
+end
+
+{{/shapes.blob}}
+{{#shapes.list}}
+function asserts.Assert{{name}}(list)
+	assert(list)
+	assert(type(list) == "table", "Expected {{name}} to be of type ''table"){{#max}}
+	assert(#list <= {{max}}, "Expected list to be contain {{max}} elements"){{/max}}{{#min}}
+	assert(#list >= {{min}}, "Expected list to be contain {{min}} elements"){{/min}}
+	for _,v in ipairs(list) do
+		asserts.Assert{{member.shape}}(v)
+	end
+end
+
+{{#documentation}}-- {{documentation}}{{/documentation}}
+-- List of {{member.shape}} objects
+function M.{{name}}(list)
+	asserts.Assert{{name}}(list)
+	return list
+end
+
+{{/shapes.list}}
+
+local content_type = require "aws-sdk.core.content_type"
+local request_headers = require "aws-sdk.core.request_headers"
+local request_handlers = require "aws-sdk.core.request_handlers"
+
+local settings = {}
+
+
+local function endpoint_for_region(region, use_dualstack)
+	if not use_dualstack then
+		if region == "us-east-1" then
+			return "{{metadata.endpointPrefix}}.amazonaws.com"
+		end
+	end
+	local ss = { "{{metadata.endpointPrefix}}" }
+	if use_dualstack then
+		ss[#ss + 1] = "dualstack"
+	end
+	ss[#ss + 1] = region
+	ss[#ss + 1] = "amazonaws.com"
+	if region == "cn-north-1" then
+		ss[#ss + 1] = "cn"
+	end
+	return table.concat(ss, ".")
+end
+
+
+function M.init(config)
+	assert(config, "You must provide a config table")
+	assert(config.region, "You must provide a region in the config table")
+
+	settings.service = M.metadata.endpoint_prefix
+	settings.protocol = M.metadata.protocol
+	settings.region = config.region
+	settings.endpoint = config.endpoint_override or endpoint_for_region(config.region, config.use_dualstack)
+	settings.signature_version = M.metadata.signature_version
+	settings.uri = (config.scheme or "https") .. "://" .. settings.endpoint
+end
+
+
+--
+-- OPERATIONS
+--
+{{#operations}}
+--- Call {{name}} asynchronously, invoking a callback when done{{#input}}
+-- @param {{shape}}{{/input}}
+-- @param cb Callback function accepting two args: response, error_message
+function M.{{name}}Async({{#input}}{{shape}}, {{/input}}cb){{#input}}
+	assert({{shape}}, "You must provide a {{shape}}"){{/input}}
+	local headers = {
+		[request_headers.CONTENT_TYPE_HEADER] = content_type.from_protocol(M.metadata.protocol, M.metadata.json_version),
+		[request_headers.AMZ_TARGET_HEADER] = "{{metadata.targetPrefix}}.{{name}}",
+	}
+	{{#input}}
+	for header,value in pairs({{shape}}.headers) do
+		headers[header] = value
+	end{{/input}}
+
+	local request_handler, err = request_handlers.from_protocol_and_method("{{metadata.protocol}}", "{{http.method}}")
+	if request_handler then
+		request_handler(settings.uri, "{{http.requestUri}}", {{input_shape_or_empty.shape}}, headers, settings, cb)
+	else
+		cb(false, err)
+	end
+end
+
+--- Call {{name}} synchronously, returning when done
+-- This assumes that the function is called from within a coroutine{{#input}}
+-- @param {{shape}}{{/input}}
+-- @return response
+-- @return error_message
+function M.{{name}}Sync({{#input}}{{shape}}, {{/input}}...)
+	local co = coroutine.running()
+	assert(co, "You must call this function from within a coroutine")
+	M.{{name}}Async({{#input}}{{shape}}, {{/input}}function(response, error_message)
+		assert(coroutine.resume(co, response, error_message))
+	end)
+	return coroutine.yield()
+end
+
+{{/operations}}
+
+return M
