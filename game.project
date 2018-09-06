@@ -2,9 +2,10 @@
 title = Steamworks
 version = 0.1
 bundle_resources = /steamworks/bundle/
+dependencies = https://github.com/britzl/gooey/archive/6.5.0.zip,https://github.com/britzl/monarch/archive/2.15.0.zip
 
 [bootstrap]
-main_collection = /examples/matchmaking/matchmaking.collectionc
+main_collection = /examples/examples.collectionc
 
 [input]
 game_binding = /input/game.input_bindingc
