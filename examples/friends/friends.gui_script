@@ -18,10 +18,20 @@ function init(self)
 	local status, error = pcall(steamworks.init)
 	if not status then print("Error: " .. error) return end
 
+	steamworks.set_listener(function(self, e, t)
+		if e == "FriendsGetFollowerCount_t" then
+			pprint(t)
+		end
+	end)
+
 	local user_id = steamworks.user_get_steam_id()
 	local name = steamworks.friends_get_persona_name()
 	local state = steamworks.friends_get_persona_state()
 	local immediate_friends = steamworks.friends_get_friend_count(steamworks.FRIENDFLAGIMMEDIATE)
+	local small_avatar = steamworks.friends_get_small_friend_avatar(user_id)
+	print(small_avatar)
+	local size = steamworks.utils_get_image_size(small_avatar)
+	print(size)
 
 
 	local names = ""
@@ -29,8 +39,24 @@ function init(self)
 		local fid = steamworks.friends_get_friend_by_index(i, steamworks.FRIENDFLAGIMMEDIATE)
 		local name = steamworks.friends_get_friend_persona_name(fid)
 		local state = steamworks.friends_get_friend_persona_state(fid)
-		names = names .. ("%s (%s)\n"):format(name, personastate(state))
+		local level = steamworks.friends_get_friend_steam_level(fid)
+		local relationship = steamworks.friends_get_friend_relationship(fid)
+		
+		print("get follower count for", fid)
+		steamworks.friends_get_follower_count(fid)
+		names = names .. ("%s - %d (%s)\n"):format(name, level, personastate(state))
 	end
+
+	
+	--[[coroutine.wrap(function()
+		local co = coroutine.running()
+		for i=0,immediate_friends-1 do
+			local fid = steamworks.friends_get_friend_by_index(i, steamworks.FRIENDFLAGIMMEDIATE)
+			steamworks.friends_get_follower_count(fid)
+			
+		end
+	end)()--]]
+	
 
 	gui.set_text(gui.get_node("info"), INFO:format(user_id, name, personastate(state)))
 	gui.set_text(gui.get_node("friends"), FRIENDS:format(names))

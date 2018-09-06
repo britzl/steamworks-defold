@@ -95,6 +95,34 @@ friends_is_following(steamID) -> ISteamFriends_IsFollowing()
 friends_enumerate_following_list(unStartIndex) -> ISteamFriends_EnumerateFollowingList()
 friends_is_clan_public(steamIDClan) -> ISteamFriends_IsClanPublic()
 friends_is_clan_official_game_group(steamIDClan) -> ISteamFriends_IsClanOfficialGameGroup()
+utils_get_seconds_since_app_active() -> ISteamUtils_GetSecondsSinceAppActive()
+utils_get_seconds_since_computer_active() -> ISteamUtils_GetSecondsSinceComputerActive()
+utils_get_connected_universe() -> ISteamUtils_GetConnectedUniverse()
+utils_get_server_real_time() -> ISteamUtils_GetServerRealTime()
+utils_get_ip_country() -> ISteamUtils_GetIPCountry()
+utils_get_image_size(iImage) -> ISteamUtils_GetImageSize()
+utils_get_image_rgba(iImage,nDestBufferSize) -> ISteamUtils_GetImageRGBA()
+utils_get_cserip_port() -> ISteamUtils_GetCSERIPPort()
+utils_get_current_battery_power() -> ISteamUtils_GetCurrentBatteryPower()
+utils_get_app_id() -> ISteamUtils_GetAppID()
+utils_set_overlay_notification_position(eNotificationPosition) -> ISteamUtils_SetOverlayNotificationPosition()
+utils_is_api_call_completed(hSteamAPICall) -> ISteamUtils_IsAPICallCompleted()
+utils_get_api_call_failure_reason(hSteamAPICall) -> ISteamUtils_GetAPICallFailureReason()
+utils_get_api_call_result(hSteamAPICall,pCallback,cubCallback,iCallbackExpected) -> ISteamUtils_GetAPICallResult()
+utils_get_ipc_call_count() -> ISteamUtils_GetIPCCallCount()
+utils_is_overlay_enabled() -> ISteamUtils_IsOverlayEnabled()
+utils_b_overlay_needs_present() -> ISteamUtils_BOverlayNeedsPresent()
+utils_check_file_signature(szFileName) -> ISteamUtils_CheckFileSignature()
+utils_show_gamepad_text_input(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText) -> ISteamUtils_ShowGamepadTextInput()
+utils_get_entered_gamepad_text_length() -> ISteamUtils_GetEnteredGamepadTextLength()
+utils_get_entered_gamepad_text_input(pchText,cchText) -> ISteamUtils_GetEnteredGamepadTextInput()
+utils_get_steam_ui_language() -> ISteamUtils_GetSteamUILanguage()
+utils_is_steam_running_in_vr() -> ISteamUtils_IsSteamRunningInVR()
+utils_set_overlay_notification_inset(nHorizontalInset,nVerticalInset) -> ISteamUtils_SetOverlayNotificationInset()
+utils_is_steam_in_big_picture_mode() -> ISteamUtils_IsSteamInBigPictureMode()
+utils_start_vr_dashboard() -> ISteamUtils_StartVRDashboard()
+utils_is_vr_headset_streaming_enabled() -> ISteamUtils_IsVRHeadsetStreamingEnabled()
+utils_set_vr_headset_streaming_enabled(bEnabled) -> ISteamUtils_SetVRHeadsetStreamingEnabled()
 
 */
 
@@ -127,95 +155,6 @@ static ISteamMatchmaking *matchmaking;
 static ISteamUtils *utils;
 
 
-static lua_Listener steamworksListener;
-
-
-
-
-static int SetListener(lua_State* L) {
-	int top = lua_gettop(L);
-
-	luaL_checklistener(L, 1, steamworksListener);
-
-	assert(top == lua_gettop(L));
-	return 0;
-}
-
-
-
-
-
-class SteamCallbackWrapper {
-	public:
-		SteamCallbackWrapper();
-
-		// General
-		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
-
-		// Networking
-		STEAM_CALLBACK(SteamCallbackWrapper, OnLobbyChatMsg, LobbyChatMsg_t, m_CallbackLobbyChatMsg);
-
-		// User Stats
-		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsReceived, UserStatsReceived_t, m_CallbackUserStatsReceived);
-		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsStored, UserStatsStored_t, m_CallbackUserStatsStored);
-		STEAM_CALLBACK(SteamCallbackWrapper, OnAchievementStored, UserAchievementStored_t, m_CallbackAchievementStored);
-		STEAM_CALLBACK(SteamCallbackWrapper, OnPS3TrophiesInstalled, PS3TrophiesInstalled_t, m_CallbackPS3TrophiesInstalled);
-
-		void OnFindLeaderboard(LeaderboardFindResult_t *pFindLearderboardResult, bool bIOFailure);
-		CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_SteamCallResultCreateLeaderboard;
-};
-
-SteamCallbackWrapper::SteamCallbackWrapper() :
-
-	// General
-	m_CallbackGameOverlayActivated(this, &SteamCallbackWrapper::OnGameOverlayActivated),
-
-
-	// Networking
-	m_CallbackLobbyChatMsg(this, &SteamCallbackWrapper::OnLobbyChatMsg),
-
-	// User Stats
-	m_CallbackUserStatsReceived(this, &SteamCallbackWrapper::OnUserStatsReceived),
-	m_CallbackUserStatsStored(this, &SteamCallbackWrapper::OnUserStatsStored),
-	m_CallbackAchievementStored(this, &SteamCallbackWrapper::OnAchievementStored),
-	m_CallbackPS3TrophiesInstalled(this, &SteamCallbackWrapper::OnPS3TrophiesInstalled) {
-}
-
-// General
-void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated\n");
-	// NotifyListener("OnGameOverlayActivated", pCallback);
-}
-
-// Networking
-void SteamCallbackWrapper::OnLobbyChatMsg(LobbyChatMsg_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnLobbyChatMsg\n");
-	// NotifyListener("OnLobbyChatMsg", pCallback);
-}
-
-// User Stats
-void SteamCallbackWrapper::OnUserStatsReceived(UserStatsReceived_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived\n");
-	// NotifyListener("OnUserStatsReceived");
-}
-void SteamCallbackWrapper::OnUserStatsStored(UserStatsStored_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnUserStatsStored\n");
-	// NotifyListener("OnUserStatsStored");
-}
-void SteamCallbackWrapper::OnAchievementStored(UserAchievementStored_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnAchievementStored\n");
-	// NotifyListener("OnAchievementStored");
-}
-void SteamCallbackWrapper::OnPS3TrophiesInstalled(PS3TrophiesInstalled_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnPS3TrophiesInstalled\n");
-	// NotifyListener("OnPS3TrophiesInstalled");
-}
-void SteamCallbackWrapper::OnFindLeaderboard(LeaderboardFindResult_t *pFindLeaderboardResult, bool bIOFailure) {
-	dmLogInfo("SteamCallbackWrapper::OnFindLeaderboard\n");
-	// NotifyListener("OnFindLeaderboard", pFindLeaderboardResult);
-}
-
-static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
 
 
 /*****************************
@@ -905,30 +844,135 @@ static void push_const_char_ptr(lua_State* L, const char * s) {
     lua_pushstring(L, s);
 }
 
-
-
 static void push_CSteamID(lua_State* L, CSteamID steamId) {
-	char buf[22];
-	snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	lua_pushstring(L, buf);
+	// char buf[22];
+	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
+	// lua_pushstring(L, buf);
+	push_uint64(L, steamId.ConvertToUint64());
 }
 
-// static void push_class_ISteamUser_ptr(lua_State* L, ISteamUser * steamuser) {
-//     luaL_error(L, "push_class_ISteamUser_ptr not implemented");
-// }
-//
-// static void push_class_ISteamFriends_ptr(lua_State* L, ISteamFriends * steamfriends) {
-//     luaL_error(L, "push_class_ISteamFriends_ptr not implemented");
-// }
-//
-// static void push_class_ISteamGameServer_ptr(lua_State* L, ISteamGameServer * gameserver) {
-//     luaL_error(L, "push_class_ISteamGameServer_ptr not implemented");
-// }
 static void push_class_CSteamID(lua_State* L, CSteamID steamId) {
-	char buf[22];
-	snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	lua_pushstring(L, buf);
+	// char buf[22];
+	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
+	// lua_pushstring(L, buf);
+	push_uint64(L, steamId.ConvertToUint64());
 }
+
+static void push_CSteamID_array(lua_State* L, CSteamID steamId[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_CSteamID(L, steamId[i]);
+		lua_settable(L, -3);
+	}
+}
+
+static void push_char_array(lua_State* L, char ca[], unsigned int size) {
+	lua_pushstring(L, ca);
+}
+
+static void push_CGameID(lua_State* L, CGameID gameId) {
+	push_uint64(L, gameId.ToUint64());
+}
+
+
+static void push_EncryptedAppTicketResponse_t(lua_State* L, EncryptedAppTicketResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_StoreAuthURLResponse_t(lua_State* L, StoreAuthURLResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_szURL");
+	push_char_array(L, s.m_szURL, 512);
+	lua_settable(L, -3);
+}
+static void push_ClanOfficerListResponse_t(lua_State* L, ClanOfficerListResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDClan");
+	push_CSteamID(L, s.m_steamIDClan);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cOfficers");
+	push_int(L, s.m_cOfficers);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bSuccess");
+	push_uint8(L, s.m_bSuccess);
+	lua_settable(L, -3);
+}
+static void push_DownloadClanActivityCountsResult_t(lua_State* L, DownloadClanActivityCountsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bSuccess");
+	push__Bool(L, s.m_bSuccess);
+	lua_settable(L, -3);
+}
+static void push_JoinClanChatRoomCompletionResult_t(lua_State* L, JoinClanChatRoomCompletionResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDClanChat");
+	push_CSteamID(L, s.m_steamIDClanChat);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eChatRoomEnterResponse");
+	push_EChatRoomEnterResponse(L, s.m_eChatRoomEnterResponse);
+	lua_settable(L, -3);
+}
+static void push_FriendsGetFollowerCount_t(lua_State* L, FriendsGetFollowerCount_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCount");
+	push_int(L, s.m_nCount);
+	lua_settable(L, -3);
+}
+static void push_FriendsIsFollowing_t(lua_State* L, FriendsIsFollowing_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bIsFollowing");
+	push__Bool(L, s.m_bIsFollowing);
+	lua_settable(L, -3);
+}
+static void push_FriendsEnumerateFollowingList_t(lua_State* L, FriendsEnumerateFollowingList_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgSteamID");
+	push_CSteamID_array(L, s.m_rgSteamID, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+}
+static void push_SetPersonaNameResponse_t(lua_State* L, SetPersonaNameResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bSuccess");
+	push__Bool(L, s.m_bSuccess);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bLocalSuccess");
+	push__Bool(L, s.m_bLocalSuccess);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_result");
+	push_EResult(L, s.m_result);
+	lua_settable(L, -3);
+}
+static void push_CheckFileSignature_t(lua_State* L, CheckFileSignature_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eCheckFileSignature");
+	push_ECheckFileSignature(L, s.m_eCheckFileSignature);
+	lua_settable(L, -3);
+}
+
 
 
 
@@ -949,14 +993,6 @@ static lua_Number check_uint16(lua_State* L, int index) {
 static lua_Number check_bool(lua_State* L, int index) {
 	return lua_toboolean(L, index);
 }
-// static uint32 * check_uint32_ptr(lua_State* L, int index) {
-// 	uint32 i = luaL_checknumber(L, index);
-// 	return &i;
-// }
-// static int * check_int_ptr(lua_State* L, int index) {
-// 	int i = luaL_checknumber(L, index);
-// 	return &i;
-// }
 
 static int32 check_int32(lua_State* L, int index) {
 	return (int32)luaL_checknumber(L, index);
@@ -1028,10 +1064,6 @@ static SteamInventoryResult_t check_SteamInventoryResult_t(lua_State* L, int ind
 	return (SteamInventoryResult_t)luaL_checknumber(L, index);
 }
 
-// static HSteamPipe * check_HSteamPipe_ptr(lua_State* L, int index) {
-// 	luaL_error(L, "check_HSteamPipe_ptr not implemented");
-// }
-
 static const char * check_const_char_ptr(lua_State* L, int index) {
 	return luaL_checkstring(L, index);
 }
@@ -1049,8 +1081,6 @@ static dmScript::LuaHBuffer * check_buffer(lua_State* L, int index) {
 	return dmScript::CheckBuffer(L, index);
 }
 
-
-
 static CSteamID check_CSteamID(lua_State* L, int index) {
 	char * pEnd;
 	const char * s = lua_tostring(L, index);
@@ -1063,6 +1093,13 @@ static CSteamID check_class_CSteamID(lua_State* L, int index) {
 	return check_CSteamID(L, index);
 }
 
+static SteamAPICall_t check_SteamAPICall_t(lua_State* L, int index) {
+	char * pEnd;
+	const char * s = lua_tostring(L, index);
+	uint64 id = strtoull(s, &pEnd, 10);
+	return id;
+}
+
 static CGameID check_class_CGameID(lua_State* L, int index) {
 	char * pEnd;
 	const char * s = lua_tostring(L, index);
@@ -1070,6 +1107,264 @@ static CGameID check_class_CGameID(lua_State* L, int index) {
 	CGameID gameId = CGameID(id);
 	return gameId;
 }
+
+
+
+
+static lua_Listener steamworksListener;
+
+class SteamCallbackWrapper {
+	public:
+		SteamCallbackWrapper();
+
+		// General
+		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
+
+
+		
+		CCallResult<SteamCallbackWrapper, EncryptedAppTicketResponse_t> m_CallResultEncryptedAppTicketResponse_t;
+		void TrackSteamAPICallEncryptedAppTicketResponse_t(SteamAPICall_t steamAPICall) {
+			m_CallResultEncryptedAppTicketResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnEncryptedAppTicketResponse_t);
+		}
+		void OnEncryptedAppTicketResponse_t(EncryptedAppTicketResponse_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnEncryptedAppTicketResponse_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "EncryptedAppTicketResponse_t");
+			push_EncryptedAppTicketResponse_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, StoreAuthURLResponse_t> m_CallResultStoreAuthURLResponse_t;
+		void TrackSteamAPICallStoreAuthURLResponse_t(SteamAPICall_t steamAPICall) {
+			m_CallResultStoreAuthURLResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnStoreAuthURLResponse_t);
+		}
+		void OnStoreAuthURLResponse_t(StoreAuthURLResponse_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnStoreAuthURLResponse_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "StoreAuthURLResponse_t");
+			push_StoreAuthURLResponse_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SetPersonaNameResponse_t> m_CallResultSetPersonaNameResponse_t;
+		void TrackSteamAPICallSetPersonaNameResponse_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSetPersonaNameResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSetPersonaNameResponse_t);
+		}
+		void OnSetPersonaNameResponse_t(SetPersonaNameResponse_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSetPersonaNameResponse_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "SetPersonaNameResponse_t");
+			push_SetPersonaNameResponse_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, DownloadClanActivityCountsResult_t> m_CallResultDownloadClanActivityCountsResult_t;
+		void TrackSteamAPICallDownloadClanActivityCountsResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultDownloadClanActivityCountsResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnDownloadClanActivityCountsResult_t);
+		}
+		void OnDownloadClanActivityCountsResult_t(DownloadClanActivityCountsResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnDownloadClanActivityCountsResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "DownloadClanActivityCountsResult_t");
+			push_DownloadClanActivityCountsResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, ClanOfficerListResponse_t> m_CallResultClanOfficerListResponse_t;
+		void TrackSteamAPICallClanOfficerListResponse_t(SteamAPICall_t steamAPICall) {
+			m_CallResultClanOfficerListResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnClanOfficerListResponse_t);
+		}
+		void OnClanOfficerListResponse_t(ClanOfficerListResponse_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnClanOfficerListResponse_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "ClanOfficerListResponse_t");
+			push_ClanOfficerListResponse_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, JoinClanChatRoomCompletionResult_t> m_CallResultJoinClanChatRoomCompletionResult_t;
+		void TrackSteamAPICallJoinClanChatRoomCompletionResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultJoinClanChatRoomCompletionResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnJoinClanChatRoomCompletionResult_t);
+		}
+		void OnJoinClanChatRoomCompletionResult_t(JoinClanChatRoomCompletionResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnJoinClanChatRoomCompletionResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "JoinClanChatRoomCompletionResult_t");
+			push_JoinClanChatRoomCompletionResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, FriendsGetFollowerCount_t> m_CallResultFriendsGetFollowerCount_t;
+		void TrackSteamAPICallFriendsGetFollowerCount_t(SteamAPICall_t steamAPICall) {
+			m_CallResultFriendsGetFollowerCount_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnFriendsGetFollowerCount_t);
+		}
+		void OnFriendsGetFollowerCount_t(FriendsGetFollowerCount_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnFriendsGetFollowerCount_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "FriendsGetFollowerCount_t");
+			push_FriendsGetFollowerCount_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, FriendsIsFollowing_t> m_CallResultFriendsIsFollowing_t;
+		void TrackSteamAPICallFriendsIsFollowing_t(SteamAPICall_t steamAPICall) {
+			m_CallResultFriendsIsFollowing_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnFriendsIsFollowing_t);
+		}
+		void OnFriendsIsFollowing_t(FriendsIsFollowing_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnFriendsIsFollowing_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "FriendsIsFollowing_t");
+			push_FriendsIsFollowing_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, FriendsEnumerateFollowingList_t> m_CallResultFriendsEnumerateFollowingList_t;
+		void TrackSteamAPICallFriendsEnumerateFollowingList_t(SteamAPICall_t steamAPICall) {
+			m_CallResultFriendsEnumerateFollowingList_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnFriendsEnumerateFollowingList_t);
+		}
+		void OnFriendsEnumerateFollowingList_t(FriendsEnumerateFollowingList_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnFriendsEnumerateFollowingList_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "FriendsEnumerateFollowingList_t");
+			push_FriendsEnumerateFollowingList_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, CheckFileSignature_t> m_CallResultCheckFileSignature_t;
+		void TrackSteamAPICallCheckFileSignature_t(SteamAPICall_t steamAPICall) {
+			m_CallResultCheckFileSignature_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnCheckFileSignature_t);
+		}
+		void OnCheckFileSignature_t(CheckFileSignature_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnCheckFileSignature_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "CheckFileSignature_t");
+			push_CheckFileSignature_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+
+		void OnFindLeaderboard(LeaderboardFindResult_t *pFindLearderboardResult, bool bIOFailure);
+		CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_SteamCallResultCreateLeaderboard;
+};
+
+SteamCallbackWrapper::SteamCallbackWrapper() :
+
+	// General
+	m_CallbackGameOverlayActivated(this, &SteamCallbackWrapper::OnGameOverlayActivated)
+{
+}
+
+
+// General
+void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated\n");
+	// NotifyListener("OnGameOverlayActivated", pCallback);
+}
+
+static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
+
+
+
 
 
 static int ISteamUser_GetHSteamUser(lua_State* L) {
@@ -1197,9 +1492,9 @@ static int ISteamUser_RequestEncryptedAppTicket(lua_State* L) {
 	dmBuffer::Result pDataToInclude_buffer_result = dmBuffer::GetBytes(pDataToInclude_buffer->m_Buffer, &pDataToInclude, &pDataToInclude_buffersize);
 
 	SteamAPICall_t r = user->RequestEncryptedAppTicket(pDataToInclude,cbDataToInclude);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallEncryptedAppTicketResponse_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamUser_GetEncryptedAppTicket(lua_State* L) {
@@ -1242,9 +1537,9 @@ static int ISteamUser_RequestStoreAuthURL(lua_State* L) {
 	const char * pchRedirectURL = check_const_char_ptr(L, 1); /*normal*/
 
 	SteamAPICall_t r = user->RequestStoreAuthURL(pchRedirectURL);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallStoreAuthURLResponse_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamUser_BIsPhoneVerified(lua_State* L) {
@@ -1297,9 +1592,9 @@ static int ISteamFriends_SetPersonaName(lua_State* L) {
 	const char * pchPersonaName = check_const_char_ptr(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->SetPersonaName(pchPersonaName);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallSetPersonaNameResponse_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamFriends_GetPersonaState(lua_State* L) {
@@ -1531,9 +1826,9 @@ static int ISteamFriends_DownloadClanActivityCounts(lua_State* L) {
 	}
 
 	SteamAPICall_t r = friends->DownloadClanActivityCounts(psteamIDClans,cClansToRequest);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallDownloadClanActivityCountsResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamFriends_GetFriendCountFromSource(lua_State* L) {
@@ -1680,9 +1975,9 @@ static int ISteamFriends_RequestClanOfficerList(lua_State* L) {
 	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->RequestClanOfficerList(steamIDClan);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallClanOfficerListResponse_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamFriends_GetClanOwner(lua_State* L) {
@@ -1840,9 +2135,9 @@ static int ISteamFriends_JoinClanChatRoom(lua_State* L) {
 	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->JoinClanChatRoom(steamIDClan);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallJoinClanChatRoomCompletionResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamFriends_LeaveClanChatRoom(lua_State* L) {
@@ -1989,9 +2284,9 @@ static int ISteamFriends_GetFollowerCount(lua_State* L) {
 	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->GetFollowerCount(steamID);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallFriendsGetFollowerCount_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamFriends_IsFollowing(lua_State* L) {
@@ -1999,9 +2294,9 @@ static int ISteamFriends_IsFollowing(lua_State* L) {
 	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->IsFollowing(steamID);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallFriendsIsFollowing_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamFriends_EnumerateFollowingList(lua_State* L) {
@@ -2009,9 +2304,9 @@ static int ISteamFriends_EnumerateFollowingList(lua_State* L) {
 	uint32 unStartIndex = check_uint32(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->EnumerateFollowingList(unStartIndex);
-	push_SteamAPICall_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	steamCallbackWrapper->TrackSteamAPICallFriendsEnumerateFollowingList_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
 }
 
 static int ISteamFriends_IsClanPublic(lua_State* L) {
@@ -2034,9 +2329,297 @@ static int ISteamFriends_IsClanOfficialGameGroup(lua_State* L) {
 	return 1;
 }
 
+static int ISteamUtils_GetSecondsSinceAppActive(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = utils->GetSecondsSinceAppActive();
+	push_uint32(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetSecondsSinceComputerActive(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = utils->GetSecondsSinceComputerActive();
+	push_uint32(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetConnectedUniverse(lua_State* L) {
+	int top = lua_gettop(L);
+
+	EUniverse r = utils->GetConnectedUniverse();
+	push_EUniverse(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetServerRealTime(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = utils->GetServerRealTime();
+	push_uint32(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetIPCountry(lua_State* L) {
+	int top = lua_gettop(L);
+
+	const char * r = utils->GetIPCountry();
+	push_const_char_ptr(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetImageSize(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 pnHeight; /*out_param*/
+	uint32 pnWidth; /*out_param*/
+	int iImage = check_int(L, 1); /*normal*/
+
+	bool r = utils->GetImageSize(iImage,&pnWidth,&pnHeight);
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetImageRGBA(lua_State* L) {
+	int top = lua_gettop(L);
+	int nDestBufferSize = check_int(L, 2); /*normal*/
+	uint8 pubDest; /*out_param*/
+	int iImage = check_int(L, 1); /*normal*/
+
+	bool r = utils->GetImageRGBA(iImage,&pubDest,nDestBufferSize);
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetCSERIPPort(lua_State* L) {
+	int top = lua_gettop(L);
+	uint16 usPort; /*out_param*/
+	uint32 unIP; /*out_param*/
+
+	bool r = utils->GetCSERIPPort(&unIP,&usPort);
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetCurrentBatteryPower(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint8 r = utils->GetCurrentBatteryPower();
+	push_uint8(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetAppID(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = utils->GetAppID();
+	push_uint32(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_SetOverlayNotificationPosition(lua_State* L) {
+	int top = lua_gettop(L);
+	ENotificationPosition eNotificationPosition = check_ENotificationPosition(L, 1); /*normal*/
+
+	utils->SetOverlayNotificationPosition(eNotificationPosition);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUtils_IsAPICallCompleted(lua_State* L) {
+	int top = lua_gettop(L);
+	bool pbFailed; /*out_param*/
+	SteamAPICall_t hSteamAPICall = check_SteamAPICall_t(L, 1); /*normal*/
+
+	bool r = utils->IsAPICallCompleted(hSteamAPICall,&pbFailed);
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetAPICallFailureReason(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamAPICall_t hSteamAPICall = check_SteamAPICall_t(L, 1); /*normal*/
+
+	ESteamAPICallFailure r = utils->GetAPICallFailureReason(hSteamAPICall);
+	push_ESteamAPICallFailure(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetAPICallResult(lua_State* L) {
+	int top = lua_gettop(L);
+	bool pbFailed; /*out_param*/
+	int iCallbackExpected = check_int(L, 4); /*normal*/
+	int cubCallback = check_int(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pCallback_buffer = check_buffer(L, 2); /*buffer_param*/
+	void* pCallback = 0x0;
+	uint32_t pCallback_buffersize = 0;
+	dmBuffer::Result pCallback_buffer_result = dmBuffer::GetBytes(pCallback_buffer->m_Buffer, &pCallback, &pCallback_buffersize);
+	SteamAPICall_t hSteamAPICall = check_SteamAPICall_t(L, 1); /*normal*/
+
+	bool r = utils->GetAPICallResult(hSteamAPICall,pCallback,cubCallback,iCallbackExpected,&pbFailed);
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetIPCCallCount(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = utils->GetIPCCallCount();
+	push_uint32(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_IsOverlayEnabled(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->IsOverlayEnabled();
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_BOverlayNeedsPresent(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->BOverlayNeedsPresent();
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_CheckFileSignature(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * szFileName = check_const_char_ptr(L, 1); /*normal*/
+
+	SteamAPICall_t r = utils->CheckFileSignature(szFileName);
+	steamCallbackWrapper->TrackSteamAPICallCheckFileSignature_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUtils_ShowGamepadTextInput(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchExistingText = check_const_char_ptr(L, 5); /*normal*/
+	uint32 unCharMax = check_uint32(L, 4); /*normal*/
+	const char * pchDescription = check_const_char_ptr(L, 3); /*normal*/
+	EGamepadTextInputLineMode eLineInputMode = check_EGamepadTextInputLineMode(L, 2); /*normal*/
+	EGamepadTextInputMode eInputMode = check_EGamepadTextInputMode(L, 1); /*normal*/
+
+	bool r = utils->ShowGamepadTextInput(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText);
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetEnteredGamepadTextLength(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = utils->GetEnteredGamepadTextLength();
+	push_uint32(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetEnteredGamepadTextInput(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchText = check_uint32(L, 2); /*normal*/
+	char * pchText = check_char_ptr(L, 1); /*normal*/
+
+	bool r = utils->GetEnteredGamepadTextInput(pchText,cchText);
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_GetSteamUILanguage(lua_State* L) {
+	int top = lua_gettop(L);
+
+	const char * r = utils->GetSteamUILanguage();
+	push_const_char_ptr(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_IsSteamRunningInVR(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->IsSteamRunningInVR();
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_SetOverlayNotificationInset(lua_State* L) {
+	int top = lua_gettop(L);
+	int nVerticalInset = check_int(L, 2); /*normal*/
+	int nHorizontalInset = check_int(L, 1); /*normal*/
+
+	utils->SetOverlayNotificationInset(nHorizontalInset,nVerticalInset);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUtils_IsSteamInBigPictureMode(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->IsSteamInBigPictureMode();
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_StartVRDashboard(lua_State* L) {
+	int top = lua_gettop(L);
+
+	utils->StartVRDashboard();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUtils_IsVRHeadsetStreamingEnabled(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->IsVRHeadsetStreamingEnabled();
+	push_bool(L, r);
+	assert(top + 1 == lua_gettop(L));
+	return 1;
+}
+
+static int ISteamUtils_SetVRHeadsetStreamingEnabled(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bEnabled = check_bool(L, 1); /*normal*/
+
+	utils->SetVRHeadsetStreamingEnabled(bEnabled);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
 
 
 
+
+extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDebugText )
+{
+	if (nSeverity == 0) {
+		dmLogInfo(pchDebugText);
+	}
+	else {
+		dmLogWarning(pchDebugText);
+	}
+}
 
 static int Init(lua_State* L) {
 	dmLogInfo("Init");
@@ -2048,6 +2631,7 @@ static int Init(lua_State* L) {
 	friends = SteamFriends();
 	user = SteamUser();
 	utils = SteamUtils();
+	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	matchmaking = SteamMatchmaking();
 	userstats = SteamUserStats();
 	userstats->RequestCurrentStats();
@@ -2064,11 +2648,20 @@ static int Final(lua_State* L) {
 	return 0;
 }
 
+static int SetListener(lua_State* L) {
+	int top = lua_gettop(L);
+
+	luaL_checklistener(L, 1, steamworksListener);
+
+	assert(top == lua_gettop(L));
+	return 0;
+}
 
 static const luaL_reg Module_methods[] = {
 	{ "init", Init },
 	{ "update", Update },
 	{ "final", Final },
+	{ "set_listener", SetListener },
 	{ "user_get_h_steam_user", ISteamUser_GetHSteamUser },
 	{ "user_b_logged_on", ISteamUser_BLoggedOn },
 	{ "user_get_steam_id", ISteamUser_GetSteamID },
@@ -2161,6 +2754,34 @@ static const luaL_reg Module_methods[] = {
 	{ "friends_enumerate_following_list", ISteamFriends_EnumerateFollowingList },
 	{ "friends_is_clan_public", ISteamFriends_IsClanPublic },
 	{ "friends_is_clan_official_game_group", ISteamFriends_IsClanOfficialGameGroup },
+	{ "utils_get_seconds_since_app_active", ISteamUtils_GetSecondsSinceAppActive },
+	{ "utils_get_seconds_since_computer_active", ISteamUtils_GetSecondsSinceComputerActive },
+	{ "utils_get_connected_universe", ISteamUtils_GetConnectedUniverse },
+	{ "utils_get_server_real_time", ISteamUtils_GetServerRealTime },
+	{ "utils_get_ip_country", ISteamUtils_GetIPCountry },
+	{ "utils_get_image_size", ISteamUtils_GetImageSize },
+	{ "utils_get_image_rgba", ISteamUtils_GetImageRGBA },
+	{ "utils_get_cserip_port", ISteamUtils_GetCSERIPPort },
+	{ "utils_get_current_battery_power", ISteamUtils_GetCurrentBatteryPower },
+	{ "utils_get_app_id", ISteamUtils_GetAppID },
+	{ "utils_set_overlay_notification_position", ISteamUtils_SetOverlayNotificationPosition },
+	{ "utils_is_api_call_completed", ISteamUtils_IsAPICallCompleted },
+	{ "utils_get_api_call_failure_reason", ISteamUtils_GetAPICallFailureReason },
+	{ "utils_get_api_call_result", ISteamUtils_GetAPICallResult },
+	{ "utils_get_ipc_call_count", ISteamUtils_GetIPCCallCount },
+	{ "utils_is_overlay_enabled", ISteamUtils_IsOverlayEnabled },
+	{ "utils_b_overlay_needs_present", ISteamUtils_BOverlayNeedsPresent },
+	{ "utils_check_file_signature", ISteamUtils_CheckFileSignature },
+	{ "utils_show_gamepad_text_input", ISteamUtils_ShowGamepadTextInput },
+	{ "utils_get_entered_gamepad_text_length", ISteamUtils_GetEnteredGamepadTextLength },
+	{ "utils_get_entered_gamepad_text_input", ISteamUtils_GetEnteredGamepadTextInput },
+	{ "utils_get_steam_ui_language", ISteamUtils_GetSteamUILanguage },
+	{ "utils_is_steam_running_in_vr", ISteamUtils_IsSteamRunningInVR },
+	{ "utils_set_overlay_notification_inset", ISteamUtils_SetOverlayNotificationInset },
+	{ "utils_is_steam_in_big_picture_mode", ISteamUtils_IsSteamInBigPictureMode },
+	{ "utils_start_vr_dashboard", ISteamUtils_StartVRDashboard },
+	{ "utils_is_vr_headset_streaming_enabled", ISteamUtils_IsVRHeadsetStreamingEnabled },
+	{ "utils_set_vr_headset_streaming_enabled", ISteamUtils_SetVRHeadsetStreamingEnabled },
 	{ 0, 0 }
 };
 

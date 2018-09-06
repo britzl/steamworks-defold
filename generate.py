@@ -13,9 +13,9 @@ def to_snake_case(name):
 
 
 def parse_methods(methods):
-    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends"]
+    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils"]
     DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection"]
-    SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", ""]
+    SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook"]
     m = []
     for method in methods:
         classname = method.get("classname")
@@ -97,8 +97,11 @@ def parse_methods(methods):
             method["paramnames"] = ",".join(method["paramnames"])
             method["paramnames_in"] = ",".join(method["paramnames_in"])
             method["hasreturntype"] = method.get("returntype") != "void"
-            if method.get("returntype") is not None:
-                method["returntypestring"] = method.get("returntype").replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_")
+            returntype = method.get("returntype")
+            if returntype is not None:
+                method["returntypestring"] = returntype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_")
+                if returntype == "SteamAPICall_t":
+                    method["steamapicall"] = True
             m.append(method)
     return m
 
@@ -116,12 +119,8 @@ def parse_enums(enums):
     return e
 
 
-NUMBERS = [
-    "int", "uint8", "int8", "int16", "uint16", "int32", "uint32"
-]
-
-
 def parse_typedefs(typedefs):
+    NUMBERS = ["int", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
     t = {}
     int = []
     int64 = []
@@ -148,14 +147,29 @@ def parse_typedefs(typedefs):
     return t
 
 
-def parse_structs(structs):
+def parse_structs(structs, methods):
+    STRUCTS_TO_INCLUDE = []
+
+    for method in methods:
+        if method.get("callresult"):
+            STRUCTS_TO_INCLUDE.append(method.get("callresult"))
+
+    SKIP_STRUCTS = ["CallbackMsg_t", "CSteamID", "CSteamID::SteamID_t", "CSteamID::SteamID_t::SteamIDComponent_t", "CGameID::GameID_t", "CGameID::(anonymous)"]
     s = []
     for struct in structs:
-        if not struct.get("struct").startswith("CSteamID"):
-            struct["name"] = re.sub(".*::", "", struct.get("struct").replace("::(anonymous)", ""))
+        structname = struct.get("struct")
+        if structname not in SKIP_STRUCTS and structname in STRUCTS_TO_INCLUDE:
+            print(structname)
+            struct["name"] = re.sub(".*::", "", structname.replace("::(anonymous)", ""))
             f = []
             for field in struct.get("fields"):
-                field["fieldtypestring"] = re.sub(".*::", "", field.get("fieldtype").replace("enum ", "").replace("struct ", "").replace("union ", "").replace(" ", "_"))
+                fieldtype = field.get("fieldtype")
+                if " [" in fieldtype:
+                    field["array"] = True
+                    field["arraysize"] = re.match(".*\[(.*)\]", fieldtype).group(1)
+
+                # field["fieldtypestring"] = re.sub(".*::", "", field.get("fieldtype").replace("enum ", "").replace("struct ", "").replace("union ", "").replace(" ", "_"))
+                field["fieldtypestring"] = re.sub("_\[.*\]", "", fieldtype.replace("enum ", "").replace("struct ", "").replace("class ", "").replace("union ", "").replace(" ", "_"))
                 f.append(field)
             struct["fields"] = f
             s.append(struct)
@@ -171,7 +185,7 @@ def generate():
 
         j["methods"] = parse_methods(j["methods"])
         j["typedefs"] = parse_typedefs(j["typedefs"])
-        j["structs"] = parse_structs(j["structs"])
+        j["structs"] = parse_structs(j["structs"], j["methods"])
         j["enums"] = parse_enums(j["enums"])
 
         result = pystache.render(extension_mtl, j)

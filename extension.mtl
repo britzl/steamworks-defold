@@ -38,95 +38,6 @@ static ISteamMatchmaking *matchmaking;
 static ISteamUtils *utils;
 
 
-static lua_Listener steamworksListener;
-
-
-
-
-static int SetListener(lua_State* L) {
-	int top = lua_gettop(L);
-
-	luaL_checklistener(L, 1, steamworksListener);
-
-	assert(top == lua_gettop(L));
-	return 0;
-}
-
-
-
-
-
-class SteamCallbackWrapper {
-	public:
-		SteamCallbackWrapper();
-
-		// General
-		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
-
-		// Networking
-		STEAM_CALLBACK(SteamCallbackWrapper, OnLobbyChatMsg, LobbyChatMsg_t, m_CallbackLobbyChatMsg);
-
-		// User Stats
-		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsReceived, UserStatsReceived_t, m_CallbackUserStatsReceived);
-		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsStored, UserStatsStored_t, m_CallbackUserStatsStored);
-		STEAM_CALLBACK(SteamCallbackWrapper, OnAchievementStored, UserAchievementStored_t, m_CallbackAchievementStored);
-		STEAM_CALLBACK(SteamCallbackWrapper, OnPS3TrophiesInstalled, PS3TrophiesInstalled_t, m_CallbackPS3TrophiesInstalled);
-
-		void OnFindLeaderboard(LeaderboardFindResult_t *pFindLearderboardResult, bool bIOFailure);
-		CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_SteamCallResultCreateLeaderboard;
-};
-
-SteamCallbackWrapper::SteamCallbackWrapper() :
-
-	// General
-	m_CallbackGameOverlayActivated(this, &SteamCallbackWrapper::OnGameOverlayActivated),
-
-
-	// Networking
-	m_CallbackLobbyChatMsg(this, &SteamCallbackWrapper::OnLobbyChatMsg),
-
-	// User Stats
-	m_CallbackUserStatsReceived(this, &SteamCallbackWrapper::OnUserStatsReceived),
-	m_CallbackUserStatsStored(this, &SteamCallbackWrapper::OnUserStatsStored),
-	m_CallbackAchievementStored(this, &SteamCallbackWrapper::OnAchievementStored),
-	m_CallbackPS3TrophiesInstalled(this, &SteamCallbackWrapper::OnPS3TrophiesInstalled) {
-}
-
-// General
-void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated\n");
-	// NotifyListener("OnGameOverlayActivated", pCallback);
-}
-
-// Networking
-void SteamCallbackWrapper::OnLobbyChatMsg(LobbyChatMsg_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnLobbyChatMsg\n");
-	// NotifyListener("OnLobbyChatMsg", pCallback);
-}
-
-// User Stats
-void SteamCallbackWrapper::OnUserStatsReceived(UserStatsReceived_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived\n");
-	// NotifyListener("OnUserStatsReceived");
-}
-void SteamCallbackWrapper::OnUserStatsStored(UserStatsStored_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnUserStatsStored\n");
-	// NotifyListener("OnUserStatsStored");
-}
-void SteamCallbackWrapper::OnAchievementStored(UserAchievementStored_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnAchievementStored\n");
-	// NotifyListener("OnAchievementStored");
-}
-void SteamCallbackWrapper::OnPS3TrophiesInstalled(PS3TrophiesInstalled_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnPS3TrophiesInstalled\n");
-	// NotifyListener("OnPS3TrophiesInstalled");
-}
-void SteamCallbackWrapper::OnFindLeaderboard(LeaderboardFindResult_t *pFindLeaderboardResult, bool bIOFailure) {
-	dmLogInfo("SteamCallbackWrapper::OnFindLeaderboard\n");
-	// NotifyListener("OnFindLeaderboard", pFindLeaderboardResult);
-}
-
-static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
 
 
 /*****************************
@@ -201,30 +112,49 @@ static void push_const_char_ptr(lua_State* L, const char * s) {
     lua_pushstring(L, s);
 }
 
-
-
 static void push_CSteamID(lua_State* L, CSteamID steamId) {
-	char buf[22];
-	snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	lua_pushstring(L, buf);
+	// char buf[22];
+	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
+	// lua_pushstring(L, buf);
+	push_uint64(L, steamId.ConvertToUint64());
 }
 
-// static void push_class_ISteamUser_ptr(lua_State* L, ISteamUser * steamuser) {
-//     luaL_error(L, "push_class_ISteamUser_ptr not implemented");
-// }
-//
-// static void push_class_ISteamFriends_ptr(lua_State* L, ISteamFriends * steamfriends) {
-//     luaL_error(L, "push_class_ISteamFriends_ptr not implemented");
-// }
-//
-// static void push_class_ISteamGameServer_ptr(lua_State* L, ISteamGameServer * gameserver) {
-//     luaL_error(L, "push_class_ISteamGameServer_ptr not implemented");
-// }
 static void push_class_CSteamID(lua_State* L, CSteamID steamId) {
-	char buf[22];
-	snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	lua_pushstring(L, buf);
+	// char buf[22];
+	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
+	// lua_pushstring(L, buf);
+	push_uint64(L, steamId.ConvertToUint64());
 }
+
+static void push_CSteamID_array(lua_State* L, CSteamID steamId[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_CSteamID(L, steamId[i]);
+		lua_settable(L, -3);
+	}
+}
+
+static void push_char_array(lua_State* L, char ca[], unsigned int size) {
+	lua_pushstring(L, ca);
+}
+
+static void push_CGameID(lua_State* L, CGameID gameId) {
+	push_uint64(L, gameId.ToUint64());
+}
+
+
+{{#structs}}
+static void push_{{name}}(lua_State* L, {{name}} s) {
+	lua_newtable(L);
+	{{#fields}}
+	lua_pushstring(L, "{{fieldname}}");
+	push_{{fieldtypestring}}{{#array}}_array{{/array}}(L, s.{{fieldname}}{{#array}}, {{arraysize}}{{/array}});
+	lua_settable(L, -3);
+	{{/fields}}
+}
+{{/structs}}
+
 
 
 
@@ -245,24 +175,12 @@ static lua_Number check_uint16(lua_State* L, int index) {
 static lua_Number check_bool(lua_State* L, int index) {
 	return lua_toboolean(L, index);
 }
-// static uint32 * check_uint32_ptr(lua_State* L, int index) {
-// 	uint32 i = luaL_checknumber(L, index);
-// 	return &i;
-// }
-// static int * check_int_ptr(lua_State* L, int index) {
-// 	int i = luaL_checknumber(L, index);
-// 	return &i;
-// }
 
 {{#typedefs.int}}
 static {{typedef}} check_{{typedef}}(lua_State* L, int index) {
 	return ({{typedef}})luaL_checknumber(L, index);
 }
 {{/typedefs.int}}
-
-// static HSteamPipe * check_HSteamPipe_ptr(lua_State* L, int index) {
-// 	luaL_error(L, "check_HSteamPipe_ptr not implemented");
-// }
 
 static const char * check_const_char_ptr(lua_State* L, int index) {
 	return luaL_checkstring(L, index);
@@ -281,8 +199,6 @@ static dmScript::LuaHBuffer * check_buffer(lua_State* L, int index) {
 	return dmScript::CheckBuffer(L, index);
 }
 
-
-
 static CSteamID check_CSteamID(lua_State* L, int index) {
 	char * pEnd;
 	const char * s = lua_tostring(L, index);
@@ -295,6 +211,13 @@ static CSteamID check_class_CSteamID(lua_State* L, int index) {
 	return check_CSteamID(L, index);
 }
 
+static SteamAPICall_t check_SteamAPICall_t(lua_State* L, int index) {
+	char * pEnd;
+	const char * s = lua_tostring(L, index);
+	uint64 id = strtoull(s, &pEnd, 10);
+	return id;
+}
+
 static CGameID check_class_CGameID(lua_State* L, int index) {
 	char * pEnd;
 	const char * s = lua_tostring(L, index);
@@ -302,6 +225,66 @@ static CGameID check_class_CGameID(lua_State* L, int index) {
 	CGameID gameId = CGameID(id);
 	return gameId;
 }
+
+
+
+
+static lua_Listener steamworksListener;
+
+class SteamCallbackWrapper {
+	public:
+		SteamCallbackWrapper();
+
+		// General
+		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
+
+
+		{{#methods}}{{#callresult}}
+		CCallResult<SteamCallbackWrapper, {{callresult}}> m_CallResult{{callresult}};
+		void TrackSteamAPICall{{callresult}}(SteamAPICall_t steamAPICall) {
+			m_CallResult{{callresult}}.Set(steamAPICall, this, &SteamCallbackWrapper::On{{callresult}});
+		}
+		void On{{callresult}}({{callresult}} *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::On{{callresult}}\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "{{callresult}}");
+			push_{{callresult}}(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		{{/callresult}}{{/methods}}
+
+		void OnFindLeaderboard(LeaderboardFindResult_t *pFindLearderboardResult, bool bIOFailure);
+		CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_SteamCallResultCreateLeaderboard;
+};
+
+SteamCallbackWrapper::SteamCallbackWrapper() :
+
+	// General
+	m_CallbackGameOverlayActivated(this, &SteamCallbackWrapper::OnGameOverlayActivated)
+{
+}
+
+
+// General
+void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated\n");
+	// NotifyListener("OnGameOverlayActivated", pCallback);
+}
+
+static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
+
+
+
 
 
 {{#methods}}
@@ -332,9 +315,16 @@ static int {{classname}}_{{methodname}}(lua_State* L) {
 
 	{{#hasreturntype}}
 	{{returntype}} r = {{classname_lower}}->{{methodname}}({{paramnames}});
+	{{#steamapicall}}
+	steamCallbackWrapper->TrackSteamAPICall{{callresult}}(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+	{{/steamapicall}}
+	{{^steamapicall}}
 	push_{{returntypestring}}(L, r);
 	assert(top + 1 == lua_gettop(L));
 	return 1;
+	{{/steamapicall}}
 	{{/hasreturntype}}
 	{{^hasreturntype}}
 	{{classname_lower}}->{{methodname}}({{paramnames}});
@@ -347,6 +337,15 @@ static int {{classname}}_{{methodname}}(lua_State* L) {
 
 
 
+extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDebugText )
+{
+	if (nSeverity == 0) {
+		dmLogInfo(pchDebugText);
+	}
+	else {
+		dmLogWarning(pchDebugText);
+	}
+}
 
 static int Init(lua_State* L) {
 	dmLogInfo("Init");
@@ -358,6 +357,7 @@ static int Init(lua_State* L) {
 	friends = SteamFriends();
 	user = SteamUser();
 	utils = SteamUtils();
+	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	matchmaking = SteamMatchmaking();
 	userstats = SteamUserStats();
 	userstats->RequestCurrentStats();
@@ -374,11 +374,20 @@ static int Final(lua_State* L) {
 	return 0;
 }
 
+static int SetListener(lua_State* L) {
+	int top = lua_gettop(L);
+
+	luaL_checklistener(L, 1, steamworksListener);
+
+	assert(top == lua_gettop(L));
+	return 0;
+}
 
 static const luaL_reg Module_methods[] = {
 	{ "init", Init },
 	{ "update", Update },
 	{ "final", Final },
+	{ "set_listener", SetListener },
 	{{#methods}}
 	{ "{{classname_lower}}_{{methodname_lower}}", {{classname}}_{{methodname}} },
 	{{/methods}}
