@@ -101,7 +101,7 @@ utils_get_connected_universe() -> ISteamUtils_GetConnectedUniverse()
 utils_get_server_real_time() -> ISteamUtils_GetServerRealTime()
 utils_get_ip_country() -> ISteamUtils_GetIPCountry()
 utils_get_image_size(iImage) -> ISteamUtils_GetImageSize()
-utils_get_image_rgba(iImage,nDestBufferSize) -> ISteamUtils_GetImageRGBA()
+utils_get_image_rgba(iImage,pubDest,nDestBufferSize) -> ISteamUtils_GetImageRGBA()
 utils_get_cserip_port() -> ISteamUtils_GetCSERIPPort()
 utils_get_current_battery_power() -> ISteamUtils_GetCurrentBatteryPower()
 utils_get_app_id() -> ISteamUtils_GetAppID()
@@ -1372,8 +1372,9 @@ static int ISteamUser_GetHSteamUser(lua_State* L) {
 
 	HSteamUser r = user->GetHSteamUser();
 	push_HSteamUser(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_BLoggedOn(lua_State* L) {
@@ -1381,8 +1382,9 @@ static int ISteamUser_BLoggedOn(lua_State* L) {
 
 	bool r = user->BLoggedOn();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_GetSteamID(lua_State* L) {
@@ -1390,8 +1392,9 @@ static int ISteamUser_GetSteamID(lua_State* L) {
 
 	class CSteamID r = user->GetSteamID();
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_TerminateGameConnection(lua_State* L) {
@@ -1415,8 +1418,10 @@ static int ISteamUser_GetAuthSessionTicket(lua_State* L) {
 
 	HAuthTicket r = user->GetAuthSessionTicket(pTicket,cbMaxTicket,&pcbTicket);
 	push_HAuthTicket(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_uint32(L, pcbTicket);
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
 }
 
 static int ISteamUser_BeginAuthSession(lua_State* L) {
@@ -1430,8 +1435,9 @@ static int ISteamUser_BeginAuthSession(lua_State* L) {
 
 	EBeginAuthSessionResult r = user->BeginAuthSession(pAuthTicket,cbAuthTicket,steamID);
 	push_EBeginAuthSessionResult(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_EndAuthSession(lua_State* L) {
@@ -1459,8 +1465,9 @@ static int ISteamUser_UserHasLicenseForApp(lua_State* L) {
 
 	EUserHasLicenseForAppResult r = user->UserHasLicenseForApp(steamID,appID);
 	push_EUserHasLicenseForAppResult(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_BIsBehindNAT(lua_State* L) {
@@ -1468,8 +1475,9 @@ static int ISteamUser_BIsBehindNAT(lua_State* L) {
 
 	bool r = user->BIsBehindNAT();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_AdvertiseGame(lua_State* L) {
@@ -1508,8 +1516,10 @@ static int ISteamUser_GetEncryptedAppTicket(lua_State* L) {
 
 	bool r = user->GetEncryptedAppTicket(pTicket,cbMaxTicket,&pcbTicket);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_uint32(L, pcbTicket);
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
 }
 
 static int ISteamUser_GetGameBadgeLevel(lua_State* L) {
@@ -1519,8 +1529,9 @@ static int ISteamUser_GetGameBadgeLevel(lua_State* L) {
 
 	int r = user->GetGameBadgeLevel(nSeries,bFoil);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_GetPlayerSteamLevel(lua_State* L) {
@@ -1528,8 +1539,9 @@ static int ISteamUser_GetPlayerSteamLevel(lua_State* L) {
 
 	int r = user->GetPlayerSteamLevel();
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_RequestStoreAuthURL(lua_State* L) {
@@ -1547,8 +1559,9 @@ static int ISteamUser_BIsPhoneVerified(lua_State* L) {
 
 	bool r = user->BIsPhoneVerified();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_BIsTwoFactorEnabled(lua_State* L) {
@@ -1556,8 +1569,9 @@ static int ISteamUser_BIsTwoFactorEnabled(lua_State* L) {
 
 	bool r = user->BIsTwoFactorEnabled();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_BIsPhoneIdentifying(lua_State* L) {
@@ -1565,8 +1579,9 @@ static int ISteamUser_BIsPhoneIdentifying(lua_State* L) {
 
 	bool r = user->BIsPhoneIdentifying();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_BIsPhoneRequiringVerification(lua_State* L) {
@@ -1574,8 +1589,9 @@ static int ISteamUser_BIsPhoneRequiringVerification(lua_State* L) {
 
 	bool r = user->BIsPhoneRequiringVerification();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetPersonaName(lua_State* L) {
@@ -1583,8 +1599,9 @@ static int ISteamFriends_GetPersonaName(lua_State* L) {
 
 	const char * r = friends->GetPersonaName();
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_SetPersonaName(lua_State* L) {
@@ -1602,8 +1619,9 @@ static int ISteamFriends_GetPersonaState(lua_State* L) {
 
 	EPersonaState r = friends->GetPersonaState();
 	push_EPersonaState(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendCount(lua_State* L) {
@@ -1612,8 +1630,9 @@ static int ISteamFriends_GetFriendCount(lua_State* L) {
 
 	int r = friends->GetFriendCount(iFriendFlags);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendByIndex(lua_State* L) {
@@ -1623,8 +1642,9 @@ static int ISteamFriends_GetFriendByIndex(lua_State* L) {
 
 	class CSteamID r = friends->GetFriendByIndex(iFriend,iFriendFlags);
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendRelationship(lua_State* L) {
@@ -1633,8 +1653,9 @@ static int ISteamFriends_GetFriendRelationship(lua_State* L) {
 
 	EFriendRelationship r = friends->GetFriendRelationship(steamIDFriend);
 	push_EFriendRelationship(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendPersonaState(lua_State* L) {
@@ -1643,8 +1664,9 @@ static int ISteamFriends_GetFriendPersonaState(lua_State* L) {
 
 	EPersonaState r = friends->GetFriendPersonaState(steamIDFriend);
 	push_EPersonaState(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendPersonaName(lua_State* L) {
@@ -1653,8 +1675,9 @@ static int ISteamFriends_GetFriendPersonaName(lua_State* L) {
 
 	const char * r = friends->GetFriendPersonaName(steamIDFriend);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendGamePlayed(lua_State* L) {
@@ -1664,8 +1687,9 @@ static int ISteamFriends_GetFriendGamePlayed(lua_State* L) {
 
 	bool r = friends->GetFriendGamePlayed(steamIDFriend,&pFriendGameInfo);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendPersonaNameHistory(lua_State* L) {
@@ -1675,8 +1699,9 @@ static int ISteamFriends_GetFriendPersonaNameHistory(lua_State* L) {
 
 	const char * r = friends->GetFriendPersonaNameHistory(steamIDFriend,iPersonaName);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendSteamLevel(lua_State* L) {
@@ -1685,8 +1710,9 @@ static int ISteamFriends_GetFriendSteamLevel(lua_State* L) {
 
 	int r = friends->GetFriendSteamLevel(steamIDFriend);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetPlayerNickname(lua_State* L) {
@@ -1695,8 +1721,9 @@ static int ISteamFriends_GetPlayerNickname(lua_State* L) {
 
 	const char * r = friends->GetPlayerNickname(steamIDPlayer);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendsGroupCount(lua_State* L) {
@@ -1704,8 +1731,9 @@ static int ISteamFriends_GetFriendsGroupCount(lua_State* L) {
 
 	int r = friends->GetFriendsGroupCount();
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendsGroupIDByIndex(lua_State* L) {
@@ -1714,8 +1742,9 @@ static int ISteamFriends_GetFriendsGroupIDByIndex(lua_State* L) {
 
 	FriendsGroupID_t r = friends->GetFriendsGroupIDByIndex(iFG);
 	push_FriendsGroupID_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendsGroupName(lua_State* L) {
@@ -1724,8 +1753,9 @@ static int ISteamFriends_GetFriendsGroupName(lua_State* L) {
 
 	const char * r = friends->GetFriendsGroupName(friendsGroupID);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendsGroupMembersCount(lua_State* L) {
@@ -1734,8 +1764,9 @@ static int ISteamFriends_GetFriendsGroupMembersCount(lua_State* L) {
 
 	int r = friends->GetFriendsGroupMembersCount(friendsGroupID);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendsGroupMembersList(lua_State* L) {
@@ -1757,8 +1788,9 @@ static int ISteamFriends_HasFriend(lua_State* L) {
 
 	bool r = friends->HasFriend(steamIDFriend,iFriendFlags);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanCount(lua_State* L) {
@@ -1766,8 +1798,9 @@ static int ISteamFriends_GetClanCount(lua_State* L) {
 
 	int r = friends->GetClanCount();
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanByIndex(lua_State* L) {
@@ -1776,8 +1809,9 @@ static int ISteamFriends_GetClanByIndex(lua_State* L) {
 
 	class CSteamID r = friends->GetClanByIndex(iClan);
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanName(lua_State* L) {
@@ -1786,8 +1820,9 @@ static int ISteamFriends_GetClanName(lua_State* L) {
 
 	const char * r = friends->GetClanName(steamIDClan);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanTag(lua_State* L) {
@@ -1796,8 +1831,9 @@ static int ISteamFriends_GetClanTag(lua_State* L) {
 
 	const char * r = friends->GetClanTag(steamIDClan);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanActivityCounts(lua_State* L) {
@@ -1809,8 +1845,12 @@ static int ISteamFriends_GetClanActivityCounts(lua_State* L) {
 
 	bool r = friends->GetClanActivityCounts(steamIDClan,&pnOnline,&pnInGame,&pnChatting);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_int(L, pnChatting);
+	push_int(L, pnInGame);
+	push_int(L, pnOnline);
+	
+	assert(top + 1 + 3 == lua_gettop(L));
+	return 1 + 3;
 }
 
 static int ISteamFriends_DownloadClanActivityCounts(lua_State* L) {
@@ -1837,8 +1877,9 @@ static int ISteamFriends_GetFriendCountFromSource(lua_State* L) {
 
 	int r = friends->GetFriendCountFromSource(steamIDSource);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendFromSourceByIndex(lua_State* L) {
@@ -1848,8 +1889,9 @@ static int ISteamFriends_GetFriendFromSourceByIndex(lua_State* L) {
 
 	class CSteamID r = friends->GetFriendFromSourceByIndex(steamIDSource,iFriend);
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_IsUserInSource(lua_State* L) {
@@ -1859,8 +1901,9 @@ static int ISteamFriends_IsUserInSource(lua_State* L) {
 
 	bool r = friends->IsUserInSource(steamIDUser,steamIDSource);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_SetInGameVoiceSpeaking(lua_State* L) {
@@ -1935,8 +1978,9 @@ static int ISteamFriends_GetSmallFriendAvatar(lua_State* L) {
 
 	int r = friends->GetSmallFriendAvatar(steamIDFriend);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetMediumFriendAvatar(lua_State* L) {
@@ -1945,8 +1989,9 @@ static int ISteamFriends_GetMediumFriendAvatar(lua_State* L) {
 
 	int r = friends->GetMediumFriendAvatar(steamIDFriend);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetLargeFriendAvatar(lua_State* L) {
@@ -1955,8 +2000,9 @@ static int ISteamFriends_GetLargeFriendAvatar(lua_State* L) {
 
 	int r = friends->GetLargeFriendAvatar(steamIDFriend);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_RequestUserInformation(lua_State* L) {
@@ -1966,8 +2012,9 @@ static int ISteamFriends_RequestUserInformation(lua_State* L) {
 
 	bool r = friends->RequestUserInformation(steamIDUser,bRequireNameOnly);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_RequestClanOfficerList(lua_State* L) {
@@ -1986,8 +2033,9 @@ static int ISteamFriends_GetClanOwner(lua_State* L) {
 
 	class CSteamID r = friends->GetClanOwner(steamIDClan);
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanOfficerCount(lua_State* L) {
@@ -1996,8 +2044,9 @@ static int ISteamFriends_GetClanOfficerCount(lua_State* L) {
 
 	int r = friends->GetClanOfficerCount(steamIDClan);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanOfficerByIndex(lua_State* L) {
@@ -2007,8 +2056,9 @@ static int ISteamFriends_GetClanOfficerByIndex(lua_State* L) {
 
 	class CSteamID r = friends->GetClanOfficerByIndex(steamIDClan,iOfficer);
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetUserRestrictions(lua_State* L) {
@@ -2016,8 +2066,9 @@ static int ISteamFriends_GetUserRestrictions(lua_State* L) {
 
 	uint32 r = friends->GetUserRestrictions();
 	push_uint32(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_SetRichPresence(lua_State* L) {
@@ -2027,8 +2078,9 @@ static int ISteamFriends_SetRichPresence(lua_State* L) {
 
 	bool r = friends->SetRichPresence(pchKey,pchValue);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_ClearRichPresence(lua_State* L) {
@@ -2046,8 +2098,9 @@ static int ISteamFriends_GetFriendRichPresence(lua_State* L) {
 
 	const char * r = friends->GetFriendRichPresence(steamIDFriend,pchKey);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendRichPresenceKeyCount(lua_State* L) {
@@ -2056,8 +2109,9 @@ static int ISteamFriends_GetFriendRichPresenceKeyCount(lua_State* L) {
 
 	int r = friends->GetFriendRichPresenceKeyCount(steamIDFriend);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendRichPresenceKeyByIndex(lua_State* L) {
@@ -2067,8 +2121,9 @@ static int ISteamFriends_GetFriendRichPresenceKeyByIndex(lua_State* L) {
 
 	const char * r = friends->GetFriendRichPresenceKeyByIndex(steamIDFriend,iKey);
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_RequestFriendRichPresence(lua_State* L) {
@@ -2087,8 +2142,9 @@ static int ISteamFriends_InviteUserToGame(lua_State* L) {
 
 	bool r = friends->InviteUserToGame(steamIDFriend,pchConnectString);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetCoplayFriendCount(lua_State* L) {
@@ -2096,8 +2152,9 @@ static int ISteamFriends_GetCoplayFriendCount(lua_State* L) {
 
 	int r = friends->GetCoplayFriendCount();
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetCoplayFriend(lua_State* L) {
@@ -2106,8 +2163,9 @@ static int ISteamFriends_GetCoplayFriend(lua_State* L) {
 
 	class CSteamID r = friends->GetCoplayFriend(iCoplayFriend);
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendCoplayTime(lua_State* L) {
@@ -2116,8 +2174,9 @@ static int ISteamFriends_GetFriendCoplayTime(lua_State* L) {
 
 	int r = friends->GetFriendCoplayTime(steamIDFriend);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendCoplayGame(lua_State* L) {
@@ -2126,8 +2185,9 @@ static int ISteamFriends_GetFriendCoplayGame(lua_State* L) {
 
 	AppId_t r = friends->GetFriendCoplayGame(steamIDFriend);
 	push_AppId_t(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_JoinClanChatRoom(lua_State* L) {
@@ -2146,8 +2206,9 @@ static int ISteamFriends_LeaveClanChatRoom(lua_State* L) {
 
 	bool r = friends->LeaveClanChatRoom(steamIDClan);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanChatMemberCount(lua_State* L) {
@@ -2156,8 +2217,9 @@ static int ISteamFriends_GetClanChatMemberCount(lua_State* L) {
 
 	int r = friends->GetClanChatMemberCount(steamIDClan);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetChatMemberByIndex(lua_State* L) {
@@ -2167,8 +2229,9 @@ static int ISteamFriends_GetChatMemberByIndex(lua_State* L) {
 
 	class CSteamID r = friends->GetChatMemberByIndex(steamIDClan,iUser);
 	push_class_CSteamID(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_SendClanChatMessage(lua_State* L) {
@@ -2178,8 +2241,9 @@ static int ISteamFriends_SendClanChatMessage(lua_State* L) {
 
 	bool r = friends->SendClanChatMessage(steamIDClanChat,pchText);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetClanChatMessage(lua_State* L) {
@@ -2196,8 +2260,10 @@ static int ISteamFriends_GetClanChatMessage(lua_State* L) {
 
 	int r = friends->GetClanChatMessage(steamIDClanChat,iMessage,prgchText,cchTextMax,&peChatEntryType,&psteamidChatter);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_EChatEntryType(L, peChatEntryType);
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
 }
 
 static int ISteamFriends_IsClanChatAdmin(lua_State* L) {
@@ -2207,8 +2273,9 @@ static int ISteamFriends_IsClanChatAdmin(lua_State* L) {
 
 	bool r = friends->IsClanChatAdmin(steamIDClanChat,steamIDUser);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_IsClanChatWindowOpenInSteam(lua_State* L) {
@@ -2217,8 +2284,9 @@ static int ISteamFriends_IsClanChatWindowOpenInSteam(lua_State* L) {
 
 	bool r = friends->IsClanChatWindowOpenInSteam(steamIDClanChat);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_OpenClanChatWindowInSteam(lua_State* L) {
@@ -2227,8 +2295,9 @@ static int ISteamFriends_OpenClanChatWindowInSteam(lua_State* L) {
 
 	bool r = friends->OpenClanChatWindowInSteam(steamIDClanChat);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_CloseClanChatWindowInSteam(lua_State* L) {
@@ -2237,8 +2306,9 @@ static int ISteamFriends_CloseClanChatWindowInSteam(lua_State* L) {
 
 	bool r = friends->CloseClanChatWindowInSteam(steamIDClanChat);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_SetListenForFriendsMessages(lua_State* L) {
@@ -2247,8 +2317,9 @@ static int ISteamFriends_SetListenForFriendsMessages(lua_State* L) {
 
 	bool r = friends->SetListenForFriendsMessages(bInterceptEnabled);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_ReplyToFriendMessage(lua_State* L) {
@@ -2258,8 +2329,9 @@ static int ISteamFriends_ReplyToFriendMessage(lua_State* L) {
 
 	bool r = friends->ReplyToFriendMessage(steamIDFriend,pchMsgToSend);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_GetFriendMessage(lua_State* L) {
@@ -2275,8 +2347,10 @@ static int ISteamFriends_GetFriendMessage(lua_State* L) {
 
 	int r = friends->GetFriendMessage(steamIDFriend,iMessageID,pvData,cubData,&peChatEntryType);
 	push_int(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_EChatEntryType(L, peChatEntryType);
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
 }
 
 static int ISteamFriends_GetFollowerCount(lua_State* L) {
@@ -2315,8 +2389,9 @@ static int ISteamFriends_IsClanPublic(lua_State* L) {
 
 	bool r = friends->IsClanPublic(steamIDClan);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamFriends_IsClanOfficialGameGroup(lua_State* L) {
@@ -2325,8 +2400,9 @@ static int ISteamFriends_IsClanOfficialGameGroup(lua_State* L) {
 
 	bool r = friends->IsClanOfficialGameGroup(steamIDClan);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetSecondsSinceAppActive(lua_State* L) {
@@ -2334,8 +2410,9 @@ static int ISteamUtils_GetSecondsSinceAppActive(lua_State* L) {
 
 	uint32 r = utils->GetSecondsSinceAppActive();
 	push_uint32(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetSecondsSinceComputerActive(lua_State* L) {
@@ -2343,8 +2420,9 @@ static int ISteamUtils_GetSecondsSinceComputerActive(lua_State* L) {
 
 	uint32 r = utils->GetSecondsSinceComputerActive();
 	push_uint32(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetConnectedUniverse(lua_State* L) {
@@ -2352,8 +2430,9 @@ static int ISteamUtils_GetConnectedUniverse(lua_State* L) {
 
 	EUniverse r = utils->GetConnectedUniverse();
 	push_EUniverse(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetServerRealTime(lua_State* L) {
@@ -2361,8 +2440,9 @@ static int ISteamUtils_GetServerRealTime(lua_State* L) {
 
 	uint32 r = utils->GetServerRealTime();
 	push_uint32(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetIPCountry(lua_State* L) {
@@ -2370,8 +2450,9 @@ static int ISteamUtils_GetIPCountry(lua_State* L) {
 
 	const char * r = utils->GetIPCountry();
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetImageSize(lua_State* L) {
@@ -2382,20 +2463,27 @@ static int ISteamUtils_GetImageSize(lua_State* L) {
 
 	bool r = utils->GetImageSize(iImage,&pnWidth,&pnHeight);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_uint32(L, pnHeight);
+	push_uint32(L, pnWidth);
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
 }
 
 static int ISteamUtils_GetImageRGBA(lua_State* L) {
 	int top = lua_gettop(L);
-	int nDestBufferSize = check_int(L, 2); /*normal*/
-	uint8 pubDest; /*out_param*/
+	int nDestBufferSize = check_int(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
+	void* pubDest = 0x0;
+	uint32_t pubDest_buffersize = 0;
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, &pubDest, &pubDest_buffersize);
 	int iImage = check_int(L, 1); /*normal*/
 
-	bool r = utils->GetImageRGBA(iImage,&pubDest,nDestBufferSize);
+	bool r = utils->GetImageRGBA(iImage,pubDest,nDestBufferSize);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetCSERIPPort(lua_State* L) {
@@ -2405,8 +2493,11 @@ static int ISteamUtils_GetCSERIPPort(lua_State* L) {
 
 	bool r = utils->GetCSERIPPort(&unIP,&usPort);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_uint16(L, usPort);
+	push_uint32(L, unIP);
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
 }
 
 static int ISteamUtils_GetCurrentBatteryPower(lua_State* L) {
@@ -2414,8 +2505,9 @@ static int ISteamUtils_GetCurrentBatteryPower(lua_State* L) {
 
 	uint8 r = utils->GetCurrentBatteryPower();
 	push_uint8(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetAppID(lua_State* L) {
@@ -2423,8 +2515,9 @@ static int ISteamUtils_GetAppID(lua_State* L) {
 
 	uint32 r = utils->GetAppID();
 	push_uint32(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_SetOverlayNotificationPosition(lua_State* L) {
@@ -2443,8 +2536,10 @@ static int ISteamUtils_IsAPICallCompleted(lua_State* L) {
 
 	bool r = utils->IsAPICallCompleted(hSteamAPICall,&pbFailed);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_bool(L, pbFailed);
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
 }
 
 static int ISteamUtils_GetAPICallFailureReason(lua_State* L) {
@@ -2453,8 +2548,9 @@ static int ISteamUtils_GetAPICallFailureReason(lua_State* L) {
 
 	ESteamAPICallFailure r = utils->GetAPICallFailureReason(hSteamAPICall);
 	push_ESteamAPICallFailure(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetAPICallResult(lua_State* L) {
@@ -2470,8 +2566,10 @@ static int ISteamUtils_GetAPICallResult(lua_State* L) {
 
 	bool r = utils->GetAPICallResult(hSteamAPICall,pCallback,cubCallback,iCallbackExpected,&pbFailed);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	push_bool(L, pbFailed);
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
 }
 
 static int ISteamUtils_GetIPCCallCount(lua_State* L) {
@@ -2479,8 +2577,9 @@ static int ISteamUtils_GetIPCCallCount(lua_State* L) {
 
 	uint32 r = utils->GetIPCCallCount();
 	push_uint32(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_IsOverlayEnabled(lua_State* L) {
@@ -2488,8 +2587,9 @@ static int ISteamUtils_IsOverlayEnabled(lua_State* L) {
 
 	bool r = utils->IsOverlayEnabled();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_BOverlayNeedsPresent(lua_State* L) {
@@ -2497,8 +2597,9 @@ static int ISteamUtils_BOverlayNeedsPresent(lua_State* L) {
 
 	bool r = utils->BOverlayNeedsPresent();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_CheckFileSignature(lua_State* L) {
@@ -2521,8 +2622,9 @@ static int ISteamUtils_ShowGamepadTextInput(lua_State* L) {
 
 	bool r = utils->ShowGamepadTextInput(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetEnteredGamepadTextLength(lua_State* L) {
@@ -2530,8 +2632,9 @@ static int ISteamUtils_GetEnteredGamepadTextLength(lua_State* L) {
 
 	uint32 r = utils->GetEnteredGamepadTextLength();
 	push_uint32(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetEnteredGamepadTextInput(lua_State* L) {
@@ -2541,8 +2644,9 @@ static int ISteamUtils_GetEnteredGamepadTextInput(lua_State* L) {
 
 	bool r = utils->GetEnteredGamepadTextInput(pchText,cchText);
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_GetSteamUILanguage(lua_State* L) {
@@ -2550,8 +2654,9 @@ static int ISteamUtils_GetSteamUILanguage(lua_State* L) {
 
 	const char * r = utils->GetSteamUILanguage();
 	push_const_char_ptr(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_IsSteamRunningInVR(lua_State* L) {
@@ -2559,8 +2664,9 @@ static int ISteamUtils_IsSteamRunningInVR(lua_State* L) {
 
 	bool r = utils->IsSteamRunningInVR();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_SetOverlayNotificationInset(lua_State* L) {
@@ -2578,8 +2684,9 @@ static int ISteamUtils_IsSteamInBigPictureMode(lua_State* L) {
 
 	bool r = utils->IsSteamInBigPictureMode();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_StartVRDashboard(lua_State* L) {
@@ -2595,8 +2702,9 @@ static int ISteamUtils_IsVRHeadsetStreamingEnabled(lua_State* L) {
 
 	bool r = utils->IsVRHeadsetStreamingEnabled();
 	push_bool(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUtils_SetVRHeadsetStreamingEnabled(lua_State* L) {

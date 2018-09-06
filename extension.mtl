@@ -322,8 +322,10 @@ static int {{classname}}_{{methodname}}(lua_State* L) {
 	{{/steamapicall}}
 	{{^steamapicall}}
 	push_{{returntypestring}}(L, r);
-	assert(top + 1 == lua_gettop(L));
-	return 1;
+	{{#params}}{{#out_param}}push_{{paramtype}}(L, {{paramname}});
+	{{/out_param}}{{/params}}
+	assert(top + 1 + {{paramcount_out}} == lua_gettop(L));
+	return 1 + {{paramcount_out}};
 	{{/steamapicall}}
 	{{/hasreturntype}}
 	{{^hasreturntype}}

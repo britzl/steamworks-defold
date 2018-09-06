@@ -25,6 +25,7 @@ def parse_methods(methods):
             method["methodname_lower"] = to_snake_case(methodname).lower()
             method["paramnames"] = []
             method["paramnames_in"] = []
+            method["paramcount_out"] = 0
             if method.get("params") is not None:
                 method["paramcount"] = len(method.get("params"))
                 p = []
@@ -57,7 +58,7 @@ def parse_methods(methods):
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
                     # In this case we treat it as a Defold buffer
-                    elif "void *" in param.get("paramtype"):
+                    elif "void *" in paramtype or "uint8 *" in paramtype:
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["buffer_param"] = True
                         param["paramtype"] = paramtype.replace("void *", "LuaHBuffer *")
@@ -65,7 +66,7 @@ def parse_methods(methods):
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
-                    elif "char *" in param.get("paramtype"):
+                    elif "char *" in paramtype:
                         param["normal_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
@@ -73,11 +74,12 @@ def parse_methods(methods):
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
-                    elif " *" in param.get("paramtype"):
+                    elif " *" in paramtype:
                         param["out_param"] = True
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
                         p.insert(0, param)
                         method["paramnames"].append("&" + paramname)
+                        method["paramcount_out"] = method["paramcount_out"] + 1
                     # A parameter that an "out_array_call" will write to
                     elif paramname in out_array_call_params:
                         param["out_array_call_param"] = True

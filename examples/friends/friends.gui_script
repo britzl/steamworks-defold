@@ -29,9 +29,8 @@ function init(self)
 	local state = steamworks.friends_get_persona_state()
 	local immediate_friends = steamworks.friends_get_friend_count(steamworks.FRIENDFLAGIMMEDIATE)
 	local small_avatar = steamworks.friends_get_small_friend_avatar(user_id)
-	print(small_avatar)
-	local size = steamworks.utils_get_image_size(small_avatar)
-	print(size)
+	local size, w, h = steamworks.utils_get_image_size(small_avatar)
+	print(size, w, h)
 
 
 	local names = ""
