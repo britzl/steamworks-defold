@@ -12,6 +12,29 @@ local FRIENDS = [[FRIENDS
 %s
 ]]
 
+local function show_avatar(user_id, node)
+	local small_avatar_id = steamworks.friends_get_small_friend_avatar(user_id)
+	local ok, w, h = steamworks.utils_get_image_size(small_avatar_id)
+	if not ok then
+		print("Unable to get image size")
+		return
+	end
+
+	local b = buffer.create(w * h, {
+		{ name = "rgba", type = buffer.VALUE_TYPE_UINT8, count = 4 }
+	})
+	local ok = steamworks.utils_get_image_rgba(small_avatar_id, b, w * h * 4)
+	if not ok then
+		print("Unable to get image RGBA")
+		return
+	end
+
+	local data = buffer.get_bytes(b, "rgba")
+	gui.new_texture(user_id, w, h, "rgba", data, false)
+	gui.set_texture(node, user_id)
+	gui.set_size(node, vmath.vector3(w, h, 0))
+end
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 
@@ -28,10 +51,7 @@ function init(self)
 	local name = steamworks.friends_get_persona_name()
 	local state = steamworks.friends_get_persona_state()
 	local immediate_friends = steamworks.friends_get_friend_count(steamworks.FRIENDFLAGIMMEDIATE)
-	local small_avatar = steamworks.friends_get_small_friend_avatar(user_id)
-	local size, w, h = steamworks.utils_get_image_size(small_avatar)
-	print(size, w, h)
-
+	show_avatar(user_id, gui.get_node("avatar"))
 
 	local names = ""
 	for i=0,immediate_friends-1 do

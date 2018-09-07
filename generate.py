@@ -61,7 +61,8 @@ def parse_methods(methods):
                     elif "void *" in paramtype or "uint8 *" in paramtype:
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["buffer_param"] = True
-                        param["paramtype"] = paramtype.replace("void *", "LuaHBuffer *")
+                        # param["paramtype"] = paramtype.replace("void *", "dmScript::LuaHBuffer *")
+                        # param["paramtype"] = paramtype.replace("void *", "uint8 *")
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)

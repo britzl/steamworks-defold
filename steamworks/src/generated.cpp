@@ -1412,9 +1412,9 @@ static int ISteamUser_GetAuthSessionTicket(lua_State* L) {
 	uint32 pcbTicket; /*out_param*/
 	int cbMaxTicket = check_int(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pTicket_buffer = check_buffer(L, 1); /*buffer_param*/
-	void* pTicket = 0x0;
+	void * pTicket = 0x0;
 	uint32_t pTicket_buffersize = 0;
-	dmBuffer::Result pTicket_buffer_result = dmBuffer::GetBytes(pTicket_buffer->m_Buffer, &pTicket, &pTicket_buffersize);
+	dmBuffer::Result pTicket_buffer_result = dmBuffer::GetBytes(pTicket_buffer->m_Buffer, (void**)&pTicket, &pTicket_buffersize);
 
 	HAuthTicket r = user->GetAuthSessionTicket(pTicket,cbMaxTicket,&pcbTicket);
 	push_HAuthTicket(L, r);
@@ -1429,9 +1429,9 @@ static int ISteamUser_BeginAuthSession(lua_State* L) {
 	class CSteamID steamID = check_class_CSteamID(L, 3); /*normal*/
 	int cbAuthTicket = check_int(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pAuthTicket_buffer = check_buffer(L, 1); /*buffer_param*/
-	void* pAuthTicket = 0x0;
+	const void * pAuthTicket = 0x0;
 	uint32_t pAuthTicket_buffersize = 0;
-	dmBuffer::Result pAuthTicket_buffer_result = dmBuffer::GetBytes(pAuthTicket_buffer->m_Buffer, &pAuthTicket, &pAuthTicket_buffersize);
+	dmBuffer::Result pAuthTicket_buffer_result = dmBuffer::GetBytes(pAuthTicket_buffer->m_Buffer, (void**)&pAuthTicket, &pAuthTicket_buffersize);
 
 	EBeginAuthSessionResult r = user->BeginAuthSession(pAuthTicket,cbAuthTicket,steamID);
 	push_EBeginAuthSessionResult(L, r);
@@ -1495,9 +1495,9 @@ static int ISteamUser_RequestEncryptedAppTicket(lua_State* L) {
 	int top = lua_gettop(L);
 	int cbDataToInclude = check_int(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pDataToInclude_buffer = check_buffer(L, 1); /*buffer_param*/
-	void* pDataToInclude = 0x0;
+	void * pDataToInclude = 0x0;
 	uint32_t pDataToInclude_buffersize = 0;
-	dmBuffer::Result pDataToInclude_buffer_result = dmBuffer::GetBytes(pDataToInclude_buffer->m_Buffer, &pDataToInclude, &pDataToInclude_buffersize);
+	dmBuffer::Result pDataToInclude_buffer_result = dmBuffer::GetBytes(pDataToInclude_buffer->m_Buffer, (void**)&pDataToInclude, &pDataToInclude_buffersize);
 
 	SteamAPICall_t r = user->RequestEncryptedAppTicket(pDataToInclude,cbDataToInclude);
 	steamCallbackWrapper->TrackSteamAPICallEncryptedAppTicketResponse_t(r);
@@ -1510,9 +1510,9 @@ static int ISteamUser_GetEncryptedAppTicket(lua_State* L) {
 	uint32 pcbTicket; /*out_param*/
 	int cbMaxTicket = check_int(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pTicket_buffer = check_buffer(L, 1); /*buffer_param*/
-	void* pTicket = 0x0;
+	void * pTicket = 0x0;
 	uint32_t pTicket_buffersize = 0;
-	dmBuffer::Result pTicket_buffer_result = dmBuffer::GetBytes(pTicket_buffer->m_Buffer, &pTicket, &pTicket_buffersize);
+	dmBuffer::Result pTicket_buffer_result = dmBuffer::GetBytes(pTicket_buffer->m_Buffer, (void**)&pTicket, &pTicket_buffersize);
 
 	bool r = user->GetEncryptedAppTicket(pTicket,cbMaxTicket,&pcbTicket);
 	push_bool(L, r);
@@ -2251,9 +2251,9 @@ static int ISteamFriends_GetClanChatMessage(lua_State* L) {
 	EChatEntryType peChatEntryType; /*out_param*/
 	int cchTextMax = check_int(L, 4); /*normal*/
 	dmScript::LuaHBuffer * prgchText_buffer = check_buffer(L, 3); /*buffer_param*/
-	void* prgchText = 0x0;
+	void * prgchText = 0x0;
 	uint32_t prgchText_buffersize = 0;
-	dmBuffer::Result prgchText_buffer_result = dmBuffer::GetBytes(prgchText_buffer->m_Buffer, &prgchText, &prgchText_buffersize);
+	dmBuffer::Result prgchText_buffer_result = dmBuffer::GetBytes(prgchText_buffer->m_Buffer, (void**)&prgchText, &prgchText_buffersize);
 	int iMessage = check_int(L, 2); /*normal*/
 	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
 	class CSteamID psteamidChatter; /*out_struct*/
@@ -2339,9 +2339,9 @@ static int ISteamFriends_GetFriendMessage(lua_State* L) {
 	EChatEntryType peChatEntryType; /*out_param*/
 	int cubData = check_int(L, 4); /*normal*/
 	dmScript::LuaHBuffer * pvData_buffer = check_buffer(L, 3); /*buffer_param*/
-	void* pvData = 0x0;
+	void * pvData = 0x0;
 	uint32_t pvData_buffersize = 0;
-	dmBuffer::Result pvData_buffer_result = dmBuffer::GetBytes(pvData_buffer->m_Buffer, &pvData, &pvData_buffersize);
+	dmBuffer::Result pvData_buffer_result = dmBuffer::GetBytes(pvData_buffer->m_Buffer, (void**)&pvData, &pvData_buffersize);
 	int iMessageID = check_int(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
@@ -2474,9 +2474,9 @@ static int ISteamUtils_GetImageRGBA(lua_State* L) {
 	int top = lua_gettop(L);
 	int nDestBufferSize = check_int(L, 3); /*normal*/
 	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
-	void* pubDest = 0x0;
+	uint8 * pubDest = 0x0;
 	uint32_t pubDest_buffersize = 0;
-	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, &pubDest, &pubDest_buffersize);
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
 	int iImage = check_int(L, 1); /*normal*/
 
 	bool r = utils->GetImageRGBA(iImage,pubDest,nDestBufferSize);
@@ -2559,9 +2559,9 @@ static int ISteamUtils_GetAPICallResult(lua_State* L) {
 	int iCallbackExpected = check_int(L, 4); /*normal*/
 	int cubCallback = check_int(L, 3); /*normal*/
 	dmScript::LuaHBuffer * pCallback_buffer = check_buffer(L, 2); /*buffer_param*/
-	void* pCallback = 0x0;
+	void * pCallback = 0x0;
 	uint32_t pCallback_buffersize = 0;
-	dmBuffer::Result pCallback_buffer_result = dmBuffer::GetBytes(pCallback_buffer->m_Buffer, &pCallback, &pCallback_buffersize);
+	dmBuffer::Result pCallback_buffer_result = dmBuffer::GetBytes(pCallback_buffer->m_Buffer, (void**)&pCallback, &pCallback_buffersize);
 	SteamAPICall_t hSteamAPICall = check_SteamAPICall_t(L, 1); /*normal*/
 
 	bool r = utils->GetAPICallResult(hSteamAPICall,pCallback,cubCallback,iCallbackExpected,&pbFailed);

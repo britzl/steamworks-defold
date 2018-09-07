@@ -307,9 +307,9 @@ static int {{classname}}_{{methodname}}(lua_State* L) {
 		lua_pop(L, 1);
 	}
 {{/array_count}}{{#buffer_param}}	dmScript::LuaHBuffer * {{paramname}}_buffer = check_buffer(L, {{paramindex}}); /*buffer_param*/
-	void* {{paramname}} = 0x0;
+	{{paramtype}} {{paramname}} = 0x0;
 	uint32_t {{paramname}}_buffersize = 0;
-	dmBuffer::Result {{paramname}}_buffer_result = dmBuffer::GetBytes({{paramname}}_buffer->m_Buffer, &{{paramname}}, &{{paramname}}_buffersize);
+	dmBuffer::Result {{paramname}}_buffer_result = dmBuffer::GetBytes({{paramname}}_buffer->m_Buffer, (void**)&{{paramname}}, &{{paramname}}_buffersize);
 {{/buffer_param}}
 	{{/params}}
 
