@@ -123,6 +123,49 @@ utils_is_steam_in_big_picture_mode() -> ISteamUtils_IsSteamInBigPictureMode()
 utils_start_vr_dashboard() -> ISteamUtils_StartVRDashboard()
 utils_is_vr_headset_streaming_enabled() -> ISteamUtils_IsVRHeadsetStreamingEnabled()
 utils_set_vr_headset_streaming_enabled(bEnabled) -> ISteamUtils_SetVRHeadsetStreamingEnabled()
+user_stats_request_current_stats() -> ISteamUserStats_RequestCurrentStats()
+user_stats_get_stat_int(pchName) -> ISteamUserStats_GetStat()
+user_stats_get_stat_float(pchName) -> ISteamUserStats_GetStat()
+user_stats_set_stat_int(pchName,nData) -> ISteamUserStats_SetStat()
+user_stats_set_stat_float(pchName,fData) -> ISteamUserStats_SetStat()
+user_stats_update_avg_rate_stat(pchName,flCountThisSession,dSessionLength) -> ISteamUserStats_UpdateAvgRateStat()
+user_stats_get_achievement(pchName) -> ISteamUserStats_GetAchievement()
+user_stats_set_achievement(pchName) -> ISteamUserStats_SetAchievement()
+user_stats_clear_achievement(pchName) -> ISteamUserStats_ClearAchievement()
+user_stats_get_achievement_and_unlock_time(pchName) -> ISteamUserStats_GetAchievementAndUnlockTime()
+user_stats_store_stats() -> ISteamUserStats_StoreStats()
+user_stats_get_achievement_icon(pchName) -> ISteamUserStats_GetAchievementIcon()
+user_stats_get_achievement_display_attribute(pchName,pchKey) -> ISteamUserStats_GetAchievementDisplayAttribute()
+user_stats_indicate_achievement_progress(pchName,nCurProgress,nMaxProgress) -> ISteamUserStats_IndicateAchievementProgress()
+user_stats_get_num_achievements() -> ISteamUserStats_GetNumAchievements()
+user_stats_get_achievement_name(iAchievement) -> ISteamUserStats_GetAchievementName()
+user_stats_request_user_stats(steamIDUser) -> ISteamUserStats_RequestUserStats()
+user_stats_get_user_stat_int(steamIDUser,pchName) -> ISteamUserStats_GetUserStat()
+user_stats_get_user_stat_float(steamIDUser,pchName) -> ISteamUserStats_GetUserStat()
+user_stats_get_user_achievement(steamIDUser,pchName) -> ISteamUserStats_GetUserAchievement()
+user_stats_get_user_achievement_and_unlock_time(steamIDUser,pchName) -> ISteamUserStats_GetUserAchievementAndUnlockTime()
+user_stats_reset_all_stats(bAchievementsToo) -> ISteamUserStats_ResetAllStats()
+user_stats_find_or_create_leaderboard(pchLeaderboardName,eLeaderboardSortMethod,eLeaderboardDisplayType) -> ISteamUserStats_FindOrCreateLeaderboard()
+user_stats_find_leaderboard(pchLeaderboardName) -> ISteamUserStats_FindLeaderboard()
+user_stats_get_leaderboard_name(hSteamLeaderboard) -> ISteamUserStats_GetLeaderboardName()
+user_stats_get_leaderboard_entry_count(hSteamLeaderboard) -> ISteamUserStats_GetLeaderboardEntryCount()
+user_stats_get_leaderboard_sort_method(hSteamLeaderboard) -> ISteamUserStats_GetLeaderboardSortMethod()
+user_stats_get_leaderboard_display_type(hSteamLeaderboard) -> ISteamUserStats_GetLeaderboardDisplayType()
+user_stats_download_leaderboard_entries(hSteamLeaderboard,eLeaderboardDataRequest,nRangeStart,nRangeEnd) -> ISteamUserStats_DownloadLeaderboardEntries()
+user_stats_download_leaderboard_entries_for_users(hSteamLeaderboard,prgUsers,cUsers) -> ISteamUserStats_DownloadLeaderboardEntriesForUsers()
+user_stats_get_downloaded_leaderboard_entry(hSteamLeaderboardEntries,index,cDetailsMax) -> ISteamUserStats_GetDownloadedLeaderboardEntry()
+user_stats_upload_leaderboard_score(hSteamLeaderboard,eLeaderboardUploadScoreMethod,nScore,pScoreDetails,cScoreDetailsCount) -> ISteamUserStats_UploadLeaderboardScore()
+user_stats_attach_leaderboard_ugc(hSteamLeaderboard,hUGC) -> ISteamUserStats_AttachLeaderboardUGC()
+user_stats_get_number_of_current_players() -> ISteamUserStats_GetNumberOfCurrentPlayers()
+user_stats_request_global_achievement_percentages() -> ISteamUserStats_RequestGlobalAchievementPercentages()
+user_stats_get_most_achieved_achievement_info(pchName,unNameBufLen) -> ISteamUserStats_GetMostAchievedAchievementInfo()
+user_stats_get_next_most_achieved_achievement_info(iIteratorPrevious,pchName,unNameBufLen) -> ISteamUserStats_GetNextMostAchievedAchievementInfo()
+user_stats_get_achievement_achieved_percent(pchName) -> ISteamUserStats_GetAchievementAchievedPercent()
+user_stats_request_global_stats(nHistoryDays) -> ISteamUserStats_RequestGlobalStats()
+user_stats_get_global_stat_int(pchStatName) -> ISteamUserStats_GetGlobalStat()
+user_stats_get_global_stat_float(pchStatName) -> ISteamUserStats_GetGlobalStat()
+user_stats_get_global_stat_int_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
+user_stats_get_global_stat_float_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
 
 */
 
@@ -132,6 +175,7 @@ utils_set_vr_headset_streaming_enabled(bEnabled) -> ISteamUtils_SetVRHeadsetStre
 #include <stdio.h>
 
 #include "steam_api.h"
+#include "steam_gameserver.h"
 #include "luautils.h"
 
 #define LIB_NAME "Steamworks"
@@ -147,119 +191,393 @@ utils_set_vr_headset_streaming_enabled(bEnabled) -> ISteamUtils_SetVRHeadsetStre
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE 2
 
-static ISteamClient *client;
 static ISteamFriends *friends;
 static ISteamUser *user;
-static ISteamUserStats *userstats;
-static ISteamMatchmaking *matchmaking;
+static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
+
+// static ISteamClient *client;
+// static ISteamMatchmaking *matchmaking;
 
 
 
 
 /*****************************
-* PUSH
+* PUSH numbers and other primitive types
 ******************************/
-
 static void push_double(lua_State* L, double n) {
-	lua_pushinteger(L, n);
+	lua_pushnumber(L, n);
+}
+static void push_float(lua_State* L, float n) {
+	lua_pushnumber(L, n);
+}
+static void push_float_array(lua_State* L, float arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_float(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_int(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
+static void push_int_array(lua_State* L, int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_int(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_unsigned_int(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_uint32(lua_State* L, uint32 n) {
+static void push_unsigned_int_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_unsigned_int(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_bool(lua_State* L, bool b) {
+    lua_pushboolean(L, b);
+}
+static void push_char_array(lua_State* L, char ca[], unsigned int size) {
+	lua_pushstring(L, ca);
+}
+static void push_const_char_ptr(lua_State* L, const char * s) {
+	lua_pushstring(L, s);
+}
+static void push_uint8(lua_State* L, unsigned char n) {
 	lua_pushinteger(L, n);
 }
-static void push_uint16(lua_State* L, uint16 n) {
+static void push_uint8_array(lua_State* L, unsigned char arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_uint8(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_int8(lua_State* L, signed char n) {
 	lua_pushinteger(L, n);
 }
-static void push_uint8(lua_State* L, uint8 n) {
+static void push_int8_array(lua_State* L, signed char arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_int8(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_int16(lua_State* L, short n) {
 	lua_pushinteger(L, n);
 }
-static void push_int32(lua_State* L, int32 n) {
+static void push_int16_array(lua_State* L, short arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_int16(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_uint16(lua_State* L, unsigned short n) {
 	lua_pushinteger(L, n);
 }
-static void push_PackageId_t(lua_State* L, PackageId_t n) {
+static void push_uint16_array(lua_State* L, unsigned short arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_uint16(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_int32(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
-static void push_BundleId_t(lua_State* L, BundleId_t n) {
+static void push_int32_array(lua_State* L, int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_int32(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_uint32(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_AppId_t(lua_State* L, AppId_t n) {
+static void push_uint32_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_uint32(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_PackageId_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_PhysicalItemId_t(lua_State* L, PhysicalItemId_t n) {
+static void push_PackageId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PackageId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_BundleId_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_DepotId_t(lua_State* L, DepotId_t n) {
+static void push_BundleId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_BundleId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AppId_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_RTime32(lua_State* L, RTime32 n) {
+static void push_AppId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AppId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_PhysicalItemId_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_CellID_t(lua_State* L, CellID_t n) {
+static void push_PhysicalItemId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PhysicalItemId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_DepotId_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_AccountID_t(lua_State* L, AccountID_t n) {
+static void push_DepotId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_DepotId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RTime32(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_PartnerId_t(lua_State* L, PartnerId_t n) {
+static void push_RTime32_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RTime32(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_CellID_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_HAuthTicket(lua_State* L, HAuthTicket n) {
+static void push_CellID_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_CellID_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AccountID_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_HSteamPipe(lua_State* L, HSteamPipe n) {
+static void push_AccountID_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AccountID_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_PartnerId_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_HSteamUser(lua_State* L, HSteamUser n) {
+static void push_PartnerId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PartnerId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HAuthTicket(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_FriendsGroupID_t(lua_State* L, FriendsGroupID_t n) {
+static void push_HAuthTicket_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HAuthTicket(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HSteamPipe(lua_State* L, int32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_HServerQuery(lua_State* L, HServerQuery n) {
+static void push_HSteamPipe_array(lua_State* L, int32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HSteamPipe(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HSteamUser(lua_State* L, int32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_SNetSocket_t(lua_State* L, SNetSocket_t n) {
+static void push_HSteamUser_array(lua_State* L, int32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HSteamUser(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FriendsGroupID_t(lua_State* L, int16 n) {
 	lua_pushinteger(L, n);
 }
-static void push_SNetListenSocket_t(lua_State* L, SNetListenSocket_t n) {
+static void push_FriendsGroupID_t_array(lua_State* L, int16 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendsGroupID_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HServerQuery(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
-static void push_ScreenshotHandle(lua_State* L, ScreenshotHandle n) {
+static void push_HServerQuery_array(lua_State* L, int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HServerQuery(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SNetSocket_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_HTTPRequestHandle(lua_State* L, HTTPRequestHandle n) {
+static void push_SNetSocket_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SNetSocket_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SNetListenSocket_t(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_HTTPCookieContainerHandle(lua_State* L, HTTPCookieContainerHandle n) {
+static void push_SNetListenSocket_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SNetListenSocket_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ScreenshotHandle(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_HHTMLBrowser(lua_State* L, HHTMLBrowser n) {
+static void push_ScreenshotHandle_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ScreenshotHandle(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTTPRequestHandle(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_SteamItemDef_t(lua_State* L, SteamItemDef_t n) {
+static void push_HTTPRequestHandle_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTTPRequestHandle(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTTPCookieContainerHandle(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
 }
-static void push_SteamInventoryResult_t(lua_State* L, SteamInventoryResult_t n) {
+static void push_HTTPCookieContainerHandle_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTTPCookieContainerHandle(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HHTMLBrowser(lua_State* L, uint32 n) {
 	lua_pushinteger(L, n);
+}
+static void push_HHTMLBrowser_array(lua_State* L, uint32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HHTMLBrowser(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamItemDef_t(lua_State* L, int32 n) {
+	lua_pushinteger(L, n);
+}
+static void push_SteamItemDef_t_array(lua_State* L, int32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamItemDef_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamInventoryResult_t(lua_State* L, int32 n) {
+	lua_pushinteger(L, n);
+}
+static void push_SteamInventoryResult_t_array(lua_State* L, int32 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 
+/*****************************
+* PUSH (u)int64 (to strings)
+******************************/
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
 	snprintf(buf, sizeof(buf), "%ld", n);
 	lua_pushstring(L, buf);
 }
 static void push_lint64(lua_State* L, lint64 n) {
-	char buf[22];
-	snprintf(buf, sizeof(buf), "%ld", n);
-	lua_pushstring(L, buf);
+	push_int64(L, n);
 }
-
+static void push_lint64_array(lua_State* L, lint64 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_lint64(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_uint64(lua_State* L, uint64 n) {
 	char buf[22];
 	snprintf(buf, sizeof(buf), "%llu", n);
@@ -268,596 +586,464 @@ static void push_uint64(lua_State* L, uint64 n) {
 static void push_ulint64(lua_State* L, ulint64 n) {
 	push_uint64(L, n);
 }
+static void push_ulint64_array(lua_State* L, ulint64 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ulint64(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_GID_t(lua_State* L, GID_t n) {
 	push_uint64(L, n);
+}
+static void push_GID_t_array(lua_State* L, GID_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GID_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_JobID_t(lua_State* L, JobID_t n) {
 	push_uint64(L, n);
 }
+static void push_JobID_t_array(lua_State* L, JobID_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_JobID_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_AssetClassId_t(lua_State* L, AssetClassId_t n) {
 	push_uint64(L, n);
+}
+static void push_AssetClassId_t_array(lua_State* L, AssetClassId_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AssetClassId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_SteamAPICall_t(lua_State* L, SteamAPICall_t n) {
 	push_uint64(L, n);
 }
+static void push_SteamAPICall_t_array(lua_State* L, SteamAPICall_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamAPICall_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_ManifestId_t(lua_State* L, ManifestId_t n) {
 	push_uint64(L, n);
+}
+static void push_ManifestId_t_array(lua_State* L, ManifestId_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ManifestId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_SiteId_t(lua_State* L, SiteId_t n) {
 	push_uint64(L, n);
 }
+static void push_SiteId_t_array(lua_State* L, SiteId_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SiteId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_UGCHandle_t(lua_State* L, UGCHandle_t n) {
 	push_uint64(L, n);
+}
+static void push_UGCHandle_t_array(lua_State* L, UGCHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UGCHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_PublishedFileUpdateHandle_t(lua_State* L, PublishedFileUpdateHandle_t n) {
 	push_uint64(L, n);
 }
+static void push_PublishedFileUpdateHandle_t_array(lua_State* L, PublishedFileUpdateHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PublishedFileUpdateHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_PublishedFileId_t(lua_State* L, PublishedFileId_t n) {
 	push_uint64(L, n);
+}
+static void push_PublishedFileId_t_array(lua_State* L, PublishedFileId_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PublishedFileId_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_UGCFileWriteStreamHandle_t(lua_State* L, UGCFileWriteStreamHandle_t n) {
 	push_uint64(L, n);
 }
+static void push_UGCFileWriteStreamHandle_t_array(lua_State* L, UGCFileWriteStreamHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UGCFileWriteStreamHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_SteamLeaderboard_t(lua_State* L, SteamLeaderboard_t n) {
 	push_uint64(L, n);
+}
+static void push_SteamLeaderboard_t_array(lua_State* L, SteamLeaderboard_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamLeaderboard_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_SteamLeaderboardEntries_t(lua_State* L, SteamLeaderboardEntries_t n) {
 	push_uint64(L, n);
 }
+static void push_SteamLeaderboardEntries_t_array(lua_State* L, SteamLeaderboardEntries_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamLeaderboardEntries_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_ControllerHandle_t(lua_State* L, ControllerHandle_t n) {
 	push_uint64(L, n);
+}
+static void push_ControllerHandle_t_array(lua_State* L, ControllerHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ControllerHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_ControllerActionSetHandle_t(lua_State* L, ControllerActionSetHandle_t n) {
 	push_uint64(L, n);
 }
+static void push_ControllerActionSetHandle_t_array(lua_State* L, ControllerActionSetHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ControllerActionSetHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_ControllerDigitalActionHandle_t(lua_State* L, ControllerDigitalActionHandle_t n) {
 	push_uint64(L, n);
+}
+static void push_ControllerDigitalActionHandle_t_array(lua_State* L, ControllerDigitalActionHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ControllerDigitalActionHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_ControllerAnalogActionHandle_t(lua_State* L, ControllerAnalogActionHandle_t n) {
 	push_uint64(L, n);
 }
+static void push_ControllerAnalogActionHandle_t_array(lua_State* L, ControllerAnalogActionHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ControllerAnalogActionHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_UGCQueryHandle_t(lua_State* L, UGCQueryHandle_t n) {
 	push_uint64(L, n);
+}
+static void push_UGCQueryHandle_t_array(lua_State* L, UGCQueryHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UGCQueryHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_UGCUpdateHandle_t(lua_State* L, UGCUpdateHandle_t n) {
 	push_uint64(L, n);
 }
+static void push_UGCUpdateHandle_t_array(lua_State* L, UGCUpdateHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UGCUpdateHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_SteamItemInstanceID_t(lua_State* L, SteamItemInstanceID_t n) {
 	push_uint64(L, n);
+}
+static void push_SteamItemInstanceID_t_array(lua_State* L, SteamItemInstanceID_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamItemInstanceID_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_SteamInventoryUpdateHandle_t(lua_State* L, SteamInventoryUpdateHandle_t n) {
 	push_uint64(L, n);
 }
+static void push_SteamInventoryUpdateHandle_t_array(lua_State* L, SteamInventoryUpdateHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryUpdateHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 
+/*****************************
+* PUSH enums
+******************************/
 static void push_EUniverse(lua_State* L, EUniverse n) {
 	lua_pushinteger(L, n);
 }
-static EUniverse check_EUniverse(lua_State* L, int index) {
-	return EUniverse(luaL_checkinteger(L, index));
-}
-
 static void push_EResult(lua_State* L, EResult n) {
 	lua_pushinteger(L, n);
 }
-static EResult check_EResult(lua_State* L, int index) {
-	return EResult(luaL_checkinteger(L, index));
-}
-
 static void push_EVoiceResult(lua_State* L, EVoiceResult n) {
 	lua_pushinteger(L, n);
 }
-static EVoiceResult check_EVoiceResult(lua_State* L, int index) {
-	return EVoiceResult(luaL_checkinteger(L, index));
-}
-
 static void push_EDenyReason(lua_State* L, EDenyReason n) {
 	lua_pushinteger(L, n);
 }
-static EDenyReason check_EDenyReason(lua_State* L, int index) {
-	return EDenyReason(luaL_checkinteger(L, index));
-}
-
 static void push_EBeginAuthSessionResult(lua_State* L, EBeginAuthSessionResult n) {
 	lua_pushinteger(L, n);
 }
-static EBeginAuthSessionResult check_EBeginAuthSessionResult(lua_State* L, int index) {
-	return EBeginAuthSessionResult(luaL_checkinteger(L, index));
-}
-
 static void push_EAuthSessionResponse(lua_State* L, EAuthSessionResponse n) {
 	lua_pushinteger(L, n);
 }
-static EAuthSessionResponse check_EAuthSessionResponse(lua_State* L, int index) {
-	return EAuthSessionResponse(luaL_checkinteger(L, index));
-}
-
 static void push_EUserHasLicenseForAppResult(lua_State* L, EUserHasLicenseForAppResult n) {
 	lua_pushinteger(L, n);
 }
-static EUserHasLicenseForAppResult check_EUserHasLicenseForAppResult(lua_State* L, int index) {
-	return EUserHasLicenseForAppResult(luaL_checkinteger(L, index));
-}
-
 static void push_EAccountType(lua_State* L, EAccountType n) {
 	lua_pushinteger(L, n);
 }
-static EAccountType check_EAccountType(lua_State* L, int index) {
-	return EAccountType(luaL_checkinteger(L, index));
-}
-
 static void push_EAppReleaseState(lua_State* L, EAppReleaseState n) {
 	lua_pushinteger(L, n);
 }
-static EAppReleaseState check_EAppReleaseState(lua_State* L, int index) {
-	return EAppReleaseState(luaL_checkinteger(L, index));
-}
-
 static void push_EAppOwnershipFlags(lua_State* L, EAppOwnershipFlags n) {
 	lua_pushinteger(L, n);
 }
-static EAppOwnershipFlags check_EAppOwnershipFlags(lua_State* L, int index) {
-	return EAppOwnershipFlags(luaL_checkinteger(L, index));
-}
-
 static void push_EAppType(lua_State* L, EAppType n) {
 	lua_pushinteger(L, n);
 }
-static EAppType check_EAppType(lua_State* L, int index) {
-	return EAppType(luaL_checkinteger(L, index));
-}
-
 static void push_ESteamUserStatType(lua_State* L, ESteamUserStatType n) {
 	lua_pushinteger(L, n);
 }
-static ESteamUserStatType check_ESteamUserStatType(lua_State* L, int index) {
-	return ESteamUserStatType(luaL_checkinteger(L, index));
-}
-
 static void push_EChatEntryType(lua_State* L, EChatEntryType n) {
 	lua_pushinteger(L, n);
 }
-static EChatEntryType check_EChatEntryType(lua_State* L, int index) {
-	return EChatEntryType(luaL_checkinteger(L, index));
-}
-
 static void push_EChatRoomEnterResponse(lua_State* L, EChatRoomEnterResponse n) {
 	lua_pushinteger(L, n);
 }
-static EChatRoomEnterResponse check_EChatRoomEnterResponse(lua_State* L, int index) {
-	return EChatRoomEnterResponse(luaL_checkinteger(L, index));
-}
-
 static void push_EChatSteamIDInstanceFlags(lua_State* L, EChatSteamIDInstanceFlags n) {
 	lua_pushinteger(L, n);
 }
-static EChatSteamIDInstanceFlags check_EChatSteamIDInstanceFlags(lua_State* L, int index) {
-	return EChatSteamIDInstanceFlags(luaL_checkinteger(L, index));
-}
-
 static void push_EMarketingMessageFlags(lua_State* L, EMarketingMessageFlags n) {
 	lua_pushinteger(L, n);
 }
-static EMarketingMessageFlags check_EMarketingMessageFlags(lua_State* L, int index) {
-	return EMarketingMessageFlags(luaL_checkinteger(L, index));
-}
-
 static void push_ENotificationPosition(lua_State* L, ENotificationPosition n) {
 	lua_pushinteger(L, n);
 }
-static ENotificationPosition check_ENotificationPosition(lua_State* L, int index) {
-	return ENotificationPosition(luaL_checkinteger(L, index));
-}
-
 static void push_EBroadcastUploadResult(lua_State* L, EBroadcastUploadResult n) {
 	lua_pushinteger(L, n);
 }
-static EBroadcastUploadResult check_EBroadcastUploadResult(lua_State* L, int index) {
-	return EBroadcastUploadResult(luaL_checkinteger(L, index));
-}
-
 static void push_ELaunchOptionType(lua_State* L, ELaunchOptionType n) {
 	lua_pushinteger(L, n);
 }
-static ELaunchOptionType check_ELaunchOptionType(lua_State* L, int index) {
-	return ELaunchOptionType(luaL_checkinteger(L, index));
-}
-
 static void push_EVRHMDType(lua_State* L, EVRHMDType n) {
 	lua_pushinteger(L, n);
 }
-static EVRHMDType check_EVRHMDType(lua_State* L, int index) {
-	return EVRHMDType(luaL_checkinteger(L, index));
-}
-
 static void push_EFriendRelationship(lua_State* L, EFriendRelationship n) {
 	lua_pushinteger(L, n);
 }
-static EFriendRelationship check_EFriendRelationship(lua_State* L, int index) {
-	return EFriendRelationship(luaL_checkinteger(L, index));
-}
-
 static void push_EPersonaState(lua_State* L, EPersonaState n) {
 	lua_pushinteger(L, n);
 }
-static EPersonaState check_EPersonaState(lua_State* L, int index) {
-	return EPersonaState(luaL_checkinteger(L, index));
-}
-
 static void push_EFriendFlags(lua_State* L, EFriendFlags n) {
 	lua_pushinteger(L, n);
 }
-static EFriendFlags check_EFriendFlags(lua_State* L, int index) {
-	return EFriendFlags(luaL_checkinteger(L, index));
-}
-
 static void push_EUserRestriction(lua_State* L, EUserRestriction n) {
 	lua_pushinteger(L, n);
 }
-static EUserRestriction check_EUserRestriction(lua_State* L, int index) {
-	return EUserRestriction(luaL_checkinteger(L, index));
-}
-
 static void push_EOverlayToStoreFlag(lua_State* L, EOverlayToStoreFlag n) {
 	lua_pushinteger(L, n);
 }
-static EOverlayToStoreFlag check_EOverlayToStoreFlag(lua_State* L, int index) {
-	return EOverlayToStoreFlag(luaL_checkinteger(L, index));
-}
-
 static void push_EPersonaChange(lua_State* L, EPersonaChange n) {
 	lua_pushinteger(L, n);
 }
-static EPersonaChange check_EPersonaChange(lua_State* L, int index) {
-	return EPersonaChange(luaL_checkinteger(L, index));
-}
-
 static void push_ESteamAPICallFailure(lua_State* L, ESteamAPICallFailure n) {
 	lua_pushinteger(L, n);
 }
-static ESteamAPICallFailure check_ESteamAPICallFailure(lua_State* L, int index) {
-	return ESteamAPICallFailure(luaL_checkinteger(L, index));
-}
-
 static void push_EGamepadTextInputMode(lua_State* L, EGamepadTextInputMode n) {
 	lua_pushinteger(L, n);
 }
-static EGamepadTextInputMode check_EGamepadTextInputMode(lua_State* L, int index) {
-	return EGamepadTextInputMode(luaL_checkinteger(L, index));
-}
-
 static void push_EGamepadTextInputLineMode(lua_State* L, EGamepadTextInputLineMode n) {
 	lua_pushinteger(L, n);
 }
-static EGamepadTextInputLineMode check_EGamepadTextInputLineMode(lua_State* L, int index) {
-	return EGamepadTextInputLineMode(luaL_checkinteger(L, index));
-}
-
 static void push_ECheckFileSignature(lua_State* L, ECheckFileSignature n) {
 	lua_pushinteger(L, n);
 }
-static ECheckFileSignature check_ECheckFileSignature(lua_State* L, int index) {
-	return ECheckFileSignature(luaL_checkinteger(L, index));
-}
-
 static void push_EMatchMakingServerResponse(lua_State* L, EMatchMakingServerResponse n) {
 	lua_pushinteger(L, n);
 }
-static EMatchMakingServerResponse check_EMatchMakingServerResponse(lua_State* L, int index) {
-	return EMatchMakingServerResponse(luaL_checkinteger(L, index));
-}
-
 static void push_ELobbyType(lua_State* L, ELobbyType n) {
 	lua_pushinteger(L, n);
 }
-static ELobbyType check_ELobbyType(lua_State* L, int index) {
-	return ELobbyType(luaL_checkinteger(L, index));
-}
-
 static void push_ELobbyComparison(lua_State* L, ELobbyComparison n) {
 	lua_pushinteger(L, n);
 }
-static ELobbyComparison check_ELobbyComparison(lua_State* L, int index) {
-	return ELobbyComparison(luaL_checkinteger(L, index));
-}
-
 static void push_ELobbyDistanceFilter(lua_State* L, ELobbyDistanceFilter n) {
 	lua_pushinteger(L, n);
 }
-static ELobbyDistanceFilter check_ELobbyDistanceFilter(lua_State* L, int index) {
-	return ELobbyDistanceFilter(luaL_checkinteger(L, index));
-}
-
 static void push_EChatMemberStateChange(lua_State* L, EChatMemberStateChange n) {
 	lua_pushinteger(L, n);
 }
-static EChatMemberStateChange check_EChatMemberStateChange(lua_State* L, int index) {
-	return EChatMemberStateChange(luaL_checkinteger(L, index));
-}
-
 static void push_ERemoteStoragePlatform(lua_State* L, ERemoteStoragePlatform n) {
 	lua_pushinteger(L, n);
 }
-static ERemoteStoragePlatform check_ERemoteStoragePlatform(lua_State* L, int index) {
-	return ERemoteStoragePlatform(luaL_checkinteger(L, index));
-}
-
 static void push_ERemoteStoragePublishedFileVisibility(lua_State* L, ERemoteStoragePublishedFileVisibility n) {
 	lua_pushinteger(L, n);
 }
-static ERemoteStoragePublishedFileVisibility check_ERemoteStoragePublishedFileVisibility(lua_State* L, int index) {
-	return ERemoteStoragePublishedFileVisibility(luaL_checkinteger(L, index));
-}
-
 static void push_EWorkshopFileType(lua_State* L, EWorkshopFileType n) {
 	lua_pushinteger(L, n);
 }
-static EWorkshopFileType check_EWorkshopFileType(lua_State* L, int index) {
-	return EWorkshopFileType(luaL_checkinteger(L, index));
-}
-
 static void push_EWorkshopVote(lua_State* L, EWorkshopVote n) {
 	lua_pushinteger(L, n);
 }
-static EWorkshopVote check_EWorkshopVote(lua_State* L, int index) {
-	return EWorkshopVote(luaL_checkinteger(L, index));
-}
-
 static void push_EWorkshopFileAction(lua_State* L, EWorkshopFileAction n) {
 	lua_pushinteger(L, n);
 }
-static EWorkshopFileAction check_EWorkshopFileAction(lua_State* L, int index) {
-	return EWorkshopFileAction(luaL_checkinteger(L, index));
-}
-
 static void push_EWorkshopEnumerationType(lua_State* L, EWorkshopEnumerationType n) {
 	lua_pushinteger(L, n);
 }
-static EWorkshopEnumerationType check_EWorkshopEnumerationType(lua_State* L, int index) {
-	return EWorkshopEnumerationType(luaL_checkinteger(L, index));
-}
-
 static void push_EWorkshopVideoProvider(lua_State* L, EWorkshopVideoProvider n) {
 	lua_pushinteger(L, n);
 }
-static EWorkshopVideoProvider check_EWorkshopVideoProvider(lua_State* L, int index) {
-	return EWorkshopVideoProvider(luaL_checkinteger(L, index));
-}
-
 static void push_EUGCReadAction(lua_State* L, EUGCReadAction n) {
 	lua_pushinteger(L, n);
 }
-static EUGCReadAction check_EUGCReadAction(lua_State* L, int index) {
-	return EUGCReadAction(luaL_checkinteger(L, index));
-}
-
 static void push_ELeaderboardDataRequest(lua_State* L, ELeaderboardDataRequest n) {
 	lua_pushinteger(L, n);
 }
-static ELeaderboardDataRequest check_ELeaderboardDataRequest(lua_State* L, int index) {
-	return ELeaderboardDataRequest(luaL_checkinteger(L, index));
-}
-
 static void push_ELeaderboardSortMethod(lua_State* L, ELeaderboardSortMethod n) {
 	lua_pushinteger(L, n);
 }
-static ELeaderboardSortMethod check_ELeaderboardSortMethod(lua_State* L, int index) {
-	return ELeaderboardSortMethod(luaL_checkinteger(L, index));
-}
-
 static void push_ELeaderboardDisplayType(lua_State* L, ELeaderboardDisplayType n) {
 	lua_pushinteger(L, n);
 }
-static ELeaderboardDisplayType check_ELeaderboardDisplayType(lua_State* L, int index) {
-	return ELeaderboardDisplayType(luaL_checkinteger(L, index));
-}
-
 static void push_ELeaderboardUploadScoreMethod(lua_State* L, ELeaderboardUploadScoreMethod n) {
 	lua_pushinteger(L, n);
 }
-static ELeaderboardUploadScoreMethod check_ELeaderboardUploadScoreMethod(lua_State* L, int index) {
-	return ELeaderboardUploadScoreMethod(luaL_checkinteger(L, index));
-}
-
 static void push_ERegisterActivationCodeResult(lua_State* L, ERegisterActivationCodeResult n) {
 	lua_pushinteger(L, n);
 }
-static ERegisterActivationCodeResult check_ERegisterActivationCodeResult(lua_State* L, int index) {
-	return ERegisterActivationCodeResult(luaL_checkinteger(L, index));
-}
-
 static void push_EP2PSessionError(lua_State* L, EP2PSessionError n) {
 	lua_pushinteger(L, n);
 }
-static EP2PSessionError check_EP2PSessionError(lua_State* L, int index) {
-	return EP2PSessionError(luaL_checkinteger(L, index));
-}
-
 static void push_EP2PSend(lua_State* L, EP2PSend n) {
 	lua_pushinteger(L, n);
 }
-static EP2PSend check_EP2PSend(lua_State* L, int index) {
-	return EP2PSend(luaL_checkinteger(L, index));
-}
-
 static void push_ESNetSocketState(lua_State* L, ESNetSocketState n) {
 	lua_pushinteger(L, n);
 }
-static ESNetSocketState check_ESNetSocketState(lua_State* L, int index) {
-	return ESNetSocketState(luaL_checkinteger(L, index));
-}
-
 static void push_ESNetSocketConnectionType(lua_State* L, ESNetSocketConnectionType n) {
 	lua_pushinteger(L, n);
 }
-static ESNetSocketConnectionType check_ESNetSocketConnectionType(lua_State* L, int index) {
-	return ESNetSocketConnectionType(luaL_checkinteger(L, index));
-}
-
 static void push_EVRScreenshotType(lua_State* L, EVRScreenshotType n) {
 	lua_pushinteger(L, n);
 }
-static EVRScreenshotType check_EVRScreenshotType(lua_State* L, int index) {
-	return EVRScreenshotType(luaL_checkinteger(L, index));
-}
-
 static void push_AudioPlayback_Status(lua_State* L, AudioPlayback_Status n) {
 	lua_pushinteger(L, n);
 }
-static AudioPlayback_Status check_AudioPlayback_Status(lua_State* L, int index) {
-	return AudioPlayback_Status(luaL_checkinteger(L, index));
-}
-
 static void push_EHTTPMethod(lua_State* L, EHTTPMethod n) {
 	lua_pushinteger(L, n);
 }
-static EHTTPMethod check_EHTTPMethod(lua_State* L, int index) {
-	return EHTTPMethod(luaL_checkinteger(L, index));
-}
-
 static void push_EHTTPStatusCode(lua_State* L, EHTTPStatusCode n) {
 	lua_pushinteger(L, n);
 }
-static EHTTPStatusCode check_EHTTPStatusCode(lua_State* L, int index) {
-	return EHTTPStatusCode(luaL_checkinteger(L, index));
-}
-
 static void push_ESteamControllerPad(lua_State* L, ESteamControllerPad n) {
 	lua_pushinteger(L, n);
 }
-static ESteamControllerPad check_ESteamControllerPad(lua_State* L, int index) {
-	return ESteamControllerPad(luaL_checkinteger(L, index));
-}
-
 static void push_EControllerSource(lua_State* L, EControllerSource n) {
 	lua_pushinteger(L, n);
 }
-static EControllerSource check_EControllerSource(lua_State* L, int index) {
-	return EControllerSource(luaL_checkinteger(L, index));
-}
-
 static void push_EControllerSourceMode(lua_State* L, EControllerSourceMode n) {
 	lua_pushinteger(L, n);
 }
-static EControllerSourceMode check_EControllerSourceMode(lua_State* L, int index) {
-	return EControllerSourceMode(luaL_checkinteger(L, index));
-}
-
 static void push_EControllerActionOrigin(lua_State* L, EControllerActionOrigin n) {
 	lua_pushinteger(L, n);
 }
-static EControllerActionOrigin check_EControllerActionOrigin(lua_State* L, int index) {
-	return EControllerActionOrigin(luaL_checkinteger(L, index));
-}
-
 static void push_ESteamControllerLEDFlag(lua_State* L, ESteamControllerLEDFlag n) {
 	lua_pushinteger(L, n);
 }
-static ESteamControllerLEDFlag check_ESteamControllerLEDFlag(lua_State* L, int index) {
-	return ESteamControllerLEDFlag(luaL_checkinteger(L, index));
-}
-
 static void push_ESteamInputType(lua_State* L, ESteamInputType n) {
 	lua_pushinteger(L, n);
 }
-static ESteamInputType check_ESteamInputType(lua_State* L, int index) {
-	return ESteamInputType(luaL_checkinteger(L, index));
-}
-
 static void push_EUGCMatchingUGCType(lua_State* L, EUGCMatchingUGCType n) {
 	lua_pushinteger(L, n);
 }
-static EUGCMatchingUGCType check_EUGCMatchingUGCType(lua_State* L, int index) {
-	return EUGCMatchingUGCType(luaL_checkinteger(L, index));
-}
-
 static void push_EUserUGCList(lua_State* L, EUserUGCList n) {
 	lua_pushinteger(L, n);
 }
-static EUserUGCList check_EUserUGCList(lua_State* L, int index) {
-	return EUserUGCList(luaL_checkinteger(L, index));
-}
-
 static void push_EUserUGCListSortOrder(lua_State* L, EUserUGCListSortOrder n) {
 	lua_pushinteger(L, n);
 }
-static EUserUGCListSortOrder check_EUserUGCListSortOrder(lua_State* L, int index) {
-	return EUserUGCListSortOrder(luaL_checkinteger(L, index));
-}
-
 static void push_EUGCQuery(lua_State* L, EUGCQuery n) {
 	lua_pushinteger(L, n);
 }
-static EUGCQuery check_EUGCQuery(lua_State* L, int index) {
-	return EUGCQuery(luaL_checkinteger(L, index));
-}
-
 static void push_EItemUpdateStatus(lua_State* L, EItemUpdateStatus n) {
 	lua_pushinteger(L, n);
 }
-static EItemUpdateStatus check_EItemUpdateStatus(lua_State* L, int index) {
-	return EItemUpdateStatus(luaL_checkinteger(L, index));
-}
-
 static void push_EItemState(lua_State* L, EItemState n) {
 	lua_pushinteger(L, n);
 }
-static EItemState check_EItemState(lua_State* L, int index) {
-	return EItemState(luaL_checkinteger(L, index));
-}
-
 static void push_EItemStatistic(lua_State* L, EItemStatistic n) {
 	lua_pushinteger(L, n);
 }
-static EItemStatistic check_EItemStatistic(lua_State* L, int index) {
-	return EItemStatistic(luaL_checkinteger(L, index));
-}
-
 static void push_EItemPreviewType(lua_State* L, EItemPreviewType n) {
 	lua_pushinteger(L, n);
 }
-static EItemPreviewType check_EItemPreviewType(lua_State* L, int index) {
-	return EItemPreviewType(luaL_checkinteger(L, index));
-}
-
 static void push_ESteamItemFlags(lua_State* L, ESteamItemFlags n) {
 	lua_pushinteger(L, n);
 }
-static ESteamItemFlags check_ESteamItemFlags(lua_State* L, int index) {
-	return ESteamItemFlags(luaL_checkinteger(L, index));
-}
-
 static void push_EParentalFeature(lua_State* L, EParentalFeature n) {
 	lua_pushinteger(L, n);
 }
-static EParentalFeature check_EParentalFeature(lua_State* L, int index) {
-	return EParentalFeature(luaL_checkinteger(L, index));
-}
 
-
-static void push_bool(lua_State* L, bool b) {
-    lua_pushboolean(L, b);
-}
-static void push__Bool(lua_State* L, bool b) {
-    lua_pushboolean(L, b);
-}
-static void push_const_char_ptr(lua_State* L, const char * s) {
-    lua_pushstring(L, s);
-}
-
+/*****************************
+* PUSH CSteamID
+******************************/
 static void push_CSteamID(lua_State* L, CSteamID steamId) {
-	// char buf[22];
-	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	// lua_pushstring(L, buf);
 	push_uint64(L, steamId.ConvertToUint64());
 }
-
 static void push_class_CSteamID(lua_State* L, CSteamID steamId) {
-	// char buf[22];
-	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	// lua_pushstring(L, buf);
 	push_uint64(L, steamId.ConvertToUint64());
 }
-
 static void push_CSteamID_array(lua_State* L, CSteamID steamId[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
@@ -867,26 +1053,394 @@ static void push_CSteamID_array(lua_State* L, CSteamID steamId[], unsigned int s
 	}
 }
 
-static void push_char_array(lua_State* L, char ca[], unsigned int size) {
-	lua_pushstring(L, ca);
-}
-
+/*****************************
+* PUSH CGameID
+******************************/
 static void push_CGameID(lua_State* L, CGameID gameId) {
 	push_uint64(L, gameId.ToUint64());
 }
 
-
+/*****************************
+* PUSH structs
+******************************/
+static void push_servernetadr_t(lua_State* L, servernetadr_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_usConnectionPort");
+	push_uint16(L, s.GetConnectionPort());
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usQueryPort");
+	push_uint16(L, s.GetQueryPort());
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unIP");
+	push_uint32(L, s.GetIP());
+	lua_settable(L, -3);
+}
+static void push_gameserveritem_t(lua_State* L, gameserveritem_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_NetAdr");
+	push_servernetadr_t(L, s.m_NetAdr);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPing");
+	push_int(L, s.m_nPing);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bHadSuccessfulResponse");
+	push_bool(L, s.m_bHadSuccessfulResponse);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bDoNotRefresh");
+	push_bool(L, s.m_bDoNotRefresh);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szGameDir");
+	push_char_array(L, s.m_szGameDir, 32);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szMap");
+	push_char_array(L, s.m_szMap, 32);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szGameDescription");
+	push_char_array(L, s.m_szGameDescription, 64);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_uint32(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPlayers");
+	push_int(L, s.m_nPlayers);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nMaxPlayers");
+	push_int(L, s.m_nMaxPlayers);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nBotPlayers");
+	push_int(L, s.m_nBotPlayers);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bPassword");
+	push_bool(L, s.m_bPassword);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bSecure");
+	push_bool(L, s.m_bSecure);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulTimeLastPlayed");
+	push_uint32(L, s.m_ulTimeLastPlayed);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nServerVersion");
+	push_int(L, s.m_nServerVersion);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szServerName");
+	lua_pushstring(L, s.GetName());
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szGameTags");
+	push_char_array(L, s.m_szGameTags, 128);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+}
+static void push_ValvePackingSentinel_t(lua_State* L, ValvePackingSentinel_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_u32");
+	push_uint32(L, s.m_u32);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_u64");
+	push_uint64(L, s.m_u64);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_u16");
+	push_uint16(L, s.m_u16);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_d");
+	push_double(L, s.m_d);
+	lua_settable(L, -3);
+}
+static void push_ValvePackingSentinel_t_array(lua_State* L, ValvePackingSentinel_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ValvePackingSentinel_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamServerConnectFailure_t(lua_State* L, SteamServerConnectFailure_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bStillRetrying");
+	push_bool(L, s.m_bStillRetrying);
+	lua_settable(L, -3);
+}
+static void push_SteamServerConnectFailure_t_array(lua_State* L, SteamServerConnectFailure_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamServerConnectFailure_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamServersDisconnected_t(lua_State* L, SteamServersDisconnected_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_SteamServersDisconnected_t_array(lua_State* L, SteamServersDisconnected_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamServersDisconnected_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ClientGameServerDeny_t(lua_State* L, ClientGameServerDeny_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_uAppID");
+	push_uint32(L, s.m_uAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unGameServerIP");
+	push_uint32(L, s.m_unGameServerIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usGameServerPort");
+	push_uint16(L, s.m_usGameServerPort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bSecure");
+	push_uint16(L, s.m_bSecure);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_uReason");
+	push_uint32(L, s.m_uReason);
+	lua_settable(L, -3);
+}
+static void push_ClientGameServerDeny_t_array(lua_State* L, ClientGameServerDeny_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ClientGameServerDeny_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ValidateAuthTicketResponse_t(lua_State* L, ValidateAuthTicketResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_SteamID");
+	push_CSteamID(L, s.m_SteamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eAuthSessionResponse");
+	push_EAuthSessionResponse(L, s.m_eAuthSessionResponse);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_OwnerSteamID");
+	push_CSteamID(L, s.m_OwnerSteamID);
+	lua_settable(L, -3);
+}
+static void push_ValidateAuthTicketResponse_t_array(lua_State* L, ValidateAuthTicketResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ValidateAuthTicketResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MicroTxnAuthorizationResponse_t(lua_State* L, MicroTxnAuthorizationResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_unAppID");
+	push_uint32(L, s.m_unAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulOrderID");
+	push_uint64(L, s.m_ulOrderID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAuthorized");
+	push_uint8(L, s.m_bAuthorized);
+	lua_settable(L, -3);
+}
+static void push_MicroTxnAuthorizationResponse_t_array(lua_State* L, MicroTxnAuthorizationResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MicroTxnAuthorizationResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_EncryptedAppTicketResponse_t(lua_State* L, EncryptedAppTicketResponse_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eResult");
 	push_EResult(L, s.m_eResult);
 	lua_settable(L, -3);
 }
+static void push_EncryptedAppTicketResponse_t_array(lua_State* L, EncryptedAppTicketResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_EncryptedAppTicketResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GetAuthSessionTicketResponse_t(lua_State* L, GetAuthSessionTicketResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hAuthTicket");
+	push_HAuthTicket(L, s.m_hAuthTicket);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_GetAuthSessionTicketResponse_t_array(lua_State* L, GetAuthSessionTicketResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GetAuthSessionTicketResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameWebCallback_t(lua_State* L, GameWebCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_szURL");
+	push_char_array(L, s.m_szURL, 256);
+	lua_settable(L, -3);
+}
+static void push_GameWebCallback_t_array(lua_State* L, GameWebCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameWebCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_StoreAuthURLResponse_t(lua_State* L, StoreAuthURLResponse_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_szURL");
 	push_char_array(L, s.m_szURL, 512);
 	lua_settable(L, -3);
+}
+static void push_StoreAuthURLResponse_t_array(lua_State* L, StoreAuthURLResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_StoreAuthURLResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FriendGameInfo_t(lua_State* L, FriendGameInfo_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_gameID");
+	push_CGameID(L, s.m_gameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unGameIP");
+	push_uint32(L, s.m_unGameIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usGamePort");
+	push_uint16(L, s.m_usGamePort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usQueryPort");
+	push_uint16(L, s.m_usQueryPort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDLobby");
+	push_CSteamID(L, s.m_steamIDLobby);
+	lua_settable(L, -3);
+}
+static void push_FriendGameInfo_t_array(lua_State* L, FriendGameInfo_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendGameInfo_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FriendSessionStateInfo_t(lua_State* L, FriendSessionStateInfo_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_uiOnlineSessionInstances");
+	push_uint32(L, s.m_uiOnlineSessionInstances);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_uiPublishedToFriendsSessionInstance");
+	push_uint8(L, s.m_uiPublishedToFriendsSessionInstance);
+	lua_settable(L, -3);
+}
+static void push_FriendSessionStateInfo_t_array(lua_State* L, FriendSessionStateInfo_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendSessionStateInfo_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_PersonaStateChange_t(lua_State* L, PersonaStateChange_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamID");
+	push_uint64(L, s.m_ulSteamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nChangeFlags");
+	push_int(L, s.m_nChangeFlags);
+	lua_settable(L, -3);
+}
+static void push_PersonaStateChange_t_array(lua_State* L, PersonaStateChange_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PersonaStateChange_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameOverlayActivated_t(lua_State* L, GameOverlayActivated_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bActive");
+	push_uint8(L, s.m_bActive);
+	lua_settable(L, -3);
+}
+static void push_GameOverlayActivated_t_array(lua_State* L, GameOverlayActivated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameOverlayActivated_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameServerChangeRequested_t(lua_State* L, GameServerChangeRequested_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_rgchServer");
+	push_char_array(L, s.m_rgchServer, 64);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchPassword");
+	push_char_array(L, s.m_rgchPassword, 64);
+	lua_settable(L, -3);
+}
+static void push_GameServerChangeRequested_t_array(lua_State* L, GameServerChangeRequested_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameServerChangeRequested_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameLobbyJoinRequested_t(lua_State* L, GameLobbyJoinRequested_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDLobby");
+	push_CSteamID(L, s.m_steamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDFriend");
+	push_CSteamID(L, s.m_steamIDFriend);
+	lua_settable(L, -3);
+}
+static void push_GameLobbyJoinRequested_t_array(lua_State* L, GameLobbyJoinRequested_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameLobbyJoinRequested_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AvatarImageLoaded_t(lua_State* L, AvatarImageLoaded_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iImage");
+	push_int(L, s.m_iImage);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iWide");
+	push_int(L, s.m_iWide);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iTall");
+	push_int(L, s.m_iTall);
+	lua_settable(L, -3);
+}
+static void push_AvatarImageLoaded_t_array(lua_State* L, AvatarImageLoaded_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AvatarImageLoaded_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_ClanOfficerListResponse_t(lua_State* L, ClanOfficerListResponse_t s) {
 	lua_newtable(L);
@@ -900,11 +1454,121 @@ static void push_ClanOfficerListResponse_t(lua_State* L, ClanOfficerListResponse
 	push_uint8(L, s.m_bSuccess);
 	lua_settable(L, -3);
 }
+static void push_ClanOfficerListResponse_t_array(lua_State* L, ClanOfficerListResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ClanOfficerListResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FriendRichPresenceUpdate_t(lua_State* L, FriendRichPresenceUpdate_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDFriend");
+	push_CSteamID(L, s.m_steamIDFriend);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_FriendRichPresenceUpdate_t_array(lua_State* L, FriendRichPresenceUpdate_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendRichPresenceUpdate_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameRichPresenceJoinRequested_t(lua_State* L, GameRichPresenceJoinRequested_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDFriend");
+	push_CSteamID(L, s.m_steamIDFriend);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchConnect");
+	push_char_array(L, s.m_rgchConnect, 256);
+	lua_settable(L, -3);
+}
+static void push_GameRichPresenceJoinRequested_t_array(lua_State* L, GameRichPresenceJoinRequested_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameRichPresenceJoinRequested_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameConnectedClanChatMsg_t(lua_State* L, GameConnectedClanChatMsg_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDClanChat");
+	push_CSteamID(L, s.m_steamIDClanChat);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iMessageID");
+	push_int(L, s.m_iMessageID);
+	lua_settable(L, -3);
+}
+static void push_GameConnectedClanChatMsg_t_array(lua_State* L, GameConnectedClanChatMsg_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameConnectedClanChatMsg_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameConnectedChatJoin_t(lua_State* L, GameConnectedChatJoin_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDClanChat");
+	push_CSteamID(L, s.m_steamIDClanChat);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+}
+static void push_GameConnectedChatJoin_t_array(lua_State* L, GameConnectedChatJoin_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameConnectedChatJoin_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameConnectedChatLeave_t(lua_State* L, GameConnectedChatLeave_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDClanChat");
+	push_CSteamID(L, s.m_steamIDClanChat);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bKicked");
+	push_bool(L, s.m_bKicked);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bDropped");
+	push_bool(L, s.m_bDropped);
+	lua_settable(L, -3);
+}
+static void push_GameConnectedChatLeave_t_array(lua_State* L, GameConnectedChatLeave_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameConnectedChatLeave_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_DownloadClanActivityCountsResult_t(lua_State* L, DownloadClanActivityCountsResult_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_bSuccess");
-	push__Bool(L, s.m_bSuccess);
+	push_bool(L, s.m_bSuccess);
 	lua_settable(L, -3);
+}
+static void push_DownloadClanActivityCountsResult_t_array(lua_State* L, DownloadClanActivityCountsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_DownloadClanActivityCountsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_JoinClanChatRoomCompletionResult_t(lua_State* L, JoinClanChatRoomCompletionResult_t s) {
 	lua_newtable(L);
@@ -914,6 +1578,31 @@ static void push_JoinClanChatRoomCompletionResult_t(lua_State* L, JoinClanChatRo
 	lua_pushstring(L, "m_eChatRoomEnterResponse");
 	push_EChatRoomEnterResponse(L, s.m_eChatRoomEnterResponse);
 	lua_settable(L, -3);
+}
+static void push_JoinClanChatRoomCompletionResult_t_array(lua_State* L, JoinClanChatRoomCompletionResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_JoinClanChatRoomCompletionResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GameConnectedFriendChatMsg_t(lua_State* L, GameConnectedFriendChatMsg_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iMessageID");
+	push_int(L, s.m_iMessageID);
+	lua_settable(L, -3);
+}
+static void push_GameConnectedFriendChatMsg_t_array(lua_State* L, GameConnectedFriendChatMsg_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GameConnectedFriendChatMsg_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_FriendsGetFollowerCount_t(lua_State* L, FriendsGetFollowerCount_t s) {
 	lua_newtable(L);
@@ -927,6 +1616,14 @@ static void push_FriendsGetFollowerCount_t(lua_State* L, FriendsGetFollowerCount
 	push_int(L, s.m_nCount);
 	lua_settable(L, -3);
 }
+static void push_FriendsGetFollowerCount_t_array(lua_State* L, FriendsGetFollowerCount_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendsGetFollowerCount_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_FriendsIsFollowing_t(lua_State* L, FriendsIsFollowing_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eResult");
@@ -936,8 +1633,16 @@ static void push_FriendsIsFollowing_t(lua_State* L, FriendsIsFollowing_t s) {
 	push_CSteamID(L, s.m_steamID);
 	lua_settable(L, -3);
 	lua_pushstring(L, "m_bIsFollowing");
-	push__Bool(L, s.m_bIsFollowing);
+	push_bool(L, s.m_bIsFollowing);
 	lua_settable(L, -3);
+}
+static void push_FriendsIsFollowing_t_array(lua_State* L, FriendsIsFollowing_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendsIsFollowing_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_FriendsEnumerateFollowingList_t(lua_State* L, FriendsEnumerateFollowingList_t s) {
 	lua_newtable(L);
@@ -954,17 +1659,67 @@ static void push_FriendsEnumerateFollowingList_t(lua_State* L, FriendsEnumerateF
 	push_int32(L, s.m_nTotalResultCount);
 	lua_settable(L, -3);
 }
+static void push_FriendsEnumerateFollowingList_t_array(lua_State* L, FriendsEnumerateFollowingList_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendsEnumerateFollowingList_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_SetPersonaNameResponse_t(lua_State* L, SetPersonaNameResponse_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_bSuccess");
-	push__Bool(L, s.m_bSuccess);
+	push_bool(L, s.m_bSuccess);
 	lua_settable(L, -3);
 	lua_pushstring(L, "m_bLocalSuccess");
-	push__Bool(L, s.m_bLocalSuccess);
+	push_bool(L, s.m_bLocalSuccess);
 	lua_settable(L, -3);
 	lua_pushstring(L, "m_result");
 	push_EResult(L, s.m_result);
 	lua_settable(L, -3);
+}
+static void push_SetPersonaNameResponse_t_array(lua_State* L, SetPersonaNameResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SetPersonaNameResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LowBatteryPower_t(lua_State* L, LowBatteryPower_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nMinutesBatteryLeft");
+	push_uint8(L, s.m_nMinutesBatteryLeft);
+	lua_settable(L, -3);
+}
+static void push_LowBatteryPower_t_array(lua_State* L, LowBatteryPower_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LowBatteryPower_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamAPICallCompleted_t(lua_State* L, SteamAPICallCompleted_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hAsyncCall");
+	push_SteamAPICall_t(L, s.m_hAsyncCall);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iCallback");
+	push_int(L, s.m_iCallback);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cubParam");
+	push_uint32(L, s.m_cubParam);
+	lua_settable(L, -3);
+}
+static void push_SteamAPICallCompleted_t_array(lua_State* L, SteamAPICallCompleted_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamAPICallCompleted_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_CheckFileSignature_t(lua_State* L, CheckFileSignature_t s) {
 	lua_newtable(L);
@@ -972,98 +1727,3507 @@ static void push_CheckFileSignature_t(lua_State* L, CheckFileSignature_t s) {
 	push_ECheckFileSignature(L, s.m_eCheckFileSignature);
 	lua_settable(L, -3);
 }
-
-
+static void push_CheckFileSignature_t_array(lua_State* L, CheckFileSignature_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_CheckFileSignature_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GamepadTextInputDismissed_t(lua_State* L, GamepadTextInputDismissed_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bSubmitted");
+	push_bool(L, s.m_bSubmitted);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unSubmittedText");
+	push_uint32(L, s.m_unSubmittedText);
+	lua_settable(L, -3);
+}
+static void push_GamepadTextInputDismissed_t_array(lua_State* L, GamepadTextInputDismissed_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GamepadTextInputDismissed_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MatchMakingKeyValuePair_t(lua_State* L, MatchMakingKeyValuePair_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_szKey");
+	push_char_array(L, s.m_szKey, 256);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szValue");
+	push_char_array(L, s.m_szValue, 256);
+	lua_settable(L, -3);
+}
+static void push_MatchMakingKeyValuePair_t_array(lua_State* L, MatchMakingKeyValuePair_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MatchMakingKeyValuePair_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FavoritesListChanged_t(lua_State* L, FavoritesListChanged_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nIP");
+	push_uint32(L, s.m_nIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nQueryPort");
+	push_uint32(L, s.m_nQueryPort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nConnPort");
+	push_uint32(L, s.m_nConnPort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_uint32(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nFlags");
+	push_uint32(L, s.m_nFlags);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAdd");
+	push_bool(L, s.m_bAdd);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unAccountId");
+	push_AccountID_t(L, s.m_unAccountId);
+	lua_settable(L, -3);
+}
+static void push_FavoritesListChanged_t_array(lua_State* L, FavoritesListChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FavoritesListChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyInvite_t(lua_State* L, LobbyInvite_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamIDUser");
+	push_uint64(L, s.m_ulSteamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulGameID");
+	push_uint64(L, s.m_ulGameID);
+	lua_settable(L, -3);
+}
+static void push_LobbyInvite_t_array(lua_State* L, LobbyInvite_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyInvite_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyEnter_t(lua_State* L, LobbyEnter_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgfChatPermissions");
+	push_uint32(L, s.m_rgfChatPermissions);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bLocked");
+	push_bool(L, s.m_bLocked);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_EChatRoomEnterResponse");
+	push_uint32(L, s.m_EChatRoomEnterResponse);
+	lua_settable(L, -3);
+}
+static void push_LobbyEnter_t_array(lua_State* L, LobbyEnter_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyEnter_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyDataUpdate_t(lua_State* L, LobbyDataUpdate_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDMember");
+	push_uint64(L, s.m_ulSteamIDMember);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bSuccess");
+	push_uint8(L, s.m_bSuccess);
+	lua_settable(L, -3);
+}
+static void push_LobbyDataUpdate_t_array(lua_State* L, LobbyDataUpdate_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyDataUpdate_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyChatUpdate_t(lua_State* L, LobbyChatUpdate_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDUserChanged");
+	push_uint64(L, s.m_ulSteamIDUserChanged);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDMakingChange");
+	push_uint64(L, s.m_ulSteamIDMakingChange);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgfChatMemberStateChange");
+	push_uint32(L, s.m_rgfChatMemberStateChange);
+	lua_settable(L, -3);
+}
+static void push_LobbyChatUpdate_t_array(lua_State* L, LobbyChatUpdate_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyChatUpdate_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyChatMsg_t(lua_State* L, LobbyChatMsg_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDUser");
+	push_uint64(L, s.m_ulSteamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eChatEntryType");
+	push_uint8(L, s.m_eChatEntryType);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iChatID");
+	push_uint32(L, s.m_iChatID);
+	lua_settable(L, -3);
+}
+static void push_LobbyChatMsg_t_array(lua_State* L, LobbyChatMsg_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyChatMsg_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyGameCreated_t(lua_State* L, LobbyGameCreated_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDGameServer");
+	push_uint64(L, s.m_ulSteamIDGameServer);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unIP");
+	push_uint32(L, s.m_unIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usPort");
+	push_uint16(L, s.m_usPort);
+	lua_settable(L, -3);
+}
+static void push_LobbyGameCreated_t_array(lua_State* L, LobbyGameCreated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyGameCreated_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyMatchList_t(lua_State* L, LobbyMatchList_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nLobbiesMatching");
+	push_uint32(L, s.m_nLobbiesMatching);
+	lua_settable(L, -3);
+}
+static void push_LobbyMatchList_t_array(lua_State* L, LobbyMatchList_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyMatchList_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyKicked_t(lua_State* L, LobbyKicked_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDAdmin");
+	push_uint64(L, s.m_ulSteamIDAdmin);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bKickedDueToDisconnect");
+	push_uint8(L, s.m_bKickedDueToDisconnect);
+	lua_settable(L, -3);
+}
+static void push_LobbyKicked_t_array(lua_State* L, LobbyKicked_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyKicked_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LobbyCreated_t(lua_State* L, LobbyCreated_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	push_uint64(L, s.m_ulSteamIDLobby);
+	lua_settable(L, -3);
+}
+static void push_LobbyCreated_t_array(lua_State* L, LobbyCreated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LobbyCreated_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_PSNGameBootInviteResult_t(lua_State* L, PSNGameBootInviteResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bGameBootInviteExists");
+	push_bool(L, s.m_bGameBootInviteExists);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDLobby");
+	push_CSteamID(L, s.m_steamIDLobby);
+	lua_settable(L, -3);
+}
+static void push_PSNGameBootInviteResult_t_array(lua_State* L, PSNGameBootInviteResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PSNGameBootInviteResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FavoritesListAccountsUpdated_t(lua_State* L, FavoritesListAccountsUpdated_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_FavoritesListAccountsUpdated_t_array(lua_State* L, FavoritesListAccountsUpdated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FavoritesListAccountsUpdated_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageAppSyncedClient_t(lua_State* L, RemoteStorageAppSyncedClient_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unNumDownloads");
+	push_int(L, s.m_unNumDownloads);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageAppSyncedClient_t_array(lua_State* L, RemoteStorageAppSyncedClient_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageAppSyncedClient_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageAppSyncedServer_t(lua_State* L, RemoteStorageAppSyncedServer_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unNumUploads");
+	push_int(L, s.m_unNumUploads);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageAppSyncedServer_t_array(lua_State* L, RemoteStorageAppSyncedServer_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageAppSyncedServer_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageAppSyncProgress_t(lua_State* L, RemoteStorageAppSyncProgress_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_rgchCurrentFile");
+	push_char_array(L, s.m_rgchCurrentFile, 260);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_uBytesTransferredThisChunk");
+	push_uint32(L, s.m_uBytesTransferredThisChunk);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_dAppPercentComplete");
+	push_double(L, s.m_dAppPercentComplete);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUploading");
+	push_bool(L, s.m_bUploading);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageAppSyncProgress_t_array(lua_State* L, RemoteStorageAppSyncProgress_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageAppSyncProgress_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageAppSyncStatusCheck_t(lua_State* L, RemoteStorageAppSyncStatusCheck_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageAppSyncStatusCheck_t_array(lua_State* L, RemoteStorageAppSyncStatusCheck_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageAppSyncStatusCheck_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageFileShareResult_t(lua_State* L, RemoteStorageFileShareResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hFile");
+	push_UGCHandle_t(L, s.m_hFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchFilename");
+	push_char_array(L, s.m_rgchFilename, 260);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageFileShareResult_t_array(lua_State* L, RemoteStorageFileShareResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageFileShareResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishFileResult_t(lua_State* L, RemoteStoragePublishFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	push_bool(L, s.m_bUserNeedsToAcceptWorkshopLegalAgreement);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishFileResult_t_array(lua_State* L, RemoteStoragePublishFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageDeletePublishedFileResult_t(lua_State* L, RemoteStorageDeletePublishedFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageDeletePublishedFileResult_t_array(lua_State* L, RemoteStorageDeletePublishedFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageDeletePublishedFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumerateUserPublishedFilesResult_t(lua_State* L, RemoteStorageEnumerateUserPublishedFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateUserPublishedFilesResult_t_array(lua_State* L, RemoteStorageEnumerateUserPublishedFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateUserPublishedFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageSubscribePublishedFileResult_t(lua_State* L, RemoteStorageSubscribePublishedFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageSubscribePublishedFileResult_t_array(lua_State* L, RemoteStorageSubscribePublishedFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageSubscribePublishedFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumerateUserSubscribedFilesResult_t(lua_State* L, RemoteStorageEnumerateUserSubscribedFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgRTimeSubscribed");
+	push_uint32_array(L, s.m_rgRTimeSubscribed, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateUserSubscribedFilesResult_t_array(lua_State* L, RemoteStorageEnumerateUserSubscribedFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateUserSubscribedFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageUnsubscribePublishedFileResult_t(lua_State* L, RemoteStorageUnsubscribePublishedFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageUnsubscribePublishedFileResult_t_array(lua_State* L, RemoteStorageUnsubscribePublishedFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageUnsubscribePublishedFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageUpdatePublishedFileResult_t(lua_State* L, RemoteStorageUpdatePublishedFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	push_bool(L, s.m_bUserNeedsToAcceptWorkshopLegalAgreement);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageUpdatePublishedFileResult_t_array(lua_State* L, RemoteStorageUpdatePublishedFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageUpdatePublishedFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageDownloadUGCResult_t(lua_State* L, RemoteStorageDownloadUGCResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hFile");
+	push_UGCHandle_t(L, s.m_hFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nSizeInBytes");
+	push_int32(L, s.m_nSizeInBytes);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_pchFileName");
+	push_char_array(L, s.m_pchFileName, 260);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	push_uint64(L, s.m_ulSteamIDOwner);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageDownloadUGCResult_t_array(lua_State* L, RemoteStorageDownloadUGCResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageDownloadUGCResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageGetPublishedFileDetailsResult_t(lua_State* L, RemoteStorageGetPublishedFileDetailsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCreatorAppID");
+	push_AppId_t(L, s.m_nCreatorAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nConsumerAppID");
+	push_AppId_t(L, s.m_nConsumerAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTitle");
+	push_char_array(L, s.m_rgchTitle, 129);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchDescription");
+	push_char_array(L, s.m_rgchDescription, 8000);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hFile");
+	push_UGCHandle_t(L, s.m_hFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hPreviewFile");
+	push_UGCHandle_t(L, s.m_hPreviewFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	push_uint64(L, s.m_ulSteamIDOwner);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeCreated");
+	push_uint32(L, s.m_rtimeCreated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeUpdated");
+	push_uint32(L, s.m_rtimeUpdated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eVisibility");
+	push_ERemoteStoragePublishedFileVisibility(L, s.m_eVisibility);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bBanned");
+	push_bool(L, s.m_bBanned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTags");
+	push_char_array(L, s.m_rgchTags, 1025);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bTagsTruncated");
+	push_bool(L, s.m_bTagsTruncated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_pchFileName");
+	push_char_array(L, s.m_pchFileName, 260);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nFileSize");
+	push_int32(L, s.m_nFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	push_int32(L, s.m_nPreviewFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchURL");
+	push_char_array(L, s.m_rgchURL, 256);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eFileType");
+	push_EWorkshopFileType(L, s.m_eFileType);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	push_bool(L, s.m_bAcceptedForUse);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageGetPublishedFileDetailsResult_t_array(lua_State* L, RemoteStorageGetPublishedFileDetailsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageGetPublishedFileDetailsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumerateWorkshopFilesResult_t(lua_State* L, RemoteStorageEnumerateWorkshopFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgScore");
+	push_float_array(L, s.m_rgScore, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppId");
+	push_AppId_t(L, s.m_nAppId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unStartIndex");
+	push_uint32(L, s.m_unStartIndex);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateWorkshopFilesResult_t_array(lua_State* L, RemoteStorageEnumerateWorkshopFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateWorkshopFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageGetPublishedItemVoteDetailsResult_t(lua_State* L, RemoteStorageGetPublishedItemVoteDetailsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unPublishedFileId");
+	push_PublishedFileId_t(L, s.m_unPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nVotesFor");
+	push_int32(L, s.m_nVotesFor);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nVotesAgainst");
+	push_int32(L, s.m_nVotesAgainst);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nReports");
+	push_int32(L, s.m_nReports);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_fScore");
+	push_float(L, s.m_fScore);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageGetPublishedItemVoteDetailsResult_t_array(lua_State* L, RemoteStorageGetPublishedItemVoteDetailsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageGetPublishedItemVoteDetailsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileSubscribed_t(lua_State* L, RemoteStoragePublishedFileSubscribed_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileSubscribed_t_array(lua_State* L, RemoteStoragePublishedFileSubscribed_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileSubscribed_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileUnsubscribed_t(lua_State* L, RemoteStoragePublishedFileUnsubscribed_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileUnsubscribed_t_array(lua_State* L, RemoteStoragePublishedFileUnsubscribed_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileUnsubscribed_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileDeleted_t(lua_State* L, RemoteStoragePublishedFileDeleted_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileDeleted_t_array(lua_State* L, RemoteStoragePublishedFileDeleted_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileDeleted_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageUpdateUserPublishedItemVoteResult_t(lua_State* L, RemoteStorageUpdateUserPublishedItemVoteResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageUpdateUserPublishedItemVoteResult_t_array(lua_State* L, RemoteStorageUpdateUserPublishedItemVoteResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageUpdateUserPublishedItemVoteResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageUserVoteDetails_t(lua_State* L, RemoteStorageUserVoteDetails_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eVote");
+	push_EWorkshopVote(L, s.m_eVote);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageUserVoteDetails_t_array(lua_State* L, RemoteStorageUserVoteDetails_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageUserVoteDetails_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t(lua_State* L, RemoteStorageEnumerateUserSharedWorkshopFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t_array(lua_State* L, RemoteStorageEnumerateUserSharedWorkshopFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageSetUserPublishedFileActionResult_t(lua_State* L, RemoteStorageSetUserPublishedFileActionResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eAction");
+	push_EWorkshopFileAction(L, s.m_eAction);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageSetUserPublishedFileActionResult_t_array(lua_State* L, RemoteStorageSetUserPublishedFileActionResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageSetUserPublishedFileActionResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(lua_State* L, RemoteStorageEnumeratePublishedFilesByUserActionResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eAction");
+	push_EWorkshopFileAction(L, s.m_eAction);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgRTimeUpdated");
+	push_uint32_array(L, s.m_rgRTimeUpdated, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumeratePublishedFilesByUserActionResult_t_array(lua_State* L, RemoteStorageEnumeratePublishedFilesByUserActionResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishFileProgress_t(lua_State* L, RemoteStoragePublishFileProgress_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_dPercentFile");
+	push_double(L, s.m_dPercentFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bPreview");
+	push_bool(L, s.m_bPreview);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishFileProgress_t_array(lua_State* L, RemoteStoragePublishFileProgress_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishFileProgress_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileUpdated_t(lua_State* L, RemoteStoragePublishedFileUpdated_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulUnused");
+	push_uint64(L, s.m_ulUnused);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileUpdated_t_array(lua_State* L, RemoteStoragePublishedFileUpdated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileUpdated_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageFileWriteAsyncComplete_t(lua_State* L, RemoteStorageFileWriteAsyncComplete_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageFileWriteAsyncComplete_t_array(lua_State* L, RemoteStorageFileWriteAsyncComplete_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageFileWriteAsyncComplete_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageFileReadAsyncComplete_t(lua_State* L, RemoteStorageFileReadAsyncComplete_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hFileReadAsync");
+	push_SteamAPICall_t(L, s.m_hFileReadAsync);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nOffset");
+	push_uint32(L, s.m_nOffset);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cubRead");
+	push_uint32(L, s.m_cubRead);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageFileReadAsyncComplete_t_array(lua_State* L, RemoteStorageFileReadAsyncComplete_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageFileReadAsyncComplete_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LeaderboardEntry_t(lua_State* L, LeaderboardEntry_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nGlobalRank");
+	push_int32(L, s.m_nGlobalRank);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nScore");
+	push_int32(L, s.m_nScore);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cDetails");
+	push_int32(L, s.m_cDetails);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hUGC");
+	push_UGCHandle_t(L, s.m_hUGC);
+	lua_settable(L, -3);
+}
+static void push_LeaderboardEntry_t_array(lua_State* L, LeaderboardEntry_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LeaderboardEntry_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_UserStatsReceived_t(lua_State* L, UserStatsReceived_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nGameID");
+	push_uint64(L, s.m_nGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+}
+static void push_UserStatsReceived_t_array(lua_State* L, UserStatsReceived_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UserStatsReceived_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_UserStatsStored_t(lua_State* L, UserStatsStored_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nGameID");
+	push_uint64(L, s.m_nGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_UserStatsStored_t_array(lua_State* L, UserStatsStored_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UserStatsStored_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_UserAchievementStored_t(lua_State* L, UserAchievementStored_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nGameID");
+	push_uint64(L, s.m_nGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bGroupAchievement");
+	push_bool(L, s.m_bGroupAchievement);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchAchievementName");
+	push_char_array(L, s.m_rgchAchievementName, 128);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCurProgress");
+	push_uint32(L, s.m_nCurProgress);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nMaxProgress");
+	push_uint32(L, s.m_nMaxProgress);
+	lua_settable(L, -3);
+}
+static void push_UserAchievementStored_t_array(lua_State* L, UserAchievementStored_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UserAchievementStored_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LeaderboardFindResult_t(lua_State* L, LeaderboardFindResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	push_SteamLeaderboard_t(L, s.m_hSteamLeaderboard);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bLeaderboardFound");
+	push_uint8(L, s.m_bLeaderboardFound);
+	lua_settable(L, -3);
+}
+static void push_LeaderboardFindResult_t_array(lua_State* L, LeaderboardFindResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LeaderboardFindResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LeaderboardScoresDownloaded_t(lua_State* L, LeaderboardScoresDownloaded_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	push_SteamLeaderboard_t(L, s.m_hSteamLeaderboard);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hSteamLeaderboardEntries");
+	push_SteamLeaderboardEntries_t(L, s.m_hSteamLeaderboardEntries);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cEntryCount");
+	push_int(L, s.m_cEntryCount);
+	lua_settable(L, -3);
+}
+static void push_LeaderboardScoresDownloaded_t_array(lua_State* L, LeaderboardScoresDownloaded_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LeaderboardScoresDownloaded_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LeaderboardScoreUploaded_t(lua_State* L, LeaderboardScoreUploaded_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bSuccess");
+	push_uint8(L, s.m_bSuccess);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	push_SteamLeaderboard_t(L, s.m_hSteamLeaderboard);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nScore");
+	push_int32(L, s.m_nScore);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bScoreChanged");
+	push_uint8(L, s.m_bScoreChanged);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nGlobalRankNew");
+	push_int(L, s.m_nGlobalRankNew);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nGlobalRankPrevious");
+	push_int(L, s.m_nGlobalRankPrevious);
+	lua_settable(L, -3);
+}
+static void push_LeaderboardScoreUploaded_t_array(lua_State* L, LeaderboardScoreUploaded_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LeaderboardScoreUploaded_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_NumberOfCurrentPlayers_t(lua_State* L, NumberOfCurrentPlayers_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bSuccess");
+	push_uint8(L, s.m_bSuccess);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cPlayers");
+	push_int32(L, s.m_cPlayers);
+	lua_settable(L, -3);
+}
+static void push_NumberOfCurrentPlayers_t_array(lua_State* L, NumberOfCurrentPlayers_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_NumberOfCurrentPlayers_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_UserStatsUnloaded_t(lua_State* L, UserStatsUnloaded_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+}
+static void push_UserStatsUnloaded_t_array(lua_State* L, UserStatsUnloaded_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UserStatsUnloaded_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_UserAchievementIconFetched_t(lua_State* L, UserAchievementIconFetched_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nGameID");
+	push_CGameID(L, s.m_nGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchAchievementName");
+	push_char_array(L, s.m_rgchAchievementName, 128);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAchieved");
+	push_bool(L, s.m_bAchieved);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nIconHandle");
+	push_int(L, s.m_nIconHandle);
+	lua_settable(L, -3);
+}
+static void push_UserAchievementIconFetched_t_array(lua_State* L, UserAchievementIconFetched_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UserAchievementIconFetched_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GlobalAchievementPercentagesReady_t(lua_State* L, GlobalAchievementPercentagesReady_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nGameID");
+	push_uint64(L, s.m_nGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_GlobalAchievementPercentagesReady_t_array(lua_State* L, GlobalAchievementPercentagesReady_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GlobalAchievementPercentagesReady_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LeaderboardUGCSet_t(lua_State* L, LeaderboardUGCSet_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	push_SteamLeaderboard_t(L, s.m_hSteamLeaderboard);
+	lua_settable(L, -3);
+}
+static void push_LeaderboardUGCSet_t_array(lua_State* L, LeaderboardUGCSet_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LeaderboardUGCSet_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_PS3TrophiesInstalled_t(lua_State* L, PS3TrophiesInstalled_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nGameID");
+	push_uint64(L, s.m_nGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulRequiredDiskSpace");
+	push_uint64(L, s.m_ulRequiredDiskSpace);
+	lua_settable(L, -3);
+}
+static void push_PS3TrophiesInstalled_t_array(lua_State* L, PS3TrophiesInstalled_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PS3TrophiesInstalled_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GlobalStatsReceived_t(lua_State* L, GlobalStatsReceived_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nGameID");
+	push_uint64(L, s.m_nGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_GlobalStatsReceived_t_array(lua_State* L, GlobalStatsReceived_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GlobalStatsReceived_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_DlcInstalled_t(lua_State* L, DlcInstalled_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_DlcInstalled_t_array(lua_State* L, DlcInstalled_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_DlcInstalled_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RegisterActivationCodeResponse_t(lua_State* L, RegisterActivationCodeResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_ERegisterActivationCodeResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unPackageRegistered");
+	push_uint32(L, s.m_unPackageRegistered);
+	lua_settable(L, -3);
+}
+static void push_RegisterActivationCodeResponse_t_array(lua_State* L, RegisterActivationCodeResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RegisterActivationCodeResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AppProofOfPurchaseKeyResponse_t(lua_State* L, AppProofOfPurchaseKeyResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_uint32(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cchKeyLength");
+	push_uint32(L, s.m_cchKeyLength);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchKey");
+	push_char_array(L, s.m_rgchKey, 240);
+	lua_settable(L, -3);
+}
+static void push_AppProofOfPurchaseKeyResponse_t_array(lua_State* L, AppProofOfPurchaseKeyResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AppProofOfPurchaseKeyResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FileDetailsResult_t(lua_State* L, FileDetailsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulFileSize");
+	push_uint64(L, s.m_ulFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_FileSHA");
+	push_uint8_array(L, s.m_FileSHA, 20);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unFlags");
+	push_uint32(L, s.m_unFlags);
+	lua_settable(L, -3);
+}
+static void push_FileDetailsResult_t_array(lua_State* L, FileDetailsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FileDetailsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_P2PSessionState_t(lua_State* L, P2PSessionState_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bConnectionActive");
+	push_uint8(L, s.m_bConnectionActive);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bConnecting");
+	push_uint8(L, s.m_bConnecting);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eP2PSessionError");
+	push_uint8(L, s.m_eP2PSessionError);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUsingRelay");
+	push_uint8(L, s.m_bUsingRelay);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nBytesQueuedForSend");
+	push_int32(L, s.m_nBytesQueuedForSend);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPacketsQueuedForSend");
+	push_int32(L, s.m_nPacketsQueuedForSend);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nRemoteIP");
+	push_uint32(L, s.m_nRemoteIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nRemotePort");
+	push_uint16(L, s.m_nRemotePort);
+	lua_settable(L, -3);
+}
+static void push_P2PSessionState_t_array(lua_State* L, P2PSessionState_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_P2PSessionState_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_P2PSessionRequest_t(lua_State* L, P2PSessionRequest_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDRemote");
+	push_CSteamID(L, s.m_steamIDRemote);
+	lua_settable(L, -3);
+}
+static void push_P2PSessionRequest_t_array(lua_State* L, P2PSessionRequest_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_P2PSessionRequest_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_P2PSessionConnectFail_t(lua_State* L, P2PSessionConnectFail_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDRemote");
+	push_CSteamID(L, s.m_steamIDRemote);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eP2PSessionError");
+	push_uint8(L, s.m_eP2PSessionError);
+	lua_settable(L, -3);
+}
+static void push_P2PSessionConnectFail_t_array(lua_State* L, P2PSessionConnectFail_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_P2PSessionConnectFail_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SocketStatusCallback_t(lua_State* L, SocketStatusCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hSocket");
+	push_SNetSocket_t(L, s.m_hSocket);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hListenSocket");
+	push_SNetListenSocket_t(L, s.m_hListenSocket);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDRemote");
+	push_CSteamID(L, s.m_steamIDRemote);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eSNetSocketState");
+	push_int(L, s.m_eSNetSocketState);
+	lua_settable(L, -3);
+}
+static void push_SocketStatusCallback_t_array(lua_State* L, SocketStatusCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SocketStatusCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ScreenshotReady_t(lua_State* L, ScreenshotReady_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hLocal");
+	push_ScreenshotHandle(L, s.m_hLocal);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_ScreenshotReady_t_array(lua_State* L, ScreenshotReady_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ScreenshotReady_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_VolumeHasChanged_t(lua_State* L, VolumeHasChanged_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_flNewVolume");
+	push_float(L, s.m_flNewVolume);
+	lua_settable(L, -3);
+}
+static void push_VolumeHasChanged_t_array(lua_State* L, VolumeHasChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_VolumeHasChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsShuffled_t(lua_State* L, MusicPlayerWantsShuffled_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bShuffled");
+	push_bool(L, s.m_bShuffled);
+	lua_settable(L, -3);
+}
+static void push_MusicPlayerWantsShuffled_t_array(lua_State* L, MusicPlayerWantsShuffled_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsShuffled_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsLooped_t(lua_State* L, MusicPlayerWantsLooped_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bLooped");
+	push_bool(L, s.m_bLooped);
+	lua_settable(L, -3);
+}
+static void push_MusicPlayerWantsLooped_t_array(lua_State* L, MusicPlayerWantsLooped_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsLooped_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsVolume_t(lua_State* L, MusicPlayerWantsVolume_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_flNewVolume");
+	push_float(L, s.m_flNewVolume);
+	lua_settable(L, -3);
+}
+static void push_MusicPlayerWantsVolume_t_array(lua_State* L, MusicPlayerWantsVolume_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsVolume_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerSelectsQueueEntry_t(lua_State* L, MusicPlayerSelectsQueueEntry_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "nID");
+	push_int(L, s.nID);
+	lua_settable(L, -3);
+}
+static void push_MusicPlayerSelectsQueueEntry_t_array(lua_State* L, MusicPlayerSelectsQueueEntry_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerSelectsQueueEntry_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerSelectsPlaylistEntry_t(lua_State* L, MusicPlayerSelectsPlaylistEntry_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "nID");
+	push_int(L, s.nID);
+	lua_settable(L, -3);
+}
+static void push_MusicPlayerSelectsPlaylistEntry_t_array(lua_State* L, MusicPlayerSelectsPlaylistEntry_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerSelectsPlaylistEntry_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsPlayingRepeatStatus_t(lua_State* L, MusicPlayerWantsPlayingRepeatStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPlayingRepeatStatus");
+	push_int(L, s.m_nPlayingRepeatStatus);
+	lua_settable(L, -3);
+}
+static void push_MusicPlayerWantsPlayingRepeatStatus_t_array(lua_State* L, MusicPlayerWantsPlayingRepeatStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsPlayingRepeatStatus_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTTPRequestCompleted_t(lua_State* L, HTTPRequestCompleted_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hRequest");
+	push_HTTPRequestHandle(L, s.m_hRequest);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulContextValue");
+	push_uint64(L, s.m_ulContextValue);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bRequestSuccessful");
+	push_bool(L, s.m_bRequestSuccessful);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eStatusCode");
+	push_EHTTPStatusCode(L, s.m_eStatusCode);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unBodySize");
+	push_uint32(L, s.m_unBodySize);
+	lua_settable(L, -3);
+}
+static void push_HTTPRequestCompleted_t_array(lua_State* L, HTTPRequestCompleted_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTTPRequestCompleted_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTTPRequestHeadersReceived_t(lua_State* L, HTTPRequestHeadersReceived_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hRequest");
+	push_HTTPRequestHandle(L, s.m_hRequest);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulContextValue");
+	push_uint64(L, s.m_ulContextValue);
+	lua_settable(L, -3);
+}
+static void push_HTTPRequestHeadersReceived_t_array(lua_State* L, HTTPRequestHeadersReceived_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTTPRequestHeadersReceived_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTTPRequestDataReceived_t(lua_State* L, HTTPRequestDataReceived_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hRequest");
+	push_HTTPRequestHandle(L, s.m_hRequest);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulContextValue");
+	push_uint64(L, s.m_ulContextValue);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cOffset");
+	push_uint32(L, s.m_cOffset);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cBytesReceived");
+	push_uint32(L, s.m_cBytesReceived);
+	lua_settable(L, -3);
+}
+static void push_HTTPRequestDataReceived_t_array(lua_State* L, HTTPRequestDataReceived_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTTPRequestDataReceived_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ControllerAnalogActionData_t(lua_State* L, ControllerAnalogActionData_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "eMode");
+	push_EControllerSourceMode(L, s.eMode);
+	lua_settable(L, -3);
+	lua_pushstring(L, "x");
+	push_float(L, s.x);
+	lua_settable(L, -3);
+	lua_pushstring(L, "y");
+	push_float(L, s.y);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bActive");
+	push_bool(L, s.bActive);
+	lua_settable(L, -3);
+}
+static void push_ControllerAnalogActionData_t_array(lua_State* L, ControllerAnalogActionData_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ControllerAnalogActionData_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ControllerDigitalActionData_t(lua_State* L, ControllerDigitalActionData_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "bState");
+	push_bool(L, s.bState);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bActive");
+	push_bool(L, s.bActive);
+	lua_settable(L, -3);
+}
+static void push_ControllerDigitalActionData_t_array(lua_State* L, ControllerDigitalActionData_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ControllerDigitalActionData_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ControllerMotionData_t(lua_State* L, ControllerMotionData_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "rotQuatX");
+	push_float(L, s.rotQuatX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotQuatY");
+	push_float(L, s.rotQuatY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotQuatZ");
+	push_float(L, s.rotQuatZ);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotQuatW");
+	push_float(L, s.rotQuatW);
+	lua_settable(L, -3);
+	lua_pushstring(L, "posAccelX");
+	push_float(L, s.posAccelX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "posAccelY");
+	push_float(L, s.posAccelY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "posAccelZ");
+	push_float(L, s.posAccelZ);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotVelX");
+	push_float(L, s.rotVelX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotVelY");
+	push_float(L, s.rotVelY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotVelZ");
+	push_float(L, s.rotVelZ);
+	lua_settable(L, -3);
+}
+static void push_ControllerMotionData_t_array(lua_State* L, ControllerMotionData_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ControllerMotionData_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamUGCDetails_t(lua_State* L, SteamUGCDetails_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eFileType");
+	push_EWorkshopFileType(L, s.m_eFileType);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCreatorAppID");
+	push_AppId_t(L, s.m_nCreatorAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nConsumerAppID");
+	push_AppId_t(L, s.m_nConsumerAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTitle");
+	push_char_array(L, s.m_rgchTitle, 129);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchDescription");
+	push_char_array(L, s.m_rgchDescription, 8000);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	push_uint64(L, s.m_ulSteamIDOwner);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeCreated");
+	push_uint32(L, s.m_rtimeCreated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeUpdated");
+	push_uint32(L, s.m_rtimeUpdated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeAddedToUserList");
+	push_uint32(L, s.m_rtimeAddedToUserList);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eVisibility");
+	push_ERemoteStoragePublishedFileVisibility(L, s.m_eVisibility);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bBanned");
+	push_bool(L, s.m_bBanned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	push_bool(L, s.m_bAcceptedForUse);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bTagsTruncated");
+	push_bool(L, s.m_bTagsTruncated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTags");
+	push_char_array(L, s.m_rgchTags, 1025);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hFile");
+	push_UGCHandle_t(L, s.m_hFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hPreviewFile");
+	push_UGCHandle_t(L, s.m_hPreviewFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_pchFileName");
+	push_char_array(L, s.m_pchFileName, 260);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nFileSize");
+	push_int32(L, s.m_nFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	push_int32(L, s.m_nPreviewFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchURL");
+	push_char_array(L, s.m_rgchURL, 256);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unVotesUp");
+	push_uint32(L, s.m_unVotesUp);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unVotesDown");
+	push_uint32(L, s.m_unVotesDown);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flScore");
+	push_float(L, s.m_flScore);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unNumChildren");
+	push_uint32(L, s.m_unNumChildren);
+	lua_settable(L, -3);
+}
+static void push_SteamUGCDetails_t_array(lua_State* L, SteamUGCDetails_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamUGCDetails_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamUGCQueryCompleted_t(lua_State* L, SteamUGCQueryCompleted_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_handle");
+	push_UGCQueryHandle_t(L, s.m_handle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unNumResultsReturned");
+	push_uint32(L, s.m_unNumResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unTotalMatchingResults");
+	push_uint32(L, s.m_unTotalMatchingResults);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bCachedData");
+	push_bool(L, s.m_bCachedData);
+	lua_settable(L, -3);
+}
+static void push_SteamUGCQueryCompleted_t_array(lua_State* L, SteamUGCQueryCompleted_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamUGCQueryCompleted_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamUGCRequestUGCDetailsResult_t(lua_State* L, SteamUGCRequestUGCDetailsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_details");
+	push_SteamUGCDetails_t(L, s.m_details);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bCachedData");
+	push_bool(L, s.m_bCachedData);
+	lua_settable(L, -3);
+}
+static void push_SteamUGCRequestUGCDetailsResult_t_array(lua_State* L, SteamUGCRequestUGCDetailsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamUGCRequestUGCDetailsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_CreateItemResult_t(lua_State* L, CreateItemResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	push_bool(L, s.m_bUserNeedsToAcceptWorkshopLegalAgreement);
+	lua_settable(L, -3);
+}
+static void push_CreateItemResult_t_array(lua_State* L, CreateItemResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_CreateItemResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SubmitItemUpdateResult_t(lua_State* L, SubmitItemUpdateResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	push_bool(L, s.m_bUserNeedsToAcceptWorkshopLegalAgreement);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_SubmitItemUpdateResult_t_array(lua_State* L, SubmitItemUpdateResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SubmitItemUpdateResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_DownloadItemResult_t(lua_State* L, DownloadItemResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_unAppID");
+	push_AppId_t(L, s.m_unAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_DownloadItemResult_t_array(lua_State* L, DownloadItemResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_DownloadItemResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_UserFavoriteItemsListChanged_t(lua_State* L, UserFavoriteItemsListChanged_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bWasAddRequest");
+	push_bool(L, s.m_bWasAddRequest);
+	lua_settable(L, -3);
+}
+static void push_UserFavoriteItemsListChanged_t_array(lua_State* L, UserFavoriteItemsListChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UserFavoriteItemsListChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SetUserItemVoteResult_t(lua_State* L, SetUserItemVoteResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bVoteUp");
+	push_bool(L, s.m_bVoteUp);
+	lua_settable(L, -3);
+}
+static void push_SetUserItemVoteResult_t_array(lua_State* L, SetUserItemVoteResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SetUserItemVoteResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GetUserItemVoteResult_t(lua_State* L, GetUserItemVoteResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bVotedUp");
+	push_bool(L, s.m_bVotedUp);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bVotedDown");
+	push_bool(L, s.m_bVotedDown);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bVoteSkipped");
+	push_bool(L, s.m_bVoteSkipped);
+	lua_settable(L, -3);
+}
+static void push_GetUserItemVoteResult_t_array(lua_State* L, GetUserItemVoteResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GetUserItemVoteResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_StartPlaytimeTrackingResult_t(lua_State* L, StartPlaytimeTrackingResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_StartPlaytimeTrackingResult_t_array(lua_State* L, StartPlaytimeTrackingResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_StartPlaytimeTrackingResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_StopPlaytimeTrackingResult_t(lua_State* L, StopPlaytimeTrackingResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_StopPlaytimeTrackingResult_t_array(lua_State* L, StopPlaytimeTrackingResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_StopPlaytimeTrackingResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AddUGCDependencyResult_t(lua_State* L, AddUGCDependencyResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nChildPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nChildPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_AddUGCDependencyResult_t_array(lua_State* L, AddUGCDependencyResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AddUGCDependencyResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoveUGCDependencyResult_t(lua_State* L, RemoveUGCDependencyResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nChildPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nChildPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_RemoveUGCDependencyResult_t_array(lua_State* L, RemoveUGCDependencyResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoveUGCDependencyResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AddAppDependencyResult_t(lua_State* L, AddAppDependencyResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_AddAppDependencyResult_t_array(lua_State* L, AddAppDependencyResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AddAppDependencyResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoveAppDependencyResult_t(lua_State* L, RemoveAppDependencyResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_RemoveAppDependencyResult_t_array(lua_State* L, RemoveAppDependencyResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoveAppDependencyResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GetAppDependenciesResult_t(lua_State* L, GetAppDependenciesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgAppIDs");
+	push_AppId_t_array(L, s.m_rgAppIDs, 32);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nNumAppDependencies");
+	push_uint32(L, s.m_nNumAppDependencies);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalNumAppDependencies");
+	push_uint32(L, s.m_nTotalNumAppDependencies);
+	lua_settable(L, -3);
+}
+static void push_GetAppDependenciesResult_t_array(lua_State* L, GetAppDependenciesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GetAppDependenciesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_DeleteItemResult_t(lua_State* L, DeleteItemResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_DeleteItemResult_t_array(lua_State* L, DeleteItemResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_DeleteItemResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamAppInstalled_t(lua_State* L, SteamAppInstalled_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_SteamAppInstalled_t_array(lua_State* L, SteamAppInstalled_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamAppInstalled_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamAppUninstalled_t(lua_State* L, SteamAppUninstalled_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_SteamAppUninstalled_t_array(lua_State* L, SteamAppUninstalled_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamAppUninstalled_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_BrowserReady_t(lua_State* L, HTML_BrowserReady_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+}
+static void push_HTML_BrowserReady_t_array(lua_State* L, HTML_BrowserReady_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_BrowserReady_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_NeedsPaint_t(lua_State* L, HTML_NeedsPaint_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pBGRA");
+	push_const_char_ptr(L, s.pBGRA);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unWide");
+	push_uint32(L, s.unWide);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unTall");
+	push_uint32(L, s.unTall);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unUpdateX");
+	push_uint32(L, s.unUpdateX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unUpdateY");
+	push_uint32(L, s.unUpdateY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unUpdateWide");
+	push_uint32(L, s.unUpdateWide);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unUpdateTall");
+	push_uint32(L, s.unUpdateTall);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unScrollX");
+	push_uint32(L, s.unScrollX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unScrollY");
+	push_uint32(L, s.unScrollY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "flPageScale");
+	push_float(L, s.flPageScale);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unPageSerial");
+	push_uint32(L, s.unPageSerial);
+	lua_settable(L, -3);
+}
+static void push_HTML_NeedsPaint_t_array(lua_State* L, HTML_NeedsPaint_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_NeedsPaint_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_StartRequest_t(lua_State* L, HTML_StartRequest_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchURL");
+	push_const_char_ptr(L, s.pchURL);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchTarget");
+	push_const_char_ptr(L, s.pchTarget);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchPostData");
+	push_const_char_ptr(L, s.pchPostData);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bIsRedirect");
+	push_bool(L, s.bIsRedirect);
+	lua_settable(L, -3);
+}
+static void push_HTML_StartRequest_t_array(lua_State* L, HTML_StartRequest_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_StartRequest_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_CloseBrowser_t(lua_State* L, HTML_CloseBrowser_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+}
+static void push_HTML_CloseBrowser_t_array(lua_State* L, HTML_CloseBrowser_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_CloseBrowser_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_URLChanged_t(lua_State* L, HTML_URLChanged_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchURL");
+	push_const_char_ptr(L, s.pchURL);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchPostData");
+	push_const_char_ptr(L, s.pchPostData);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bIsRedirect");
+	push_bool(L, s.bIsRedirect);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchPageTitle");
+	push_const_char_ptr(L, s.pchPageTitle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bNewNavigation");
+	push_bool(L, s.bNewNavigation);
+	lua_settable(L, -3);
+}
+static void push_HTML_URLChanged_t_array(lua_State* L, HTML_URLChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_URLChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_FinishedRequest_t(lua_State* L, HTML_FinishedRequest_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchURL");
+	push_const_char_ptr(L, s.pchURL);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchPageTitle");
+	push_const_char_ptr(L, s.pchPageTitle);
+	lua_settable(L, -3);
+}
+static void push_HTML_FinishedRequest_t_array(lua_State* L, HTML_FinishedRequest_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_FinishedRequest_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_OpenLinkInNewTab_t(lua_State* L, HTML_OpenLinkInNewTab_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchURL");
+	push_const_char_ptr(L, s.pchURL);
+	lua_settable(L, -3);
+}
+static void push_HTML_OpenLinkInNewTab_t_array(lua_State* L, HTML_OpenLinkInNewTab_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_OpenLinkInNewTab_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_ChangedTitle_t(lua_State* L, HTML_ChangedTitle_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchTitle");
+	push_const_char_ptr(L, s.pchTitle);
+	lua_settable(L, -3);
+}
+static void push_HTML_ChangedTitle_t_array(lua_State* L, HTML_ChangedTitle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_ChangedTitle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_SearchResults_t(lua_State* L, HTML_SearchResults_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unResults");
+	push_uint32(L, s.unResults);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unCurrentMatch");
+	push_uint32(L, s.unCurrentMatch);
+	lua_settable(L, -3);
+}
+static void push_HTML_SearchResults_t_array(lua_State* L, HTML_SearchResults_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_SearchResults_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_CanGoBackAndForward_t(lua_State* L, HTML_CanGoBackAndForward_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bCanGoBack");
+	push_bool(L, s.bCanGoBack);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bCanGoForward");
+	push_bool(L, s.bCanGoForward);
+	lua_settable(L, -3);
+}
+static void push_HTML_CanGoBackAndForward_t_array(lua_State* L, HTML_CanGoBackAndForward_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_CanGoBackAndForward_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_HorizontalScroll_t(lua_State* L, HTML_HorizontalScroll_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unScrollMax");
+	push_uint32(L, s.unScrollMax);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unScrollCurrent");
+	push_uint32(L, s.unScrollCurrent);
+	lua_settable(L, -3);
+	lua_pushstring(L, "flPageScale");
+	push_float(L, s.flPageScale);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bVisible");
+	push_bool(L, s.bVisible);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unPageSize");
+	push_uint32(L, s.unPageSize);
+	lua_settable(L, -3);
+}
+static void push_HTML_HorizontalScroll_t_array(lua_State* L, HTML_HorizontalScroll_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_HorizontalScroll_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_VerticalScroll_t(lua_State* L, HTML_VerticalScroll_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unScrollMax");
+	push_uint32(L, s.unScrollMax);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unScrollCurrent");
+	push_uint32(L, s.unScrollCurrent);
+	lua_settable(L, -3);
+	lua_pushstring(L, "flPageScale");
+	push_float(L, s.flPageScale);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bVisible");
+	push_bool(L, s.bVisible);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unPageSize");
+	push_uint32(L, s.unPageSize);
+	lua_settable(L, -3);
+}
+static void push_HTML_VerticalScroll_t_array(lua_State* L, HTML_VerticalScroll_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_VerticalScroll_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_LinkAtPosition_t(lua_State* L, HTML_LinkAtPosition_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "x");
+	push_uint32(L, s.x);
+	lua_settable(L, -3);
+	lua_pushstring(L, "y");
+	push_uint32(L, s.y);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchURL");
+	push_const_char_ptr(L, s.pchURL);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bInput");
+	push_bool(L, s.bInput);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bLiveLink");
+	push_bool(L, s.bLiveLink);
+	lua_settable(L, -3);
+}
+static void push_HTML_LinkAtPosition_t_array(lua_State* L, HTML_LinkAtPosition_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_LinkAtPosition_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_JSAlert_t(lua_State* L, HTML_JSAlert_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchMessage");
+	push_const_char_ptr(L, s.pchMessage);
+	lua_settable(L, -3);
+}
+static void push_HTML_JSAlert_t_array(lua_State* L, HTML_JSAlert_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_JSAlert_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_JSConfirm_t(lua_State* L, HTML_JSConfirm_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchMessage");
+	push_const_char_ptr(L, s.pchMessage);
+	lua_settable(L, -3);
+}
+static void push_HTML_JSConfirm_t_array(lua_State* L, HTML_JSConfirm_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_JSConfirm_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_FileOpenDialog_t(lua_State* L, HTML_FileOpenDialog_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchTitle");
+	push_const_char_ptr(L, s.pchTitle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchInitialFile");
+	push_const_char_ptr(L, s.pchInitialFile);
+	lua_settable(L, -3);
+}
+static void push_HTML_FileOpenDialog_t_array(lua_State* L, HTML_FileOpenDialog_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_FileOpenDialog_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_NewWindow_t(lua_State* L, HTML_NewWindow_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchURL");
+	push_const_char_ptr(L, s.pchURL);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unX");
+	push_uint32(L, s.unX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unY");
+	push_uint32(L, s.unY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unWide");
+	push_uint32(L, s.unWide);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unTall");
+	push_uint32(L, s.unTall);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unNewWindow_BrowserHandle");
+	push_HHTMLBrowser(L, s.unNewWindow_BrowserHandle);
+	lua_settable(L, -3);
+}
+static void push_HTML_NewWindow_t_array(lua_State* L, HTML_NewWindow_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_NewWindow_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_SetCursor_t(lua_State* L, HTML_SetCursor_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "eMouseCursor");
+	push_uint32(L, s.eMouseCursor);
+	lua_settable(L, -3);
+}
+static void push_HTML_SetCursor_t_array(lua_State* L, HTML_SetCursor_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_SetCursor_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_StatusText_t(lua_State* L, HTML_StatusText_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchMsg");
+	push_const_char_ptr(L, s.pchMsg);
+	lua_settable(L, -3);
+}
+static void push_HTML_StatusText_t_array(lua_State* L, HTML_StatusText_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_StatusText_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_ShowToolTip_t(lua_State* L, HTML_ShowToolTip_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchMsg");
+	push_const_char_ptr(L, s.pchMsg);
+	lua_settable(L, -3);
+}
+static void push_HTML_ShowToolTip_t_array(lua_State* L, HTML_ShowToolTip_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_ShowToolTip_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_UpdateToolTip_t(lua_State* L, HTML_UpdateToolTip_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "pchMsg");
+	push_const_char_ptr(L, s.pchMsg);
+	lua_settable(L, -3);
+}
+static void push_HTML_UpdateToolTip_t_array(lua_State* L, HTML_UpdateToolTip_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_UpdateToolTip_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_HideToolTip_t(lua_State* L, HTML_HideToolTip_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+}
+static void push_HTML_HideToolTip_t_array(lua_State* L, HTML_HideToolTip_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_HideToolTip_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HTML_BrowserRestarted_t(lua_State* L, HTML_BrowserRestarted_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "unBrowserHandle");
+	push_HHTMLBrowser(L, s.unBrowserHandle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "unOldBrowserHandle");
+	push_HHTMLBrowser(L, s.unOldBrowserHandle);
+	lua_settable(L, -3);
+}
+static void push_HTML_BrowserRestarted_t_array(lua_State* L, HTML_BrowserRestarted_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HTML_BrowserRestarted_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamItemDetails_t(lua_State* L, SteamItemDetails_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_itemId");
+	push_SteamItemInstanceID_t(L, s.m_itemId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iDefinition");
+	push_SteamItemDef_t(L, s.m_iDefinition);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unQuantity");
+	push_uint16(L, s.m_unQuantity);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unFlags");
+	push_uint16(L, s.m_unFlags);
+	lua_settable(L, -3);
+}
+static void push_SteamItemDetails_t_array(lua_State* L, SteamItemDetails_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamItemDetails_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamInventoryResultReady_t(lua_State* L, SteamInventoryResultReady_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_handle");
+	push_SteamInventoryResult_t(L, s.m_handle);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_result");
+	push_EResult(L, s.m_result);
+	lua_settable(L, -3);
+}
+static void push_SteamInventoryResultReady_t_array(lua_State* L, SteamInventoryResultReady_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryResultReady_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamInventoryFullUpdate_t(lua_State* L, SteamInventoryFullUpdate_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_handle");
+	push_SteamInventoryResult_t(L, s.m_handle);
+	lua_settable(L, -3);
+}
+static void push_SteamInventoryFullUpdate_t_array(lua_State* L, SteamInventoryFullUpdate_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryFullUpdate_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamInventoryEligiblePromoItemDefIDs_t(lua_State* L, SteamInventoryEligiblePromoItemDefIDs_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_result");
+	push_EResult(L, s.m_result);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_numEligiblePromoItemDefs");
+	push_int(L, s.m_numEligiblePromoItemDefs);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bCachedData");
+	push_bool(L, s.m_bCachedData);
+	lua_settable(L, -3);
+}
+static void push_SteamInventoryEligiblePromoItemDefIDs_t_array(lua_State* L, SteamInventoryEligiblePromoItemDefIDs_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryEligiblePromoItemDefIDs_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamInventoryStartPurchaseResult_t(lua_State* L, SteamInventoryStartPurchaseResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_result");
+	push_EResult(L, s.m_result);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulOrderID");
+	push_uint64(L, s.m_ulOrderID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulTransID");
+	push_uint64(L, s.m_ulTransID);
+	lua_settable(L, -3);
+}
+static void push_SteamInventoryStartPurchaseResult_t_array(lua_State* L, SteamInventoryStartPurchaseResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryStartPurchaseResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamInventoryRequestPricesResult_t(lua_State* L, SteamInventoryRequestPricesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_result");
+	push_EResult(L, s.m_result);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchCurrency");
+	push_char_array(L, s.m_rgchCurrency, 4);
+	lua_settable(L, -3);
+}
+static void push_SteamInventoryRequestPricesResult_t_array(lua_State* L, SteamInventoryRequestPricesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryRequestPricesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_BroadcastUploadStop_t(lua_State* L, BroadcastUploadStop_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EBroadcastUploadResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_BroadcastUploadStop_t_array(lua_State* L, BroadcastUploadStop_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_BroadcastUploadStop_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GetVideoURLResult_t(lua_State* L, GetVideoURLResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unVideoAppID");
+	push_AppId_t(L, s.m_unVideoAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchURL");
+	push_char_array(L, s.m_rgchURL, 256);
+	lua_settable(L, -3);
+}
+static void push_GetVideoURLResult_t_array(lua_State* L, GetVideoURLResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GetVideoURLResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GetOPFSettingsResult_t(lua_State* L, GetOPFSettingsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unVideoAppID");
+	push_AppId_t(L, s.m_unVideoAppID);
+	lua_settable(L, -3);
+}
+static void push_GetOPFSettingsResult_t_array(lua_State* L, GetOPFSettingsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GetOPFSettingsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSClientApprove_t(lua_State* L, GSClientApprove_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_SteamID");
+	push_CSteamID(L, s.m_SteamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_OwnerSteamID");
+	push_CSteamID(L, s.m_OwnerSteamID);
+	lua_settable(L, -3);
+}
+static void push_GSClientApprove_t_array(lua_State* L, GSClientApprove_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSClientApprove_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSClientDeny_t(lua_State* L, GSClientDeny_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_SteamID");
+	push_CSteamID(L, s.m_SteamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eDenyReason");
+	push_EDenyReason(L, s.m_eDenyReason);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchOptionalText");
+	push_char_array(L, s.m_rgchOptionalText, 128);
+	lua_settable(L, -3);
+}
+static void push_GSClientDeny_t_array(lua_State* L, GSClientDeny_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSClientDeny_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSClientKick_t(lua_State* L, GSClientKick_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_SteamID");
+	push_CSteamID(L, s.m_SteamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eDenyReason");
+	push_EDenyReason(L, s.m_eDenyReason);
+	lua_settable(L, -3);
+}
+static void push_GSClientKick_t_array(lua_State* L, GSClientKick_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSClientKick_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSClientAchievementStatus_t(lua_State* L, GSClientAchievementStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_SteamID");
+	push_uint64(L, s.m_SteamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_pchAchievement");
+	push_char_array(L, s.m_pchAchievement, 128);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUnlocked");
+	push_bool(L, s.m_bUnlocked);
+	lua_settable(L, -3);
+}
+static void push_GSClientAchievementStatus_t_array(lua_State* L, GSClientAchievementStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSClientAchievementStatus_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSPolicyResponse_t(lua_State* L, GSPolicyResponse_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bSecure");
+	push_uint8(L, s.m_bSecure);
+	lua_settable(L, -3);
+}
+static void push_GSPolicyResponse_t_array(lua_State* L, GSPolicyResponse_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSPolicyResponse_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSGameplayStats_t(lua_State* L, GSGameplayStats_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nRank");
+	push_int32(L, s.m_nRank);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unTotalConnects");
+	push_uint32(L, s.m_unTotalConnects);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unTotalMinutesPlayed");
+	push_uint32(L, s.m_unTotalMinutesPlayed);
+	lua_settable(L, -3);
+}
+static void push_GSGameplayStats_t_array(lua_State* L, GSGameplayStats_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSGameplayStats_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSClientGroupStatus_t(lua_State* L, GSClientGroupStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_SteamIDUser");
+	push_CSteamID(L, s.m_SteamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_SteamIDGroup");
+	push_CSteamID(L, s.m_SteamIDGroup);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bMember");
+	push_bool(L, s.m_bMember);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bOfficer");
+	push_bool(L, s.m_bOfficer);
+	lua_settable(L, -3);
+}
+static void push_GSClientGroupStatus_t_array(lua_State* L, GSClientGroupStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSClientGroupStatus_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSReputation_t(lua_State* L, GSReputation_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unReputationScore");
+	push_uint32(L, s.m_unReputationScore);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bBanned");
+	push_bool(L, s.m_bBanned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unBannedIP");
+	push_uint32(L, s.m_unBannedIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usBannedPort");
+	push_uint16(L, s.m_usBannedPort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulBannedGameID");
+	push_uint64(L, s.m_ulBannedGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unBanExpires");
+	push_uint32(L, s.m_unBanExpires);
+	lua_settable(L, -3);
+}
+static void push_GSReputation_t_array(lua_State* L, GSReputation_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSReputation_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AssociateWithClanResult_t(lua_State* L, AssociateWithClanResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_AssociateWithClanResult_t_array(lua_State* L, AssociateWithClanResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AssociateWithClanResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ComputeNewPlayerCompatibilityResult_t(lua_State* L, ComputeNewPlayerCompatibilityResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cPlayersThatDontLikeCandidate");
+	push_int(L, s.m_cPlayersThatDontLikeCandidate);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cPlayersThatCandidateDoesntLike");
+	push_int(L, s.m_cPlayersThatCandidateDoesntLike);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cClanPlayersThatDontLikeCandidate");
+	push_int(L, s.m_cClanPlayersThatDontLikeCandidate);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_SteamIDCandidate");
+	push_CSteamID(L, s.m_SteamIDCandidate);
+	lua_settable(L, -3);
+}
+static void push_ComputeNewPlayerCompatibilityResult_t_array(lua_State* L, ComputeNewPlayerCompatibilityResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ComputeNewPlayerCompatibilityResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSStatsReceived_t(lua_State* L, GSStatsReceived_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+}
+static void push_GSStatsReceived_t_array(lua_State* L, GSStatsReceived_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSStatsReceived_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSStatsStored_t(lua_State* L, GSStatsStored_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+}
+static void push_GSStatsStored_t_array(lua_State* L, GSStatsStored_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSStatsStored_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_GSStatsUnloaded_t(lua_State* L, GSStatsUnloaded_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+}
+static void push_GSStatsUnloaded_t_array(lua_State* L, GSStatsUnloaded_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_GSStatsUnloaded_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 
 
 
 /*****************************
-* CHECK
+* CHECK primitives
 ******************************/
-
 static lua_Number check_int(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
-}
-static lua_Number check_uint32(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
-}
-static lua_Number check_uint16(lua_State* L, int index) {
 	return luaL_checknumber(L, index);
 }
 static lua_Number check_bool(lua_State* L, int index) {
 	return lua_toboolean(L, index);
 }
-
+static lua_Number check_float(lua_State* L, int index) {
+	return luaL_checknumber(L, index);
+}
+static void check_float_array(lua_State* L, int index, float * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_float(L, -1);
+	}
+}
+static lua_Number check_double(lua_State* L, int index) {
+	return luaL_checknumber(L, index);
+}
+static uint8 check_uint8(lua_State* L, int index) {
+	return (uint8)luaL_checknumber(L, index);
+}
+static void check_uint8_array(lua_State* L, int index, uint8 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_uint8(L, -1);
+	}
+}
+static int8 check_int8(lua_State* L, int index) {
+	return (int8)luaL_checknumber(L, index);
+}
+static void check_int8_array(lua_State* L, int index, int8 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_int8(L, -1);
+	}
+}
+static int16 check_int16(lua_State* L, int index) {
+	return (int16)luaL_checknumber(L, index);
+}
+static void check_int16_array(lua_State* L, int index, int16 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_int16(L, -1);
+	}
+}
+static uint16 check_uint16(lua_State* L, int index) {
+	return (uint16)luaL_checknumber(L, index);
+}
+static void check_uint16_array(lua_State* L, int index, uint16 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_uint16(L, -1);
+	}
+}
 static int32 check_int32(lua_State* L, int index) {
 	return (int32)luaL_checknumber(L, index);
+}
+static void check_int32_array(lua_State* L, int index, int32 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_int32(L, -1);
+	}
+}
+static uint32 check_uint32(lua_State* L, int index) {
+	return (uint32)luaL_checknumber(L, index);
+}
+static void check_uint32_array(lua_State* L, int index, uint32 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_uint32(L, -1);
+	}
 }
 static PackageId_t check_PackageId_t(lua_State* L, int index) {
 	return (PackageId_t)luaL_checknumber(L, index);
 }
+static void check_PackageId_t_array(lua_State* L, int index, PackageId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_PackageId_t(L, -1);
+	}
+}
 static BundleId_t check_BundleId_t(lua_State* L, int index) {
 	return (BundleId_t)luaL_checknumber(L, index);
+}
+static void check_BundleId_t_array(lua_State* L, int index, BundleId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_BundleId_t(L, -1);
+	}
 }
 static AppId_t check_AppId_t(lua_State* L, int index) {
 	return (AppId_t)luaL_checknumber(L, index);
 }
+static void check_AppId_t_array(lua_State* L, int index, AppId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_AppId_t(L, -1);
+	}
+}
 static PhysicalItemId_t check_PhysicalItemId_t(lua_State* L, int index) {
 	return (PhysicalItemId_t)luaL_checknumber(L, index);
+}
+static void check_PhysicalItemId_t_array(lua_State* L, int index, PhysicalItemId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_PhysicalItemId_t(L, -1);
+	}
 }
 static DepotId_t check_DepotId_t(lua_State* L, int index) {
 	return (DepotId_t)luaL_checknumber(L, index);
 }
+static void check_DepotId_t_array(lua_State* L, int index, DepotId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_DepotId_t(L, -1);
+	}
+}
 static RTime32 check_RTime32(lua_State* L, int index) {
 	return (RTime32)luaL_checknumber(L, index);
+}
+static void check_RTime32_array(lua_State* L, int index, RTime32 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_RTime32(L, -1);
+	}
 }
 static CellID_t check_CellID_t(lua_State* L, int index) {
 	return (CellID_t)luaL_checknumber(L, index);
 }
+static void check_CellID_t_array(lua_State* L, int index, CellID_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_CellID_t(L, -1);
+	}
+}
 static AccountID_t check_AccountID_t(lua_State* L, int index) {
 	return (AccountID_t)luaL_checknumber(L, index);
+}
+static void check_AccountID_t_array(lua_State* L, int index, AccountID_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_AccountID_t(L, -1);
+	}
 }
 static PartnerId_t check_PartnerId_t(lua_State* L, int index) {
 	return (PartnerId_t)luaL_checknumber(L, index);
 }
+static void check_PartnerId_t_array(lua_State* L, int index, PartnerId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_PartnerId_t(L, -1);
+	}
+}
 static HAuthTicket check_HAuthTicket(lua_State* L, int index) {
 	return (HAuthTicket)luaL_checknumber(L, index);
+}
+static void check_HAuthTicket_array(lua_State* L, int index, HAuthTicket * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HAuthTicket(L, -1);
+	}
 }
 static HSteamPipe check_HSteamPipe(lua_State* L, int index) {
 	return (HSteamPipe)luaL_checknumber(L, index);
 }
+static void check_HSteamPipe_array(lua_State* L, int index, HSteamPipe * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HSteamPipe(L, -1);
+	}
+}
 static HSteamUser check_HSteamUser(lua_State* L, int index) {
 	return (HSteamUser)luaL_checknumber(L, index);
+}
+static void check_HSteamUser_array(lua_State* L, int index, HSteamUser * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HSteamUser(L, -1);
+	}
 }
 static FriendsGroupID_t check_FriendsGroupID_t(lua_State* L, int index) {
 	return (FriendsGroupID_t)luaL_checknumber(L, index);
 }
+static void check_FriendsGroupID_t_array(lua_State* L, int index, FriendsGroupID_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_FriendsGroupID_t(L, -1);
+	}
+}
 static HServerQuery check_HServerQuery(lua_State* L, int index) {
 	return (HServerQuery)luaL_checknumber(L, index);
+}
+static void check_HServerQuery_array(lua_State* L, int index, HServerQuery * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HServerQuery(L, -1);
+	}
 }
 static SNetSocket_t check_SNetSocket_t(lua_State* L, int index) {
 	return (SNetSocket_t)luaL_checknumber(L, index);
 }
+static void check_SNetSocket_t_array(lua_State* L, int index, SNetSocket_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SNetSocket_t(L, -1);
+	}
+}
 static SNetListenSocket_t check_SNetListenSocket_t(lua_State* L, int index) {
 	return (SNetListenSocket_t)luaL_checknumber(L, index);
+}
+static void check_SNetListenSocket_t_array(lua_State* L, int index, SNetListenSocket_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SNetListenSocket_t(L, -1);
+	}
 }
 static ScreenshotHandle check_ScreenshotHandle(lua_State* L, int index) {
 	return (ScreenshotHandle)luaL_checknumber(L, index);
 }
+static void check_ScreenshotHandle_array(lua_State* L, int index, ScreenshotHandle * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_ScreenshotHandle(L, -1);
+	}
+}
 static HTTPRequestHandle check_HTTPRequestHandle(lua_State* L, int index) {
 	return (HTTPRequestHandle)luaL_checknumber(L, index);
+}
+static void check_HTTPRequestHandle_array(lua_State* L, int index, HTTPRequestHandle * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HTTPRequestHandle(L, -1);
+	}
 }
 static HTTPCookieContainerHandle check_HTTPCookieContainerHandle(lua_State* L, int index) {
 	return (HTTPCookieContainerHandle)luaL_checknumber(L, index);
 }
+static void check_HTTPCookieContainerHandle_array(lua_State* L, int index, HTTPCookieContainerHandle * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HTTPCookieContainerHandle(L, -1);
+	}
+}
 static HHTMLBrowser check_HHTMLBrowser(lua_State* L, int index) {
 	return (HHTMLBrowser)luaL_checknumber(L, index);
+}
+static void check_HHTMLBrowser_array(lua_State* L, int index, HHTMLBrowser * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HHTMLBrowser(L, -1);
+	}
 }
 static SteamItemDef_t check_SteamItemDef_t(lua_State* L, int index) {
 	return (SteamItemDef_t)luaL_checknumber(L, index);
 }
+static void check_SteamItemDef_t_array(lua_State* L, int index, SteamItemDef_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamItemDef_t(L, -1);
+	}
+}
 static SteamInventoryResult_t check_SteamInventoryResult_t(lua_State* L, int index) {
 	return (SteamInventoryResult_t)luaL_checknumber(L, index);
 }
+static void check_SteamInventoryResult_t_array(lua_State* L, int index, SteamInventoryResult_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamInventoryResult_t(L, -1);
+	}
+}
 
+/*****************************
+* CHECK strings
+******************************/
 static const char * check_const_char_ptr(lua_State* L, int index) {
 	return luaL_checkstring(L, index);
 }
@@ -1076,37 +5240,3738 @@ static const void * check_const_void_ptr(lua_State* L, int index) {
 static void * check_void_ptr(lua_State* L, int index) {
 	return (void*)luaL_checkstring(L, index);
 }
+static void check_char_array(lua_State* L, int index, char* dest, unsigned int size) {
+	const char * src = luaL_checkstring(L, index);
+	strncpy(dest, src, size - 1);
+	dest[size] = 0x0;
+}
 
+/*****************************
+* CHECK (u)int64 (from string)
+******************************/
+static uint64 check_uint64(lua_State* L, int index) {
+	const char * s = luaL_checkstring(L, index);
+	return strtoull(s, NULL, 10);
+}
+static int64 check_int64(lua_State* L, int index) {
+	const char * s = luaL_checkstring(L, index);
+	return strtoll(s, NULL, 10);
+}
+static ulint64 check_ulint64(lua_State* L, int index) {
+	return (ulint64)check_uint64(L, index);
+}
+static void check_ulint64_array(lua_State* L, int index, ulint64 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_ulint64(L, -1);
+	}
+}
+static GID_t check_GID_t(lua_State* L, int index) {
+	return (GID_t)check_uint64(L, index);
+}
+static void check_GID_t_array(lua_State* L, int index, GID_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_GID_t(L, -1);
+	}
+}
+static JobID_t check_JobID_t(lua_State* L, int index) {
+	return (JobID_t)check_uint64(L, index);
+}
+static void check_JobID_t_array(lua_State* L, int index, JobID_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_JobID_t(L, -1);
+	}
+}
+static AssetClassId_t check_AssetClassId_t(lua_State* L, int index) {
+	return (AssetClassId_t)check_uint64(L, index);
+}
+static void check_AssetClassId_t_array(lua_State* L, int index, AssetClassId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_AssetClassId_t(L, -1);
+	}
+}
+static SteamAPICall_t check_SteamAPICall_t(lua_State* L, int index) {
+	return (SteamAPICall_t)check_uint64(L, index);
+}
+static void check_SteamAPICall_t_array(lua_State* L, int index, SteamAPICall_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamAPICall_t(L, -1);
+	}
+}
+static ManifestId_t check_ManifestId_t(lua_State* L, int index) {
+	return (ManifestId_t)check_uint64(L, index);
+}
+static void check_ManifestId_t_array(lua_State* L, int index, ManifestId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_ManifestId_t(L, -1);
+	}
+}
+static SiteId_t check_SiteId_t(lua_State* L, int index) {
+	return (SiteId_t)check_uint64(L, index);
+}
+static void check_SiteId_t_array(lua_State* L, int index, SiteId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SiteId_t(L, -1);
+	}
+}
+static UGCHandle_t check_UGCHandle_t(lua_State* L, int index) {
+	return (UGCHandle_t)check_uint64(L, index);
+}
+static void check_UGCHandle_t_array(lua_State* L, int index, UGCHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_UGCHandle_t(L, -1);
+	}
+}
+static PublishedFileUpdateHandle_t check_PublishedFileUpdateHandle_t(lua_State* L, int index) {
+	return (PublishedFileUpdateHandle_t)check_uint64(L, index);
+}
+static void check_PublishedFileUpdateHandle_t_array(lua_State* L, int index, PublishedFileUpdateHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_PublishedFileUpdateHandle_t(L, -1);
+	}
+}
+static PublishedFileId_t check_PublishedFileId_t(lua_State* L, int index) {
+	return (PublishedFileId_t)check_uint64(L, index);
+}
+static void check_PublishedFileId_t_array(lua_State* L, int index, PublishedFileId_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_PublishedFileId_t(L, -1);
+	}
+}
+static UGCFileWriteStreamHandle_t check_UGCFileWriteStreamHandle_t(lua_State* L, int index) {
+	return (UGCFileWriteStreamHandle_t)check_uint64(L, index);
+}
+static void check_UGCFileWriteStreamHandle_t_array(lua_State* L, int index, UGCFileWriteStreamHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_UGCFileWriteStreamHandle_t(L, -1);
+	}
+}
+static SteamLeaderboard_t check_SteamLeaderboard_t(lua_State* L, int index) {
+	return (SteamLeaderboard_t)check_uint64(L, index);
+}
+static void check_SteamLeaderboard_t_array(lua_State* L, int index, SteamLeaderboard_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamLeaderboard_t(L, -1);
+	}
+}
+static SteamLeaderboardEntries_t check_SteamLeaderboardEntries_t(lua_State* L, int index) {
+	return (SteamLeaderboardEntries_t)check_uint64(L, index);
+}
+static void check_SteamLeaderboardEntries_t_array(lua_State* L, int index, SteamLeaderboardEntries_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamLeaderboardEntries_t(L, -1);
+	}
+}
+static ControllerHandle_t check_ControllerHandle_t(lua_State* L, int index) {
+	return (ControllerHandle_t)check_uint64(L, index);
+}
+static void check_ControllerHandle_t_array(lua_State* L, int index, ControllerHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_ControllerHandle_t(L, -1);
+	}
+}
+static ControllerActionSetHandle_t check_ControllerActionSetHandle_t(lua_State* L, int index) {
+	return (ControllerActionSetHandle_t)check_uint64(L, index);
+}
+static void check_ControllerActionSetHandle_t_array(lua_State* L, int index, ControllerActionSetHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_ControllerActionSetHandle_t(L, -1);
+	}
+}
+static ControllerDigitalActionHandle_t check_ControllerDigitalActionHandle_t(lua_State* L, int index) {
+	return (ControllerDigitalActionHandle_t)check_uint64(L, index);
+}
+static void check_ControllerDigitalActionHandle_t_array(lua_State* L, int index, ControllerDigitalActionHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_ControllerDigitalActionHandle_t(L, -1);
+	}
+}
+static ControllerAnalogActionHandle_t check_ControllerAnalogActionHandle_t(lua_State* L, int index) {
+	return (ControllerAnalogActionHandle_t)check_uint64(L, index);
+}
+static void check_ControllerAnalogActionHandle_t_array(lua_State* L, int index, ControllerAnalogActionHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_ControllerAnalogActionHandle_t(L, -1);
+	}
+}
+static UGCQueryHandle_t check_UGCQueryHandle_t(lua_State* L, int index) {
+	return (UGCQueryHandle_t)check_uint64(L, index);
+}
+static void check_UGCQueryHandle_t_array(lua_State* L, int index, UGCQueryHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_UGCQueryHandle_t(L, -1);
+	}
+}
+static UGCUpdateHandle_t check_UGCUpdateHandle_t(lua_State* L, int index) {
+	return (UGCUpdateHandle_t)check_uint64(L, index);
+}
+static void check_UGCUpdateHandle_t_array(lua_State* L, int index, UGCUpdateHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_UGCUpdateHandle_t(L, -1);
+	}
+}
+static SteamItemInstanceID_t check_SteamItemInstanceID_t(lua_State* L, int index) {
+	return (SteamItemInstanceID_t)check_uint64(L, index);
+}
+static void check_SteamItemInstanceID_t_array(lua_State* L, int index, SteamItemInstanceID_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamItemInstanceID_t(L, -1);
+	}
+}
+static SteamInventoryUpdateHandle_t check_SteamInventoryUpdateHandle_t(lua_State* L, int index) {
+	return (SteamInventoryUpdateHandle_t)check_uint64(L, index);
+}
+static void check_SteamInventoryUpdateHandle_t_array(lua_State* L, int index, SteamInventoryUpdateHandle_t * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamInventoryUpdateHandle_t(L, -1);
+	}
+}
+static lint64 check_lint64(lua_State* L, int index) {
+	return (lint64)check_int64(L, index);
+}
+static void check_lint64_array(lua_State* L, int index, lint64 * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_lint64(L, -1);
+	}
+}
+
+/*****************************
+* CHECK enums
+******************************/
+static EUniverse check_EUniverse(lua_State* L, int index) {
+	return EUniverse(luaL_checkinteger(L, index));
+}
+static EResult check_EResult(lua_State* L, int index) {
+	return EResult(luaL_checkinteger(L, index));
+}
+static EVoiceResult check_EVoiceResult(lua_State* L, int index) {
+	return EVoiceResult(luaL_checkinteger(L, index));
+}
+static EDenyReason check_EDenyReason(lua_State* L, int index) {
+	return EDenyReason(luaL_checkinteger(L, index));
+}
+static EBeginAuthSessionResult check_EBeginAuthSessionResult(lua_State* L, int index) {
+	return EBeginAuthSessionResult(luaL_checkinteger(L, index));
+}
+static EAuthSessionResponse check_EAuthSessionResponse(lua_State* L, int index) {
+	return EAuthSessionResponse(luaL_checkinteger(L, index));
+}
+static EUserHasLicenseForAppResult check_EUserHasLicenseForAppResult(lua_State* L, int index) {
+	return EUserHasLicenseForAppResult(luaL_checkinteger(L, index));
+}
+static EAccountType check_EAccountType(lua_State* L, int index) {
+	return EAccountType(luaL_checkinteger(L, index));
+}
+static EAppReleaseState check_EAppReleaseState(lua_State* L, int index) {
+	return EAppReleaseState(luaL_checkinteger(L, index));
+}
+static EAppOwnershipFlags check_EAppOwnershipFlags(lua_State* L, int index) {
+	return EAppOwnershipFlags(luaL_checkinteger(L, index));
+}
+static EAppType check_EAppType(lua_State* L, int index) {
+	return EAppType(luaL_checkinteger(L, index));
+}
+static ESteamUserStatType check_ESteamUserStatType(lua_State* L, int index) {
+	return ESteamUserStatType(luaL_checkinteger(L, index));
+}
+static EChatEntryType check_EChatEntryType(lua_State* L, int index) {
+	return EChatEntryType(luaL_checkinteger(L, index));
+}
+static EChatRoomEnterResponse check_EChatRoomEnterResponse(lua_State* L, int index) {
+	return EChatRoomEnterResponse(luaL_checkinteger(L, index));
+}
+static EChatSteamIDInstanceFlags check_EChatSteamIDInstanceFlags(lua_State* L, int index) {
+	return EChatSteamIDInstanceFlags(luaL_checkinteger(L, index));
+}
+static EMarketingMessageFlags check_EMarketingMessageFlags(lua_State* L, int index) {
+	return EMarketingMessageFlags(luaL_checkinteger(L, index));
+}
+static ENotificationPosition check_ENotificationPosition(lua_State* L, int index) {
+	return ENotificationPosition(luaL_checkinteger(L, index));
+}
+static EBroadcastUploadResult check_EBroadcastUploadResult(lua_State* L, int index) {
+	return EBroadcastUploadResult(luaL_checkinteger(L, index));
+}
+static ELaunchOptionType check_ELaunchOptionType(lua_State* L, int index) {
+	return ELaunchOptionType(luaL_checkinteger(L, index));
+}
+static EVRHMDType check_EVRHMDType(lua_State* L, int index) {
+	return EVRHMDType(luaL_checkinteger(L, index));
+}
+static EFriendRelationship check_EFriendRelationship(lua_State* L, int index) {
+	return EFriendRelationship(luaL_checkinteger(L, index));
+}
+static EPersonaState check_EPersonaState(lua_State* L, int index) {
+	return EPersonaState(luaL_checkinteger(L, index));
+}
+static EFriendFlags check_EFriendFlags(lua_State* L, int index) {
+	return EFriendFlags(luaL_checkinteger(L, index));
+}
+static EUserRestriction check_EUserRestriction(lua_State* L, int index) {
+	return EUserRestriction(luaL_checkinteger(L, index));
+}
+static EOverlayToStoreFlag check_EOverlayToStoreFlag(lua_State* L, int index) {
+	return EOverlayToStoreFlag(luaL_checkinteger(L, index));
+}
+static EPersonaChange check_EPersonaChange(lua_State* L, int index) {
+	return EPersonaChange(luaL_checkinteger(L, index));
+}
+static ESteamAPICallFailure check_ESteamAPICallFailure(lua_State* L, int index) {
+	return ESteamAPICallFailure(luaL_checkinteger(L, index));
+}
+static EGamepadTextInputMode check_EGamepadTextInputMode(lua_State* L, int index) {
+	return EGamepadTextInputMode(luaL_checkinteger(L, index));
+}
+static EGamepadTextInputLineMode check_EGamepadTextInputLineMode(lua_State* L, int index) {
+	return EGamepadTextInputLineMode(luaL_checkinteger(L, index));
+}
+static ECheckFileSignature check_ECheckFileSignature(lua_State* L, int index) {
+	return ECheckFileSignature(luaL_checkinteger(L, index));
+}
+static EMatchMakingServerResponse check_EMatchMakingServerResponse(lua_State* L, int index) {
+	return EMatchMakingServerResponse(luaL_checkinteger(L, index));
+}
+static ELobbyType check_ELobbyType(lua_State* L, int index) {
+	return ELobbyType(luaL_checkinteger(L, index));
+}
+static ELobbyComparison check_ELobbyComparison(lua_State* L, int index) {
+	return ELobbyComparison(luaL_checkinteger(L, index));
+}
+static ELobbyDistanceFilter check_ELobbyDistanceFilter(lua_State* L, int index) {
+	return ELobbyDistanceFilter(luaL_checkinteger(L, index));
+}
+static EChatMemberStateChange check_EChatMemberStateChange(lua_State* L, int index) {
+	return EChatMemberStateChange(luaL_checkinteger(L, index));
+}
+static ERemoteStoragePlatform check_ERemoteStoragePlatform(lua_State* L, int index) {
+	return ERemoteStoragePlatform(luaL_checkinteger(L, index));
+}
+static ERemoteStoragePublishedFileVisibility check_ERemoteStoragePublishedFileVisibility(lua_State* L, int index) {
+	return ERemoteStoragePublishedFileVisibility(luaL_checkinteger(L, index));
+}
+static EWorkshopFileType check_EWorkshopFileType(lua_State* L, int index) {
+	return EWorkshopFileType(luaL_checkinteger(L, index));
+}
+static EWorkshopVote check_EWorkshopVote(lua_State* L, int index) {
+	return EWorkshopVote(luaL_checkinteger(L, index));
+}
+static EWorkshopFileAction check_EWorkshopFileAction(lua_State* L, int index) {
+	return EWorkshopFileAction(luaL_checkinteger(L, index));
+}
+static EWorkshopEnumerationType check_EWorkshopEnumerationType(lua_State* L, int index) {
+	return EWorkshopEnumerationType(luaL_checkinteger(L, index));
+}
+static EWorkshopVideoProvider check_EWorkshopVideoProvider(lua_State* L, int index) {
+	return EWorkshopVideoProvider(luaL_checkinteger(L, index));
+}
+static EUGCReadAction check_EUGCReadAction(lua_State* L, int index) {
+	return EUGCReadAction(luaL_checkinteger(L, index));
+}
+static ELeaderboardDataRequest check_ELeaderboardDataRequest(lua_State* L, int index) {
+	return ELeaderboardDataRequest(luaL_checkinteger(L, index));
+}
+static ELeaderboardSortMethod check_ELeaderboardSortMethod(lua_State* L, int index) {
+	return ELeaderboardSortMethod(luaL_checkinteger(L, index));
+}
+static ELeaderboardDisplayType check_ELeaderboardDisplayType(lua_State* L, int index) {
+	return ELeaderboardDisplayType(luaL_checkinteger(L, index));
+}
+static ELeaderboardUploadScoreMethod check_ELeaderboardUploadScoreMethod(lua_State* L, int index) {
+	return ELeaderboardUploadScoreMethod(luaL_checkinteger(L, index));
+}
+static ERegisterActivationCodeResult check_ERegisterActivationCodeResult(lua_State* L, int index) {
+	return ERegisterActivationCodeResult(luaL_checkinteger(L, index));
+}
+static EP2PSessionError check_EP2PSessionError(lua_State* L, int index) {
+	return EP2PSessionError(luaL_checkinteger(L, index));
+}
+static EP2PSend check_EP2PSend(lua_State* L, int index) {
+	return EP2PSend(luaL_checkinteger(L, index));
+}
+static ESNetSocketState check_ESNetSocketState(lua_State* L, int index) {
+	return ESNetSocketState(luaL_checkinteger(L, index));
+}
+static ESNetSocketConnectionType check_ESNetSocketConnectionType(lua_State* L, int index) {
+	return ESNetSocketConnectionType(luaL_checkinteger(L, index));
+}
+static EVRScreenshotType check_EVRScreenshotType(lua_State* L, int index) {
+	return EVRScreenshotType(luaL_checkinteger(L, index));
+}
+static AudioPlayback_Status check_AudioPlayback_Status(lua_State* L, int index) {
+	return AudioPlayback_Status(luaL_checkinteger(L, index));
+}
+static EHTTPMethod check_EHTTPMethod(lua_State* L, int index) {
+	return EHTTPMethod(luaL_checkinteger(L, index));
+}
+static EHTTPStatusCode check_EHTTPStatusCode(lua_State* L, int index) {
+	return EHTTPStatusCode(luaL_checkinteger(L, index));
+}
+static ESteamControllerPad check_ESteamControllerPad(lua_State* L, int index) {
+	return ESteamControllerPad(luaL_checkinteger(L, index));
+}
+static EControllerSource check_EControllerSource(lua_State* L, int index) {
+	return EControllerSource(luaL_checkinteger(L, index));
+}
+static EControllerSourceMode check_EControllerSourceMode(lua_State* L, int index) {
+	return EControllerSourceMode(luaL_checkinteger(L, index));
+}
+static EControllerActionOrigin check_EControllerActionOrigin(lua_State* L, int index) {
+	return EControllerActionOrigin(luaL_checkinteger(L, index));
+}
+static ESteamControllerLEDFlag check_ESteamControllerLEDFlag(lua_State* L, int index) {
+	return ESteamControllerLEDFlag(luaL_checkinteger(L, index));
+}
+static ESteamInputType check_ESteamInputType(lua_State* L, int index) {
+	return ESteamInputType(luaL_checkinteger(L, index));
+}
+static EUGCMatchingUGCType check_EUGCMatchingUGCType(lua_State* L, int index) {
+	return EUGCMatchingUGCType(luaL_checkinteger(L, index));
+}
+static EUserUGCList check_EUserUGCList(lua_State* L, int index) {
+	return EUserUGCList(luaL_checkinteger(L, index));
+}
+static EUserUGCListSortOrder check_EUserUGCListSortOrder(lua_State* L, int index) {
+	return EUserUGCListSortOrder(luaL_checkinteger(L, index));
+}
+static EUGCQuery check_EUGCQuery(lua_State* L, int index) {
+	return EUGCQuery(luaL_checkinteger(L, index));
+}
+static EItemUpdateStatus check_EItemUpdateStatus(lua_State* L, int index) {
+	return EItemUpdateStatus(luaL_checkinteger(L, index));
+}
+static EItemState check_EItemState(lua_State* L, int index) {
+	return EItemState(luaL_checkinteger(L, index));
+}
+static EItemStatistic check_EItemStatistic(lua_State* L, int index) {
+	return EItemStatistic(luaL_checkinteger(L, index));
+}
+static EItemPreviewType check_EItemPreviewType(lua_State* L, int index) {
+	return EItemPreviewType(luaL_checkinteger(L, index));
+}
+static ESteamItemFlags check_ESteamItemFlags(lua_State* L, int index) {
+	return ESteamItemFlags(luaL_checkinteger(L, index));
+}
+static EParentalFeature check_EParentalFeature(lua_State* L, int index) {
+	return EParentalFeature(luaL_checkinteger(L, index));
+}
+
+/*****************************
+* CHECK LuaBuffer
+******************************/
 static dmScript::LuaHBuffer * check_buffer(lua_State* L, int index) {
 	return dmScript::CheckBuffer(L, index);
 }
 
+/*****************************
+* CHECK CSteamID
+******************************/
 static CSteamID check_CSteamID(lua_State* L, int index) {
-	char * pEnd;
-	const char * s = lua_tostring(L, index);
-	uint64 id = strtoull(s, &pEnd, 10);
+	uint64 id = check_uint64(L, index);
 	CSteamID steamId = CSteamID(id);
 	return steamId;
 }
-
 static CSteamID check_class_CSteamID(lua_State* L, int index) {
 	return check_CSteamID(L, index);
 }
-
-static SteamAPICall_t check_SteamAPICall_t(lua_State* L, int index) {
-	char * pEnd;
-	const char * s = lua_tostring(L, index);
-	uint64 id = strtoull(s, &pEnd, 10);
-	return id;
+static void check_CSteamID_array(lua_State* L, int index, CSteamID *ids, int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		ids[i] = check_CSteamID(L, -1);
+	}
 }
 
-static CGameID check_class_CGameID(lua_State* L, int index) {
-	char * pEnd;
-	const char * s = lua_tostring(L, index);
-	uint64 id = strtoull(s, &pEnd, 10);
+/*****************************
+* CHECK CGameID
+******************************/
+static CGameID check_CGameID(lua_State* L, int index) {
+	uint64 id = check_uint64(L, index);
 	CGameID gameId = CGameID(id);
 	return gameId;
 }
+
+/*****************************
+* CHECK structs
+******************************/
+static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	servernetadr_t s;
+	lua_pushstring(L, "m_usConnectionPort");
+	lua_gettable(L, index);
+	s.SetConnectionPort(check_uint16(L, -1));
+	lua_pushstring(L, "m_usQueryPort");
+	lua_gettable(L, index);
+	s.SetQueryPort(check_uint16(L, -1));
+	lua_pushstring(L, "m_unIP");
+	lua_gettable(L, index);
+	s.SetIP(check_uint32(L, -1));
+	return s;
+}
+static ValvePackingSentinel_t check_ValvePackingSentinel_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ValvePackingSentinel_t s;
+	lua_pushstring(L, "m_u32");
+	lua_gettable(L, index);
+	s.m_u32 = check_uint32(L, -1);
+	lua_pushstring(L, "m_u64");
+	lua_gettable(L, index);
+	s.m_u64 = check_uint64(L, -1);
+	lua_pushstring(L, "m_u16");
+	lua_gettable(L, index);
+	s.m_u16 = check_uint16(L, -1);
+	lua_pushstring(L, "m_d");
+	lua_gettable(L, index);
+	s.m_d = check_double(L, -1);
+	return s;
+}
+
+static SteamServerConnectFailure_t check_SteamServerConnectFailure_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamServerConnectFailure_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_bStillRetrying");
+	lua_gettable(L, index);
+	s.m_bStillRetrying = check_bool(L, -1);
+	return s;
+}
+
+static SteamServersDisconnected_t check_SteamServersDisconnected_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamServersDisconnected_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static ClientGameServerDeny_t check_ClientGameServerDeny_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ClientGameServerDeny_t s;
+	lua_pushstring(L, "m_uAppID");
+	lua_gettable(L, index);
+	s.m_uAppID = check_uint32(L, -1);
+	lua_pushstring(L, "m_unGameServerIP");
+	lua_gettable(L, index);
+	s.m_unGameServerIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_usGameServerPort");
+	lua_gettable(L, index);
+	s.m_usGameServerPort = check_uint16(L, -1);
+	lua_pushstring(L, "m_bSecure");
+	lua_gettable(L, index);
+	s.m_bSecure = check_uint16(L, -1);
+	lua_pushstring(L, "m_uReason");
+	lua_gettable(L, index);
+	s.m_uReason = check_uint32(L, -1);
+	return s;
+}
+
+static ValidateAuthTicketResponse_t check_ValidateAuthTicketResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ValidateAuthTicketResponse_t s;
+	lua_pushstring(L, "m_SteamID");
+	lua_gettable(L, index);
+	s.m_SteamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_eAuthSessionResponse");
+	lua_gettable(L, index);
+	s.m_eAuthSessionResponse = check_EAuthSessionResponse(L, -1);
+	lua_pushstring(L, "m_OwnerSteamID");
+	lua_gettable(L, index);
+	s.m_OwnerSteamID = check_CSteamID(L, -1);
+	return s;
+}
+
+static MicroTxnAuthorizationResponse_t check_MicroTxnAuthorizationResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MicroTxnAuthorizationResponse_t s;
+	lua_pushstring(L, "m_unAppID");
+	lua_gettable(L, index);
+	s.m_unAppID = check_uint32(L, -1);
+	lua_pushstring(L, "m_ulOrderID");
+	lua_gettable(L, index);
+	s.m_ulOrderID = check_uint64(L, -1);
+	lua_pushstring(L, "m_bAuthorized");
+	lua_gettable(L, index);
+	s.m_bAuthorized = check_uint8(L, -1);
+	return s;
+}
+
+static EncryptedAppTicketResponse_t check_EncryptedAppTicketResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	EncryptedAppTicketResponse_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static GetAuthSessionTicketResponse_t check_GetAuthSessionTicketResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GetAuthSessionTicketResponse_t s;
+	lua_pushstring(L, "m_hAuthTicket");
+	lua_gettable(L, index);
+	s.m_hAuthTicket = check_HAuthTicket(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static GameWebCallback_t check_GameWebCallback_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameWebCallback_t s;
+	lua_pushstring(L, "m_szURL");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szURL, 256);
+	return s;
+}
+
+static StoreAuthURLResponse_t check_StoreAuthURLResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	StoreAuthURLResponse_t s;
+	lua_pushstring(L, "m_szURL");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szURL, 512);
+	return s;
+}
+
+static FriendGameInfo_t check_FriendGameInfo_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FriendGameInfo_t s;
+	lua_pushstring(L, "m_gameID");
+	lua_gettable(L, index);
+	s.m_gameID = check_CGameID(L, -1);
+	lua_pushstring(L, "m_unGameIP");
+	lua_gettable(L, index);
+	s.m_unGameIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_usGamePort");
+	lua_gettable(L, index);
+	s.m_usGamePort = check_uint16(L, -1);
+	lua_pushstring(L, "m_usQueryPort");
+	lua_gettable(L, index);
+	s.m_usQueryPort = check_uint16(L, -1);
+	lua_pushstring(L, "m_steamIDLobby");
+	lua_gettable(L, index);
+	s.m_steamIDLobby = check_CSteamID(L, -1);
+	return s;
+}
+
+static FriendSessionStateInfo_t check_FriendSessionStateInfo_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FriendSessionStateInfo_t s;
+	lua_pushstring(L, "m_uiOnlineSessionInstances");
+	lua_gettable(L, index);
+	s.m_uiOnlineSessionInstances = check_uint32(L, -1);
+	lua_pushstring(L, "m_uiPublishedToFriendsSessionInstance");
+	lua_gettable(L, index);
+	s.m_uiPublishedToFriendsSessionInstance = check_uint8(L, -1);
+	return s;
+}
+
+static PersonaStateChange_t check_PersonaStateChange_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	PersonaStateChange_t s;
+	lua_pushstring(L, "m_ulSteamID");
+	lua_gettable(L, index);
+	s.m_ulSteamID = check_uint64(L, -1);
+	lua_pushstring(L, "m_nChangeFlags");
+	lua_gettable(L, index);
+	s.m_nChangeFlags = check_int(L, -1);
+	return s;
+}
+
+static GameOverlayActivated_t check_GameOverlayActivated_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameOverlayActivated_t s;
+	lua_pushstring(L, "m_bActive");
+	lua_gettable(L, index);
+	s.m_bActive = check_uint8(L, -1);
+	return s;
+}
+
+static GameServerChangeRequested_t check_GameServerChangeRequested_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameServerChangeRequested_t s;
+	lua_pushstring(L, "m_rgchServer");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchServer, 64);
+	lua_pushstring(L, "m_rgchPassword");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchPassword, 64);
+	return s;
+}
+
+static GameLobbyJoinRequested_t check_GameLobbyJoinRequested_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameLobbyJoinRequested_t s;
+	lua_pushstring(L, "m_steamIDLobby");
+	lua_gettable(L, index);
+	s.m_steamIDLobby = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_steamIDFriend");
+	lua_gettable(L, index);
+	s.m_steamIDFriend = check_CSteamID(L, -1);
+	return s;
+}
+
+static AvatarImageLoaded_t check_AvatarImageLoaded_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	AvatarImageLoaded_t s;
+	lua_pushstring(L, "m_steamID");
+	lua_gettable(L, index);
+	s.m_steamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_iImage");
+	lua_gettable(L, index);
+	s.m_iImage = check_int(L, -1);
+	lua_pushstring(L, "m_iWide");
+	lua_gettable(L, index);
+	s.m_iWide = check_int(L, -1);
+	lua_pushstring(L, "m_iTall");
+	lua_gettable(L, index);
+	s.m_iTall = check_int(L, -1);
+	return s;
+}
+
+static ClanOfficerListResponse_t check_ClanOfficerListResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ClanOfficerListResponse_t s;
+	lua_pushstring(L, "m_steamIDClan");
+	lua_gettable(L, index);
+	s.m_steamIDClan = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_cOfficers");
+	lua_gettable(L, index);
+	s.m_cOfficers = check_int(L, -1);
+	lua_pushstring(L, "m_bSuccess");
+	lua_gettable(L, index);
+	s.m_bSuccess = check_uint8(L, -1);
+	return s;
+}
+
+static FriendRichPresenceUpdate_t check_FriendRichPresenceUpdate_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FriendRichPresenceUpdate_t s;
+	lua_pushstring(L, "m_steamIDFriend");
+	lua_gettable(L, index);
+	s.m_steamIDFriend = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static GameRichPresenceJoinRequested_t check_GameRichPresenceJoinRequested_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameRichPresenceJoinRequested_t s;
+	lua_pushstring(L, "m_steamIDFriend");
+	lua_gettable(L, index);
+	s.m_steamIDFriend = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_rgchConnect");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchConnect, 256);
+	return s;
+}
+
+static GameConnectedClanChatMsg_t check_GameConnectedClanChatMsg_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameConnectedClanChatMsg_t s;
+	lua_pushstring(L, "m_steamIDClanChat");
+	lua_gettable(L, index);
+	s.m_steamIDClanChat = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_iMessageID");
+	lua_gettable(L, index);
+	s.m_iMessageID = check_int(L, -1);
+	return s;
+}
+
+static GameConnectedChatJoin_t check_GameConnectedChatJoin_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameConnectedChatJoin_t s;
+	lua_pushstring(L, "m_steamIDClanChat");
+	lua_gettable(L, index);
+	s.m_steamIDClanChat = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	return s;
+}
+
+static GameConnectedChatLeave_t check_GameConnectedChatLeave_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameConnectedChatLeave_t s;
+	lua_pushstring(L, "m_steamIDClanChat");
+	lua_gettable(L, index);
+	s.m_steamIDClanChat = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_bKicked");
+	lua_gettable(L, index);
+	s.m_bKicked = check_bool(L, -1);
+	lua_pushstring(L, "m_bDropped");
+	lua_gettable(L, index);
+	s.m_bDropped = check_bool(L, -1);
+	return s;
+}
+
+static DownloadClanActivityCountsResult_t check_DownloadClanActivityCountsResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	DownloadClanActivityCountsResult_t s;
+	lua_pushstring(L, "m_bSuccess");
+	lua_gettable(L, index);
+	s.m_bSuccess = check_bool(L, -1);
+	return s;
+}
+
+static JoinClanChatRoomCompletionResult_t check_JoinClanChatRoomCompletionResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	JoinClanChatRoomCompletionResult_t s;
+	lua_pushstring(L, "m_steamIDClanChat");
+	lua_gettable(L, index);
+	s.m_steamIDClanChat = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_eChatRoomEnterResponse");
+	lua_gettable(L, index);
+	s.m_eChatRoomEnterResponse = check_EChatRoomEnterResponse(L, -1);
+	return s;
+}
+
+static GameConnectedFriendChatMsg_t check_GameConnectedFriendChatMsg_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GameConnectedFriendChatMsg_t s;
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_iMessageID");
+	lua_gettable(L, index);
+	s.m_iMessageID = check_int(L, -1);
+	return s;
+}
+
+static FriendsGetFollowerCount_t check_FriendsGetFollowerCount_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FriendsGetFollowerCount_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_steamID");
+	lua_gettable(L, index);
+	s.m_steamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_nCount");
+	lua_gettable(L, index);
+	s.m_nCount = check_int(L, -1);
+	return s;
+}
+
+static FriendsIsFollowing_t check_FriendsIsFollowing_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FriendsIsFollowing_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_steamID");
+	lua_gettable(L, index);
+	s.m_steamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_bIsFollowing");
+	lua_gettable(L, index);
+	s.m_bIsFollowing = check_bool(L, -1);
+	return s;
+}
+
+static FriendsEnumerateFollowingList_t check_FriendsEnumerateFollowingList_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FriendsEnumerateFollowingList_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_rgSteamID");
+	lua_gettable(L, index);
+	check_CSteamID_array(L, -1, s.m_rgSteamID, 50);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	return s;
+}
+
+static SetPersonaNameResponse_t check_SetPersonaNameResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SetPersonaNameResponse_t s;
+	lua_pushstring(L, "m_bSuccess");
+	lua_gettable(L, index);
+	s.m_bSuccess = check_bool(L, -1);
+	lua_pushstring(L, "m_bLocalSuccess");
+	lua_gettable(L, index);
+	s.m_bLocalSuccess = check_bool(L, -1);
+	lua_pushstring(L, "m_result");
+	lua_gettable(L, index);
+	s.m_result = check_EResult(L, -1);
+	return s;
+}
+
+static LowBatteryPower_t check_LowBatteryPower_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LowBatteryPower_t s;
+	lua_pushstring(L, "m_nMinutesBatteryLeft");
+	lua_gettable(L, index);
+	s.m_nMinutesBatteryLeft = check_uint8(L, -1);
+	return s;
+}
+
+static SteamAPICallCompleted_t check_SteamAPICallCompleted_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamAPICallCompleted_t s;
+	lua_pushstring(L, "m_hAsyncCall");
+	lua_gettable(L, index);
+	s.m_hAsyncCall = check_SteamAPICall_t(L, -1);
+	lua_pushstring(L, "m_iCallback");
+	lua_gettable(L, index);
+	s.m_iCallback = check_int(L, -1);
+	lua_pushstring(L, "m_cubParam");
+	lua_gettable(L, index);
+	s.m_cubParam = check_uint32(L, -1);
+	return s;
+}
+
+static CheckFileSignature_t check_CheckFileSignature_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	CheckFileSignature_t s;
+	lua_pushstring(L, "m_eCheckFileSignature");
+	lua_gettable(L, index);
+	s.m_eCheckFileSignature = check_ECheckFileSignature(L, -1);
+	return s;
+}
+
+static GamepadTextInputDismissed_t check_GamepadTextInputDismissed_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GamepadTextInputDismissed_t s;
+	lua_pushstring(L, "m_bSubmitted");
+	lua_gettable(L, index);
+	s.m_bSubmitted = check_bool(L, -1);
+	lua_pushstring(L, "m_unSubmittedText");
+	lua_gettable(L, index);
+	s.m_unSubmittedText = check_uint32(L, -1);
+	return s;
+}
+
+static MatchMakingKeyValuePair_t check_MatchMakingKeyValuePair_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MatchMakingKeyValuePair_t s;
+	lua_pushstring(L, "m_szKey");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szKey, 256);
+	lua_pushstring(L, "m_szValue");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szValue, 256);
+	return s;
+}
+
+static FavoritesListChanged_t check_FavoritesListChanged_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FavoritesListChanged_t s;
+	lua_pushstring(L, "m_nIP");
+	lua_gettable(L, index);
+	s.m_nIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_nQueryPort");
+	lua_gettable(L, index);
+	s.m_nQueryPort = check_uint32(L, -1);
+	lua_pushstring(L, "m_nConnPort");
+	lua_gettable(L, index);
+	s.m_nConnPort = check_uint32(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_uint32(L, -1);
+	lua_pushstring(L, "m_nFlags");
+	lua_gettable(L, index);
+	s.m_nFlags = check_uint32(L, -1);
+	lua_pushstring(L, "m_bAdd");
+	lua_gettable(L, index);
+	s.m_bAdd = check_bool(L, -1);
+	lua_pushstring(L, "m_unAccountId");
+	lua_gettable(L, index);
+	s.m_unAccountId = check_AccountID_t(L, -1);
+	return s;
+}
+
+static LobbyInvite_t check_LobbyInvite_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyInvite_t s;
+	lua_pushstring(L, "m_ulSteamIDUser");
+	lua_gettable(L, index);
+	s.m_ulSteamIDUser = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulGameID");
+	lua_gettable(L, index);
+	s.m_ulGameID = check_uint64(L, -1);
+	return s;
+}
+
+static LobbyEnter_t check_LobbyEnter_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyEnter_t s;
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	lua_pushstring(L, "m_rgfChatPermissions");
+	lua_gettable(L, index);
+	s.m_rgfChatPermissions = check_uint32(L, -1);
+	lua_pushstring(L, "m_bLocked");
+	lua_gettable(L, index);
+	s.m_bLocked = check_bool(L, -1);
+	lua_pushstring(L, "m_EChatRoomEnterResponse");
+	lua_gettable(L, index);
+	s.m_EChatRoomEnterResponse = check_uint32(L, -1);
+	return s;
+}
+
+static LobbyDataUpdate_t check_LobbyDataUpdate_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyDataUpdate_t s;
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulSteamIDMember");
+	lua_gettable(L, index);
+	s.m_ulSteamIDMember = check_uint64(L, -1);
+	lua_pushstring(L, "m_bSuccess");
+	lua_gettable(L, index);
+	s.m_bSuccess = check_uint8(L, -1);
+	return s;
+}
+
+static LobbyChatUpdate_t check_LobbyChatUpdate_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyChatUpdate_t s;
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulSteamIDUserChanged");
+	lua_gettable(L, index);
+	s.m_ulSteamIDUserChanged = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulSteamIDMakingChange");
+	lua_gettable(L, index);
+	s.m_ulSteamIDMakingChange = check_uint64(L, -1);
+	lua_pushstring(L, "m_rgfChatMemberStateChange");
+	lua_gettable(L, index);
+	s.m_rgfChatMemberStateChange = check_uint32(L, -1);
+	return s;
+}
+
+static LobbyChatMsg_t check_LobbyChatMsg_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyChatMsg_t s;
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulSteamIDUser");
+	lua_gettable(L, index);
+	s.m_ulSteamIDUser = check_uint64(L, -1);
+	lua_pushstring(L, "m_eChatEntryType");
+	lua_gettable(L, index);
+	s.m_eChatEntryType = check_uint8(L, -1);
+	lua_pushstring(L, "m_iChatID");
+	lua_gettable(L, index);
+	s.m_iChatID = check_uint32(L, -1);
+	return s;
+}
+
+static LobbyGameCreated_t check_LobbyGameCreated_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyGameCreated_t s;
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulSteamIDGameServer");
+	lua_gettable(L, index);
+	s.m_ulSteamIDGameServer = check_uint64(L, -1);
+	lua_pushstring(L, "m_unIP");
+	lua_gettable(L, index);
+	s.m_unIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_usPort");
+	lua_gettable(L, index);
+	s.m_usPort = check_uint16(L, -1);
+	return s;
+}
+
+static LobbyMatchList_t check_LobbyMatchList_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyMatchList_t s;
+	lua_pushstring(L, "m_nLobbiesMatching");
+	lua_gettable(L, index);
+	s.m_nLobbiesMatching = check_uint32(L, -1);
+	return s;
+}
+
+static LobbyKicked_t check_LobbyKicked_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyKicked_t s;
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulSteamIDAdmin");
+	lua_gettable(L, index);
+	s.m_ulSteamIDAdmin = check_uint64(L, -1);
+	lua_pushstring(L, "m_bKickedDueToDisconnect");
+	lua_gettable(L, index);
+	s.m_bKickedDueToDisconnect = check_uint8(L, -1);
+	return s;
+}
+
+static LobbyCreated_t check_LobbyCreated_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LobbyCreated_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ulSteamIDLobby");
+	lua_gettable(L, index);
+	s.m_ulSteamIDLobby = check_uint64(L, -1);
+	return s;
+}
+
+static PSNGameBootInviteResult_t check_PSNGameBootInviteResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	PSNGameBootInviteResult_t s;
+	lua_pushstring(L, "m_bGameBootInviteExists");
+	lua_gettable(L, index);
+	s.m_bGameBootInviteExists = check_bool(L, -1);
+	lua_pushstring(L, "m_steamIDLobby");
+	lua_gettable(L, index);
+	s.m_steamIDLobby = check_CSteamID(L, -1);
+	return s;
+}
+
+static FavoritesListAccountsUpdated_t check_FavoritesListAccountsUpdated_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FavoritesListAccountsUpdated_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static RemoteStorageAppSyncedClient_t check_RemoteStorageAppSyncedClient_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageAppSyncedClient_t s;
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unNumDownloads");
+	lua_gettable(L, index);
+	s.m_unNumDownloads = check_int(L, -1);
+	return s;
+}
+
+static RemoteStorageAppSyncedServer_t check_RemoteStorageAppSyncedServer_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageAppSyncedServer_t s;
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unNumUploads");
+	lua_gettable(L, index);
+	s.m_unNumUploads = check_int(L, -1);
+	return s;
+}
+
+static RemoteStorageAppSyncProgress_t check_RemoteStorageAppSyncProgress_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageAppSyncProgress_t s;
+	lua_pushstring(L, "m_rgchCurrentFile");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchCurrentFile, 260);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_uBytesTransferredThisChunk");
+	lua_gettable(L, index);
+	s.m_uBytesTransferredThisChunk = check_uint32(L, -1);
+	lua_pushstring(L, "m_dAppPercentComplete");
+	lua_gettable(L, index);
+	s.m_dAppPercentComplete = check_double(L, -1);
+	lua_pushstring(L, "m_bUploading");
+	lua_gettable(L, index);
+	s.m_bUploading = check_bool(L, -1);
+	return s;
+}
+
+static RemoteStorageAppSyncStatusCheck_t check_RemoteStorageAppSyncStatusCheck_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageAppSyncStatusCheck_t s;
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static RemoteStorageFileShareResult_t check_RemoteStorageFileShareResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageFileShareResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_hFile");
+	lua_gettable(L, index);
+	s.m_hFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_rgchFilename");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchFilename, 260);
+	return s;
+}
+
+static RemoteStoragePublishFileResult_t check_RemoteStoragePublishFileResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStoragePublishFileResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	lua_gettable(L, index);
+	s.m_bUserNeedsToAcceptWorkshopLegalAgreement = check_bool(L, -1);
+	return s;
+}
+
+static RemoteStorageDeletePublishedFileResult_t check_RemoteStorageDeletePublishedFileResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageDeletePublishedFileResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static RemoteStorageEnumerateUserPublishedFilesResult_t check_RemoteStorageEnumerateUserPublishedFilesResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageEnumerateUserPublishedFilesResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	return s;
+}
+
+static RemoteStorageSubscribePublishedFileResult_t check_RemoteStorageSubscribePublishedFileResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageSubscribePublishedFileResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static RemoteStorageEnumerateUserSubscribedFilesResult_t check_RemoteStorageEnumerateUserSubscribedFilesResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageEnumerateUserSubscribedFilesResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	lua_pushstring(L, "m_rgRTimeSubscribed");
+	lua_gettable(L, index);
+	check_uint32_array(L, -1, s.m_rgRTimeSubscribed, 50);
+	return s;
+}
+
+static RemoteStorageUnsubscribePublishedFileResult_t check_RemoteStorageUnsubscribePublishedFileResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageUnsubscribePublishedFileResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static RemoteStorageUpdatePublishedFileResult_t check_RemoteStorageUpdatePublishedFileResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageUpdatePublishedFileResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	lua_gettable(L, index);
+	s.m_bUserNeedsToAcceptWorkshopLegalAgreement = check_bool(L, -1);
+	return s;
+}
+
+static RemoteStorageDownloadUGCResult_t check_RemoteStorageDownloadUGCResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageDownloadUGCResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_hFile");
+	lua_gettable(L, index);
+	s.m_hFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_nSizeInBytes");
+	lua_gettable(L, index);
+	s.m_nSizeInBytes = check_int32(L, -1);
+	lua_pushstring(L, "m_pchFileName");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_pchFileName, 260);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	lua_gettable(L, index);
+	s.m_ulSteamIDOwner = check_uint64(L, -1);
+	return s;
+}
+
+static RemoteStorageGetPublishedFileDetailsResult_t check_RemoteStorageGetPublishedFileDetailsResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageGetPublishedFileDetailsResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nCreatorAppID");
+	lua_gettable(L, index);
+	s.m_nCreatorAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_nConsumerAppID");
+	lua_gettable(L, index);
+	s.m_nConsumerAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_rgchTitle");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTitle, 129);
+	lua_pushstring(L, "m_rgchDescription");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchDescription, 8000);
+	lua_pushstring(L, "m_hFile");
+	lua_gettable(L, index);
+	s.m_hFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_hPreviewFile");
+	lua_gettable(L, index);
+	s.m_hPreviewFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	lua_gettable(L, index);
+	s.m_ulSteamIDOwner = check_uint64(L, -1);
+	lua_pushstring(L, "m_rtimeCreated");
+	lua_gettable(L, index);
+	s.m_rtimeCreated = check_uint32(L, -1);
+	lua_pushstring(L, "m_rtimeUpdated");
+	lua_gettable(L, index);
+	s.m_rtimeUpdated = check_uint32(L, -1);
+	lua_pushstring(L, "m_eVisibility");
+	lua_gettable(L, index);
+	s.m_eVisibility = check_ERemoteStoragePublishedFileVisibility(L, -1);
+	lua_pushstring(L, "m_bBanned");
+	lua_gettable(L, index);
+	s.m_bBanned = check_bool(L, -1);
+	lua_pushstring(L, "m_rgchTags");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTags, 1025);
+	lua_pushstring(L, "m_bTagsTruncated");
+	lua_gettable(L, index);
+	s.m_bTagsTruncated = check_bool(L, -1);
+	lua_pushstring(L, "m_pchFileName");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_pchFileName, 260);
+	lua_pushstring(L, "m_nFileSize");
+	lua_gettable(L, index);
+	s.m_nFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	lua_gettable(L, index);
+	s.m_nPreviewFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_rgchURL");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchURL, 256);
+	lua_pushstring(L, "m_eFileType");
+	lua_gettable(L, index);
+	s.m_eFileType = check_EWorkshopFileType(L, -1);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	lua_gettable(L, index);
+	s.m_bAcceptedForUse = check_bool(L, -1);
+	return s;
+}
+
+static RemoteStorageEnumerateWorkshopFilesResult_t check_RemoteStorageEnumerateWorkshopFilesResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageEnumerateWorkshopFilesResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	lua_pushstring(L, "m_rgScore");
+	lua_gettable(L, index);
+	check_float_array(L, -1, s.m_rgScore, 50);
+	lua_pushstring(L, "m_nAppId");
+	lua_gettable(L, index);
+	s.m_nAppId = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_unStartIndex");
+	lua_gettable(L, index);
+	s.m_unStartIndex = check_uint32(L, -1);
+	return s;
+}
+
+static RemoteStorageGetPublishedItemVoteDetailsResult_t check_RemoteStorageGetPublishedItemVoteDetailsResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageGetPublishedItemVoteDetailsResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unPublishedFileId");
+	lua_gettable(L, index);
+	s.m_unPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nVotesFor");
+	lua_gettable(L, index);
+	s.m_nVotesFor = check_int32(L, -1);
+	lua_pushstring(L, "m_nVotesAgainst");
+	lua_gettable(L, index);
+	s.m_nVotesAgainst = check_int32(L, -1);
+	lua_pushstring(L, "m_nReports");
+	lua_gettable(L, index);
+	s.m_nReports = check_int32(L, -1);
+	lua_pushstring(L, "m_fScore");
+	lua_gettable(L, index);
+	s.m_fScore = check_float(L, -1);
+	return s;
+}
+
+static RemoteStoragePublishedFileSubscribed_t check_RemoteStoragePublishedFileSubscribed_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStoragePublishedFileSubscribed_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static RemoteStoragePublishedFileUnsubscribed_t check_RemoteStoragePublishedFileUnsubscribed_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStoragePublishedFileUnsubscribed_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static RemoteStoragePublishedFileDeleted_t check_RemoteStoragePublishedFileDeleted_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStoragePublishedFileDeleted_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static RemoteStorageUpdateUserPublishedItemVoteResult_t check_RemoteStorageUpdateUserPublishedItemVoteResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageUpdateUserPublishedItemVoteResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static RemoteStorageUserVoteDetails_t check_RemoteStorageUserVoteDetails_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageUserVoteDetails_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eVote");
+	lua_gettable(L, index);
+	s.m_eVote = check_EWorkshopVote(L, -1);
+	return s;
+}
+
+static RemoteStorageEnumerateUserSharedWorkshopFilesResult_t check_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageEnumerateUserSharedWorkshopFilesResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	return s;
+}
+
+static RemoteStorageSetUserPublishedFileActionResult_t check_RemoteStorageSetUserPublishedFileActionResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageSetUserPublishedFileActionResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eAction");
+	lua_gettable(L, index);
+	s.m_eAction = check_EWorkshopFileAction(L, -1);
+	return s;
+}
+
+static RemoteStorageEnumeratePublishedFilesByUserActionResult_t check_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageEnumeratePublishedFilesByUserActionResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_eAction");
+	lua_gettable(L, index);
+	s.m_eAction = check_EWorkshopFileAction(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	lua_pushstring(L, "m_rgRTimeUpdated");
+	lua_gettable(L, index);
+	check_uint32_array(L, -1, s.m_rgRTimeUpdated, 50);
+	return s;
+}
+
+static RemoteStoragePublishFileProgress_t check_RemoteStoragePublishFileProgress_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStoragePublishFileProgress_t s;
+	lua_pushstring(L, "m_dPercentFile");
+	lua_gettable(L, index);
+	s.m_dPercentFile = check_double(L, -1);
+	lua_pushstring(L, "m_bPreview");
+	lua_gettable(L, index);
+	s.m_bPreview = check_bool(L, -1);
+	return s;
+}
+
+static RemoteStoragePublishedFileUpdated_t check_RemoteStoragePublishedFileUpdated_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStoragePublishedFileUpdated_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_ulUnused");
+	lua_gettable(L, index);
+	s.m_ulUnused = check_uint64(L, -1);
+	return s;
+}
+
+static RemoteStorageFileWriteAsyncComplete_t check_RemoteStorageFileWriteAsyncComplete_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageFileWriteAsyncComplete_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static RemoteStorageFileReadAsyncComplete_t check_RemoteStorageFileReadAsyncComplete_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoteStorageFileReadAsyncComplete_t s;
+	lua_pushstring(L, "m_hFileReadAsync");
+	lua_gettable(L, index);
+	s.m_hFileReadAsync = check_SteamAPICall_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nOffset");
+	lua_gettable(L, index);
+	s.m_nOffset = check_uint32(L, -1);
+	lua_pushstring(L, "m_cubRead");
+	lua_gettable(L, index);
+	s.m_cubRead = check_uint32(L, -1);
+	return s;
+}
+
+static LeaderboardEntry_t check_LeaderboardEntry_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LeaderboardEntry_t s;
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_nGlobalRank");
+	lua_gettable(L, index);
+	s.m_nGlobalRank = check_int32(L, -1);
+	lua_pushstring(L, "m_nScore");
+	lua_gettable(L, index);
+	s.m_nScore = check_int32(L, -1);
+	lua_pushstring(L, "m_cDetails");
+	lua_gettable(L, index);
+	s.m_cDetails = check_int32(L, -1);
+	lua_pushstring(L, "m_hUGC");
+	lua_gettable(L, index);
+	s.m_hUGC = check_UGCHandle_t(L, -1);
+	return s;
+}
+
+static UserStatsReceived_t check_UserStatsReceived_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	UserStatsReceived_t s;
+	lua_pushstring(L, "m_nGameID");
+	lua_gettable(L, index);
+	s.m_nGameID = check_uint64(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	return s;
+}
+
+static UserStatsStored_t check_UserStatsStored_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	UserStatsStored_t s;
+	lua_pushstring(L, "m_nGameID");
+	lua_gettable(L, index);
+	s.m_nGameID = check_uint64(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static UserAchievementStored_t check_UserAchievementStored_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	UserAchievementStored_t s;
+	lua_pushstring(L, "m_nGameID");
+	lua_gettable(L, index);
+	s.m_nGameID = check_uint64(L, -1);
+	lua_pushstring(L, "m_bGroupAchievement");
+	lua_gettable(L, index);
+	s.m_bGroupAchievement = check_bool(L, -1);
+	lua_pushstring(L, "m_rgchAchievementName");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchAchievementName, 128);
+	lua_pushstring(L, "m_nCurProgress");
+	lua_gettable(L, index);
+	s.m_nCurProgress = check_uint32(L, -1);
+	lua_pushstring(L, "m_nMaxProgress");
+	lua_gettable(L, index);
+	s.m_nMaxProgress = check_uint32(L, -1);
+	return s;
+}
+
+static LeaderboardFindResult_t check_LeaderboardFindResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LeaderboardFindResult_t s;
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	lua_gettable(L, index);
+	s.m_hSteamLeaderboard = check_SteamLeaderboard_t(L, -1);
+	lua_pushstring(L, "m_bLeaderboardFound");
+	lua_gettable(L, index);
+	s.m_bLeaderboardFound = check_uint8(L, -1);
+	return s;
+}
+
+static LeaderboardScoresDownloaded_t check_LeaderboardScoresDownloaded_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LeaderboardScoresDownloaded_t s;
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	lua_gettable(L, index);
+	s.m_hSteamLeaderboard = check_SteamLeaderboard_t(L, -1);
+	lua_pushstring(L, "m_hSteamLeaderboardEntries");
+	lua_gettable(L, index);
+	s.m_hSteamLeaderboardEntries = check_SteamLeaderboardEntries_t(L, -1);
+	lua_pushstring(L, "m_cEntryCount");
+	lua_gettable(L, index);
+	s.m_cEntryCount = check_int(L, -1);
+	return s;
+}
+
+static LeaderboardScoreUploaded_t check_LeaderboardScoreUploaded_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LeaderboardScoreUploaded_t s;
+	lua_pushstring(L, "m_bSuccess");
+	lua_gettable(L, index);
+	s.m_bSuccess = check_uint8(L, -1);
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	lua_gettable(L, index);
+	s.m_hSteamLeaderboard = check_SteamLeaderboard_t(L, -1);
+	lua_pushstring(L, "m_nScore");
+	lua_gettable(L, index);
+	s.m_nScore = check_int32(L, -1);
+	lua_pushstring(L, "m_bScoreChanged");
+	lua_gettable(L, index);
+	s.m_bScoreChanged = check_uint8(L, -1);
+	lua_pushstring(L, "m_nGlobalRankNew");
+	lua_gettable(L, index);
+	s.m_nGlobalRankNew = check_int(L, -1);
+	lua_pushstring(L, "m_nGlobalRankPrevious");
+	lua_gettable(L, index);
+	s.m_nGlobalRankPrevious = check_int(L, -1);
+	return s;
+}
+
+static NumberOfCurrentPlayers_t check_NumberOfCurrentPlayers_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	NumberOfCurrentPlayers_t s;
+	lua_pushstring(L, "m_bSuccess");
+	lua_gettable(L, index);
+	s.m_bSuccess = check_uint8(L, -1);
+	lua_pushstring(L, "m_cPlayers");
+	lua_gettable(L, index);
+	s.m_cPlayers = check_int32(L, -1);
+	return s;
+}
+
+static UserStatsUnloaded_t check_UserStatsUnloaded_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	UserStatsUnloaded_t s;
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	return s;
+}
+
+static UserAchievementIconFetched_t check_UserAchievementIconFetched_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	UserAchievementIconFetched_t s;
+	lua_pushstring(L, "m_nGameID");
+	lua_gettable(L, index);
+	s.m_nGameID = check_CGameID(L, -1);
+	lua_pushstring(L, "m_rgchAchievementName");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchAchievementName, 128);
+	lua_pushstring(L, "m_bAchieved");
+	lua_gettable(L, index);
+	s.m_bAchieved = check_bool(L, -1);
+	lua_pushstring(L, "m_nIconHandle");
+	lua_gettable(L, index);
+	s.m_nIconHandle = check_int(L, -1);
+	return s;
+}
+
+static GlobalAchievementPercentagesReady_t check_GlobalAchievementPercentagesReady_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GlobalAchievementPercentagesReady_t s;
+	lua_pushstring(L, "m_nGameID");
+	lua_gettable(L, index);
+	s.m_nGameID = check_uint64(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static LeaderboardUGCSet_t check_LeaderboardUGCSet_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	LeaderboardUGCSet_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_hSteamLeaderboard");
+	lua_gettable(L, index);
+	s.m_hSteamLeaderboard = check_SteamLeaderboard_t(L, -1);
+	return s;
+}
+
+static PS3TrophiesInstalled_t check_PS3TrophiesInstalled_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	PS3TrophiesInstalled_t s;
+	lua_pushstring(L, "m_nGameID");
+	lua_gettable(L, index);
+	s.m_nGameID = check_uint64(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ulRequiredDiskSpace");
+	lua_gettable(L, index);
+	s.m_ulRequiredDiskSpace = check_uint64(L, -1);
+	return s;
+}
+
+static GlobalStatsReceived_t check_GlobalStatsReceived_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GlobalStatsReceived_t s;
+	lua_pushstring(L, "m_nGameID");
+	lua_gettable(L, index);
+	s.m_nGameID = check_uint64(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static DlcInstalled_t check_DlcInstalled_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	DlcInstalled_t s;
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static RegisterActivationCodeResponse_t check_RegisterActivationCodeResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RegisterActivationCodeResponse_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_ERegisterActivationCodeResult(L, -1);
+	lua_pushstring(L, "m_unPackageRegistered");
+	lua_gettable(L, index);
+	s.m_unPackageRegistered = check_uint32(L, -1);
+	return s;
+}
+
+static AppProofOfPurchaseKeyResponse_t check_AppProofOfPurchaseKeyResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	AppProofOfPurchaseKeyResponse_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_uint32(L, -1);
+	lua_pushstring(L, "m_cchKeyLength");
+	lua_gettable(L, index);
+	s.m_cchKeyLength = check_uint32(L, -1);
+	lua_pushstring(L, "m_rgchKey");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchKey, 240);
+	return s;
+}
+
+static FileDetailsResult_t check_FileDetailsResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	FileDetailsResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ulFileSize");
+	lua_gettable(L, index);
+	s.m_ulFileSize = check_uint64(L, -1);
+	lua_pushstring(L, "m_FileSHA");
+	lua_gettable(L, index);
+	check_uint8_array(L, -1, s.m_FileSHA, 20);
+	lua_pushstring(L, "m_unFlags");
+	lua_gettable(L, index);
+	s.m_unFlags = check_uint32(L, -1);
+	return s;
+}
+
+static P2PSessionState_t check_P2PSessionState_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	P2PSessionState_t s;
+	lua_pushstring(L, "m_bConnectionActive");
+	lua_gettable(L, index);
+	s.m_bConnectionActive = check_uint8(L, -1);
+	lua_pushstring(L, "m_bConnecting");
+	lua_gettable(L, index);
+	s.m_bConnecting = check_uint8(L, -1);
+	lua_pushstring(L, "m_eP2PSessionError");
+	lua_gettable(L, index);
+	s.m_eP2PSessionError = check_uint8(L, -1);
+	lua_pushstring(L, "m_bUsingRelay");
+	lua_gettable(L, index);
+	s.m_bUsingRelay = check_uint8(L, -1);
+	lua_pushstring(L, "m_nBytesQueuedForSend");
+	lua_gettable(L, index);
+	s.m_nBytesQueuedForSend = check_int32(L, -1);
+	lua_pushstring(L, "m_nPacketsQueuedForSend");
+	lua_gettable(L, index);
+	s.m_nPacketsQueuedForSend = check_int32(L, -1);
+	lua_pushstring(L, "m_nRemoteIP");
+	lua_gettable(L, index);
+	s.m_nRemoteIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_nRemotePort");
+	lua_gettable(L, index);
+	s.m_nRemotePort = check_uint16(L, -1);
+	return s;
+}
+
+static P2PSessionRequest_t check_P2PSessionRequest_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	P2PSessionRequest_t s;
+	lua_pushstring(L, "m_steamIDRemote");
+	lua_gettable(L, index);
+	s.m_steamIDRemote = check_CSteamID(L, -1);
+	return s;
+}
+
+static P2PSessionConnectFail_t check_P2PSessionConnectFail_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	P2PSessionConnectFail_t s;
+	lua_pushstring(L, "m_steamIDRemote");
+	lua_gettable(L, index);
+	s.m_steamIDRemote = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_eP2PSessionError");
+	lua_gettable(L, index);
+	s.m_eP2PSessionError = check_uint8(L, -1);
+	return s;
+}
+
+static SocketStatusCallback_t check_SocketStatusCallback_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SocketStatusCallback_t s;
+	lua_pushstring(L, "m_hSocket");
+	lua_gettable(L, index);
+	s.m_hSocket = check_SNetSocket_t(L, -1);
+	lua_pushstring(L, "m_hListenSocket");
+	lua_gettable(L, index);
+	s.m_hListenSocket = check_SNetListenSocket_t(L, -1);
+	lua_pushstring(L, "m_steamIDRemote");
+	lua_gettable(L, index);
+	s.m_steamIDRemote = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_eSNetSocketState");
+	lua_gettable(L, index);
+	s.m_eSNetSocketState = check_int(L, -1);
+	return s;
+}
+
+static ScreenshotReady_t check_ScreenshotReady_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ScreenshotReady_t s;
+	lua_pushstring(L, "m_hLocal");
+	lua_gettable(L, index);
+	s.m_hLocal = check_ScreenshotHandle(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static VolumeHasChanged_t check_VolumeHasChanged_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	VolumeHasChanged_t s;
+	lua_pushstring(L, "m_flNewVolume");
+	lua_gettable(L, index);
+	s.m_flNewVolume = check_float(L, -1);
+	return s;
+}
+
+static MusicPlayerWantsShuffled_t check_MusicPlayerWantsShuffled_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MusicPlayerWantsShuffled_t s;
+	lua_pushstring(L, "m_bShuffled");
+	lua_gettable(L, index);
+	s.m_bShuffled = check_bool(L, -1);
+	return s;
+}
+
+static MusicPlayerWantsLooped_t check_MusicPlayerWantsLooped_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MusicPlayerWantsLooped_t s;
+	lua_pushstring(L, "m_bLooped");
+	lua_gettable(L, index);
+	s.m_bLooped = check_bool(L, -1);
+	return s;
+}
+
+static MusicPlayerWantsVolume_t check_MusicPlayerWantsVolume_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MusicPlayerWantsVolume_t s;
+	lua_pushstring(L, "m_flNewVolume");
+	lua_gettable(L, index);
+	s.m_flNewVolume = check_float(L, -1);
+	return s;
+}
+
+static MusicPlayerSelectsQueueEntry_t check_MusicPlayerSelectsQueueEntry_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MusicPlayerSelectsQueueEntry_t s;
+	lua_pushstring(L, "nID");
+	lua_gettable(L, index);
+	s.nID = check_int(L, -1);
+	return s;
+}
+
+static MusicPlayerSelectsPlaylistEntry_t check_MusicPlayerSelectsPlaylistEntry_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MusicPlayerSelectsPlaylistEntry_t s;
+	lua_pushstring(L, "nID");
+	lua_gettable(L, index);
+	s.nID = check_int(L, -1);
+	return s;
+}
+
+static MusicPlayerWantsPlayingRepeatStatus_t check_MusicPlayerWantsPlayingRepeatStatus_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	MusicPlayerWantsPlayingRepeatStatus_t s;
+	lua_pushstring(L, "m_nPlayingRepeatStatus");
+	lua_gettable(L, index);
+	s.m_nPlayingRepeatStatus = check_int(L, -1);
+	return s;
+}
+
+static HTTPRequestCompleted_t check_HTTPRequestCompleted_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTTPRequestCompleted_t s;
+	lua_pushstring(L, "m_hRequest");
+	lua_gettable(L, index);
+	s.m_hRequest = check_HTTPRequestHandle(L, -1);
+	lua_pushstring(L, "m_ulContextValue");
+	lua_gettable(L, index);
+	s.m_ulContextValue = check_uint64(L, -1);
+	lua_pushstring(L, "m_bRequestSuccessful");
+	lua_gettable(L, index);
+	s.m_bRequestSuccessful = check_bool(L, -1);
+	lua_pushstring(L, "m_eStatusCode");
+	lua_gettable(L, index);
+	s.m_eStatusCode = check_EHTTPStatusCode(L, -1);
+	lua_pushstring(L, "m_unBodySize");
+	lua_gettable(L, index);
+	s.m_unBodySize = check_uint32(L, -1);
+	return s;
+}
+
+static HTTPRequestHeadersReceived_t check_HTTPRequestHeadersReceived_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTTPRequestHeadersReceived_t s;
+	lua_pushstring(L, "m_hRequest");
+	lua_gettable(L, index);
+	s.m_hRequest = check_HTTPRequestHandle(L, -1);
+	lua_pushstring(L, "m_ulContextValue");
+	lua_gettable(L, index);
+	s.m_ulContextValue = check_uint64(L, -1);
+	return s;
+}
+
+static HTTPRequestDataReceived_t check_HTTPRequestDataReceived_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTTPRequestDataReceived_t s;
+	lua_pushstring(L, "m_hRequest");
+	lua_gettable(L, index);
+	s.m_hRequest = check_HTTPRequestHandle(L, -1);
+	lua_pushstring(L, "m_ulContextValue");
+	lua_gettable(L, index);
+	s.m_ulContextValue = check_uint64(L, -1);
+	lua_pushstring(L, "m_cOffset");
+	lua_gettable(L, index);
+	s.m_cOffset = check_uint32(L, -1);
+	lua_pushstring(L, "m_cBytesReceived");
+	lua_gettable(L, index);
+	s.m_cBytesReceived = check_uint32(L, -1);
+	return s;
+}
+
+static ControllerAnalogActionData_t check_ControllerAnalogActionData_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ControllerAnalogActionData_t s;
+	lua_pushstring(L, "eMode");
+	lua_gettable(L, index);
+	s.eMode = check_EControllerSourceMode(L, -1);
+	lua_pushstring(L, "x");
+	lua_gettable(L, index);
+	s.x = check_float(L, -1);
+	lua_pushstring(L, "y");
+	lua_gettable(L, index);
+	s.y = check_float(L, -1);
+	lua_pushstring(L, "bActive");
+	lua_gettable(L, index);
+	s.bActive = check_bool(L, -1);
+	return s;
+}
+
+static ControllerDigitalActionData_t check_ControllerDigitalActionData_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ControllerDigitalActionData_t s;
+	lua_pushstring(L, "bState");
+	lua_gettable(L, index);
+	s.bState = check_bool(L, -1);
+	lua_pushstring(L, "bActive");
+	lua_gettable(L, index);
+	s.bActive = check_bool(L, -1);
+	return s;
+}
+
+static ControllerMotionData_t check_ControllerMotionData_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ControllerMotionData_t s;
+	lua_pushstring(L, "rotQuatX");
+	lua_gettable(L, index);
+	s.rotQuatX = check_float(L, -1);
+	lua_pushstring(L, "rotQuatY");
+	lua_gettable(L, index);
+	s.rotQuatY = check_float(L, -1);
+	lua_pushstring(L, "rotQuatZ");
+	lua_gettable(L, index);
+	s.rotQuatZ = check_float(L, -1);
+	lua_pushstring(L, "rotQuatW");
+	lua_gettable(L, index);
+	s.rotQuatW = check_float(L, -1);
+	lua_pushstring(L, "posAccelX");
+	lua_gettable(L, index);
+	s.posAccelX = check_float(L, -1);
+	lua_pushstring(L, "posAccelY");
+	lua_gettable(L, index);
+	s.posAccelY = check_float(L, -1);
+	lua_pushstring(L, "posAccelZ");
+	lua_gettable(L, index);
+	s.posAccelZ = check_float(L, -1);
+	lua_pushstring(L, "rotVelX");
+	lua_gettable(L, index);
+	s.rotVelX = check_float(L, -1);
+	lua_pushstring(L, "rotVelY");
+	lua_gettable(L, index);
+	s.rotVelY = check_float(L, -1);
+	lua_pushstring(L, "rotVelZ");
+	lua_gettable(L, index);
+	s.rotVelZ = check_float(L, -1);
+	return s;
+}
+
+static SteamUGCDetails_t check_SteamUGCDetails_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamUGCDetails_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_eFileType");
+	lua_gettable(L, index);
+	s.m_eFileType = check_EWorkshopFileType(L, -1);
+	lua_pushstring(L, "m_nCreatorAppID");
+	lua_gettable(L, index);
+	s.m_nCreatorAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_nConsumerAppID");
+	lua_gettable(L, index);
+	s.m_nConsumerAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_rgchTitle");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTitle, 129);
+	lua_pushstring(L, "m_rgchDescription");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchDescription, 8000);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	lua_gettable(L, index);
+	s.m_ulSteamIDOwner = check_uint64(L, -1);
+	lua_pushstring(L, "m_rtimeCreated");
+	lua_gettable(L, index);
+	s.m_rtimeCreated = check_uint32(L, -1);
+	lua_pushstring(L, "m_rtimeUpdated");
+	lua_gettable(L, index);
+	s.m_rtimeUpdated = check_uint32(L, -1);
+	lua_pushstring(L, "m_rtimeAddedToUserList");
+	lua_gettable(L, index);
+	s.m_rtimeAddedToUserList = check_uint32(L, -1);
+	lua_pushstring(L, "m_eVisibility");
+	lua_gettable(L, index);
+	s.m_eVisibility = check_ERemoteStoragePublishedFileVisibility(L, -1);
+	lua_pushstring(L, "m_bBanned");
+	lua_gettable(L, index);
+	s.m_bBanned = check_bool(L, -1);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	lua_gettable(L, index);
+	s.m_bAcceptedForUse = check_bool(L, -1);
+	lua_pushstring(L, "m_bTagsTruncated");
+	lua_gettable(L, index);
+	s.m_bTagsTruncated = check_bool(L, -1);
+	lua_pushstring(L, "m_rgchTags");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTags, 1025);
+	lua_pushstring(L, "m_hFile");
+	lua_gettable(L, index);
+	s.m_hFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_hPreviewFile");
+	lua_gettable(L, index);
+	s.m_hPreviewFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_pchFileName");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_pchFileName, 260);
+	lua_pushstring(L, "m_nFileSize");
+	lua_gettable(L, index);
+	s.m_nFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	lua_gettable(L, index);
+	s.m_nPreviewFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_rgchURL");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchURL, 256);
+	lua_pushstring(L, "m_unVotesUp");
+	lua_gettable(L, index);
+	s.m_unVotesUp = check_uint32(L, -1);
+	lua_pushstring(L, "m_unVotesDown");
+	lua_gettable(L, index);
+	s.m_unVotesDown = check_uint32(L, -1);
+	lua_pushstring(L, "m_flScore");
+	lua_gettable(L, index);
+	s.m_flScore = check_float(L, -1);
+	lua_pushstring(L, "m_unNumChildren");
+	lua_gettable(L, index);
+	s.m_unNumChildren = check_uint32(L, -1);
+	return s;
+}
+
+static SteamUGCQueryCompleted_t check_SteamUGCQueryCompleted_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamUGCQueryCompleted_t s;
+	lua_pushstring(L, "m_handle");
+	lua_gettable(L, index);
+	s.m_handle = check_UGCQueryHandle_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unNumResultsReturned");
+	lua_gettable(L, index);
+	s.m_unNumResultsReturned = check_uint32(L, -1);
+	lua_pushstring(L, "m_unTotalMatchingResults");
+	lua_gettable(L, index);
+	s.m_unTotalMatchingResults = check_uint32(L, -1);
+	lua_pushstring(L, "m_bCachedData");
+	lua_gettable(L, index);
+	s.m_bCachedData = check_bool(L, -1);
+	return s;
+}
+
+static SteamUGCRequestUGCDetailsResult_t check_SteamUGCRequestUGCDetailsResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamUGCRequestUGCDetailsResult_t s;
+	lua_pushstring(L, "m_details");
+	lua_gettable(L, index);
+	s.m_details = check_SteamUGCDetails_t(L, -1);
+	lua_pushstring(L, "m_bCachedData");
+	lua_gettable(L, index);
+	s.m_bCachedData = check_bool(L, -1);
+	return s;
+}
+
+static CreateItemResult_t check_CreateItemResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	CreateItemResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	lua_gettable(L, index);
+	s.m_bUserNeedsToAcceptWorkshopLegalAgreement = check_bool(L, -1);
+	return s;
+}
+
+static SubmitItemUpdateResult_t check_SubmitItemUpdateResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SubmitItemUpdateResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	lua_gettable(L, index);
+	s.m_bUserNeedsToAcceptWorkshopLegalAgreement = check_bool(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static DownloadItemResult_t check_DownloadItemResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	DownloadItemResult_t s;
+	lua_pushstring(L, "m_unAppID");
+	lua_gettable(L, index);
+	s.m_unAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static UserFavoriteItemsListChanged_t check_UserFavoriteItemsListChanged_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	UserFavoriteItemsListChanged_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_bWasAddRequest");
+	lua_gettable(L, index);
+	s.m_bWasAddRequest = check_bool(L, -1);
+	return s;
+}
+
+static SetUserItemVoteResult_t check_SetUserItemVoteResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SetUserItemVoteResult_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_bVoteUp");
+	lua_gettable(L, index);
+	s.m_bVoteUp = check_bool(L, -1);
+	return s;
+}
+
+static GetUserItemVoteResult_t check_GetUserItemVoteResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GetUserItemVoteResult_t s;
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_bVotedUp");
+	lua_gettable(L, index);
+	s.m_bVotedUp = check_bool(L, -1);
+	lua_pushstring(L, "m_bVotedDown");
+	lua_gettable(L, index);
+	s.m_bVotedDown = check_bool(L, -1);
+	lua_pushstring(L, "m_bVoteSkipped");
+	lua_gettable(L, index);
+	s.m_bVoteSkipped = check_bool(L, -1);
+	return s;
+}
+
+static StartPlaytimeTrackingResult_t check_StartPlaytimeTrackingResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	StartPlaytimeTrackingResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static StopPlaytimeTrackingResult_t check_StopPlaytimeTrackingResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	StopPlaytimeTrackingResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static AddUGCDependencyResult_t check_AddUGCDependencyResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	AddUGCDependencyResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nChildPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nChildPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static RemoveUGCDependencyResult_t check_RemoveUGCDependencyResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoveUGCDependencyResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nChildPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nChildPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static AddAppDependencyResult_t check_AddAppDependencyResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	AddAppDependencyResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static RemoveAppDependencyResult_t check_RemoveAppDependencyResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	RemoveAppDependencyResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static GetAppDependenciesResult_t check_GetAppDependenciesResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GetAppDependenciesResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_rgAppIDs");
+	lua_gettable(L, index);
+	check_AppId_t_array(L, -1, s.m_rgAppIDs, 32);
+	lua_pushstring(L, "m_nNumAppDependencies");
+	lua_gettable(L, index);
+	s.m_nNumAppDependencies = check_uint32(L, -1);
+	lua_pushstring(L, "m_nTotalNumAppDependencies");
+	lua_gettable(L, index);
+	s.m_nTotalNumAppDependencies = check_uint32(L, -1);
+	return s;
+}
+
+static DeleteItemResult_t check_DeleteItemResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	DeleteItemResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static SteamAppInstalled_t check_SteamAppInstalled_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamAppInstalled_t s;
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static SteamAppUninstalled_t check_SteamAppUninstalled_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamAppUninstalled_t s;
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static HTML_BrowserReady_t check_HTML_BrowserReady_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_BrowserReady_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	return s;
+}
+
+static HTML_NeedsPaint_t check_HTML_NeedsPaint_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_NeedsPaint_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pBGRA");
+	lua_gettable(L, index);
+	s.pBGRA = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "unWide");
+	lua_gettable(L, index);
+	s.unWide = check_uint32(L, -1);
+	lua_pushstring(L, "unTall");
+	lua_gettable(L, index);
+	s.unTall = check_uint32(L, -1);
+	lua_pushstring(L, "unUpdateX");
+	lua_gettable(L, index);
+	s.unUpdateX = check_uint32(L, -1);
+	lua_pushstring(L, "unUpdateY");
+	lua_gettable(L, index);
+	s.unUpdateY = check_uint32(L, -1);
+	lua_pushstring(L, "unUpdateWide");
+	lua_gettable(L, index);
+	s.unUpdateWide = check_uint32(L, -1);
+	lua_pushstring(L, "unUpdateTall");
+	lua_gettable(L, index);
+	s.unUpdateTall = check_uint32(L, -1);
+	lua_pushstring(L, "unScrollX");
+	lua_gettable(L, index);
+	s.unScrollX = check_uint32(L, -1);
+	lua_pushstring(L, "unScrollY");
+	lua_gettable(L, index);
+	s.unScrollY = check_uint32(L, -1);
+	lua_pushstring(L, "flPageScale");
+	lua_gettable(L, index);
+	s.flPageScale = check_float(L, -1);
+	lua_pushstring(L, "unPageSerial");
+	lua_gettable(L, index);
+	s.unPageSerial = check_uint32(L, -1);
+	return s;
+}
+
+static HTML_StartRequest_t check_HTML_StartRequest_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_StartRequest_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchURL");
+	lua_gettable(L, index);
+	s.pchURL = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "pchTarget");
+	lua_gettable(L, index);
+	s.pchTarget = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "pchPostData");
+	lua_gettable(L, index);
+	s.pchPostData = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "bIsRedirect");
+	lua_gettable(L, index);
+	s.bIsRedirect = check_bool(L, -1);
+	return s;
+}
+
+static HTML_CloseBrowser_t check_HTML_CloseBrowser_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_CloseBrowser_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	return s;
+}
+
+static HTML_URLChanged_t check_HTML_URLChanged_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_URLChanged_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchURL");
+	lua_gettable(L, index);
+	s.pchURL = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "pchPostData");
+	lua_gettable(L, index);
+	s.pchPostData = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "bIsRedirect");
+	lua_gettable(L, index);
+	s.bIsRedirect = check_bool(L, -1);
+	lua_pushstring(L, "pchPageTitle");
+	lua_gettable(L, index);
+	s.pchPageTitle = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "bNewNavigation");
+	lua_gettable(L, index);
+	s.bNewNavigation = check_bool(L, -1);
+	return s;
+}
+
+static HTML_FinishedRequest_t check_HTML_FinishedRequest_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_FinishedRequest_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchURL");
+	lua_gettable(L, index);
+	s.pchURL = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "pchPageTitle");
+	lua_gettable(L, index);
+	s.pchPageTitle = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_OpenLinkInNewTab_t check_HTML_OpenLinkInNewTab_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_OpenLinkInNewTab_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchURL");
+	lua_gettable(L, index);
+	s.pchURL = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_ChangedTitle_t check_HTML_ChangedTitle_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_ChangedTitle_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchTitle");
+	lua_gettable(L, index);
+	s.pchTitle = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_SearchResults_t check_HTML_SearchResults_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_SearchResults_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "unResults");
+	lua_gettable(L, index);
+	s.unResults = check_uint32(L, -1);
+	lua_pushstring(L, "unCurrentMatch");
+	lua_gettable(L, index);
+	s.unCurrentMatch = check_uint32(L, -1);
+	return s;
+}
+
+static HTML_CanGoBackAndForward_t check_HTML_CanGoBackAndForward_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_CanGoBackAndForward_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "bCanGoBack");
+	lua_gettable(L, index);
+	s.bCanGoBack = check_bool(L, -1);
+	lua_pushstring(L, "bCanGoForward");
+	lua_gettable(L, index);
+	s.bCanGoForward = check_bool(L, -1);
+	return s;
+}
+
+static HTML_HorizontalScroll_t check_HTML_HorizontalScroll_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_HorizontalScroll_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "unScrollMax");
+	lua_gettable(L, index);
+	s.unScrollMax = check_uint32(L, -1);
+	lua_pushstring(L, "unScrollCurrent");
+	lua_gettable(L, index);
+	s.unScrollCurrent = check_uint32(L, -1);
+	lua_pushstring(L, "flPageScale");
+	lua_gettable(L, index);
+	s.flPageScale = check_float(L, -1);
+	lua_pushstring(L, "bVisible");
+	lua_gettable(L, index);
+	s.bVisible = check_bool(L, -1);
+	lua_pushstring(L, "unPageSize");
+	lua_gettable(L, index);
+	s.unPageSize = check_uint32(L, -1);
+	return s;
+}
+
+static HTML_VerticalScroll_t check_HTML_VerticalScroll_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_VerticalScroll_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "unScrollMax");
+	lua_gettable(L, index);
+	s.unScrollMax = check_uint32(L, -1);
+	lua_pushstring(L, "unScrollCurrent");
+	lua_gettable(L, index);
+	s.unScrollCurrent = check_uint32(L, -1);
+	lua_pushstring(L, "flPageScale");
+	lua_gettable(L, index);
+	s.flPageScale = check_float(L, -1);
+	lua_pushstring(L, "bVisible");
+	lua_gettable(L, index);
+	s.bVisible = check_bool(L, -1);
+	lua_pushstring(L, "unPageSize");
+	lua_gettable(L, index);
+	s.unPageSize = check_uint32(L, -1);
+	return s;
+}
+
+static HTML_LinkAtPosition_t check_HTML_LinkAtPosition_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_LinkAtPosition_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "x");
+	lua_gettable(L, index);
+	s.x = check_uint32(L, -1);
+	lua_pushstring(L, "y");
+	lua_gettable(L, index);
+	s.y = check_uint32(L, -1);
+	lua_pushstring(L, "pchURL");
+	lua_gettable(L, index);
+	s.pchURL = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "bInput");
+	lua_gettable(L, index);
+	s.bInput = check_bool(L, -1);
+	lua_pushstring(L, "bLiveLink");
+	lua_gettable(L, index);
+	s.bLiveLink = check_bool(L, -1);
+	return s;
+}
+
+static HTML_JSAlert_t check_HTML_JSAlert_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_JSAlert_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchMessage");
+	lua_gettable(L, index);
+	s.pchMessage = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_JSConfirm_t check_HTML_JSConfirm_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_JSConfirm_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchMessage");
+	lua_gettable(L, index);
+	s.pchMessage = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_FileOpenDialog_t check_HTML_FileOpenDialog_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_FileOpenDialog_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchTitle");
+	lua_gettable(L, index);
+	s.pchTitle = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "pchInitialFile");
+	lua_gettable(L, index);
+	s.pchInitialFile = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_NewWindow_t check_HTML_NewWindow_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_NewWindow_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchURL");
+	lua_gettable(L, index);
+	s.pchURL = check_const_char_ptr(L, -1);
+	lua_pushstring(L, "unX");
+	lua_gettable(L, index);
+	s.unX = check_uint32(L, -1);
+	lua_pushstring(L, "unY");
+	lua_gettable(L, index);
+	s.unY = check_uint32(L, -1);
+	lua_pushstring(L, "unWide");
+	lua_gettable(L, index);
+	s.unWide = check_uint32(L, -1);
+	lua_pushstring(L, "unTall");
+	lua_gettable(L, index);
+	s.unTall = check_uint32(L, -1);
+	lua_pushstring(L, "unNewWindow_BrowserHandle");
+	lua_gettable(L, index);
+	s.unNewWindow_BrowserHandle = check_HHTMLBrowser(L, -1);
+	return s;
+}
+
+static HTML_SetCursor_t check_HTML_SetCursor_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_SetCursor_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "eMouseCursor");
+	lua_gettable(L, index);
+	s.eMouseCursor = check_uint32(L, -1);
+	return s;
+}
+
+static HTML_StatusText_t check_HTML_StatusText_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_StatusText_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchMsg");
+	lua_gettable(L, index);
+	s.pchMsg = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_ShowToolTip_t check_HTML_ShowToolTip_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_ShowToolTip_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchMsg");
+	lua_gettable(L, index);
+	s.pchMsg = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_UpdateToolTip_t check_HTML_UpdateToolTip_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_UpdateToolTip_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "pchMsg");
+	lua_gettable(L, index);
+	s.pchMsg = check_const_char_ptr(L, -1);
+	return s;
+}
+
+static HTML_HideToolTip_t check_HTML_HideToolTip_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_HideToolTip_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	return s;
+}
+
+static HTML_BrowserRestarted_t check_HTML_BrowserRestarted_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	HTML_BrowserRestarted_t s;
+	lua_pushstring(L, "unBrowserHandle");
+	lua_gettable(L, index);
+	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
+	lua_pushstring(L, "unOldBrowserHandle");
+	lua_gettable(L, index);
+	s.unOldBrowserHandle = check_HHTMLBrowser(L, -1);
+	return s;
+}
+
+static SteamItemDetails_t check_SteamItemDetails_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamItemDetails_t s;
+	lua_pushstring(L, "m_itemId");
+	lua_gettable(L, index);
+	s.m_itemId = check_SteamItemInstanceID_t(L, -1);
+	lua_pushstring(L, "m_iDefinition");
+	lua_gettable(L, index);
+	s.m_iDefinition = check_SteamItemDef_t(L, -1);
+	lua_pushstring(L, "m_unQuantity");
+	lua_gettable(L, index);
+	s.m_unQuantity = check_uint16(L, -1);
+	lua_pushstring(L, "m_unFlags");
+	lua_gettable(L, index);
+	s.m_unFlags = check_uint16(L, -1);
+	return s;
+}
+
+static SteamInventoryResultReady_t check_SteamInventoryResultReady_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamInventoryResultReady_t s;
+	lua_pushstring(L, "m_handle");
+	lua_gettable(L, index);
+	s.m_handle = check_SteamInventoryResult_t(L, -1);
+	lua_pushstring(L, "m_result");
+	lua_gettable(L, index);
+	s.m_result = check_EResult(L, -1);
+	return s;
+}
+
+static SteamInventoryFullUpdate_t check_SteamInventoryFullUpdate_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamInventoryFullUpdate_t s;
+	lua_pushstring(L, "m_handle");
+	lua_gettable(L, index);
+	s.m_handle = check_SteamInventoryResult_t(L, -1);
+	return s;
+}
+
+static SteamInventoryEligiblePromoItemDefIDs_t check_SteamInventoryEligiblePromoItemDefIDs_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamInventoryEligiblePromoItemDefIDs_t s;
+	lua_pushstring(L, "m_result");
+	lua_gettable(L, index);
+	s.m_result = check_EResult(L, -1);
+	lua_pushstring(L, "m_steamID");
+	lua_gettable(L, index);
+	s.m_steamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_numEligiblePromoItemDefs");
+	lua_gettable(L, index);
+	s.m_numEligiblePromoItemDefs = check_int(L, -1);
+	lua_pushstring(L, "m_bCachedData");
+	lua_gettable(L, index);
+	s.m_bCachedData = check_bool(L, -1);
+	return s;
+}
+
+static SteamInventoryStartPurchaseResult_t check_SteamInventoryStartPurchaseResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamInventoryStartPurchaseResult_t s;
+	lua_pushstring(L, "m_result");
+	lua_gettable(L, index);
+	s.m_result = check_EResult(L, -1);
+	lua_pushstring(L, "m_ulOrderID");
+	lua_gettable(L, index);
+	s.m_ulOrderID = check_uint64(L, -1);
+	lua_pushstring(L, "m_ulTransID");
+	lua_gettable(L, index);
+	s.m_ulTransID = check_uint64(L, -1);
+	return s;
+}
+
+static SteamInventoryRequestPricesResult_t check_SteamInventoryRequestPricesResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	SteamInventoryRequestPricesResult_t s;
+	lua_pushstring(L, "m_result");
+	lua_gettable(L, index);
+	s.m_result = check_EResult(L, -1);
+	lua_pushstring(L, "m_rgchCurrency");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchCurrency, 4);
+	return s;
+}
+
+static BroadcastUploadStop_t check_BroadcastUploadStop_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	BroadcastUploadStop_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EBroadcastUploadResult(L, -1);
+	return s;
+}
+
+static GetVideoURLResult_t check_GetVideoURLResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GetVideoURLResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unVideoAppID");
+	lua_gettable(L, index);
+	s.m_unVideoAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_rgchURL");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchURL, 256);
+	return s;
+}
+
+static GetOPFSettingsResult_t check_GetOPFSettingsResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GetOPFSettingsResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unVideoAppID");
+	lua_gettable(L, index);
+	s.m_unVideoAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static GSClientApprove_t check_GSClientApprove_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSClientApprove_t s;
+	lua_pushstring(L, "m_SteamID");
+	lua_gettable(L, index);
+	s.m_SteamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_OwnerSteamID");
+	lua_gettable(L, index);
+	s.m_OwnerSteamID = check_CSteamID(L, -1);
+	return s;
+}
+
+static GSClientDeny_t check_GSClientDeny_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSClientDeny_t s;
+	lua_pushstring(L, "m_SteamID");
+	lua_gettable(L, index);
+	s.m_SteamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_eDenyReason");
+	lua_gettable(L, index);
+	s.m_eDenyReason = check_EDenyReason(L, -1);
+	lua_pushstring(L, "m_rgchOptionalText");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchOptionalText, 128);
+	return s;
+}
+
+static GSClientKick_t check_GSClientKick_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSClientKick_t s;
+	lua_pushstring(L, "m_SteamID");
+	lua_gettable(L, index);
+	s.m_SteamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_eDenyReason");
+	lua_gettable(L, index);
+	s.m_eDenyReason = check_EDenyReason(L, -1);
+	return s;
+}
+
+static GSClientAchievementStatus_t check_GSClientAchievementStatus_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSClientAchievementStatus_t s;
+	lua_pushstring(L, "m_SteamID");
+	lua_gettable(L, index);
+	s.m_SteamID = check_uint64(L, -1);
+	lua_pushstring(L, "m_pchAchievement");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_pchAchievement, 128);
+	lua_pushstring(L, "m_bUnlocked");
+	lua_gettable(L, index);
+	s.m_bUnlocked = check_bool(L, -1);
+	return s;
+}
+
+static GSPolicyResponse_t check_GSPolicyResponse_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSPolicyResponse_t s;
+	lua_pushstring(L, "m_bSecure");
+	lua_gettable(L, index);
+	s.m_bSecure = check_uint8(L, -1);
+	return s;
+}
+
+static GSGameplayStats_t check_GSGameplayStats_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSGameplayStats_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nRank");
+	lua_gettable(L, index);
+	s.m_nRank = check_int32(L, -1);
+	lua_pushstring(L, "m_unTotalConnects");
+	lua_gettable(L, index);
+	s.m_unTotalConnects = check_uint32(L, -1);
+	lua_pushstring(L, "m_unTotalMinutesPlayed");
+	lua_gettable(L, index);
+	s.m_unTotalMinutesPlayed = check_uint32(L, -1);
+	return s;
+}
+
+static GSClientGroupStatus_t check_GSClientGroupStatus_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSClientGroupStatus_t s;
+	lua_pushstring(L, "m_SteamIDUser");
+	lua_gettable(L, index);
+	s.m_SteamIDUser = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_SteamIDGroup");
+	lua_gettable(L, index);
+	s.m_SteamIDGroup = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_bMember");
+	lua_gettable(L, index);
+	s.m_bMember = check_bool(L, -1);
+	lua_pushstring(L, "m_bOfficer");
+	lua_gettable(L, index);
+	s.m_bOfficer = check_bool(L, -1);
+	return s;
+}
+
+static GSReputation_t check_GSReputation_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSReputation_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unReputationScore");
+	lua_gettable(L, index);
+	s.m_unReputationScore = check_uint32(L, -1);
+	lua_pushstring(L, "m_bBanned");
+	lua_gettable(L, index);
+	s.m_bBanned = check_bool(L, -1);
+	lua_pushstring(L, "m_unBannedIP");
+	lua_gettable(L, index);
+	s.m_unBannedIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_usBannedPort");
+	lua_gettable(L, index);
+	s.m_usBannedPort = check_uint16(L, -1);
+	lua_pushstring(L, "m_ulBannedGameID");
+	lua_gettable(L, index);
+	s.m_ulBannedGameID = check_uint64(L, -1);
+	lua_pushstring(L, "m_unBanExpires");
+	lua_gettable(L, index);
+	s.m_unBanExpires = check_uint32(L, -1);
+	return s;
+}
+
+static AssociateWithClanResult_t check_AssociateWithClanResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	AssociateWithClanResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static ComputeNewPlayerCompatibilityResult_t check_ComputeNewPlayerCompatibilityResult_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	ComputeNewPlayerCompatibilityResult_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_cPlayersThatDontLikeCandidate");
+	lua_gettable(L, index);
+	s.m_cPlayersThatDontLikeCandidate = check_int(L, -1);
+	lua_pushstring(L, "m_cPlayersThatCandidateDoesntLike");
+	lua_gettable(L, index);
+	s.m_cPlayersThatCandidateDoesntLike = check_int(L, -1);
+	lua_pushstring(L, "m_cClanPlayersThatDontLikeCandidate");
+	lua_gettable(L, index);
+	s.m_cClanPlayersThatDontLikeCandidate = check_int(L, -1);
+	lua_pushstring(L, "m_SteamIDCandidate");
+	lua_gettable(L, index);
+	s.m_SteamIDCandidate = check_CSteamID(L, -1);
+	return s;
+}
+
+static GSStatsReceived_t check_GSStatsReceived_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSStatsReceived_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	return s;
+}
+
+static GSStatsStored_t check_GSStatsStored_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSStatsStored_t s;
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	return s;
+}
+
+static GSStatsUnloaded_t check_GSStatsUnloaded_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	GSStatsUnloaded_t s;
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	return s;
+}
+
 
 
 
@@ -1114,11 +8979,15 @@ static CGameID check_class_CGameID(lua_State* L, int index) {
 static lua_Listener steamworksListener;
 
 class SteamCallbackWrapper {
+	private:
+		int64 m_iAppID;
 	public:
 		SteamCallbackWrapper();
 
-		// General
-		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
+		//STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
+		STEAM_CALLBACK(SteamCallbackWrapper, OnPersonaStateChange_t, PersonaStateChange_t, m_CallbackPersonaStateChange_t);
+		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated_t, GameOverlayActivated_t, m_CallbackGameOverlayActivated_t);
+		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsReceived_t, UserStatsReceived_t, m_CallbackUserStatsReceived_t);
 
 
 		
@@ -1166,12 +9035,12 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
-		CCallResult<SteamCallbackWrapper, SetPersonaNameResponse_t> m_CallResultSetPersonaNameResponse_t;
-		void TrackSteamAPICallSetPersonaNameResponse_t(SteamAPICall_t steamAPICall) {
-			m_CallResultSetPersonaNameResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSetPersonaNameResponse_t);
+		CCallResult<SteamCallbackWrapper, ClanOfficerListResponse_t> m_CallResultClanOfficerListResponse_t;
+		void TrackSteamAPICallClanOfficerListResponse_t(SteamAPICall_t steamAPICall) {
+			m_CallResultClanOfficerListResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnClanOfficerListResponse_t);
 		}
-		void OnSetPersonaNameResponse_t(SetPersonaNameResponse_t *pResult, bool bIOFailure) {
-			dmLogInfo("SteamCallbackWrapper::OnSetPersonaNameResponse_t\n");
+		void OnClanOfficerListResponse_t(ClanOfficerListResponse_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnClanOfficerListResponse_t\n");
 			lua_State* L = steamworksListener.m_L;
 			if (!L) {
 				dmLogInfo("no lua state\n");
@@ -1179,8 +9048,8 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
-			lua_pushstring(L, "SetPersonaNameResponse_t");
-			push_SetPersonaNameResponse_t(L, *pResult);
+			lua_pushstring(L, "ClanOfficerListResponse_t");
+			push_ClanOfficerListResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
 				lua_pop(L, 2);
@@ -1203,28 +9072,6 @@ class SteamCallbackWrapper {
 			lua_pushlistener(L, steamworksListener);
 			lua_pushstring(L, "DownloadClanActivityCountsResult_t");
 			push_DownloadClanActivityCountsResult_t(L, *pResult);
-			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
-			if (ret != 0) {
-				lua_pop(L, 2);
-			}
-			assert(top == lua_gettop(L));
-		}
-		
-		CCallResult<SteamCallbackWrapper, ClanOfficerListResponse_t> m_CallResultClanOfficerListResponse_t;
-		void TrackSteamAPICallClanOfficerListResponse_t(SteamAPICall_t steamAPICall) {
-			m_CallResultClanOfficerListResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnClanOfficerListResponse_t);
-		}
-		void OnClanOfficerListResponse_t(ClanOfficerListResponse_t *pResult, bool bIOFailure) {
-			dmLogInfo("SteamCallbackWrapper::OnClanOfficerListResponse_t\n");
-			lua_State* L = steamworksListener.m_L;
-			if (!L) {
-				dmLogInfo("no lua state\n");
-				return;
-			}
-			int top = lua_gettop(L);
-			lua_pushlistener(L, steamworksListener);
-			lua_pushstring(L, "ClanOfficerListResponse_t");
-			push_ClanOfficerListResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
 				lua_pop(L, 2);
@@ -1320,6 +9167,28 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, SetPersonaNameResponse_t> m_CallResultSetPersonaNameResponse_t;
+		void TrackSteamAPICallSetPersonaNameResponse_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSetPersonaNameResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSetPersonaNameResponse_t);
+		}
+		void OnSetPersonaNameResponse_t(SetPersonaNameResponse_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSetPersonaNameResponse_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "SetPersonaNameResponse_t");
+			push_SetPersonaNameResponse_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, CheckFileSignature_t> m_CallResultCheckFileSignature_t;
 		void TrackSteamAPICallCheckFileSignature_t(SteamAPICall_t steamAPICall) {
 			m_CallResultCheckFileSignature_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnCheckFileSignature_t);
@@ -1342,24 +9211,250 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
-
-		void OnFindLeaderboard(LeaderboardFindResult_t *pFindLearderboardResult, bool bIOFailure);
-		CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_SteamCallResultCreateLeaderboard;
+		CCallResult<SteamCallbackWrapper, UserStatsReceived_t> m_CallResultUserStatsReceived_t;
+		void TrackSteamAPICallUserStatsReceived_t(SteamAPICall_t steamAPICall) {
+			m_CallResultUserStatsReceived_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnUserStatsReceived_t);
+		}
+		void OnUserStatsReceived_t(UserStatsReceived_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "UserStatsReceived_t");
+			push_UserStatsReceived_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_CallResultLeaderboardFindResult_t;
+		void TrackSteamAPICallLeaderboardFindResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultLeaderboardFindResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnLeaderboardFindResult_t);
+		}
+		void OnLeaderboardFindResult_t(LeaderboardFindResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnLeaderboardFindResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "LeaderboardFindResult_t");
+			push_LeaderboardFindResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, LeaderboardScoresDownloaded_t> m_CallResultLeaderboardScoresDownloaded_t;
+		void TrackSteamAPICallLeaderboardScoresDownloaded_t(SteamAPICall_t steamAPICall) {
+			m_CallResultLeaderboardScoresDownloaded_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnLeaderboardScoresDownloaded_t);
+		}
+		void OnLeaderboardScoresDownloaded_t(LeaderboardScoresDownloaded_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnLeaderboardScoresDownloaded_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "LeaderboardScoresDownloaded_t");
+			push_LeaderboardScoresDownloaded_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, LeaderboardScoreUploaded_t> m_CallResultLeaderboardScoreUploaded_t;
+		void TrackSteamAPICallLeaderboardScoreUploaded_t(SteamAPICall_t steamAPICall) {
+			m_CallResultLeaderboardScoreUploaded_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnLeaderboardScoreUploaded_t);
+		}
+		void OnLeaderboardScoreUploaded_t(LeaderboardScoreUploaded_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnLeaderboardScoreUploaded_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "LeaderboardScoreUploaded_t");
+			push_LeaderboardScoreUploaded_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, NumberOfCurrentPlayers_t> m_CallResultNumberOfCurrentPlayers_t;
+		void TrackSteamAPICallNumberOfCurrentPlayers_t(SteamAPICall_t steamAPICall) {
+			m_CallResultNumberOfCurrentPlayers_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnNumberOfCurrentPlayers_t);
+		}
+		void OnNumberOfCurrentPlayers_t(NumberOfCurrentPlayers_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnNumberOfCurrentPlayers_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "NumberOfCurrentPlayers_t");
+			push_NumberOfCurrentPlayers_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, GlobalAchievementPercentagesReady_t> m_CallResultGlobalAchievementPercentagesReady_t;
+		void TrackSteamAPICallGlobalAchievementPercentagesReady_t(SteamAPICall_t steamAPICall) {
+			m_CallResultGlobalAchievementPercentagesReady_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnGlobalAchievementPercentagesReady_t);
+		}
+		void OnGlobalAchievementPercentagesReady_t(GlobalAchievementPercentagesReady_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnGlobalAchievementPercentagesReady_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "GlobalAchievementPercentagesReady_t");
+			push_GlobalAchievementPercentagesReady_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, LeaderboardUGCSet_t> m_CallResultLeaderboardUGCSet_t;
+		void TrackSteamAPICallLeaderboardUGCSet_t(SteamAPICall_t steamAPICall) {
+			m_CallResultLeaderboardUGCSet_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnLeaderboardUGCSet_t);
+		}
+		void OnLeaderboardUGCSet_t(LeaderboardUGCSet_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnLeaderboardUGCSet_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "LeaderboardUGCSet_t");
+			push_LeaderboardUGCSet_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, GlobalStatsReceived_t> m_CallResultGlobalStatsReceived_t;
+		void TrackSteamAPICallGlobalStatsReceived_t(SteamAPICall_t steamAPICall) {
+			m_CallResultGlobalStatsReceived_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnGlobalStatsReceived_t);
+		}
+		void OnGlobalStatsReceived_t(GlobalStatsReceived_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnGlobalStatsReceived_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "GlobalStatsReceived_t");
+			push_GlobalStatsReceived_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 };
 
+// ctor
 SteamCallbackWrapper::SteamCallbackWrapper() :
 
-	// General
-	m_CallbackGameOverlayActivated(this, &SteamCallbackWrapper::OnGameOverlayActivated)
+	m_CallbackPersonaStateChange_t(this, &SteamCallbackWrapper::OnPersonaStateChange_t),
+	m_CallbackGameOverlayActivated_t(this, &SteamCallbackWrapper::OnGameOverlayActivated_t),
+	m_CallbackUserStatsReceived_t(this, &SteamCallbackWrapper::OnUserStatsReceived_t),
+	m_iAppID( 0 )
 {
+	//m_iAppID = SteamUtils()->GetAppID();
 }
 
+void SteamCallbackWrapper::OnPersonaStateChange_t(PersonaStateChange_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnPersonaStateChange_t\n");
+	lua_State* L = steamworksListener.m_L;
+	if (!L) {
+		// no listener set
+		return;
+	}
+	int top = lua_gettop(L);
+	lua_pushlistener(L, steamworksListener);
+	lua_pushstring(L, "PersonaStateChange_t");
+	push_PersonaStateChange_t(L, *pCallback);
+	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+	if (ret != 0) {
+		lua_pop(L, 2);
+	}
+	assert(top == lua_gettop(L));
 
-// General
-void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated\n");
-	// NotifyListener("OnGameOverlayActivated", pCallback);
 }
+void SteamCallbackWrapper::OnGameOverlayActivated_t(GameOverlayActivated_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated_t\n");
+	lua_State* L = steamworksListener.m_L;
+	if (!L) {
+		// no listener set
+		return;
+	}
+	int top = lua_gettop(L);
+	lua_pushlistener(L, steamworksListener);
+	lua_pushstring(L, "GameOverlayActivated_t");
+	push_GameOverlayActivated_t(L, *pCallback);
+	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+	if (ret != 0) {
+		lua_pop(L, 2);
+	}
+	assert(top == lua_gettop(L));
+
+}
+void SteamCallbackWrapper::OnUserStatsReceived_t(UserStatsReceived_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived_t\n");
+	lua_State* L = steamworksListener.m_L;
+	if (!L) {
+		// no listener set
+		return;
+	}
+	int top = lua_gettop(L);
+	lua_pushlistener(L, steamworksListener);
+	lua_pushstring(L, "UserStatsReceived_t");
+	push_UserStatsReceived_t(L, *pCallback);
+	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+	if (ret != 0) {
+		lua_pop(L, 2);
+	}
+	assert(top == lua_gettop(L));
+
+}
+
 
 static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
 
@@ -1418,7 +9513,7 @@ static int ISteamUser_GetAuthSessionTicket(lua_State* L) {
 
 	HAuthTicket r = user->GetAuthSessionTicket(pTicket,cbMaxTicket,&pcbTicket);
 	push_HAuthTicket(L, r);
-	push_uint32(L, pcbTicket);
+	push_uint32(L, pcbTicket); /*out_param*/
 	
 	assert(top + 1 + 1 == lua_gettop(L));
 	return 1 + 1;
@@ -1516,7 +9611,7 @@ static int ISteamUser_GetEncryptedAppTicket(lua_State* L) {
 
 	bool r = user->GetEncryptedAppTicket(pTicket,cbMaxTicket,&pcbTicket);
 	push_bool(L, r);
-	push_uint32(L, pcbTicket);
+	push_uint32(L, pcbTicket); /*out_param*/
 	
 	assert(top + 1 + 1 == lua_gettop(L));
 	return 1 + 1;
@@ -1845,9 +9940,9 @@ static int ISteamFriends_GetClanActivityCounts(lua_State* L) {
 
 	bool r = friends->GetClanActivityCounts(steamIDClan,&pnOnline,&pnInGame,&pnChatting);
 	push_bool(L, r);
-	push_int(L, pnChatting);
-	push_int(L, pnInGame);
-	push_int(L, pnOnline);
+	push_int(L, pnChatting); /*out_param*/
+	push_int(L, pnInGame); /*out_param*/
+	push_int(L, pnOnline); /*out_param*/
 	
 	assert(top + 1 + 3 == lua_gettop(L));
 	return 1 + 3;
@@ -2260,7 +10355,7 @@ static int ISteamFriends_GetClanChatMessage(lua_State* L) {
 
 	int r = friends->GetClanChatMessage(steamIDClanChat,iMessage,prgchText,cchTextMax,&peChatEntryType,&psteamidChatter);
 	push_int(L, r);
-	push_EChatEntryType(L, peChatEntryType);
+	push_EChatEntryType(L, peChatEntryType); /*out_param*/
 	
 	assert(top + 1 + 1 == lua_gettop(L));
 	return 1 + 1;
@@ -2347,7 +10442,7 @@ static int ISteamFriends_GetFriendMessage(lua_State* L) {
 
 	int r = friends->GetFriendMessage(steamIDFriend,iMessageID,pvData,cubData,&peChatEntryType);
 	push_int(L, r);
-	push_EChatEntryType(L, peChatEntryType);
+	push_EChatEntryType(L, peChatEntryType); /*out_param*/
 	
 	assert(top + 1 + 1 == lua_gettop(L));
 	return 1 + 1;
@@ -2463,8 +10558,8 @@ static int ISteamUtils_GetImageSize(lua_State* L) {
 
 	bool r = utils->GetImageSize(iImage,&pnWidth,&pnHeight);
 	push_bool(L, r);
-	push_uint32(L, pnHeight);
-	push_uint32(L, pnWidth);
+	push_uint32(L, pnHeight); /*out_param*/
+	push_uint32(L, pnWidth); /*out_param*/
 	
 	assert(top + 1 + 2 == lua_gettop(L));
 	return 1 + 2;
@@ -2493,8 +10588,8 @@ static int ISteamUtils_GetCSERIPPort(lua_State* L) {
 
 	bool r = utils->GetCSERIPPort(&unIP,&usPort);
 	push_bool(L, r);
-	push_uint16(L, usPort);
-	push_uint32(L, unIP);
+	push_uint16(L, usPort); /*out_param*/
+	push_uint32(L, unIP); /*out_param*/
 	
 	assert(top + 1 + 2 == lua_gettop(L));
 	return 1 + 2;
@@ -2536,7 +10631,7 @@ static int ISteamUtils_IsAPICallCompleted(lua_State* L) {
 
 	bool r = utils->IsAPICallCompleted(hSteamAPICall,&pbFailed);
 	push_bool(L, r);
-	push_bool(L, pbFailed);
+	push_bool(L, pbFailed); /*out_param*/
 	
 	assert(top + 1 + 1 == lua_gettop(L));
 	return 1 + 1;
@@ -2566,7 +10661,7 @@ static int ISteamUtils_GetAPICallResult(lua_State* L) {
 
 	bool r = utils->GetAPICallResult(hSteamAPICall,pCallback,cubCallback,iCallbackExpected,&pbFailed);
 	push_bool(L, r);
-	push_bool(L, pbFailed);
+	push_bool(L, pbFailed); /*out_param*/
 	
 	assert(top + 1 + 1 == lua_gettop(L));
 	return 1 + 1;
@@ -2716,6 +10811,562 @@ static int ISteamUtils_SetVRHeadsetStreamingEnabled(lua_State* L) {
 	return 0;
 }
 
+static int ISteamUserStats_RequestCurrentStats(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = user_stats->RequestCurrentStats();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetStatInt(lua_State* L) {
+	int top = lua_gettop(L);
+	int32 pData; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetStat(pchName,&pData);
+	push_bool(L, r);
+	push_int32(L, pData); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_GetStatFloat(lua_State* L) {
+	int top = lua_gettop(L);
+	float pData; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetStat(pchName,&pData);
+	push_bool(L, r);
+	push_float(L, pData); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_SetStatInt(lua_State* L) {
+	int top = lua_gettop(L);
+	int32 nData = check_int32(L, 2); /*normal*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->SetStat(pchName,nData);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_SetStatFloat(lua_State* L) {
+	int top = lua_gettop(L);
+	float fData = check_float(L, 2); /*normal*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->SetStat(pchName,fData);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_UpdateAvgRateStat(lua_State* L) {
+	int top = lua_gettop(L);
+	double dSessionLength = check_double(L, 3); /*normal*/
+	float flCountThisSession = check_float(L, 2); /*normal*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->UpdateAvgRateStat(pchName,flCountThisSession,dSessionLength);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetAchievement(lua_State* L) {
+	int top = lua_gettop(L);
+	bool pbAchieved; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetAchievement(pchName,&pbAchieved);
+	push_bool(L, r);
+	push_bool(L, pbAchieved); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_SetAchievement(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->SetAchievement(pchName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_ClearAchievement(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->ClearAchievement(pchName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetAchievementAndUnlockTime(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punUnlockTime; /*out_param*/
+	bool pbAchieved; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetAchievementAndUnlockTime(pchName,&pbAchieved,&punUnlockTime);
+	push_bool(L, r);
+	push_uint32(L, punUnlockTime); /*out_param*/
+	push_bool(L, pbAchieved); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUserStats_StoreStats(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = user_stats->StoreStats();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetAchievementIcon(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	int r = user_stats->GetAchievementIcon(pchName);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetAchievementDisplayAttribute(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	const char * r = user_stats->GetAchievementDisplayAttribute(pchName,pchKey);
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_IndicateAchievementProgress(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 nMaxProgress = check_uint32(L, 3); /*normal*/
+	uint32 nCurProgress = check_uint32(L, 2); /*normal*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->IndicateAchievementProgress(pchName,nCurProgress,nMaxProgress);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetNumAchievements(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = user_stats->GetNumAchievements();
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetAchievementName(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 iAchievement = check_uint32(L, 1); /*normal*/
+
+	const char * r = user_stats->GetAchievementName(iAchievement);
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_RequestUserStats(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->RequestUserStats(steamIDUser);
+	steamCallbackWrapper->TrackSteamAPICallUserStatsReceived_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_GetUserStatInt(lua_State* L) {
+	int top = lua_gettop(L);
+	int32 pData; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = user_stats->GetUserStat(steamIDUser,pchName,&pData);
+	push_bool(L, r);
+	push_int32(L, pData); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_GetUserStatFloat(lua_State* L) {
+	int top = lua_gettop(L);
+	float pData; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = user_stats->GetUserStat(steamIDUser,pchName,&pData);
+	push_bool(L, r);
+	push_float(L, pData); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_GetUserAchievement(lua_State* L) {
+	int top = lua_gettop(L);
+	bool pbAchieved; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = user_stats->GetUserAchievement(steamIDUser,pchName,&pbAchieved);
+	push_bool(L, r);
+	push_bool(L, pbAchieved); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_GetUserAchievementAndUnlockTime(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punUnlockTime; /*out_param*/
+	bool pbAchieved; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = user_stats->GetUserAchievementAndUnlockTime(steamIDUser,pchName,&pbAchieved,&punUnlockTime);
+	push_bool(L, r);
+	push_uint32(L, punUnlockTime); /*out_param*/
+	push_bool(L, pbAchieved); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUserStats_ResetAllStats(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAchievementsToo = check_bool(L, 1); /*normal*/
+
+	bool r = user_stats->ResetAllStats(bAchievementsToo);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_FindOrCreateLeaderboard(lua_State* L) {
+	int top = lua_gettop(L);
+	ELeaderboardDisplayType eLeaderboardDisplayType = check_ELeaderboardDisplayType(L, 3); /*normal*/
+	ELeaderboardSortMethod eLeaderboardSortMethod = check_ELeaderboardSortMethod(L, 2); /*normal*/
+	const char * pchLeaderboardName = check_const_char_ptr(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->FindOrCreateLeaderboard(pchLeaderboardName,eLeaderboardSortMethod,eLeaderboardDisplayType);
+	steamCallbackWrapper->TrackSteamAPICallLeaderboardFindResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_FindLeaderboard(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchLeaderboardName = check_const_char_ptr(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->FindLeaderboard(pchLeaderboardName);
+	steamCallbackWrapper->TrackSteamAPICallLeaderboardFindResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_GetLeaderboardName(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	const char * r = user_stats->GetLeaderboardName(hSteamLeaderboard);
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetLeaderboardEntryCount(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	int r = user_stats->GetLeaderboardEntryCount(hSteamLeaderboard);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetLeaderboardSortMethod(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	ELeaderboardSortMethod r = user_stats->GetLeaderboardSortMethod(hSteamLeaderboard);
+	push_ELeaderboardSortMethod(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetLeaderboardDisplayType(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	ELeaderboardDisplayType r = user_stats->GetLeaderboardDisplayType(hSteamLeaderboard);
+	push_ELeaderboardDisplayType(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_DownloadLeaderboardEntries(lua_State* L) {
+	int top = lua_gettop(L);
+	int nRangeEnd = check_int(L, 4); /*normal*/
+	int nRangeStart = check_int(L, 3); /*normal*/
+	ELeaderboardDataRequest eLeaderboardDataRequest = check_ELeaderboardDataRequest(L, 2); /*normal*/
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->DownloadLeaderboardEntries(hSteamLeaderboard,eLeaderboardDataRequest,nRangeStart,nRangeEnd);
+	steamCallbackWrapper->TrackSteamAPICallLeaderboardScoresDownloaded_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_DownloadLeaderboardEntriesForUsers(lua_State* L) {
+	int top = lua_gettop(L);
+	int cUsers = check_int(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	int n = luaL_getn(L, 2);
+	CSteamID prgUsers[cUsers];
+	for(int i=1; i<=cUsers; i++) {
+		lua_rawgeti(L, 2, i);
+		prgUsers[i] = check_CSteamID(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->DownloadLeaderboardEntriesForUsers(hSteamLeaderboard,prgUsers,cUsers);
+	steamCallbackWrapper->TrackSteamAPICallLeaderboardScoresDownloaded_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_GetDownloadedLeaderboardEntry(lua_State* L) {
+	int top = lua_gettop(L);
+	int cDetailsMax = check_int(L, 3); /*normal*/
+	int32 pDetails; /*out_param*/
+	struct LeaderboardEntry_t pLeaderboardEntry; /*out_param*/
+	int index = check_int(L, 2); /*normal*/
+	SteamLeaderboardEntries_t hSteamLeaderboardEntries = check_SteamLeaderboardEntries_t(L, 1); /*normal*/
+
+	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries,index,&pLeaderboardEntry,&pDetails,cDetailsMax);
+	push_bool(L, r);
+	push_int32(L, pDetails); /*out_param*/
+	push_LeaderboardEntry_t(L, pLeaderboardEntry); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUserStats_UploadLeaderboardScore(lua_State* L) {
+	int top = lua_gettop(L);
+	int cScoreDetailsCount = check_int(L, 5); /*normal*/
+	luaL_checktype(L, 4, LUA_TTABLE); /*array_count*/
+	int n = luaL_getn(L, 4);
+	int32 pScoreDetails[cScoreDetailsCount];
+	for(int i=1; i<=cScoreDetailsCount; i++) {
+		lua_rawgeti(L, 4, i);
+		pScoreDetails[i] = check_int32(L, 4 + 1);
+		lua_pop(L, 1);
+	}
+	int32 nScore = check_int32(L, 3); /*normal*/
+	ELeaderboardUploadScoreMethod eLeaderboardUploadScoreMethod = check_ELeaderboardUploadScoreMethod(L, 2); /*normal*/
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->UploadLeaderboardScore(hSteamLeaderboard,eLeaderboardUploadScoreMethod,nScore,pScoreDetails,cScoreDetailsCount);
+	steamCallbackWrapper->TrackSteamAPICallLeaderboardScoreUploaded_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_AttachLeaderboardUGC(lua_State* L) {
+	int top = lua_gettop(L);
+	UGCHandle_t hUGC = check_UGCHandle_t(L, 2); /*normal*/
+	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->AttachLeaderboardUGC(hSteamLeaderboard,hUGC);
+	steamCallbackWrapper->TrackSteamAPICallLeaderboardUGCSet_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_GetNumberOfCurrentPlayers(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = user_stats->GetNumberOfCurrentPlayers();
+	steamCallbackWrapper->TrackSteamAPICallNumberOfCurrentPlayers_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_RequestGlobalAchievementPercentages(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = user_stats->RequestGlobalAchievementPercentages();
+	steamCallbackWrapper->TrackSteamAPICallGlobalAchievementPercentagesReady_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_GetMostAchievedAchievementInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	bool pbAchieved; /*out_param*/
+	float pflPercent; /*out_param*/
+	uint32 unNameBufLen = check_uint32(L, 2); /*normal*/
+	char * pchName = check_char_ptr(L, 1); /*normal*/
+
+	int r = user_stats->GetMostAchievedAchievementInfo(pchName,unNameBufLen,&pflPercent,&pbAchieved);
+	push_int(L, r);
+	push_bool(L, pbAchieved); /*out_param*/
+	push_float(L, pflPercent); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUserStats_GetNextMostAchievedAchievementInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	bool pbAchieved; /*out_param*/
+	float pflPercent; /*out_param*/
+	uint32 unNameBufLen = check_uint32(L, 3); /*normal*/
+	char * pchName = check_char_ptr(L, 2); /*normal*/
+	int iIteratorPrevious = check_int(L, 1); /*normal*/
+
+	int r = user_stats->GetNextMostAchievedAchievementInfo(iIteratorPrevious,pchName,unNameBufLen,&pflPercent,&pbAchieved);
+	push_int(L, r);
+	push_bool(L, pbAchieved); /*out_param*/
+	push_float(L, pflPercent); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUserStats_GetAchievementAchievedPercent(lua_State* L) {
+	int top = lua_gettop(L);
+	float pflPercent; /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetAchievementAchievedPercent(pchName,&pflPercent);
+	push_bool(L, r);
+	push_float(L, pflPercent); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_RequestGlobalStats(lua_State* L) {
+	int top = lua_gettop(L);
+	int nHistoryDays = check_int(L, 1); /*normal*/
+
+	SteamAPICall_t r = user_stats->RequestGlobalStats(nHistoryDays);
+	steamCallbackWrapper->TrackSteamAPICallGlobalStatsReceived_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUserStats_GetGlobalStatInt(lua_State* L) {
+	int top = lua_gettop(L);
+	int64 pData; /*out_param*/
+	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetGlobalStat(pchStatName,&pData);
+	push_bool(L, r);
+	push_int64(L, pData); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_GetGlobalStatFloat(lua_State* L) {
+	int top = lua_gettop(L);
+	double pData; /*out_param*/
+	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetGlobalStat(pchStatName,&pData);
+	push_bool(L, r);
+	push_double(L, pData); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUserStats_GetGlobalStatIntHistory(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cubData = check_uint32(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	int n = luaL_getn(L, 2);
+	int64 pData[cubData];
+	for(int i=1; i<=cubData; i++) {
+		lua_rawgeti(L, 2, i);
+		pData[i] = check_int64(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
+
+	int32 r = user_stats->GetGlobalStatHistory(pchStatName,pData,cubData);
+	push_int32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUserStats_GetGlobalStatFloatHistory(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cubData = check_uint32(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	int n = luaL_getn(L, 2);
+	double pData[cubData];
+	for(int i=1; i<=cubData; i++) {
+		lua_rawgeti(L, 2, i);
+		pData[i] = check_double(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
+
+	int32 r = user_stats->GetGlobalStatHistory(pchStatName,pData,cubData);
+	push_int32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 
 
 
@@ -2735,14 +11386,14 @@ static int Init(lua_State* L) {
 	if (!SteamAPI_IsSteamRunning()) {
 		luaL_error(L, "Steam is not running");
 	}
-	client = SteamClient();
 	friends = SteamFriends();
 	user = SteamUser();
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
-	matchmaking = SteamMatchmaking();
-	userstats = SteamUserStats();
-	userstats->RequestCurrentStats();
+	user_stats = SteamUserStats();
+	//client = SteamClient();
+	//user_stats->RequestCurrentStats();
+	//matchmaking = SteamMatchmaking();
 	return 0;
 }
 
@@ -2890,6 +11541,49 @@ static const luaL_reg Module_methods[] = {
 	{ "utils_start_vr_dashboard", ISteamUtils_StartVRDashboard },
 	{ "utils_is_vr_headset_streaming_enabled", ISteamUtils_IsVRHeadsetStreamingEnabled },
 	{ "utils_set_vr_headset_streaming_enabled", ISteamUtils_SetVRHeadsetStreamingEnabled },
+	{ "user_stats_request_current_stats", ISteamUserStats_RequestCurrentStats },
+	{ "user_stats_get_stat_int", ISteamUserStats_GetStatInt },
+	{ "user_stats_get_stat_float", ISteamUserStats_GetStatFloat },
+	{ "user_stats_set_stat_int", ISteamUserStats_SetStatInt },
+	{ "user_stats_set_stat_float", ISteamUserStats_SetStatFloat },
+	{ "user_stats_update_avg_rate_stat", ISteamUserStats_UpdateAvgRateStat },
+	{ "user_stats_get_achievement", ISteamUserStats_GetAchievement },
+	{ "user_stats_set_achievement", ISteamUserStats_SetAchievement },
+	{ "user_stats_clear_achievement", ISteamUserStats_ClearAchievement },
+	{ "user_stats_get_achievement_and_unlock_time", ISteamUserStats_GetAchievementAndUnlockTime },
+	{ "user_stats_store_stats", ISteamUserStats_StoreStats },
+	{ "user_stats_get_achievement_icon", ISteamUserStats_GetAchievementIcon },
+	{ "user_stats_get_achievement_display_attribute", ISteamUserStats_GetAchievementDisplayAttribute },
+	{ "user_stats_indicate_achievement_progress", ISteamUserStats_IndicateAchievementProgress },
+	{ "user_stats_get_num_achievements", ISteamUserStats_GetNumAchievements },
+	{ "user_stats_get_achievement_name", ISteamUserStats_GetAchievementName },
+	{ "user_stats_request_user_stats", ISteamUserStats_RequestUserStats },
+	{ "user_stats_get_user_stat_int", ISteamUserStats_GetUserStatInt },
+	{ "user_stats_get_user_stat_float", ISteamUserStats_GetUserStatFloat },
+	{ "user_stats_get_user_achievement", ISteamUserStats_GetUserAchievement },
+	{ "user_stats_get_user_achievement_and_unlock_time", ISteamUserStats_GetUserAchievementAndUnlockTime },
+	{ "user_stats_reset_all_stats", ISteamUserStats_ResetAllStats },
+	{ "user_stats_find_or_create_leaderboard", ISteamUserStats_FindOrCreateLeaderboard },
+	{ "user_stats_find_leaderboard", ISteamUserStats_FindLeaderboard },
+	{ "user_stats_get_leaderboard_name", ISteamUserStats_GetLeaderboardName },
+	{ "user_stats_get_leaderboard_entry_count", ISteamUserStats_GetLeaderboardEntryCount },
+	{ "user_stats_get_leaderboard_sort_method", ISteamUserStats_GetLeaderboardSortMethod },
+	{ "user_stats_get_leaderboard_display_type", ISteamUserStats_GetLeaderboardDisplayType },
+	{ "user_stats_download_leaderboard_entries", ISteamUserStats_DownloadLeaderboardEntries },
+	{ "user_stats_download_leaderboard_entries_for_users", ISteamUserStats_DownloadLeaderboardEntriesForUsers },
+	{ "user_stats_get_downloaded_leaderboard_entry", ISteamUserStats_GetDownloadedLeaderboardEntry },
+	{ "user_stats_upload_leaderboard_score", ISteamUserStats_UploadLeaderboardScore },
+	{ "user_stats_attach_leaderboard_ugc", ISteamUserStats_AttachLeaderboardUGC },
+	{ "user_stats_get_number_of_current_players", ISteamUserStats_GetNumberOfCurrentPlayers },
+	{ "user_stats_request_global_achievement_percentages", ISteamUserStats_RequestGlobalAchievementPercentages },
+	{ "user_stats_get_most_achieved_achievement_info", ISteamUserStats_GetMostAchievedAchievementInfo },
+	{ "user_stats_get_next_most_achieved_achievement_info", ISteamUserStats_GetNextMostAchievedAchievementInfo },
+	{ "user_stats_get_achievement_achieved_percent", ISteamUserStats_GetAchievementAchievedPercent },
+	{ "user_stats_request_global_stats", ISteamUserStats_RequestGlobalStats },
+	{ "user_stats_get_global_stat_int", ISteamUserStats_GetGlobalStatInt },
+	{ "user_stats_get_global_stat_float", ISteamUserStats_GetGlobalStatFloat },
+	{ "user_stats_get_global_stat_int_history", ISteamUserStats_GetGlobalStatIntHistory },
+	{ "user_stats_get_global_stat_float_history", ISteamUserStats_GetGlobalStatFloatHistory },
 	{ 0, 0 }
 };
 

@@ -42,9 +42,8 @@ function init(self)
 	if not status then print("Error: " .. error) return end
 
 	steamworks.set_listener(function(self, e, t)
-		if e == "FriendsGetFollowerCount_t" then
-			pprint(t)
-		end
+		print(e)
+		pprint(t)
 	end)
 
 	local user_id = steamworks.user_get_steam_id()

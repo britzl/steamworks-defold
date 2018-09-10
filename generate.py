@@ -13,16 +13,20 @@ def to_snake_case(name):
 
 
 def parse_methods(methods):
-    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils"]
+    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats"]
     DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection"]
     SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook"]
     m = []
     for method in methods:
         classname = method.get("classname")
         methodname = method.get("methodname")
+        methodalias = method.get("methodalias")
         if classname in INCLUDED_CLASSES and methodname not in DEPRECATED_METHODS and methodname not in SKIP_METHODS:
             method["classname_lower"] = to_snake_case(classname.replace("ISteam", "")).lower()
-            method["methodname_lower"] = to_snake_case(methodname).lower()
+            if methodalias:
+                method["methodname_lower"] = to_snake_case(methodalias).lower()
+            else:
+                method["methodname_lower"] = to_snake_case(methodname).lower()
             method["paramnames"] = []
             method["paramnames_in"] = []
             method["paramcount_out"] = 0
@@ -52,7 +56,7 @@ def parse_methods(methods):
                     # An array of data with a length specified by another parameter
                     elif param.get("array_count") is not None:
                         param["paramindex"] = len(method["paramnames_in"]) + 1
-                        param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
+                        param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
@@ -75,9 +79,10 @@ def parse_methods(methods):
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
-                    elif " *" in paramtype:
+                    elif " *" in paramtype and "const" not in paramtype:
                         param["out_param"] = True
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
+                        param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
                         p.insert(0, param)
                         method["paramnames"].append("&" + paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
@@ -123,7 +128,7 @@ def parse_enums(enums):
 
 
 def parse_typedefs(typedefs):
-    NUMBERS = ["int", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
+    INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
     t = {}
     int = []
     int64 = []
@@ -139,7 +144,7 @@ def parse_typedefs(typedefs):
     for typedef in typedefs:
         t["types"].append(typedef)
         type = typedef.get("type")
-        if type in NUMBERS:
+        if type in INTEGERS:
             int.append(typedef)
         elif type == "uint64" or type == "ulint64":
             uint64.append(typedef)
@@ -147,37 +152,55 @@ def parse_typedefs(typedefs):
             int64.append(typedef)
         elif type.startswith("struct "):
             struct.append(typedef)
+
     return t
 
 
 def parse_structs(structs, methods):
-    STRUCTS_TO_INCLUDE = []
+    SKIP_STRUCTS = ["CallbackMsg_t", "CCallbackBase", "CCallResult", "CCallback", "CSteamID", "CSteamAPIContext", "CSteamID::SteamID_t", "CSteamID::SteamID_t::SteamIDComponent_t", "CGameID::GameID_t", "CGameID::(anonymous)", "servernetadr_t", "gameserveritem_t", "SteamParamStringArray_t"]
+    CALLRESULT_STRUCT = []
 
+    # Include all structs that are used as a CallResult
     for method in methods:
-        if method.get("callresult"):
-            STRUCTS_TO_INCLUDE.append(method.get("callresult"))
+        callresult = method.get("callresult")
+        if callresult and callresult not in CALLRESULT_STRUCT:
+            CALLRESULT_STRUCT.append(callresult)
 
-    SKIP_STRUCTS = ["CallbackMsg_t", "CSteamID", "CSteamID::SteamID_t", "CSteamID::SteamID_t::SteamIDComponent_t", "CGameID::GameID_t", "CGameID::(anonymous)"]
     s = []
     for struct in structs:
         structname = struct.get("struct")
-        if structname not in SKIP_STRUCTS and structname in STRUCTS_TO_INCLUDE:
-            print(structname)
+        if structname not in SKIP_STRUCTS:
+            if structname in CALLRESULT_STRUCT:
+                struct["callresult"] = True
             struct["name"] = re.sub(".*::", "", structname.replace("::(anonymous)", ""))
             f = []
             for field in struct.get("fields"):
-                fieldtype = field.get("fieldtype")
+                fieldtype = field.get("fieldtype").replace("_Bool", "bool")
+                # Is this an array of some kind?
                 if " [" in fieldtype:
                     field["array"] = True
                     field["arraysize"] = re.match(".*\[(.*)\]", fieldtype).group(1)
 
-                # field["fieldtypestring"] = re.sub(".*::", "", field.get("fieldtype").replace("enum ", "").replace("struct ", "").replace("union ", "").replace(" ", "_"))
-                field["fieldtypestring"] = re.sub("_\[.*\]", "", fieldtype.replace("enum ", "").replace("struct ", "").replace("class ", "").replace("union ", "").replace(" ", "_"))
+                field["fieldtypestring"] = re.sub("_\[.*\]", "", fieldtype.replace(" *", "_ptr").replace("enum ", "").replace("struct ", "").replace("class ", "").replace("union ", "").replace(" ", "_"))
                 f.append(field)
             struct["fields"] = f
             s.append(struct)
 
     return s
+
+
+def parse_callbacks(methods):
+    callbacks = ["PersonaStateChange_t", "GameOverlayActivated_t"]
+    for method in methods:
+        callback = method.get("callback")
+        if callback and callback not in callbacks:
+            callbacks.append(callback)
+
+    c = []
+    for callback in callbacks:
+        c.append({"callback": callback})
+
+    return c
 
 
 def generate():
@@ -190,6 +213,7 @@ def generate():
         j["typedefs"] = parse_typedefs(j["typedefs"])
         j["structs"] = parse_structs(j["structs"], j["methods"])
         j["enums"] = parse_enums(j["enums"])
+        j["callbacks"] = parse_callbacks(j["methods"])
 
         result = pystache.render(extension_mtl, j)
         with codecs.open("steamworks/src/generated.cpp", 'wb' "utf-8") as f:

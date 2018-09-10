@@ -20,6 +20,9 @@ function on_input(self, action_id, action)
 	rpg.button("utils", action_id, action, function()
 		monarch.show("utils")
 	end)
+	rpg.button("user_stats", action_id, action, function()
+		monarch.show("user_stats")
+	end)
 end
 
 function on_reload(self)

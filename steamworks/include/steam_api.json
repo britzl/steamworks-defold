@@ -1,5 +1,4 @@
 {"typedefs":[{"typedef": "uint8","type": "unsigned char"}
-,{"typedef": "uint8","type": "unsigned char"}
 ,{"typedef": "int8","type": "signed char"}
 ,{"typedef": "int16","type": "short"}
 ,{"typedef": "uint16","type": "unsigned short"}
@@ -4554,7 +4553,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetStat",
+	"methodname": "GetStat", "methodalias": "GetStatInt",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "pchName" ,"paramtype": "const char *"},
@@ -4563,7 +4562,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetStat",
+	"methodname": "GetStat", "methodalias": "GetStatFloat",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "pchName" ,"paramtype": "const char *"},
@@ -4572,7 +4571,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "SetStat",
+	"methodname": "SetStat", "methodalias": "SetStatInt",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "pchName" ,"paramtype": "const char *"},
@@ -4581,7 +4580,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "SetStat",
+	"methodname": "SetStat", "methodalias": "SetStatFloat",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "pchName" ,"paramtype": "const char *"},
@@ -4688,7 +4687,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetUserStat",
+	"methodname": "GetUserStat", "methodalias": "GetUserStatInt",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "steamIDUser" ,"paramtype": "class CSteamID"},
@@ -4698,7 +4697,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetUserStat",
+	"methodname": "GetUserStat", "methodalias": "GetUserStatFloat",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "steamIDUser" ,"paramtype": "class CSteamID"},
@@ -4826,7 +4825,7 @@
 {	"paramname": "hSteamLeaderboard" ,"paramtype": "SteamLeaderboard_t"},
 {	"paramname": "eLeaderboardUploadScoreMethod" ,"paramtype": "ELeaderboardUploadScoreMethod"},
 {	"paramname": "nScore" ,"paramtype": "int32"},
-{	"paramname": "pScoreDetails" ,"paramtype": "const int32 *"},
+{	"paramname": "pScoreDetails" ,"paramtype": "const int32 *", "array_count": "cScoreDetailsCount"},
 {	"paramname": "cScoreDetailsCount" ,"paramtype": "int"}
 	 ]
 }
@@ -4891,7 +4890,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetGlobalStat",
+	"methodname": "GetGlobalStat", "methodalias": "GetGlobalStatInt",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "pchStatName" ,"paramtype": "const char *"},
@@ -4900,7 +4899,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetGlobalStat",
+	"methodname": "GetGlobalStat", "methodalias": "GetGlobalStatFloat",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "pchStatName" ,"paramtype": "const char *"},
@@ -4909,7 +4908,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetGlobalStatHistory",
+	"methodname": "GetGlobalStatHistory", "methodalias": "GetGlobalStatIntHistory",
 	"returntype": "int32",
 	"params": [
 {	"paramname": "pchStatName" ,"paramtype": "const char *"},
@@ -4919,7 +4918,7 @@
 }
 ,{
 	"classname": "ISteamUserStats",
-	"methodname": "GetGlobalStatHistory",
+	"methodname": "GetGlobalStatHistory", "methodalias": "GetGlobalStatFloatHistory",
 	"returntype": "int32",
 	"params": [
 {	"paramname": "pchStatName" ,"paramtype": "const char *"},

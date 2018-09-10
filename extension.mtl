@@ -15,6 +15,7 @@
 #include <stdio.h>
 
 #include "steam_api.h"
+#include "steam_gameserver.h"
 #include "luautils.h"
 
 #define LIB_NAME "Steamworks"
@@ -30,44 +31,82 @@
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE 2
 
-static ISteamClient *client;
 static ISteamFriends *friends;
 static ISteamUser *user;
-static ISteamUserStats *userstats;
-static ISteamMatchmaking *matchmaking;
+static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
+
+// static ISteamClient *client;
+// static ISteamMatchmaking *matchmaking;
 
 
 
 
 /*****************************
-* PUSH
+* PUSH numbers and other primitive types
 ******************************/
-
 static void push_double(lua_State* L, double n) {
-	lua_pushinteger(L, n);
+	lua_pushnumber(L, n);
+}
+static void push_float(lua_State* L, float n) {
+	lua_pushnumber(L, n);
+}
+static void push_float_array(lua_State* L, float arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_float(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_int(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
+static void push_int_array(lua_State* L, int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_int(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_unsigned_int(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_uint32(lua_State* L, uint32 n) {
-	lua_pushinteger(L, n);
+static void push_unsigned_int_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_unsigned_int(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
-static void push_uint16(lua_State* L, uint16 n) {
-	lua_pushinteger(L, n);
+static void push_bool(lua_State* L, bool b) {
+    lua_pushboolean(L, b);
 }
-static void push_uint8(lua_State* L, uint8 n) {
-	lua_pushinteger(L, n);
+static void push_char_array(lua_State* L, char ca[], unsigned int size) {
+	lua_pushstring(L, ca);
+}
+static void push_const_char_ptr(lua_State* L, const char * s) {
+	lua_pushstring(L, s);
 }
 {{#typedefs.int}}
-static void push_{{typedef}}(lua_State* L, {{typedef}} n) {
+static void push_{{typedef}}(lua_State* L, {{type}} n) {
 	lua_pushinteger(L, n);
+}
+static void push_{{typedef}}_array(lua_State* L, {{type}} arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_{{typedef}}(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 {{/typedefs.int}}
 
+/*****************************
+* PUSH (u)int64 (to strings)
+******************************/
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
 	snprintf(buf, sizeof(buf), "%ld", n);
@@ -75,12 +114,17 @@ static void push_int64(lua_State* L, int64 n) {
 }
 {{#typedefs.int64}}
 static void push_{{typedef}}(lua_State* L, {{typedef}} n) {
-	char buf[22];
-	snprintf(buf, sizeof(buf), "%ld", n);
-	lua_pushstring(L, buf);
+	push_int64(L, n);
+}
+static void push_{{typedef}}_array(lua_State* L, {{typedef}} arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_{{typedef}}(L, arr[i]);
+		lua_settable(L, -3);
+	}
 }
 {{/typedefs.int64}}
-
 static void push_uint64(lua_State* L, uint64 n) {
 	char buf[22];
 	snprintf(buf, sizeof(buf), "%llu", n);
@@ -90,42 +134,34 @@ static void push_uint64(lua_State* L, uint64 n) {
 static void push_{{typedef}}(lua_State* L, {{typedef}} n) {
 	push_uint64(L, n);
 }
+static void push_{{typedef}}_array(lua_State* L, {{typedef}} arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_{{typedef}}(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 {{/typedefs.uint64}}
 
+/*****************************
+* PUSH enums
+******************************/
 {{#enums}}
 static void push_{{enumname}}(lua_State* L, {{enumname}} n) {
 	lua_pushinteger(L, n);
 }
-static {{enumname}} check_{{enumname}}(lua_State* L, int index) {
-	return {{enumname}}(luaL_checkinteger(L, index));
-}
-
 {{/enums}}
 
-static void push_bool(lua_State* L, bool b) {
-    lua_pushboolean(L, b);
-}
-static void push__Bool(lua_State* L, bool b) {
-    lua_pushboolean(L, b);
-}
-static void push_const_char_ptr(lua_State* L, const char * s) {
-    lua_pushstring(L, s);
-}
-
+/*****************************
+* PUSH CSteamID
+******************************/
 static void push_CSteamID(lua_State* L, CSteamID steamId) {
-	// char buf[22];
-	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	// lua_pushstring(L, buf);
 	push_uint64(L, steamId.ConvertToUint64());
 }
-
 static void push_class_CSteamID(lua_State* L, CSteamID steamId) {
-	// char buf[22];
-	// snprintf(buf, sizeof(buf), "%llu", steamId.ConvertToUint64());
-	// lua_pushstring(L, buf);
 	push_uint64(L, steamId.ConvertToUint64());
 }
-
 static void push_CSteamID_array(lua_State* L, CSteamID steamId[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
@@ -135,15 +171,85 @@ static void push_CSteamID_array(lua_State* L, CSteamID steamId[], unsigned int s
 	}
 }
 
-static void push_char_array(lua_State* L, char ca[], unsigned int size) {
-	lua_pushstring(L, ca);
-}
-
+/*****************************
+* PUSH CGameID
+******************************/
 static void push_CGameID(lua_State* L, CGameID gameId) {
 	push_uint64(L, gameId.ToUint64());
 }
 
-
+/*****************************
+* PUSH structs
+******************************/
+static void push_servernetadr_t(lua_State* L, servernetadr_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_usConnectionPort");
+	push_uint16(L, s.GetConnectionPort());
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usQueryPort");
+	push_uint16(L, s.GetQueryPort());
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unIP");
+	push_uint32(L, s.GetIP());
+	lua_settable(L, -3);
+}
+static void push_gameserveritem_t(lua_State* L, gameserveritem_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_NetAdr");
+	push_servernetadr_t(L, s.m_NetAdr);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPing");
+	push_int(L, s.m_nPing);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bHadSuccessfulResponse");
+	push_bool(L, s.m_bHadSuccessfulResponse);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bDoNotRefresh");
+	push_bool(L, s.m_bDoNotRefresh);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szGameDir");
+	push_char_array(L, s.m_szGameDir, 32);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szMap");
+	push_char_array(L, s.m_szMap, 32);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szGameDescription");
+	push_char_array(L, s.m_szGameDescription, 64);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_uint32(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPlayers");
+	push_int(L, s.m_nPlayers);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nMaxPlayers");
+	push_int(L, s.m_nMaxPlayers);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nBotPlayers");
+	push_int(L, s.m_nBotPlayers);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bPassword");
+	push_bool(L, s.m_bPassword);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bSecure");
+	push_bool(L, s.m_bSecure);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulTimeLastPlayed");
+	push_uint32(L, s.m_ulTimeLastPlayed);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nServerVersion");
+	push_int(L, s.m_nServerVersion);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szServerName");
+	lua_pushstring(L, s.GetName());
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szGameTags");
+	push_char_array(L, s.m_szGameTags, 128);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+}
 {{#structs}}
 static void push_{{name}}(lua_State* L, {{name}} s) {
 	lua_newtable(L);
@@ -153,35 +259,70 @@ static void push_{{name}}(lua_State* L, {{name}} s) {
 	lua_settable(L, -3);
 	{{/fields}}
 }
+static void push_{{name}}_array(lua_State* L, {{name}} arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_{{name}}(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 {{/structs}}
 
 
 
-
-
 /*****************************
-* CHECK
+* CHECK primitives
 ******************************/
-
 static lua_Number check_int(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
-}
-static lua_Number check_uint32(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
-}
-static lua_Number check_uint16(lua_State* L, int index) {
 	return luaL_checknumber(L, index);
 }
 static lua_Number check_bool(lua_State* L, int index) {
 	return lua_toboolean(L, index);
 }
-
+static lua_Number check_float(lua_State* L, int index) {
+	return luaL_checknumber(L, index);
+}
+static void check_float_array(lua_State* L, int index, float * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_float(L, -1);
+	}
+}
+static lua_Number check_double(lua_State* L, int index) {
+	return luaL_checknumber(L, index);
+}
 {{#typedefs.int}}
 static {{typedef}} check_{{typedef}}(lua_State* L, int index) {
 	return ({{typedef}})luaL_checknumber(L, index);
 }
+static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_{{typedef}}(L, -1);
+	}
+}
 {{/typedefs.int}}
 
+/*****************************
+* CHECK strings
+******************************/
 static const char * check_const_char_ptr(lua_State* L, int index) {
 	return luaL_checkstring(L, index);
 }
@@ -194,37 +335,149 @@ static const void * check_const_void_ptr(lua_State* L, int index) {
 static void * check_void_ptr(lua_State* L, int index) {
 	return (void*)luaL_checkstring(L, index);
 }
+static void check_char_array(lua_State* L, int index, char* dest, unsigned int size) {
+	const char * src = luaL_checkstring(L, index);
+	strncpy(dest, src, size - 1);
+	dest[size] = 0x0;
+}
 
+/*****************************
+* CHECK (u)int64 (from string)
+******************************/
+static uint64 check_uint64(lua_State* L, int index) {
+	const char * s = luaL_checkstring(L, index);
+	return strtoull(s, NULL, 10);
+}
+static int64 check_int64(lua_State* L, int index) {
+	const char * s = luaL_checkstring(L, index);
+	return strtoll(s, NULL, 10);
+}
+{{#typedefs.uint64}}
+static {{typedef}} check_{{typedef}}(lua_State* L, int index) {
+	return ({{typedef}})check_uint64(L, index);
+}
+static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_{{typedef}}(L, -1);
+	}
+}
+{{/typedefs.uint64}}
+{{#typedefs.int64}}
+static {{typedef}} check_{{typedef}}(lua_State* L, int index) {
+	return ({{typedef}})check_int64(L, index);
+}
+static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_{{typedef}}(L, -1);
+	}
+}
+{{/typedefs.int64}}
+
+/*****************************
+* CHECK enums
+******************************/
+{{#enums}}
+static {{enumname}} check_{{enumname}}(lua_State* L, int index) {
+	return {{enumname}}(luaL_checkinteger(L, index));
+}
+{{/enums}}
+
+/*****************************
+* CHECK LuaBuffer
+******************************/
 static dmScript::LuaHBuffer * check_buffer(lua_State* L, int index) {
 	return dmScript::CheckBuffer(L, index);
 }
 
+/*****************************
+* CHECK CSteamID
+******************************/
 static CSteamID check_CSteamID(lua_State* L, int index) {
-	char * pEnd;
-	const char * s = lua_tostring(L, index);
-	uint64 id = strtoull(s, &pEnd, 10);
+	uint64 id = check_uint64(L, index);
 	CSteamID steamId = CSteamID(id);
 	return steamId;
 }
-
 static CSteamID check_class_CSteamID(lua_State* L, int index) {
 	return check_CSteamID(L, index);
 }
-
-static SteamAPICall_t check_SteamAPICall_t(lua_State* L, int index) {
-	char * pEnd;
-	const char * s = lua_tostring(L, index);
-	uint64 id = strtoull(s, &pEnd, 10);
-	return id;
+static void check_CSteamID_array(lua_State* L, int index, CSteamID *ids, int size) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		ids[i] = check_CSteamID(L, -1);
+	}
 }
 
-static CGameID check_class_CGameID(lua_State* L, int index) {
-	char * pEnd;
-	const char * s = lua_tostring(L, index);
-	uint64 id = strtoull(s, &pEnd, 10);
+/*****************************
+* CHECK CGameID
+******************************/
+static CGameID check_CGameID(lua_State* L, int index) {
+	uint64 id = check_uint64(L, index);
 	CGameID gameId = CGameID(id);
 	return gameId;
 }
+
+/*****************************
+* CHECK structs
+******************************/
+static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	servernetadr_t s;
+	lua_pushstring(L, "m_usConnectionPort");
+	lua_gettable(L, index);
+	s.SetConnectionPort(check_uint16(L, -1));
+	lua_pushstring(L, "m_usQueryPort");
+	lua_gettable(L, index);
+	s.SetQueryPort(check_uint16(L, -1));
+	lua_pushstring(L, "m_unIP");
+	lua_gettable(L, index);
+	s.SetIP(check_uint32(L, -1));
+	return s;
+}
+{{#structs}}
+static {{struct}} check_{{name}}(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	{{struct}} s;
+	{{#fields}}
+	lua_pushstring(L, "{{fieldname}}");
+	lua_gettable(L, index);
+{{^array}}	s.{{fieldname}} = check_{{fieldtypestring}}(L, -1);
+{{/array}}{{#array}}	check_{{fieldtypestring}}_array(L, -1, s.{{fieldname}}, {{arraysize}});
+{{/array}}
+	{{/fields}}
+	return s;
+}
+
+{{/structs}}
 
 
 
@@ -232,20 +485,24 @@ static CGameID check_class_CGameID(lua_State* L, int index) {
 static lua_Listener steamworksListener;
 
 class SteamCallbackWrapper {
+	private:
+		int64 m_iAppID;
 	public:
 		SteamCallbackWrapper();
 
-		// General
-		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
+		//STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated, GameOverlayActivated_t, m_CallbackGameOverlayActivated);
+		{{#callbacks}}
+		STEAM_CALLBACK(SteamCallbackWrapper, On{{callback}}, {{callback}}, m_Callback{{callback}});
+		{{/callbacks}}
 
 
-		{{#methods}}{{#callresult}}
-		CCallResult<SteamCallbackWrapper, {{callresult}}> m_CallResult{{callresult}};
-		void TrackSteamAPICall{{callresult}}(SteamAPICall_t steamAPICall) {
-			m_CallResult{{callresult}}.Set(steamAPICall, this, &SteamCallbackWrapper::On{{callresult}});
+		{{#structs}}{{#callresult}}
+		CCallResult<SteamCallbackWrapper, {{struct}}> m_CallResult{{struct}};
+		void TrackSteamAPICall{{struct}}(SteamAPICall_t steamAPICall) {
+			m_CallResult{{struct}}.Set(steamAPICall, this, &SteamCallbackWrapper::On{{struct}});
 		}
-		void On{{callresult}}({{callresult}} *pResult, bool bIOFailure) {
-			dmLogInfo("SteamCallbackWrapper::On{{callresult}}\n");
+		void On{{struct}}({{struct}} *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::On{{struct}}\n");
 			lua_State* L = steamworksListener.m_L;
 			if (!L) {
 				dmLogInfo("no lua state\n");
@@ -253,33 +510,49 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
-			lua_pushstring(L, "{{callresult}}");
-			push_{{callresult}}(L, *pResult);
+			lua_pushstring(L, "{{struct}}");
+			push_{{struct}}(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
 				lua_pop(L, 2);
 			}
 			assert(top == lua_gettop(L));
 		}
-		{{/callresult}}{{/methods}}
-
-		void OnFindLeaderboard(LeaderboardFindResult_t *pFindLearderboardResult, bool bIOFailure);
-		CCallResult<SteamCallbackWrapper, LeaderboardFindResult_t> m_SteamCallResultCreateLeaderboard;
+		{{/callresult}}{{/structs}}
 };
 
+// ctor
 SteamCallbackWrapper::SteamCallbackWrapper() :
 
-	// General
-	m_CallbackGameOverlayActivated(this, &SteamCallbackWrapper::OnGameOverlayActivated)
+	{{#callbacks}}
+	m_Callback{{callback}}(this, &SteamCallbackWrapper::On{{callback}}),
+	{{/callbacks}}
+	m_iAppID( 0 )
 {
+	//m_iAppID = SteamUtils()->GetAppID();
 }
 
+{{#callbacks}}
+void SteamCallbackWrapper::On{{callback}}({{callback}} *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::On{{callback}}\n");
+	lua_State* L = steamworksListener.m_L;
+	if (!L) {
+		// no listener set
+		return;
+	}
+	int top = lua_gettop(L);
+	lua_pushlistener(L, steamworksListener);
+	lua_pushstring(L, "{{callback}}");
+	push_{{callback}}(L, *pCallback);
+	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+	if (ret != 0) {
+		lua_pop(L, 2);
+	}
+	assert(top == lua_gettop(L));
 
-// General
-void SteamCallbackWrapper::OnGameOverlayActivated(GameOverlayActivated_t *pCallback) {
-	dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated\n");
-	// NotifyListener("OnGameOverlayActivated", pCallback);
 }
+{{/callbacks}}
+
 
 static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
 
@@ -288,7 +561,7 @@ static SteamCallbackWrapper *steamCallbackWrapper = new SteamCallbackWrapper();
 
 
 {{#methods}}
-static int {{classname}}_{{methodname}}(lua_State* L) {
+static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^methodalias}}{{methodname}}{{/methodalias}}(lua_State* L) {
 	int top = lua_gettop(L);
 	{{#params}}
 {{#normal_param}}	{{paramtype}} {{paramname}} = check_{{paramtypestring}}(L, {{paramindex}}); /*normal*/
@@ -322,7 +595,7 @@ static int {{classname}}_{{methodname}}(lua_State* L) {
 	{{/steamapicall}}
 	{{^steamapicall}}
 	push_{{returntypestring}}(L, r);
-	{{#params}}{{#out_param}}push_{{paramtype}}(L, {{paramname}});
+	{{#params}}{{#out_param}}push_{{paramtypestring}}(L, {{paramname}}); /*out_param*/
 	{{/out_param}}{{/params}}
 	assert(top + 1 + {{paramcount_out}} == lua_gettop(L));
 	return 1 + {{paramcount_out}};
@@ -355,14 +628,14 @@ static int Init(lua_State* L) {
 	if (!SteamAPI_IsSteamRunning()) {
 		luaL_error(L, "Steam is not running");
 	}
-	client = SteamClient();
 	friends = SteamFriends();
 	user = SteamUser();
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
-	matchmaking = SteamMatchmaking();
-	userstats = SteamUserStats();
-	userstats->RequestCurrentStats();
+	user_stats = SteamUserStats();
+	//client = SteamClient();
+	//user_stats->RequestCurrentStats();
+	//matchmaking = SteamMatchmaking();
 	return 0;
 }
 
@@ -391,7 +664,7 @@ static const luaL_reg Module_methods[] = {
 	{ "final", Final },
 	{ "set_listener", SetListener },
 	{{#methods}}
-	{ "{{classname_lower}}_{{methodname_lower}}", {{classname}}_{{methodname}} },
+	{ "{{classname_lower}}_{{methodname_lower}}", {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^methodalias}}{{methodname}}{{/methodalias}} },
 	{{/methods}}
 	{ 0, 0 }
 };
