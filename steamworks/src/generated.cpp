@@ -123,6 +123,44 @@ utils_is_steam_in_big_picture_mode() -> ISteamUtils_IsSteamInBigPictureMode()
 utils_start_vr_dashboard() -> ISteamUtils_StartVRDashboard()
 utils_is_vr_headset_streaming_enabled() -> ISteamUtils_IsVRHeadsetStreamingEnabled()
 utils_set_vr_headset_streaming_enabled(bEnabled) -> ISteamUtils_SetVRHeadsetStreamingEnabled()
+matchmaking_get_favorite_game_count() -> ISteamMatchmaking_GetFavoriteGameCount()
+matchmaking_get_favorite_game(iGame) -> ISteamMatchmaking_GetFavoriteGame()
+matchmaking_add_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags,rTime32LastPlayedOnServer) -> ISteamMatchmaking_AddFavoriteGame()
+matchmaking_remove_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags) -> ISteamMatchmaking_RemoveFavoriteGame()
+matchmaking_request_lobby_list() -> ISteamMatchmaking_RequestLobbyList()
+matchmaking_add_request_lobby_list_string_filter(pchKeyToMatch,pchValueToMatch,eComparisonType) -> ISteamMatchmaking_AddRequestLobbyListStringFilter()
+matchmaking_add_request_lobby_list_numerical_filter(pchKeyToMatch,nValueToMatch,eComparisonType) -> ISteamMatchmaking_AddRequestLobbyListNumericalFilter()
+matchmaking_add_request_lobby_list_near_value_filter(pchKeyToMatch,nValueToBeCloseTo) -> ISteamMatchmaking_AddRequestLobbyListNearValueFilter()
+matchmaking_add_request_lobby_list_filter_slots_available(nSlotsAvailable) -> ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable()
+matchmaking_add_request_lobby_list_distance_filter(eLobbyDistanceFilter) -> ISteamMatchmaking_AddRequestLobbyListDistanceFilter()
+matchmaking_add_request_lobby_list_result_count_filter(cMaxResults) -> ISteamMatchmaking_AddRequestLobbyListResultCountFilter()
+matchmaking_add_request_lobby_list_compatible_members_filter(steamIDLobby) -> ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter()
+matchmaking_get_lobby_by_index(iLobby) -> ISteamMatchmaking_GetLobbyByIndex()
+matchmaking_create_lobby(eLobbyType,cMaxMembers) -> ISteamMatchmaking_CreateLobby()
+matchmaking_join_lobby(steamIDLobby) -> ISteamMatchmaking_JoinLobby()
+matchmaking_leave_lobby(steamIDLobby) -> ISteamMatchmaking_LeaveLobby()
+matchmaking_invite_user_to_lobby(steamIDLobby,steamIDInvitee) -> ISteamMatchmaking_InviteUserToLobby()
+matchmaking_get_num_lobby_members(steamIDLobby) -> ISteamMatchmaking_GetNumLobbyMembers()
+matchmaking_get_lobby_member_by_index(steamIDLobby,iMember) -> ISteamMatchmaking_GetLobbyMemberByIndex()
+matchmaking_get_lobby_data(steamIDLobby,pchKey) -> ISteamMatchmaking_GetLobbyData()
+matchmaking_set_lobby_data(steamIDLobby,pchKey,pchValue) -> ISteamMatchmaking_SetLobbyData()
+matchmaking_get_lobby_data_count(steamIDLobby) -> ISteamMatchmaking_GetLobbyDataCount()
+matchmaking_get_lobby_data_by_index(steamIDLobby,iLobbyData,pchKey,cchKeyBufferSize,pchValue,cchValueBufferSize) -> ISteamMatchmaking_GetLobbyDataByIndex()
+matchmaking_delete_lobby_data(steamIDLobby,pchKey) -> ISteamMatchmaking_DeleteLobbyData()
+matchmaking_get_lobby_member_data(steamIDLobby,steamIDUser,pchKey) -> ISteamMatchmaking_GetLobbyMemberData()
+matchmaking_set_lobby_member_data(steamIDLobby,pchKey,pchValue) -> ISteamMatchmaking_SetLobbyMemberData()
+matchmaking_send_lobby_chat_msg(steamIDLobby,pvMsgBody,cubMsgBody) -> ISteamMatchmaking_SendLobbyChatMsg()
+matchmaking_get_lobby_chat_entry(steamIDLobby,iChatID,pvData,cubData) -> ISteamMatchmaking_GetLobbyChatEntry()
+matchmaking_request_lobby_data(steamIDLobby) -> ISteamMatchmaking_RequestLobbyData()
+matchmaking_set_lobby_game_server(steamIDLobby,unGameServerIP,unGameServerPort,steamIDGameServer) -> ISteamMatchmaking_SetLobbyGameServer()
+matchmaking_get_lobby_game_server(steamIDLobby) -> ISteamMatchmaking_GetLobbyGameServer()
+matchmaking_set_lobby_member_limit(steamIDLobby,cMaxMembers) -> ISteamMatchmaking_SetLobbyMemberLimit()
+matchmaking_get_lobby_member_limit(steamIDLobby) -> ISteamMatchmaking_GetLobbyMemberLimit()
+matchmaking_set_lobby_type(steamIDLobby,eLobbyType) -> ISteamMatchmaking_SetLobbyType()
+matchmaking_set_lobby_joinable(steamIDLobby,bLobbyJoinable) -> ISteamMatchmaking_SetLobbyJoinable()
+matchmaking_get_lobby_owner(steamIDLobby) -> ISteamMatchmaking_GetLobbyOwner()
+matchmaking_set_lobby_owner(steamIDLobby,steamIDNewOwner) -> ISteamMatchmaking_SetLobbyOwner()
+matchmaking_set_linked_lobby(steamIDLobby,steamIDLobbyDependent) -> ISteamMatchmaking_SetLinkedLobby()
 user_stats_request_current_stats() -> ISteamUserStats_RequestCurrentStats()
 user_stats_get_stat_int(pchName) -> ISteamUserStats_GetStat()
 user_stats_get_stat_float(pchName) -> ISteamUserStats_GetStat()
@@ -195,9 +233,9 @@ static ISteamFriends *friends;
 static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
+static ISteamMatchmaking *matchmaking;
 
 // static ISteamClient *client;
-// static ISteamMatchmaking *matchmaking;
 
 
 
@@ -9211,6 +9249,72 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, LobbyEnter_t> m_CallResultLobbyEnter_t;
+		void TrackSteamAPICallLobbyEnter_t(SteamAPICall_t steamAPICall) {
+			m_CallResultLobbyEnter_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnLobbyEnter_t);
+		}
+		void OnLobbyEnter_t(LobbyEnter_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnLobbyEnter_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "LobbyEnter_t");
+			push_LobbyEnter_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, LobbyMatchList_t> m_CallResultLobbyMatchList_t;
+		void TrackSteamAPICallLobbyMatchList_t(SteamAPICall_t steamAPICall) {
+			m_CallResultLobbyMatchList_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnLobbyMatchList_t);
+		}
+		void OnLobbyMatchList_t(LobbyMatchList_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnLobbyMatchList_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "LobbyMatchList_t");
+			push_LobbyMatchList_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, LobbyCreated_t> m_CallResultLobbyCreated_t;
+		void TrackSteamAPICallLobbyCreated_t(SteamAPICall_t steamAPICall) {
+			m_CallResultLobbyCreated_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnLobbyCreated_t);
+		}
+		void OnLobbyCreated_t(LobbyCreated_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnLobbyCreated_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "LobbyCreated_t");
+			push_LobbyCreated_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				lua_pop(L, 2);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, UserStatsReceived_t> m_CallResultUserStatsReceived_t;
 		void TrackSteamAPICallUserStatsReceived_t(SteamAPICall_t steamAPICall) {
 			m_CallResultUserStatsReceived_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnUserStatsReceived_t);
@@ -10811,6 +10915,468 @@ static int ISteamUtils_SetVRHeadsetStreamingEnabled(lua_State* L) {
 	return 0;
 }
 
+static int ISteamMatchmaking_GetFavoriteGameCount(lua_State* L) {
+	int top = lua_gettop(L);
+
+	int r = matchmaking->GetFavoriteGameCount();
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetFavoriteGame(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 pRTime32LastPlayedOnServer; /*out_param*/
+	uint32 punFlags; /*out_param*/
+	uint16 pnQueryPort; /*out_param*/
+	uint16 pnConnPort; /*out_param*/
+	uint32 pnIP; /*out_param*/
+	AppId_t pnAppID; /*out_param*/
+	int iGame = check_int(L, 1); /*normal*/
+
+	bool r = matchmaking->GetFavoriteGame(iGame,&pnAppID,&pnIP,&pnConnPort,&pnQueryPort,&punFlags,&pRTime32LastPlayedOnServer);
+	push_bool(L, r);
+	push_uint32(L, pRTime32LastPlayedOnServer); /*out_param*/
+	push_uint32(L, punFlags); /*out_param*/
+	push_uint16(L, pnQueryPort); /*out_param*/
+	push_uint16(L, pnConnPort); /*out_param*/
+	push_uint32(L, pnIP); /*out_param*/
+	push_AppId_t(L, pnAppID); /*out_param*/
+	
+	assert(top + 1 + 6 == lua_gettop(L));
+	return 1 + 6;
+}
+
+static int ISteamMatchmaking_AddFavoriteGame(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 rTime32LastPlayedOnServer = check_uint32(L, 6); /*normal*/
+	uint32 unFlags = check_uint32(L, 5); /*normal*/
+	uint16 nQueryPort = check_uint16(L, 4); /*normal*/
+	uint16 nConnPort = check_uint16(L, 3); /*normal*/
+	uint32 nIP = check_uint32(L, 2); /*normal*/
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	int r = matchmaking->AddFavoriteGame(nAppID,nIP,nConnPort,nQueryPort,unFlags,rTime32LastPlayedOnServer);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_RemoveFavoriteGame(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unFlags = check_uint32(L, 5); /*normal*/
+	uint16 nQueryPort = check_uint16(L, 4); /*normal*/
+	uint16 nConnPort = check_uint16(L, 3); /*normal*/
+	uint32 nIP = check_uint32(L, 2); /*normal*/
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	bool r = matchmaking->RemoveFavoriteGame(nAppID,nIP,nConnPort,nQueryPort,unFlags);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_RequestLobbyList(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = matchmaking->RequestLobbyList();
+	steamCallbackWrapper->TrackSteamAPICallLobbyMatchList_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_AddRequestLobbyListStringFilter(lua_State* L) {
+	int top = lua_gettop(L);
+	ELobbyComparison eComparisonType = check_ELobbyComparison(L, 3); /*normal*/
+	const char * pchValueToMatch = check_const_char_ptr(L, 2); /*normal*/
+	const char * pchKeyToMatch = check_const_char_ptr(L, 1); /*normal*/
+
+	matchmaking->AddRequestLobbyListStringFilter(pchKeyToMatch,pchValueToMatch,eComparisonType);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_AddRequestLobbyListNumericalFilter(lua_State* L) {
+	int top = lua_gettop(L);
+	ELobbyComparison eComparisonType = check_ELobbyComparison(L, 3); /*normal*/
+	int nValueToMatch = check_int(L, 2); /*normal*/
+	const char * pchKeyToMatch = check_const_char_ptr(L, 1); /*normal*/
+
+	matchmaking->AddRequestLobbyListNumericalFilter(pchKeyToMatch,nValueToMatch,eComparisonType);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_AddRequestLobbyListNearValueFilter(lua_State* L) {
+	int top = lua_gettop(L);
+	int nValueToBeCloseTo = check_int(L, 2); /*normal*/
+	const char * pchKeyToMatch = check_const_char_ptr(L, 1); /*normal*/
+
+	matchmaking->AddRequestLobbyListNearValueFilter(pchKeyToMatch,nValueToBeCloseTo);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable(lua_State* L) {
+	int top = lua_gettop(L);
+	int nSlotsAvailable = check_int(L, 1); /*normal*/
+
+	matchmaking->AddRequestLobbyListFilterSlotsAvailable(nSlotsAvailable);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_AddRequestLobbyListDistanceFilter(lua_State* L) {
+	int top = lua_gettop(L);
+	ELobbyDistanceFilter eLobbyDistanceFilter = check_ELobbyDistanceFilter(L, 1); /*normal*/
+
+	matchmaking->AddRequestLobbyListDistanceFilter(eLobbyDistanceFilter);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_AddRequestLobbyListResultCountFilter(lua_State* L) {
+	int top = lua_gettop(L);
+	int cMaxResults = check_int(L, 1); /*normal*/
+
+	matchmaking->AddRequestLobbyListResultCountFilter(cMaxResults);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	matchmaking->AddRequestLobbyListCompatibleMembersFilter(steamIDLobby);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_GetLobbyByIndex(lua_State* L) {
+	int top = lua_gettop(L);
+	int iLobby = check_int(L, 1); /*normal*/
+
+	class CSteamID r = matchmaking->GetLobbyByIndex(iLobby);
+	push_class_CSteamID(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_CreateLobby(lua_State* L) {
+	int top = lua_gettop(L);
+	int cMaxMembers = check_int(L, 2); /*normal*/
+	ELobbyType eLobbyType = check_ELobbyType(L, 1); /*normal*/
+
+	SteamAPICall_t r = matchmaking->CreateLobby(eLobbyType,cMaxMembers);
+	steamCallbackWrapper->TrackSteamAPICallLobbyCreated_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_JoinLobby(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	SteamAPICall_t r = matchmaking->JoinLobby(steamIDLobby);
+	steamCallbackWrapper->TrackSteamAPICallLobbyEnter_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_LeaveLobby(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	matchmaking->LeaveLobby(steamIDLobby);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_InviteUserToLobby(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDInvitee = check_class_CSteamID(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->InviteUserToLobby(steamIDLobby,steamIDInvitee);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetNumLobbyMembers(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	int r = matchmaking->GetNumLobbyMembers(steamIDLobby);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyMemberByIndex(lua_State* L) {
+	int top = lua_gettop(L);
+	int iMember = check_int(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	class CSteamID r = matchmaking->GetLobbyMemberByIndex(steamIDLobby,iMember);
+	push_class_CSteamID(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyData(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	const char * r = matchmaking->GetLobbyData(steamIDLobby,pchKey);
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_SetLobbyData(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchValue = check_const_char_ptr(L, 3); /*normal*/
+	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->SetLobbyData(steamIDLobby,pchKey,pchValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyDataCount(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	int r = matchmaking->GetLobbyDataCount(steamIDLobby);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyDataByIndex(lua_State* L) {
+	int top = lua_gettop(L);
+	int cchValueBufferSize = check_int(L, 6); /*normal*/
+	char * pchValue = check_char_ptr(L, 5); /*normal*/
+	int cchKeyBufferSize = check_int(L, 4); /*normal*/
+	char * pchKey = check_char_ptr(L, 3); /*normal*/
+	int iLobbyData = check_int(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->GetLobbyDataByIndex(steamIDLobby,iLobbyData,pchKey,cchKeyBufferSize,pchValue,cchValueBufferSize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_DeleteLobbyData(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->DeleteLobbyData(steamIDLobby,pchKey);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyMemberData(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchKey = check_const_char_ptr(L, 3); /*normal*/
+	class CSteamID steamIDUser = check_class_CSteamID(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	const char * r = matchmaking->GetLobbyMemberData(steamIDLobby,steamIDUser,pchKey);
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_SetLobbyMemberData(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchValue = check_const_char_ptr(L, 3); /*normal*/
+	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	matchmaking->SetLobbyMemberData(steamIDLobby,pchKey,pchValue);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_SendLobbyChatMsg(lua_State* L) {
+	int top = lua_gettop(L);
+	int cubMsgBody = check_int(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pvMsgBody_buffer = check_buffer(L, 2); /*buffer_param*/
+	const void * pvMsgBody = 0x0;
+	uint32_t pvMsgBody_buffersize = 0;
+	dmBuffer::Result pvMsgBody_buffer_result = dmBuffer::GetBytes(pvMsgBody_buffer->m_Buffer, (void**)&pvMsgBody, &pvMsgBody_buffersize);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->SendLobbyChatMsg(steamIDLobby,pvMsgBody,cubMsgBody);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyChatEntry(lua_State* L) {
+	int top = lua_gettop(L);
+	EChatEntryType peChatEntryType; /*out_param*/
+	int cubData = check_int(L, 4); /*normal*/
+	dmScript::LuaHBuffer * pvData_buffer = check_buffer(L, 3); /*buffer_param*/
+	void * pvData = 0x0;
+	uint32_t pvData_buffersize = 0;
+	dmBuffer::Result pvData_buffer_result = dmBuffer::GetBytes(pvData_buffer->m_Buffer, (void**)&pvData, &pvData_buffersize);
+	int iChatID = check_int(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	class CSteamID pSteamIDUser; /*out_struct*/
+
+	int r = matchmaking->GetLobbyChatEntry(steamIDLobby,iChatID,&pSteamIDUser,pvData,cubData,&peChatEntryType);
+	push_int(L, r);
+	push_EChatEntryType(L, peChatEntryType); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamMatchmaking_RequestLobbyData(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->RequestLobbyData(steamIDLobby);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_SetLobbyGameServer(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDGameServer = check_class_CSteamID(L, 4); /*normal*/
+	uint16 unGameServerPort = check_uint16(L, 3); /*normal*/
+	uint32 unGameServerIP = check_uint32(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	matchmaking->SetLobbyGameServer(steamIDLobby,unGameServerIP,unGameServerPort,steamIDGameServer);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMatchmaking_GetLobbyGameServer(lua_State* L) {
+	int top = lua_gettop(L);
+	uint16 punGameServerPort; /*out_param*/
+	uint32 punGameServerIP; /*out_param*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	class CSteamID psteamIDGameServer; /*out_struct*/
+
+	bool r = matchmaking->GetLobbyGameServer(steamIDLobby,&punGameServerIP,&punGameServerPort,&psteamIDGameServer);
+	push_bool(L, r);
+	push_uint16(L, punGameServerPort); /*out_param*/
+	push_uint32(L, punGameServerIP); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamMatchmaking_SetLobbyMemberLimit(lua_State* L) {
+	int top = lua_gettop(L);
+	int cMaxMembers = check_int(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->SetLobbyMemberLimit(steamIDLobby,cMaxMembers);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyMemberLimit(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	int r = matchmaking->GetLobbyMemberLimit(steamIDLobby);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_SetLobbyType(lua_State* L) {
+	int top = lua_gettop(L);
+	ELobbyType eLobbyType = check_ELobbyType(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->SetLobbyType(steamIDLobby,eLobbyType);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_SetLobbyJoinable(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bLobbyJoinable = check_bool(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->SetLobbyJoinable(steamIDLobby,bLobbyJoinable);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_GetLobbyOwner(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	class CSteamID r = matchmaking->GetLobbyOwner(steamIDLobby);
+	push_class_CSteamID(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_SetLobbyOwner(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDNewOwner = check_class_CSteamID(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->SetLobbyOwner(steamIDLobby,steamIDNewOwner);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMatchmaking_SetLinkedLobby(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDLobbyDependent = check_class_CSteamID(L, 2); /*normal*/
+	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = matchmaking->SetLinkedLobby(steamIDLobby,steamIDLobbyDependent);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamUserStats_RequestCurrentStats(lua_State* L) {
 	int top = lua_gettop(L);
 
@@ -11391,9 +11957,8 @@ static int Init(lua_State* L) {
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
+	matchmaking = SteamMatchmaking();
 	//client = SteamClient();
-	//user_stats->RequestCurrentStats();
-	//matchmaking = SteamMatchmaking();
 	return 0;
 }
 
@@ -11541,6 +12106,44 @@ static const luaL_reg Module_methods[] = {
 	{ "utils_start_vr_dashboard", ISteamUtils_StartVRDashboard },
 	{ "utils_is_vr_headset_streaming_enabled", ISteamUtils_IsVRHeadsetStreamingEnabled },
 	{ "utils_set_vr_headset_streaming_enabled", ISteamUtils_SetVRHeadsetStreamingEnabled },
+	{ "matchmaking_get_favorite_game_count", ISteamMatchmaking_GetFavoriteGameCount },
+	{ "matchmaking_get_favorite_game", ISteamMatchmaking_GetFavoriteGame },
+	{ "matchmaking_add_favorite_game", ISteamMatchmaking_AddFavoriteGame },
+	{ "matchmaking_remove_favorite_game", ISteamMatchmaking_RemoveFavoriteGame },
+	{ "matchmaking_request_lobby_list", ISteamMatchmaking_RequestLobbyList },
+	{ "matchmaking_add_request_lobby_list_string_filter", ISteamMatchmaking_AddRequestLobbyListStringFilter },
+	{ "matchmaking_add_request_lobby_list_numerical_filter", ISteamMatchmaking_AddRequestLobbyListNumericalFilter },
+	{ "matchmaking_add_request_lobby_list_near_value_filter", ISteamMatchmaking_AddRequestLobbyListNearValueFilter },
+	{ "matchmaking_add_request_lobby_list_filter_slots_available", ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable },
+	{ "matchmaking_add_request_lobby_list_distance_filter", ISteamMatchmaking_AddRequestLobbyListDistanceFilter },
+	{ "matchmaking_add_request_lobby_list_result_count_filter", ISteamMatchmaking_AddRequestLobbyListResultCountFilter },
+	{ "matchmaking_add_request_lobby_list_compatible_members_filter", ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter },
+	{ "matchmaking_get_lobby_by_index", ISteamMatchmaking_GetLobbyByIndex },
+	{ "matchmaking_create_lobby", ISteamMatchmaking_CreateLobby },
+	{ "matchmaking_join_lobby", ISteamMatchmaking_JoinLobby },
+	{ "matchmaking_leave_lobby", ISteamMatchmaking_LeaveLobby },
+	{ "matchmaking_invite_user_to_lobby", ISteamMatchmaking_InviteUserToLobby },
+	{ "matchmaking_get_num_lobby_members", ISteamMatchmaking_GetNumLobbyMembers },
+	{ "matchmaking_get_lobby_member_by_index", ISteamMatchmaking_GetLobbyMemberByIndex },
+	{ "matchmaking_get_lobby_data", ISteamMatchmaking_GetLobbyData },
+	{ "matchmaking_set_lobby_data", ISteamMatchmaking_SetLobbyData },
+	{ "matchmaking_get_lobby_data_count", ISteamMatchmaking_GetLobbyDataCount },
+	{ "matchmaking_get_lobby_data_by_index", ISteamMatchmaking_GetLobbyDataByIndex },
+	{ "matchmaking_delete_lobby_data", ISteamMatchmaking_DeleteLobbyData },
+	{ "matchmaking_get_lobby_member_data", ISteamMatchmaking_GetLobbyMemberData },
+	{ "matchmaking_set_lobby_member_data", ISteamMatchmaking_SetLobbyMemberData },
+	{ "matchmaking_send_lobby_chat_msg", ISteamMatchmaking_SendLobbyChatMsg },
+	{ "matchmaking_get_lobby_chat_entry", ISteamMatchmaking_GetLobbyChatEntry },
+	{ "matchmaking_request_lobby_data", ISteamMatchmaking_RequestLobbyData },
+	{ "matchmaking_set_lobby_game_server", ISteamMatchmaking_SetLobbyGameServer },
+	{ "matchmaking_get_lobby_game_server", ISteamMatchmaking_GetLobbyGameServer },
+	{ "matchmaking_set_lobby_member_limit", ISteamMatchmaking_SetLobbyMemberLimit },
+	{ "matchmaking_get_lobby_member_limit", ISteamMatchmaking_GetLobbyMemberLimit },
+	{ "matchmaking_set_lobby_type", ISteamMatchmaking_SetLobbyType },
+	{ "matchmaking_set_lobby_joinable", ISteamMatchmaking_SetLobbyJoinable },
+	{ "matchmaking_get_lobby_owner", ISteamMatchmaking_GetLobbyOwner },
+	{ "matchmaking_set_lobby_owner", ISteamMatchmaking_SetLobbyOwner },
+	{ "matchmaking_set_linked_lobby", ISteamMatchmaking_SetLinkedLobby },
 	{ "user_stats_request_current_stats", ISteamUserStats_RequestCurrentStats },
 	{ "user_stats_get_stat_int", ISteamUserStats_GetStatInt },
 	{ "user_stats_get_stat_float", ISteamUserStats_GetStatFloat },

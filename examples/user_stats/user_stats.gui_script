@@ -1,12 +1,6 @@
 local rpg = require "gooey.themes.rpg.rpg"
 local monarch = require "monarch.monarch"
 
-
-local STATS_TEXT = [[USER
-Num games: %s
-]]
-
-
 function init(self)
 	msg.post(".", "acquire_input_focus")
 

@@ -35,9 +35,9 @@ static ISteamFriends *friends;
 static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
+static ISteamMatchmaking *matchmaking;
 
 // static ISteamClient *client;
-// static ISteamMatchmaking *matchmaking;
 
 
 
@@ -633,9 +633,8 @@ static int Init(lua_State* L) {
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
+	matchmaking = SteamMatchmaking();
 	//client = SteamClient();
-	//user_stats->RequestCurrentStats();
-	//matchmaking = SteamMatchmaking();
 	return 0;
 }
 
