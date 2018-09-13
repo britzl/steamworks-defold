@@ -31,12 +31,14 @@
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE 2
 
+static ISteamApps *apps;
 static ISteamFriends *friends;
+static ISteamMatchmaking *matchmaking;
+static ISteamMusic *music;
+static ISteamNetworking *networking;
 static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
-static ISteamMatchmaking *matchmaking;
-static ISteamNetworking *networking;
 
 
 
@@ -630,14 +632,15 @@ static int Init(lua_State* L) {
 	if (!SteamAPI_IsSteamRunning()) {
 		luaL_error(L, "Steam is not running");
 	}
+	apps = SteamApps();
 	friends = SteamFriends();
+	matchmaking = SteamMatchmaking();
+	music = SteamMusic();
+	networking = SteamNetworking();
 	user = SteamUser();
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
-	matchmaking = SteamMatchmaking();
-	networking = SteamNetworking();
-	//client = SteamClient();
 	return 0;
 }
 

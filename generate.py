@@ -13,7 +13,7 @@ def to_snake_case(name):
 
 
 def parse_methods(methods):
-    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking"]
+    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking", "ISteamApps", "ISteamMusic"]
     DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection"]
     SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook", "ActivateGameOverlay", "ActivateGameOverlayToUser", "ActivateGameOverlayToWebPage", "ActivateGameOverlayToStore", "SetOverlayNotificationPosition", "IsOverlayEnabled"]
     m = []
@@ -27,6 +27,10 @@ def parse_methods(methods):
                 method["methodname_lower"] = to_snake_case(methodalias).lower()
             else:
                 method["methodname_lower"] = to_snake_case(methodname).lower()
+
+            if method["methodname_lower"].startswith("b_"):
+                method["methodname_lower"] = method["methodname_lower"].replace("b_", "")
+
             method["paramnames"] = []
             method["paramnames_in"] = []
             method["paramcount_out"] = 0
@@ -128,7 +132,7 @@ def parse_enums(enums):
         if "::" not in enum.get("enumname"):
             v = []
             for value in enum.get("values"):
-                value["name"] = to_snake_case(value.get("name").replace("k_E", "").replace("k_e", "").replace("k_n", "")).upper()
+                value["name"] = to_snake_case(value.get("name").replace("k_E", "").replace("k_e", "").replace("k_n", "")).upper().replace("__", "_")
                 v.append(value)
             enum["values"] = v
             e.append(enum)

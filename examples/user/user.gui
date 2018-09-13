@@ -132,7 +132,7 @@ nodes {
 }
 nodes {
   position {
-    x: 111.0
+    x: 71.0
     y: 683.0
     z: 0.0
     w: 1.0
@@ -171,7 +171,7 @@ nodes {
 }
 nodes {
   position {
-    x: -48.0
+    x: 0.0
     y: 0.0
     z: 0.0
     w: 1.0
@@ -189,7 +189,7 @@ nodes {
     w: 1.0
   }
   size {
-    x: 100.0
+    x: 120.0
     y: 49.0
     z: 0.0
     w: 1.0
@@ -221,7 +221,6 @@ nodes {
   clipping_visible: true
   clipping_inverted: false
   alpha: 1.0
-  overridden_fields: 1
   overridden_fields: 4
   template_node_child: true
   size_mode: SIZE_MODE_MANUAL

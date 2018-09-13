@@ -4,7 +4,7 @@
 /**
 
 user_get_h_steam_user() -> ISteamUser_GetHSteamUser()
-user_b_logged_on() -> ISteamUser_BLoggedOn()
+user_logged_on() -> ISteamUser_BLoggedOn()
 user_get_steam_id() -> ISteamUser_GetSteamID()
 user_terminate_game_connection(unIPServer,usPortServer) -> ISteamUser_TerminateGameConnection()
 user_get_auth_session_ticket(pTicket,cbMaxTicket) -> ISteamUser_GetAuthSessionTicket()
@@ -12,17 +12,17 @@ user_begin_auth_session(pAuthTicket,cbAuthTicket,steamID) -> ISteamUser_BeginAut
 user_end_auth_session(steamID) -> ISteamUser_EndAuthSession()
 user_cancel_auth_ticket(hAuthTicket) -> ISteamUser_CancelAuthTicket()
 user_user_has_license_for_app(steamID,appID) -> ISteamUser_UserHasLicenseForApp()
-user_b_is_behind_nat() -> ISteamUser_BIsBehindNAT()
+user_is_behind_nat() -> ISteamUser_BIsBehindNAT()
 user_advertise_game(steamIDGameServer,unIPServer,usPortServer) -> ISteamUser_AdvertiseGame()
 user_request_encrypted_app_ticket(pDataToInclude,cbDataToInclude) -> ISteamUser_RequestEncryptedAppTicket()
 user_get_encrypted_app_ticket(pTicket,cbMaxTicket) -> ISteamUser_GetEncryptedAppTicket()
 user_get_game_badge_level(nSeries,bFoil) -> ISteamUser_GetGameBadgeLevel()
 user_get_player_steam_level() -> ISteamUser_GetPlayerSteamLevel()
 user_request_store_auth_url(pchRedirectURL) -> ISteamUser_RequestStoreAuthURL()
-user_b_is_phone_verified() -> ISteamUser_BIsPhoneVerified()
-user_b_is_two_factor_enabled() -> ISteamUser_BIsTwoFactorEnabled()
-user_b_is_phone_identifying() -> ISteamUser_BIsPhoneIdentifying()
-user_b_is_phone_requiring_verification() -> ISteamUser_BIsPhoneRequiringVerification()
+user_is_phone_verified() -> ISteamUser_BIsPhoneVerified()
+user_is_two_factor_enabled() -> ISteamUser_BIsTwoFactorEnabled()
+user_is_phone_identifying() -> ISteamUser_BIsPhoneIdentifying()
+user_is_phone_requiring_verification() -> ISteamUser_BIsPhoneRequiringVerification()
 friends_get_persona_name() -> ISteamFriends_GetPersonaName()
 friends_set_persona_name(pchPersonaName) -> ISteamFriends_SetPersonaName()
 friends_get_persona_state() -> ISteamFriends_GetPersonaState()
@@ -105,7 +105,7 @@ utils_is_api_call_completed(hSteamAPICall) -> ISteamUtils_IsAPICallCompleted()
 utils_get_api_call_failure_reason(hSteamAPICall) -> ISteamUtils_GetAPICallFailureReason()
 utils_get_api_call_result(hSteamAPICall,pCallback,cubCallback,iCallbackExpected) -> ISteamUtils_GetAPICallResult()
 utils_get_ipc_call_count() -> ISteamUtils_GetIPCCallCount()
-utils_b_overlay_needs_present() -> ISteamUtils_BOverlayNeedsPresent()
+utils_overlay_needs_present() -> ISteamUtils_BOverlayNeedsPresent()
 utils_check_file_signature(szFileName) -> ISteamUtils_CheckFileSignature()
 utils_show_gamepad_text_input(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText) -> ISteamUtils_ShowGamepadTextInput()
 utils_get_entered_gamepad_text_length() -> ISteamUtils_GetEnteredGamepadTextLength()
@@ -198,6 +198,32 @@ user_stats_get_global_stat_int(pchStatName) -> ISteamUserStats_GetGlobalStat()
 user_stats_get_global_stat_float(pchStatName) -> ISteamUserStats_GetGlobalStat()
 user_stats_get_global_stat_int_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
 user_stats_get_global_stat_float_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
+apps_is_subscribed() -> ISteamApps_BIsSubscribed()
+apps_is_low_violence() -> ISteamApps_BIsLowViolence()
+apps_is_cybercafe() -> ISteamApps_BIsCybercafe()
+apps_is_vac_banned() -> ISteamApps_BIsVACBanned()
+apps_get_current_game_language() -> ISteamApps_GetCurrentGameLanguage()
+apps_get_available_game_languages() -> ISteamApps_GetAvailableGameLanguages()
+apps_is_subscribed_app(appID) -> ISteamApps_BIsSubscribedApp()
+apps_is_dlc_installed(appID) -> ISteamApps_BIsDlcInstalled()
+apps_get_earliest_purchase_unix_time(nAppID) -> ISteamApps_GetEarliestPurchaseUnixTime()
+apps_is_subscribed_from_free_weekend() -> ISteamApps_BIsSubscribedFromFreeWeekend()
+apps_get_dlc_count() -> ISteamApps_GetDLCCount()
+apps_get_dlc_data_by_index(iDLC,pchName,cchNameBufferSize) -> ISteamApps_BGetDLCDataByIndex()
+apps_install_dlc(nAppID) -> ISteamApps_InstallDLC()
+apps_uninstall_dlc(nAppID) -> ISteamApps_UninstallDLC()
+apps_request_app_proof_of_purchase_key(nAppID) -> ISteamApps_RequestAppProofOfPurchaseKey()
+apps_get_current_beta_name(pchName,cchNameBufferSize) -> ISteamApps_GetCurrentBetaName()
+apps_mark_content_corrupt(bMissingFilesOnly) -> ISteamApps_MarkContentCorrupt()
+apps_get_installed_depots(appID,cMaxDepots) -> ISteamApps_GetInstalledDepots()
+apps_get_app_install_dir(appID,pchFolder,cchFolderBufferSize) -> ISteamApps_GetAppInstallDir()
+apps_is_app_installed(appID) -> ISteamApps_BIsAppInstalled()
+apps_get_app_owner() -> ISteamApps_GetAppOwner()
+apps_get_launch_query_param(pchKey) -> ISteamApps_GetLaunchQueryParam()
+apps_get_dlc_download_progress(nAppID) -> ISteamApps_GetDlcDownloadProgress()
+apps_get_app_build_id() -> ISteamApps_GetAppBuildId()
+apps_request_all_proof_of_purchase_keys() -> ISteamApps_RequestAllProofOfPurchaseKeys()
+apps_get_file_details(pszFileName) -> ISteamApps_GetFileDetails()
 networking_send_p2p_packet(steamIDRemote,pubData,cubData,eP2PSendType,nChannel) -> ISteamNetworking_SendP2PPacket()
 networking_is_p2p_packet_available(nChannel) -> ISteamNetworking_IsP2PPacketAvailable()
 networking_read_p2p_packet(pubDest,cubDest,nChannel) -> ISteamNetworking_ReadP2PPacket()
@@ -220,6 +246,15 @@ networking_get_socket_info(hSocket) -> ISteamNetworking_GetSocketInfo()
 networking_get_listen_socket_info(hListenSocket) -> ISteamNetworking_GetListenSocketInfo()
 networking_get_socket_connection_type(hSocket) -> ISteamNetworking_GetSocketConnectionType()
 networking_get_max_packet_size(hSocket) -> ISteamNetworking_GetMaxPacketSize()
+music_is_enabled() -> ISteamMusic_BIsEnabled()
+music_is_playing() -> ISteamMusic_BIsPlaying()
+music_get_playback_status() -> ISteamMusic_GetPlaybackStatus()
+music_play() -> ISteamMusic_Play()
+music_pause() -> ISteamMusic_Pause()
+music_play_previous() -> ISteamMusic_PlayPrevious()
+music_play_next() -> ISteamMusic_PlayNext()
+music_set_volume(flVolume) -> ISteamMusic_SetVolume()
+music_get_volume() -> ISteamMusic_GetVolume()
 
 */
 
@@ -245,12 +280,14 @@ networking_get_max_packet_size(hSocket) -> ISteamNetworking_GetMaxPacketSize()
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_AVERAGERATE 2
 
+static ISteamApps *apps;
 static ISteamFriends *friends;
+static ISteamMatchmaking *matchmaking;
+static ISteamMusic *music;
+static ISteamNetworking *networking;
 static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
-static ISteamMatchmaking *matchmaking;
-static ISteamNetworking *networking;
 
 
 
@@ -9526,6 +9563,29 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, FileDetailsResult_t> m_CallResultFileDetailsResult_t;
+		void TrackSteamAPICallFileDetailsResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultFileDetailsResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnFileDetailsResult_t);
+		}
+		void OnFileDetailsResult_t(FileDetailsResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnFileDetailsResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+			lua_pushstring(L, "FileDetailsResult_t");
+			push_FileDetailsResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnFileDetailsResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 };
 
 // ctor
@@ -11913,6 +11973,288 @@ static int ISteamUserStats_GetGlobalStatFloatHistory(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamApps_BIsSubscribed(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = apps->BIsSubscribed();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsLowViolence(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = apps->BIsLowViolence();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsCybercafe(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = apps->BIsCybercafe();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsVACBanned(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = apps->BIsVACBanned();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetCurrentGameLanguage(lua_State* L) {
+	int top = lua_gettop(L);
+
+	const char * r = apps->GetCurrentGameLanguage();
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetAvailableGameLanguages(lua_State* L) {
+	int top = lua_gettop(L);
+
+	const char * r = apps->GetAvailableGameLanguages();
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsSubscribedApp(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t appID = check_AppId_t(L, 1); /*normal*/
+
+	bool r = apps->BIsSubscribedApp(appID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsDlcInstalled(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t appID = check_AppId_t(L, 1); /*normal*/
+
+	bool r = apps->BIsDlcInstalled(appID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetEarliestPurchaseUnixTime(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	uint32 r = apps->GetEarliestPurchaseUnixTime(nAppID);
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsSubscribedFromFreeWeekend(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = apps->BIsSubscribedFromFreeWeekend();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetDLCCount(lua_State* L) {
+	int top = lua_gettop(L);
+
+	int r = apps->GetDLCCount();
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BGetDLCDataByIndex(lua_State* L) {
+	int top = lua_gettop(L);
+	int cchNameBufferSize = check_int(L, 3); /*normal*/
+	char * pchName = check_char_ptr(L, 2); /*normal*/
+	bool pbAvailable; /*out_param*/
+	AppId_t pAppID; /*out_param*/
+	int iDLC = check_int(L, 1); /*normal*/
+
+	bool r = apps->BGetDLCDataByIndex(iDLC,&pAppID,&pbAvailable,pchName,cchNameBufferSize);
+	push_bool(L, r);
+	push_bool(L, pbAvailable); /*out_param*/
+	push_AppId_t(L, pAppID); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamApps_InstallDLC(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	apps->InstallDLC(nAppID);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamApps_UninstallDLC(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	apps->UninstallDLC(nAppID);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamApps_RequestAppProofOfPurchaseKey(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	apps->RequestAppProofOfPurchaseKey(nAppID);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamApps_GetCurrentBetaName(lua_State* L) {
+	int top = lua_gettop(L);
+	int cchNameBufferSize = check_int(L, 2); /*normal*/
+	char * pchName = check_char_ptr(L, 1); /*normal*/
+
+	bool r = apps->GetCurrentBetaName(pchName,cchNameBufferSize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_MarkContentCorrupt(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bMissingFilesOnly = check_bool(L, 1); /*normal*/
+
+	bool r = apps->MarkContentCorrupt(bMissingFilesOnly);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetInstalledDepots(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cMaxDepots = check_uint32(L, 2); /*normal*/
+	DepotId_t pvecDepots; /*out_param*/
+	AppId_t appID = check_AppId_t(L, 1); /*normal*/
+
+	uint32 r = apps->GetInstalledDepots(appID,&pvecDepots,cMaxDepots);
+	push_uint32(L, r);
+	push_DepotId_t(L, pvecDepots); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamApps_GetAppInstallDir(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchFolderBufferSize = check_uint32(L, 3); /*normal*/
+	char * pchFolder = check_char_ptr(L, 2); /*normal*/
+	AppId_t appID = check_AppId_t(L, 1); /*normal*/
+
+	uint32 r = apps->GetAppInstallDir(appID,pchFolder,cchFolderBufferSize);
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsAppInstalled(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t appID = check_AppId_t(L, 1); /*normal*/
+
+	bool r = apps->BIsAppInstalled(appID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetAppOwner(lua_State* L) {
+	int top = lua_gettop(L);
+
+	class CSteamID r = apps->GetAppOwner();
+	push_class_CSteamID(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetLaunchQueryParam(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchKey = check_const_char_ptr(L, 1); /*normal*/
+
+	const char * r = apps->GetLaunchQueryParam(pchKey);
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_GetDlcDownloadProgress(lua_State* L) {
+	int top = lua_gettop(L);
+	uint64 punBytesTotal; /*out_param*/
+	uint64 punBytesDownloaded; /*out_param*/
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	bool r = apps->GetDlcDownloadProgress(nAppID,&punBytesDownloaded,&punBytesTotal);
+	push_bool(L, r);
+	push_uint64(L, punBytesTotal); /*out_param*/
+	push_uint64(L, punBytesDownloaded); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamApps_GetAppBuildId(lua_State* L) {
+	int top = lua_gettop(L);
+
+	int r = apps->GetAppBuildId();
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_RequestAllProofOfPurchaseKeys(lua_State* L) {
+	int top = lua_gettop(L);
+
+	apps->RequestAllProofOfPurchaseKeys();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamApps_GetFileDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pszFileName = check_const_char_ptr(L, 1); /*normal*/
+
+	SteamAPICall_t r = apps->GetFileDetails(pszFileName);
+	steamCallbackWrapper->TrackSteamAPICallFileDetailsResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
 static int ISteamNetworking_SendP2PPacket(lua_State* L) {
 	int top = lua_gettop(L);
 	int nChannel = check_int(L, 5); /*normal*/
@@ -12226,6 +12568,87 @@ static int ISteamNetworking_GetMaxPacketSize(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamMusic_BIsEnabled(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music->BIsEnabled();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusic_BIsPlaying(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music->BIsPlaying();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusic_GetPlaybackStatus(lua_State* L) {
+	int top = lua_gettop(L);
+
+	AudioPlayback_Status r = music->GetPlaybackStatus();
+	push_AudioPlayback_Status(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusic_Play(lua_State* L) {
+	int top = lua_gettop(L);
+
+	music->Play();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMusic_Pause(lua_State* L) {
+	int top = lua_gettop(L);
+
+	music->Pause();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMusic_PlayPrevious(lua_State* L) {
+	int top = lua_gettop(L);
+
+	music->PlayPrevious();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMusic_PlayNext(lua_State* L) {
+	int top = lua_gettop(L);
+
+	music->PlayNext();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMusic_SetVolume(lua_State* L) {
+	int top = lua_gettop(L);
+	float flVolume = check_float(L, 1); /*normal*/
+
+	music->SetVolume(flVolume);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamMusic_GetVolume(lua_State* L) {
+	int top = lua_gettop(L);
+
+	float r = music->GetVolume();
+	push_float(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 
 
 
@@ -12245,14 +12668,15 @@ static int Init(lua_State* L) {
 	if (!SteamAPI_IsSteamRunning()) {
 		luaL_error(L, "Steam is not running");
 	}
+	apps = SteamApps();
 	friends = SteamFriends();
+	matchmaking = SteamMatchmaking();
+	music = SteamMusic();
+	networking = SteamNetworking();
 	user = SteamUser();
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
-	matchmaking = SteamMatchmaking();
-	networking = SteamNetworking();
-	//client = SteamClient();
 	return 0;
 }
 
@@ -12281,7 +12705,7 @@ static const luaL_reg Module_methods[] = {
 	{ "final", Final },
 	{ "set_listener", SetListener },
 	{ "user_get_h_steam_user", ISteamUser_GetHSteamUser },
-	{ "user_b_logged_on", ISteamUser_BLoggedOn },
+	{ "user_logged_on", ISteamUser_BLoggedOn },
 	{ "user_get_steam_id", ISteamUser_GetSteamID },
 	{ "user_terminate_game_connection", ISteamUser_TerminateGameConnection },
 	{ "user_get_auth_session_ticket", ISteamUser_GetAuthSessionTicket },
@@ -12289,17 +12713,17 @@ static const luaL_reg Module_methods[] = {
 	{ "user_end_auth_session", ISteamUser_EndAuthSession },
 	{ "user_cancel_auth_ticket", ISteamUser_CancelAuthTicket },
 	{ "user_user_has_license_for_app", ISteamUser_UserHasLicenseForApp },
-	{ "user_b_is_behind_nat", ISteamUser_BIsBehindNAT },
+	{ "user_is_behind_nat", ISteamUser_BIsBehindNAT },
 	{ "user_advertise_game", ISteamUser_AdvertiseGame },
 	{ "user_request_encrypted_app_ticket", ISteamUser_RequestEncryptedAppTicket },
 	{ "user_get_encrypted_app_ticket", ISteamUser_GetEncryptedAppTicket },
 	{ "user_get_game_badge_level", ISteamUser_GetGameBadgeLevel },
 	{ "user_get_player_steam_level", ISteamUser_GetPlayerSteamLevel },
 	{ "user_request_store_auth_url", ISteamUser_RequestStoreAuthURL },
-	{ "user_b_is_phone_verified", ISteamUser_BIsPhoneVerified },
-	{ "user_b_is_two_factor_enabled", ISteamUser_BIsTwoFactorEnabled },
-	{ "user_b_is_phone_identifying", ISteamUser_BIsPhoneIdentifying },
-	{ "user_b_is_phone_requiring_verification", ISteamUser_BIsPhoneRequiringVerification },
+	{ "user_is_phone_verified", ISteamUser_BIsPhoneVerified },
+	{ "user_is_two_factor_enabled", ISteamUser_BIsTwoFactorEnabled },
+	{ "user_is_phone_identifying", ISteamUser_BIsPhoneIdentifying },
+	{ "user_is_phone_requiring_verification", ISteamUser_BIsPhoneRequiringVerification },
 	{ "friends_get_persona_name", ISteamFriends_GetPersonaName },
 	{ "friends_set_persona_name", ISteamFriends_SetPersonaName },
 	{ "friends_get_persona_state", ISteamFriends_GetPersonaState },
@@ -12382,7 +12806,7 @@ static const luaL_reg Module_methods[] = {
 	{ "utils_get_api_call_failure_reason", ISteamUtils_GetAPICallFailureReason },
 	{ "utils_get_api_call_result", ISteamUtils_GetAPICallResult },
 	{ "utils_get_ipc_call_count", ISteamUtils_GetIPCCallCount },
-	{ "utils_b_overlay_needs_present", ISteamUtils_BOverlayNeedsPresent },
+	{ "utils_overlay_needs_present", ISteamUtils_BOverlayNeedsPresent },
 	{ "utils_check_file_signature", ISteamUtils_CheckFileSignature },
 	{ "utils_show_gamepad_text_input", ISteamUtils_ShowGamepadTextInput },
 	{ "utils_get_entered_gamepad_text_length", ISteamUtils_GetEnteredGamepadTextLength },
@@ -12475,6 +12899,32 @@ static const luaL_reg Module_methods[] = {
 	{ "user_stats_get_global_stat_float", ISteamUserStats_GetGlobalStatFloat },
 	{ "user_stats_get_global_stat_int_history", ISteamUserStats_GetGlobalStatIntHistory },
 	{ "user_stats_get_global_stat_float_history", ISteamUserStats_GetGlobalStatFloatHistory },
+	{ "apps_is_subscribed", ISteamApps_BIsSubscribed },
+	{ "apps_is_low_violence", ISteamApps_BIsLowViolence },
+	{ "apps_is_cybercafe", ISteamApps_BIsCybercafe },
+	{ "apps_is_vac_banned", ISteamApps_BIsVACBanned },
+	{ "apps_get_current_game_language", ISteamApps_GetCurrentGameLanguage },
+	{ "apps_get_available_game_languages", ISteamApps_GetAvailableGameLanguages },
+	{ "apps_is_subscribed_app", ISteamApps_BIsSubscribedApp },
+	{ "apps_is_dlc_installed", ISteamApps_BIsDlcInstalled },
+	{ "apps_get_earliest_purchase_unix_time", ISteamApps_GetEarliestPurchaseUnixTime },
+	{ "apps_is_subscribed_from_free_weekend", ISteamApps_BIsSubscribedFromFreeWeekend },
+	{ "apps_get_dlc_count", ISteamApps_GetDLCCount },
+	{ "apps_get_dlc_data_by_index", ISteamApps_BGetDLCDataByIndex },
+	{ "apps_install_dlc", ISteamApps_InstallDLC },
+	{ "apps_uninstall_dlc", ISteamApps_UninstallDLC },
+	{ "apps_request_app_proof_of_purchase_key", ISteamApps_RequestAppProofOfPurchaseKey },
+	{ "apps_get_current_beta_name", ISteamApps_GetCurrentBetaName },
+	{ "apps_mark_content_corrupt", ISteamApps_MarkContentCorrupt },
+	{ "apps_get_installed_depots", ISteamApps_GetInstalledDepots },
+	{ "apps_get_app_install_dir", ISteamApps_GetAppInstallDir },
+	{ "apps_is_app_installed", ISteamApps_BIsAppInstalled },
+	{ "apps_get_app_owner", ISteamApps_GetAppOwner },
+	{ "apps_get_launch_query_param", ISteamApps_GetLaunchQueryParam },
+	{ "apps_get_dlc_download_progress", ISteamApps_GetDlcDownloadProgress },
+	{ "apps_get_app_build_id", ISteamApps_GetAppBuildId },
+	{ "apps_request_all_proof_of_purchase_keys", ISteamApps_RequestAllProofOfPurchaseKeys },
+	{ "apps_get_file_details", ISteamApps_GetFileDetails },
 	{ "networking_send_p2p_packet", ISteamNetworking_SendP2PPacket },
 	{ "networking_is_p2p_packet_available", ISteamNetworking_IsP2PPacketAvailable },
 	{ "networking_read_p2p_packet", ISteamNetworking_ReadP2PPacket },
@@ -12497,6 +12947,15 @@ static const luaL_reg Module_methods[] = {
 	{ "networking_get_listen_socket_info", ISteamNetworking_GetListenSocketInfo },
 	{ "networking_get_socket_connection_type", ISteamNetworking_GetSocketConnectionType },
 	{ "networking_get_max_packet_size", ISteamNetworking_GetMaxPacketSize },
+	{ "music_is_enabled", ISteamMusic_BIsEnabled },
+	{ "music_is_playing", ISteamMusic_BIsPlaying },
+	{ "music_get_playback_status", ISteamMusic_GetPlaybackStatus },
+	{ "music_play", ISteamMusic_Play },
+	{ "music_pause", ISteamMusic_Pause },
+	{ "music_play_previous", ISteamMusic_PlayPrevious },
+	{ "music_play_next", ISteamMusic_PlayNext },
+	{ "music_set_volume", ISteamMusic_SetVolume },
+	{ "music_get_volume", ISteamMusic_GetVolume },
 	{ 0, 0 }
 };
 
@@ -12691,52 +13150,52 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(ACCOUNT_TYPE_ANON_USER, 10);
 	SETCONSTANT(ACCOUNT_TYPE_MAX, 11);
 	// EAppReleaseState
-	SETCONSTANT(APP_RELEASE_STATE__UNKNOWN, 0);
-	SETCONSTANT(APP_RELEASE_STATE__UNAVAILABLE, 1);
-	SETCONSTANT(APP_RELEASE_STATE__PRERELEASE, 2);
-	SETCONSTANT(APP_RELEASE_STATE__PRELOAD_ONLY, 3);
-	SETCONSTANT(APP_RELEASE_STATE__RELEASED, 4);
+	SETCONSTANT(APP_RELEASE_STATE_UNKNOWN, 0);
+	SETCONSTANT(APP_RELEASE_STATE_UNAVAILABLE, 1);
+	SETCONSTANT(APP_RELEASE_STATE_PRERELEASE, 2);
+	SETCONSTANT(APP_RELEASE_STATE_PRELOAD_ONLY, 3);
+	SETCONSTANT(APP_RELEASE_STATE_RELEASED, 4);
 	// EAppOwnershipFlags
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__NONE, 0);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__OWNS_LICENSE, 1);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__FREE_LICENSE, 2);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__REGION_RESTRICTED, 4);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__LOW_VIOLENCE, 8);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__INVALID_PLATFORM, 16);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__SHARED_LICENSE, 32);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__FREE_WEEKEND, 64);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__RETAIL_LICENSE, 128);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_LOCKED, 256);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_PENDING, 512);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_EXPIRED, 1024);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_PERMANENT, 2048);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_RECURRING, 4096);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_CANCELED, 8192);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__AUTO_GRANT, 16384);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__PENDING_GIFT, 32768);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__RENTAL_NOT_ACTIVATED, 65536);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__RENTAL, 131072);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS__SITE_LICENSE, 262144);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_NONE, 0);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_OWNS_LICENSE, 1);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_FREE_LICENSE, 2);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_REGION_RESTRICTED, 4);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_LOW_VIOLENCE, 8);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_INVALID_PLATFORM, 16);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_SHARED_LICENSE, 32);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_FREE_WEEKEND, 64);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_RETAIL_LICENSE, 128);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_LOCKED, 256);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_PENDING, 512);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_EXPIRED, 1024);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_PERMANENT, 2048);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_RECURRING, 4096);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_CANCELED, 8192);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_AUTO_GRANT, 16384);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_PENDING_GIFT, 32768);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_RENTAL_NOT_ACTIVATED, 65536);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_RENTAL, 131072);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS_SITE_LICENSE, 262144);
 	// EAppType
-	SETCONSTANT(APP_TYPE__INVALID, 0);
-	SETCONSTANT(APP_TYPE__GAME, 1);
-	SETCONSTANT(APP_TYPE__APPLICATION, 2);
-	SETCONSTANT(APP_TYPE__TOOL, 4);
-	SETCONSTANT(APP_TYPE__DEMO, 8);
-	SETCONSTANT(APP_TYPE__MEDIA_DEPRECATED, 16);
+	SETCONSTANT(APP_TYPE_INVALID, 0);
+	SETCONSTANT(APP_TYPE_GAME, 1);
+	SETCONSTANT(APP_TYPE_APPLICATION, 2);
+	SETCONSTANT(APP_TYPE_TOOL, 4);
+	SETCONSTANT(APP_TYPE_DEMO, 8);
+	SETCONSTANT(APP_TYPE_MEDIA_DEPRECATED, 16);
 	SETCONSTANT(APP_TYPE_DLC, 32);
-	SETCONSTANT(APP_TYPE__GUIDE, 64);
-	SETCONSTANT(APP_TYPE__DRIVER, 128);
-	SETCONSTANT(APP_TYPE__CONFIG, 256);
-	SETCONSTANT(APP_TYPE__HARDWARE, 512);
-	SETCONSTANT(APP_TYPE__FRANCHISE, 1024);
-	SETCONSTANT(APP_TYPE__VIDEO, 2048);
-	SETCONSTANT(APP_TYPE__PLUGIN, 4096);
-	SETCONSTANT(APP_TYPE__MUSIC, 8192);
-	SETCONSTANT(APP_TYPE__SERIES, 16384);
-	SETCONSTANT(APP_TYPE__COMIC, 32768);
-	SETCONSTANT(APP_TYPE__SHORTCUT, 1073741824);
-	SETCONSTANT(APP_TYPE__DEPOT_ONLY, -2147483648);
+	SETCONSTANT(APP_TYPE_GUIDE, 64);
+	SETCONSTANT(APP_TYPE_DRIVER, 128);
+	SETCONSTANT(APP_TYPE_CONFIG, 256);
+	SETCONSTANT(APP_TYPE_HARDWARE, 512);
+	SETCONSTANT(APP_TYPE_FRANCHISE, 1024);
+	SETCONSTANT(APP_TYPE_VIDEO, 2048);
+	SETCONSTANT(APP_TYPE_PLUGIN, 4096);
+	SETCONSTANT(APP_TYPE_MUSIC, 8192);
+	SETCONSTANT(APP_TYPE_SERIES, 16384);
+	SETCONSTANT(APP_TYPE_COMIC, 32768);
+	SETCONSTANT(APP_TYPE_SHORTCUT, 1073741824);
+	SETCONSTANT(APP_TYPE_DEPOT_ONLY, -2147483648);
 	// ESteamUserStatType
 	SETCONSTANT(STEAM_USER_STAT_TYPE_INVALID, 0);
 	SETCONSTANT(STEAM_USER_STAT_TYPE_INT, 1);
@@ -12804,46 +13263,46 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(BROADCAST_UPLOAD_RESULT_TOO_FAR_BEHIND, 12);
 	SETCONSTANT(BROADCAST_UPLOAD_RESULT_TRANSCODE_BEHIND, 13);
 	// ELaunchOptionType
-	SETCONSTANT(LAUNCH_OPTION_TYPE__NONE, 0);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__DEFAULT, 1);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__SAFE_MODE, 2);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__MULTIPLAYER, 3);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__CONFIG, 4);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__OPEN_VR, 5);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__SERVER, 6);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__EDITOR, 7);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__MANUAL, 8);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__BENCHMARK, 9);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__OPTION1, 10);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__OPTION2, 11);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__OPTION3, 12);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__OCULUS_VR, 13);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__OPEN_VR_OVERLAY, 14);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_NONE, 0);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_DEFAULT, 1);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_SAFE_MODE, 2);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_MULTIPLAYER, 3);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_CONFIG, 4);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_OPEN_VR, 5);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_SERVER, 6);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_EDITOR, 7);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_MANUAL, 8);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_BENCHMARK, 9);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_OPTION1, 10);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_OPTION2, 11);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_OPTION3, 12);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_OCULUS_VR, 13);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_OPEN_VR_OVERLAY, 14);
 	SETCONSTANT(LAUNCH_OPTION_TYPE_OSVR, 15);
-	SETCONSTANT(LAUNCH_OPTION_TYPE__DIALOG, 1000);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_DIALOG, 1000);
 	// EVRHMDType
-	SETCONSTANT(EVRHMD_TYPE__NONE, -1);
-	SETCONSTANT(EVRHMD_TYPE__UNKNOWN, 0);
-	SETCONSTANT(EVRHMD_TYPE_HTC__DEV, 1);
-	SETCONSTANT(EVRHMD_TYPE_HTC__VIVE_PRE, 2);
-	SETCONSTANT(EVRHMD_TYPE_HTC__VIVE, 3);
-	SETCONSTANT(EVRHMD_TYPE_HTC__UNKNOWN, 20);
-	SETCONSTANT(EVRHMD_TYPE__OCULUS_DK1, 21);
-	SETCONSTANT(EVRHMD_TYPE__OCULUS_DK2, 22);
-	SETCONSTANT(EVRHMD_TYPE__OCULUS__RIFT, 23);
-	SETCONSTANT(EVRHMD_TYPE__OCULUS__UNKNOWN, 40);
-	SETCONSTANT(EVRHMD_TYPE__ACER__UNKNOWN, 50);
-	SETCONSTANT(EVRHMD_TYPE__ACER__WINDOWS_MR, 51);
-	SETCONSTANT(EVRHMD_TYPE__DELL__UNKNOWN, 60);
-	SETCONSTANT(EVRHMD_TYPE__DELL__VISOR, 61);
-	SETCONSTANT(EVRHMD_TYPE__LENOVO__UNKNOWN, 70);
-	SETCONSTANT(EVRHMD_TYPE__LENOVO__EXPLORER, 71);
-	SETCONSTANT(EVRHMD_TYPE_HP__UNKNOWN, 80);
-	SETCONSTANT(EVRHMD_TYPE_HP__WINDOWS_MR, 81);
-	SETCONSTANT(EVRHMD_TYPE__SAMSUNG__UNKNOWN, 90);
-	SETCONSTANT(EVRHMD_TYPE__SAMSUNG__ODYSSEY, 91);
-	SETCONSTANT(EVRHMD_TYPE__UNANNOUNCED__UNKNOWN, 100);
-	SETCONSTANT(EVRHMD_TYPE__UNANNOUNCED__WINDOWS_MR, 101);
+	SETCONSTANT(EVRHMD_TYPE_NONE, -1);
+	SETCONSTANT(EVRHMD_TYPE_UNKNOWN, 0);
+	SETCONSTANT(EVRHMD_TYPE_HTC_DEV, 1);
+	SETCONSTANT(EVRHMD_TYPE_HTC_VIVE_PRE, 2);
+	SETCONSTANT(EVRHMD_TYPE_HTC_VIVE, 3);
+	SETCONSTANT(EVRHMD_TYPE_HTC_UNKNOWN, 20);
+	SETCONSTANT(EVRHMD_TYPE_OCULUS_DK1, 21);
+	SETCONSTANT(EVRHMD_TYPE_OCULUS_DK2, 22);
+	SETCONSTANT(EVRHMD_TYPE_OCULUS_RIFT, 23);
+	SETCONSTANT(EVRHMD_TYPE_OCULUS_UNKNOWN, 40);
+	SETCONSTANT(EVRHMD_TYPE_ACER_UNKNOWN, 50);
+	SETCONSTANT(EVRHMD_TYPE_ACER_WINDOWS_MR, 51);
+	SETCONSTANT(EVRHMD_TYPE_DELL_UNKNOWN, 60);
+	SETCONSTANT(EVRHMD_TYPE_DELL_VISOR, 61);
+	SETCONSTANT(EVRHMD_TYPE_LENOVO_UNKNOWN, 70);
+	SETCONSTANT(EVRHMD_TYPE_LENOVO_EXPLORER, 71);
+	SETCONSTANT(EVRHMD_TYPE_HP_UNKNOWN, 80);
+	SETCONSTANT(EVRHMD_TYPE_HP_WINDOWS_MR, 81);
+	SETCONSTANT(EVRHMD_TYPE_SAMSUNG_UNKNOWN, 90);
+	SETCONSTANT(EVRHMD_TYPE_SAMSUNG_ODYSSEY, 91);
+	SETCONSTANT(EVRHMD_TYPE_UNANNOUNCED_UNKNOWN, 100);
+	SETCONSTANT(EVRHMD_TYPE_UNANNOUNCED_WINDOWS_MR, 101);
 	// EFriendRelationship
 	SETCONSTANT(FRIEND_RELATIONSHIP_NONE, 0);
 	SETCONSTANT(FRIEND_RELATIONSHIP_BLOCKED, 1);
@@ -12886,9 +13345,9 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(USER_RESTRICTION_GAME_INVITES, 32);
 	SETCONSTANT(USER_RESTRICTION_TRADING, 64);
 	// EOverlayToStoreFlag
-	SETCONSTANT(OVERLAY_TO_STORE_FLAG__NONE, 0);
-	SETCONSTANT(OVERLAY_TO_STORE_FLAG__ADD_TO_CART, 1);
-	SETCONSTANT(OVERLAY_TO_STORE_FLAG__ADD_TO_CART_AND_SHOW, 2);
+	SETCONSTANT(OVERLAY_TO_STORE_FLAG_NONE, 0);
+	SETCONSTANT(OVERLAY_TO_STORE_FLAG_ADD_TO_CART, 1);
+	SETCONSTANT(OVERLAY_TO_STORE_FLAG_ADD_TO_CART_AND_SHOW, 2);
 	// EPersonaChange
 	SETCONSTANT(PERSONA_CHANGE_NAME, 1);
 	SETCONSTANT(PERSONA_CHANGE_STATUS, 2);
@@ -13000,9 +13459,9 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(WORKSHOP_VIDEO_PROVIDER_NONE, 0);
 	SETCONSTANT(WORKSHOP_VIDEO_PROVIDER_YOUTUBE, 1);
 	// EUGCReadAction
-	SETCONSTANT(UGC_READ__CONTINUE_READING_UNTIL_FINISHED, 0);
-	SETCONSTANT(UGC_READ__CONTINUE_READING, 1);
-	SETCONSTANT(UGC_READ__CLOSE, 2);
+	SETCONSTANT(UGC_READ_CONTINUE_READING_UNTIL_FINISHED, 0);
+	SETCONSTANT(UGC_READ_CONTINUE_READING, 1);
+	SETCONSTANT(UGC_READ_CLOSE, 2);
 	// ELeaderboardDataRequest
 	SETCONSTANT(LEADERBOARD_DATA_REQUEST_GLOBAL, 0);
 	SETCONSTANT(LEADERBOARD_DATA_REQUEST_GLOBAL_AROUND_USER, 1);
@@ -13056,17 +13515,17 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(S_NET_SOCKET_CONNECTION_TYPE_UDP, 1);
 	SETCONSTANT(S_NET_SOCKET_CONNECTION_TYPE_UDP_RELAY, 2);
 	// EVRScreenshotType
-	SETCONSTANT(VR_SCREENSHOT_TYPE__NONE, 0);
-	SETCONSTANT(VR_SCREENSHOT_TYPE__MONO, 1);
-	SETCONSTANT(VR_SCREENSHOT_TYPE__STEREO, 2);
-	SETCONSTANT(VR_SCREENSHOT_TYPE__MONO_CUBEMAP, 3);
-	SETCONSTANT(VR_SCREENSHOT_TYPE__MONO_PANORAMA, 4);
-	SETCONSTANT(VR_SCREENSHOT_TYPE__STEREO_PANORAMA, 5);
+	SETCONSTANT(VR_SCREENSHOT_TYPE_NONE, 0);
+	SETCONSTANT(VR_SCREENSHOT_TYPE_MONO, 1);
+	SETCONSTANT(VR_SCREENSHOT_TYPE_STEREO, 2);
+	SETCONSTANT(VR_SCREENSHOT_TYPE_MONO_CUBEMAP, 3);
+	SETCONSTANT(VR_SCREENSHOT_TYPE_MONO_PANORAMA, 4);
+	SETCONSTANT(VR_SCREENSHOT_TYPE_STEREO_PANORAMA, 5);
 	// AudioPlayback_Status
-	SETCONSTANT(AUDIO_PLAYBACK__UNDEFINED, 0);
-	SETCONSTANT(AUDIO_PLAYBACK__PLAYING, 1);
-	SETCONSTANT(AUDIO_PLAYBACK__PAUSED, 2);
-	SETCONSTANT(AUDIO_PLAYBACK__IDLE, 3);
+	SETCONSTANT(AUDIO_PLAYBACK_UNDEFINED, 0);
+	SETCONSTANT(AUDIO_PLAYBACK_PLAYING, 1);
+	SETCONSTANT(AUDIO_PLAYBACK_PAUSED, 2);
+	SETCONSTANT(AUDIO_PLAYBACK_IDLE, 3);
 	// EHTTPMethod
 	SETCONSTANT(HTTP_METHOD_INVALID, 0);
 	SETCONSTANT(HTTP_METHOD_GET, 1);
@@ -13122,303 +13581,303 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(HTTP_STATUS_CODE505HTTP_VERSION_NOT_SUPPORTED, 505);
 	SETCONSTANT(HTTP_STATUS_CODE5XX_UNKNOWN, 599);
 	// ESteamControllerPad
-	SETCONSTANT(STEAM_CONTROLLER_PAD__LEFT, 0);
-	SETCONSTANT(STEAM_CONTROLLER_PAD__RIGHT, 1);
+	SETCONSTANT(STEAM_CONTROLLER_PAD_LEFT, 0);
+	SETCONSTANT(STEAM_CONTROLLER_PAD_RIGHT, 1);
 	// EControllerSource
-	SETCONSTANT(CONTROLLER_SOURCE__NONE, 0);
-	SETCONSTANT(CONTROLLER_SOURCE__LEFT_TRACKPAD, 1);
-	SETCONSTANT(CONTROLLER_SOURCE__RIGHT_TRACKPAD, 2);
-	SETCONSTANT(CONTROLLER_SOURCE__JOYSTICK, 3);
+	SETCONSTANT(CONTROLLER_SOURCE_NONE, 0);
+	SETCONSTANT(CONTROLLER_SOURCE_LEFT_TRACKPAD, 1);
+	SETCONSTANT(CONTROLLER_SOURCE_RIGHT_TRACKPAD, 2);
+	SETCONSTANT(CONTROLLER_SOURCE_JOYSTICK, 3);
 	SETCONSTANT(CONTROLLER_SOURCE_ABXY, 4);
-	SETCONSTANT(CONTROLLER_SOURCE__SWITCH, 5);
-	SETCONSTANT(CONTROLLER_SOURCE__LEFT_TRIGGER, 6);
-	SETCONSTANT(CONTROLLER_SOURCE__RIGHT_TRIGGER, 7);
-	SETCONSTANT(CONTROLLER_SOURCE__GYRO, 8);
-	SETCONSTANT(CONTROLLER_SOURCE__CENTER_TRACKPAD, 9);
-	SETCONSTANT(CONTROLLER_SOURCE__RIGHT_JOYSTICK, 10);
+	SETCONSTANT(CONTROLLER_SOURCE_SWITCH, 5);
+	SETCONSTANT(CONTROLLER_SOURCE_LEFT_TRIGGER, 6);
+	SETCONSTANT(CONTROLLER_SOURCE_RIGHT_TRIGGER, 7);
+	SETCONSTANT(CONTROLLER_SOURCE_GYRO, 8);
+	SETCONSTANT(CONTROLLER_SOURCE_CENTER_TRACKPAD, 9);
+	SETCONSTANT(CONTROLLER_SOURCE_RIGHT_JOYSTICK, 10);
 	SETCONSTANT(CONTROLLER_SOURCE_D_PAD, 11);
-	SETCONSTANT(CONTROLLER_SOURCE__KEY, 12);
-	SETCONSTANT(CONTROLLER_SOURCE__MOUSE, 13);
-	SETCONSTANT(CONTROLLER_SOURCE__COUNT, 14);
+	SETCONSTANT(CONTROLLER_SOURCE_KEY, 12);
+	SETCONSTANT(CONTROLLER_SOURCE_MOUSE, 13);
+	SETCONSTANT(CONTROLLER_SOURCE_COUNT, 14);
 	// EControllerSourceMode
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__NONE, 0);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__DPAD, 1);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__BUTTONS, 2);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__FOUR_BUTTONS, 3);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__ABSOLUTE_MOUSE, 4);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__RELATIVE_MOUSE, 5);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__JOYSTICK_MOVE, 6);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__JOYSTICK_MOUSE, 7);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__JOYSTICK_CAMERA, 8);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__SCROLL_WHEEL, 9);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__TRIGGER, 10);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__TOUCH_MENU, 11);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__MOUSE_JOYSTICK, 12);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__MOUSE_REGION, 13);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__RADIAL_MENU, 14);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__SINGLE_BUTTON, 15);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE__SWITCHES, 16);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_NONE, 0);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_DPAD, 1);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_BUTTONS, 2);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_FOUR_BUTTONS, 3);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_ABSOLUTE_MOUSE, 4);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_RELATIVE_MOUSE, 5);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_JOYSTICK_MOVE, 6);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_JOYSTICK_MOUSE, 7);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_JOYSTICK_CAMERA, 8);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_SCROLL_WHEEL, 9);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_TRIGGER, 10);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_TOUCH_MENU, 11);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_MOUSE_JOYSTICK, 12);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_MOUSE_REGION, 13);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_RADIAL_MENU, 14);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_SINGLE_BUTTON, 15);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE_SWITCHES, 16);
 	// EControllerActionOrigin
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__NONE, 0);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_NONE, 0);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_A, 1);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_B, 2);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X, 3);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_Y, 4);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_BUMPER, 5);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_BUMPER, 6);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_GRIP, 7);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_GRIP, 8);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__START, 9);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__BACK, 10);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD__TOUCH, 11);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD__SWIPE, 12);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD__CLICK, 13);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_NORTH, 14);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_SOUTH, 15);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_WEST, 16);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_EAST, 17);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD__TOUCH, 18);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD__SWIPE, 19);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD__CLICK, 20);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_NORTH, 21);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_SOUTH, 22);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_WEST, 23);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_EAST, 24);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_TRIGGER__PULL, 25);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_TRIGGER__CLICK, 26);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_TRIGGER__PULL, 27);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_TRIGGER__CLICK, 28);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK__MOVE, 29);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK__CLICK, 30);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_NORTH, 31);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_SOUTH, 32);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_WEST, 33);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_EAST, 34);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__MOVE, 35);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__PITCH, 36);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__YAW, 37);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__ROLL, 38);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_BUMPER, 5);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_BUMPER, 6);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_GRIP, 7);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_GRIP, 8);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_START, 9);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_BACK, 10);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_PAD_TOUCH, 11);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_PAD_SWIPE, 12);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_PAD_CLICK, 13);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_PAD_D_PAD_NORTH, 14);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_PAD_D_PAD_SOUTH, 15);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_PAD_D_PAD_WEST, 16);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_PAD_D_PAD_EAST, 17);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_PAD_TOUCH, 18);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_PAD_SWIPE, 19);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_PAD_CLICK, 20);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_PAD_D_PAD_NORTH, 21);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_PAD_D_PAD_SOUTH, 22);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_PAD_D_PAD_WEST, 23);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_PAD_D_PAD_EAST, 24);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_TRIGGER_PULL, 25);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_TRIGGER_CLICK, 26);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_TRIGGER_PULL, 27);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_RIGHT_TRIGGER_CLICK, 28);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_STICK_MOVE, 29);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_STICK_CLICK, 30);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_STICK_D_PAD_NORTH, 31);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_STICK_D_PAD_SOUTH, 32);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_STICK_D_PAD_WEST, 33);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_LEFT_STICK_D_PAD_EAST, 34);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_GYRO_MOVE, 35);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_GYRO_PITCH, 36);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_GYRO_YAW, 37);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_GYRO_ROLL, 38);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_X, 39);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CIRCLE, 40);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__TRIANGLE, 41);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__SQUARE, 42);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_BUMPER, 43);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_BUMPER, 44);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__OPTIONS, 45);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__SHARE, 46);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD__TOUCH, 47);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD__SWIPE, 48);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD__CLICK, 49);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_NORTH, 50);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_SOUTH, 51);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_WEST, 52);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_EAST, 53);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD__TOUCH, 54);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD__SWIPE, 55);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD__CLICK, 56);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_NORTH, 57);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_SOUTH, 58);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_WEST, 59);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_EAST, 60);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD__TOUCH, 61);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD__SWIPE, 62);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD__CLICK, 63);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_NORTH, 64);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_SOUTH, 65);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_WEST, 66);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_EAST, 67);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_TRIGGER__PULL, 68);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_TRIGGER__CLICK, 69);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_TRIGGER__PULL, 70);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_TRIGGER__CLICK, 71);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK__MOVE, 72);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK__CLICK, 73);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_NORTH, 74);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_SOUTH, 75);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_WEST, 76);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_EAST, 77);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK__MOVE, 78);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK__CLICK, 79);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_NORTH, 80);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_SOUTH, 81);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_WEST, 82);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_EAST, 83);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__NORTH, 84);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__SOUTH, 85);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__WEST, 86);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__EAST, 87);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__MOVE, 88);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__PITCH, 89);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__YAW, 90);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__ROLL, 91);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CIRCLE, 40);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_TRIANGLE, 41);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_SQUARE, 42);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_BUMPER, 43);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_BUMPER, 44);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_OPTIONS, 45);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_SHARE, 46);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_PAD_TOUCH, 47);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_PAD_SWIPE, 48);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_PAD_CLICK, 49);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_NORTH, 50);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_SOUTH, 51);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_WEST, 52);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_EAST, 53);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_PAD_TOUCH, 54);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_PAD_SWIPE, 55);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_PAD_CLICK, 56);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_NORTH, 57);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_SOUTH, 58);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_WEST, 59);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_EAST, 60);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CENTER_PAD_TOUCH, 61);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CENTER_PAD_SWIPE, 62);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CENTER_PAD_CLICK, 63);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_NORTH, 64);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_SOUTH, 65);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_WEST, 66);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_EAST, 67);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_TRIGGER_PULL, 68);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_TRIGGER_CLICK, 69);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_TRIGGER_PULL, 70);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_TRIGGER_CLICK, 71);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_STICK_MOVE, 72);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_STICK_CLICK, 73);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_NORTH, 74);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_SOUTH, 75);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_WEST, 76);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_EAST, 77);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_STICK_MOVE, 78);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_STICK_CLICK, 79);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_NORTH, 80);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_SOUTH, 81);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_WEST, 82);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_EAST, 83);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD_NORTH, 84);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD_SOUTH, 85);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD_WEST, 86);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD_EAST, 87);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_GYRO_MOVE, 88);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_GYRO_PITCH, 89);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_GYRO_YAW, 90);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_GYRO_ROLL, 91);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_A, 92);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_B, 93);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_X, 94);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_Y, 95);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_BUMPER, 96);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_BUMPER, 97);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__MENU, 98);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__VIEW, 99);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_TRIGGER__PULL, 100);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_TRIGGER__CLICK, 101);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_TRIGGER__PULL, 102);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_TRIGGER__CLICK, 103);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK__MOVE, 104);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK__CLICK, 105);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_NORTH, 106);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_SOUTH, 107);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_WEST, 108);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_EAST, 109);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK__MOVE, 110);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK__CLICK, 111);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_NORTH, 112);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_SOUTH, 113);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_WEST, 114);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_EAST, 115);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__NORTH, 116);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__SOUTH, 117);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__WEST, 118);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__EAST, 119);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_BUMPER, 96);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_BUMPER, 97);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_MENU, 98);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_VIEW, 99);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_TRIGGER_PULL, 100);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_TRIGGER_CLICK, 101);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_TRIGGER_PULL, 102);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_TRIGGER_CLICK, 103);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_MOVE, 104);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_CLICK, 105);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_NORTH, 106);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_SOUTH, 107);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_WEST, 108);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_EAST, 109);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_MOVE, 110);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_CLICK, 111);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_NORTH, 112);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_SOUTH, 113);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_WEST, 114);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_EAST, 115);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD_NORTH, 116);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD_SOUTH, 117);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD_WEST, 118);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD_EAST, 119);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_A, 120);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_B, 121);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_X, 122);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_Y, 123);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_BUMPER, 124);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_BUMPER, 125);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__START, 126);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__BACK, 127);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_TRIGGER__PULL, 128);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_TRIGGER__CLICK, 129);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_TRIGGER__PULL, 130);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_TRIGGER__CLICK, 131);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK__MOVE, 132);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK__CLICK, 133);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_NORTH, 134);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_SOUTH, 135);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_WEST, 136);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_EAST, 137);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK__MOVE, 138);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK__CLICK, 139);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_NORTH, 140);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_SOUTH, 141);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_WEST, 142);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_EAST, 143);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__NORTH, 144);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__SOUTH, 145);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__WEST, 146);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__EAST, 147);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_A, 148);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_B, 149);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_X, 150);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_Y, 151);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_BUMPER, 152);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_BUMPER, 153);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP, 154);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP, 155);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP__UPPER, 156);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP__UPPER, 157);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_BUMPER__PRESSURE, 158);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_BUMPER__PRESSURE, 159);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP__PRESSURE, 160);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP__PRESSURE, 161);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP__UPPER__PRESSURE, 162);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP__UPPER__PRESSURE, 163);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__START, 164);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__BACK, 165);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__TOUCH, 166);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__SWIPE, 167);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__CLICK, 168);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__PRESSURE, 169);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_NORTH, 170);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_SOUTH, 171);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_WEST, 172);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_EAST, 173);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__TOUCH, 174);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__SWIPE, 175);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__CLICK, 176);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__PRESSURE, 177);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_NORTH, 178);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_SOUTH, 179);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_WEST, 180);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_EAST, 181);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_TRIGGER__PULL, 182);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_TRIGGER__CLICK, 183);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_TRIGGER__PULL, 184);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_TRIGGER__CLICK, 185);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK__MOVE, 186);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK__CLICK, 187);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_NORTH, 188);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_SOUTH, 189);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_WEST, 190);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_EAST, 191);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__MOVE, 192);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__PITCH, 193);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__YAW, 194);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__ROLL, 195);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__COUNT, 196);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_BUMPER, 124);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_BUMPER, 125);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_START, 126);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_BACK, 127);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_TRIGGER_PULL, 128);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_TRIGGER_CLICK, 129);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_TRIGGER_PULL, 130);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_TRIGGER_CLICK, 131);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_STICK_MOVE, 132);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_STICK_CLICK, 133);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_NORTH, 134);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_SOUTH, 135);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_WEST, 136);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_EAST, 137);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_MOVE, 138);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_CLICK, 139);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_NORTH, 140);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_SOUTH, 141);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_WEST, 142);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_EAST, 143);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD_NORTH, 144);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD_SOUTH, 145);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD_WEST, 146);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD_EAST, 147);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_A, 148);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_B, 149);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_X, 150);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_Y, 151);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_BUMPER, 152);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_BUMPER, 153);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP, 154);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP, 155);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_UPPER, 156);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP_UPPER, 157);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_BUMPER_PRESSURE, 158);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_BUMPER_PRESSURE, 159);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_PRESSURE, 160);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP_PRESSURE, 161);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_UPPER_PRESSURE, 162);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP_UPPER_PRESSURE, 163);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_START, 164);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_BACK, 165);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_TOUCH, 166);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_SWIPE, 167);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_CLICK, 168);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_PRESSURE, 169);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_D_PAD_NORTH, 170);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_D_PAD_SOUTH, 171);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_D_PAD_WEST, 172);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_PAD_D_PAD_EAST, 173);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_TOUCH, 174);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_SWIPE, 175);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_CLICK, 176);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_PRESSURE, 177);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_D_PAD_NORTH, 178);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_D_PAD_SOUTH, 179);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_D_PAD_WEST, 180);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_PAD_D_PAD_EAST, 181);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_TRIGGER_PULL, 182);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_TRIGGER_CLICK, 183);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_TRIGGER_PULL, 184);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_TRIGGER_CLICK, 185);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_STICK_MOVE, 186);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_STICK_CLICK, 187);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_STICK_D_PAD_NORTH, 188);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_STICK_D_PAD_SOUTH, 189);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_STICK_D_PAD_WEST, 190);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_STICK_D_PAD_EAST, 191);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_MOVE, 192);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_PITCH, 193);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_YAW, 194);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_ROLL, 195);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_COUNT, 196);
 	// ESteamControllerLEDFlag
-	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG__SET_COLOR, 0);
-	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG__RESTORE_USER_DEFAULT, 1);
+	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG_SET_COLOR, 0);
+	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG_RESTORE_USER_DEFAULT, 1);
 	// ESteamInputType
-	SETCONSTANT(STEAM_INPUT_TYPE__UNKNOWN, 0);
-	SETCONSTANT(STEAM_INPUT_TYPE__STEAM_CONTROLLER, 1);
+	SETCONSTANT(STEAM_INPUT_TYPE_UNKNOWN, 0);
+	SETCONSTANT(STEAM_INPUT_TYPE_STEAM_CONTROLLER, 1);
 	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX360_CONTROLLER, 2);
 	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX_ONE_CONTROLLER, 3);
-	SETCONSTANT(STEAM_INPUT_TYPE__GENERIC_X_INPUT, 4);
+	SETCONSTANT(STEAM_INPUT_TYPE_GENERIC_X_INPUT, 4);
 	SETCONSTANT(STEAM_INPUT_TYPE_PS4_CONTROLLER, 5);
 	// EUGCMatchingUGCType
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ITEMS, 0);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ITEMS__MTX, 1);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ITEMS__READY_TO_USE, 2);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__COLLECTIONS, 3);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ARTWORK, 4);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__VIDEOS, 5);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__SCREENSHOTS, 6);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ALL_GUIDES, 7);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__WEB_GUIDES, 8);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__INTEGRATED_GUIDES, 9);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__USABLE_IN_GAME, 10);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__CONTROLLER_BINDINGS, 11);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__GAME_MANAGED_ITEMS, 12);
-	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ALL, -1);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ITEMS, 0);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ITEMS_MTX, 1);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ITEMS_READY_TO_USE, 2);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_COLLECTIONS, 3);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ARTWORK, 4);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_VIDEOS, 5);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_SCREENSHOTS, 6);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ALL_GUIDES, 7);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_WEB_GUIDES, 8);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_INTEGRATED_GUIDES, 9);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_USABLE_IN_GAME, 10);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_CONTROLLER_BINDINGS, 11);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_GAME_MANAGED_ITEMS, 12);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ALL, -1);
 	// EUserUGCList
-	SETCONSTANT(USER_UGC_LIST__PUBLISHED, 0);
-	SETCONSTANT(USER_UGC_LIST__VOTED_ON, 1);
-	SETCONSTANT(USER_UGC_LIST__VOTED_UP, 2);
-	SETCONSTANT(USER_UGC_LIST__VOTED_DOWN, 3);
-	SETCONSTANT(USER_UGC_LIST__WILL_VOTE_LATER, 4);
-	SETCONSTANT(USER_UGC_LIST__FAVORITED, 5);
-	SETCONSTANT(USER_UGC_LIST__SUBSCRIBED, 6);
-	SETCONSTANT(USER_UGC_LIST__USED_OR_PLAYED, 7);
-	SETCONSTANT(USER_UGC_LIST__FOLLOWED, 8);
+	SETCONSTANT(USER_UGC_LIST_PUBLISHED, 0);
+	SETCONSTANT(USER_UGC_LIST_VOTED_ON, 1);
+	SETCONSTANT(USER_UGC_LIST_VOTED_UP, 2);
+	SETCONSTANT(USER_UGC_LIST_VOTED_DOWN, 3);
+	SETCONSTANT(USER_UGC_LIST_WILL_VOTE_LATER, 4);
+	SETCONSTANT(USER_UGC_LIST_FAVORITED, 5);
+	SETCONSTANT(USER_UGC_LIST_SUBSCRIBED, 6);
+	SETCONSTANT(USER_UGC_LIST_USED_OR_PLAYED, 7);
+	SETCONSTANT(USER_UGC_LIST_FOLLOWED, 8);
 	// EUserUGCListSortOrder
-	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__CREATION_ORDER_DESC, 0);
-	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__CREATION_ORDER_ASC, 1);
-	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__TITLE_ASC, 2);
-	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__LAST_UPDATED_DESC, 3);
-	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__SUBSCRIPTION_DATE_DESC, 4);
-	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__VOTE_SCORE_DESC, 5);
-	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__FOR_MODERATION, 6);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER_CREATION_ORDER_DESC, 0);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER_CREATION_ORDER_ASC, 1);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER_TITLE_ASC, 2);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER_LAST_UPDATED_DESC, 3);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER_SUBSCRIPTION_DATE_DESC, 4);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER_VOTE_SCORE_DESC, 5);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER_FOR_MODERATION, 6);
 	// EUGCQuery
-	SETCONSTANT(UGC_QUERY__RANKED_BY_VOTE, 0);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_PUBLICATION_DATE, 1);
-	SETCONSTANT(UGC_QUERY__ACCEPTED_FOR_GAME_RANKED_BY_ACCEPTANCE_DATE, 2);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_TREND, 3);
-	SETCONSTANT(UGC_QUERY__FAVORITED_BY_FRIENDS_RANKED_BY_PUBLICATION_DATE, 4);
-	SETCONSTANT(UGC_QUERY__CREATED_BY_FRIENDS_RANKED_BY_PUBLICATION_DATE, 5);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_NUM_TIMES_REPORTED, 6);
-	SETCONSTANT(UGC_QUERY__CREATED_BY_FOLLOWED_USERS_RANKED_BY_PUBLICATION_DATE, 7);
-	SETCONSTANT(UGC_QUERY__NOT_YET_RATED, 8);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_TOTAL_VOTES_ASC, 9);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_VOTES_UP, 10);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_TEXT_SEARCH, 11);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_TOTAL_UNIQUE_SUBSCRIPTIONS, 12);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_PLAYTIME_TREND, 13);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_TOTAL_PLAYTIME, 14);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_AVERAGE_PLAYTIME_TREND, 15);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_LIFETIME_AVERAGE_PLAYTIME, 16);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_PLAYTIME_SESSIONS_TREND, 17);
-	SETCONSTANT(UGC_QUERY__RANKED_BY_LIFETIME_PLAYTIME_SESSIONS, 18);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_VOTE, 0);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_PUBLICATION_DATE, 1);
+	SETCONSTANT(UGC_QUERY_ACCEPTED_FOR_GAME_RANKED_BY_ACCEPTANCE_DATE, 2);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_TREND, 3);
+	SETCONSTANT(UGC_QUERY_FAVORITED_BY_FRIENDS_RANKED_BY_PUBLICATION_DATE, 4);
+	SETCONSTANT(UGC_QUERY_CREATED_BY_FRIENDS_RANKED_BY_PUBLICATION_DATE, 5);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_NUM_TIMES_REPORTED, 6);
+	SETCONSTANT(UGC_QUERY_CREATED_BY_FOLLOWED_USERS_RANKED_BY_PUBLICATION_DATE, 7);
+	SETCONSTANT(UGC_QUERY_NOT_YET_RATED, 8);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_TOTAL_VOTES_ASC, 9);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_VOTES_UP, 10);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_TEXT_SEARCH, 11);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_TOTAL_UNIQUE_SUBSCRIPTIONS, 12);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_PLAYTIME_TREND, 13);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_TOTAL_PLAYTIME, 14);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_AVERAGE_PLAYTIME_TREND, 15);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_LIFETIME_AVERAGE_PLAYTIME, 16);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_PLAYTIME_SESSIONS_TREND, 17);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_LIFETIME_PLAYTIME_SESSIONS, 18);
 	// EItemUpdateStatus
 	SETCONSTANT(ITEM_UPDATE_STATUS_INVALID, 0);
 	SETCONSTANT(ITEM_UPDATE_STATUS_PREPARING_CONFIG, 1);
@@ -13435,26 +13894,26 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(ITEM_STATE_DOWNLOADING, 16);
 	SETCONSTANT(ITEM_STATE_DOWNLOAD_PENDING, 32);
 	// EItemStatistic
-	SETCONSTANT(ITEM_STATISTIC__NUM_SUBSCRIPTIONS, 0);
-	SETCONSTANT(ITEM_STATISTIC__NUM_FAVORITES, 1);
-	SETCONSTANT(ITEM_STATISTIC__NUM_FOLLOWERS, 2);
-	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_SUBSCRIPTIONS, 3);
-	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_FAVORITES, 4);
-	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_FOLLOWERS, 5);
-	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_WEBSITE_VIEWS, 6);
-	SETCONSTANT(ITEM_STATISTIC__REPORT_SCORE, 7);
-	SETCONSTANT(ITEM_STATISTIC__NUM_SECONDS_PLAYED, 8);
-	SETCONSTANT(ITEM_STATISTIC__NUM_PLAYTIME_SESSIONS, 9);
-	SETCONSTANT(ITEM_STATISTIC__NUM_COMMENTS, 10);
-	SETCONSTANT(ITEM_STATISTIC__NUM_SECONDS_PLAYED_DURING_TIME_PERIOD, 11);
-	SETCONSTANT(ITEM_STATISTIC__NUM_PLAYTIME_SESSIONS_DURING_TIME_PERIOD, 12);
+	SETCONSTANT(ITEM_STATISTIC_NUM_SUBSCRIPTIONS, 0);
+	SETCONSTANT(ITEM_STATISTIC_NUM_FAVORITES, 1);
+	SETCONSTANT(ITEM_STATISTIC_NUM_FOLLOWERS, 2);
+	SETCONSTANT(ITEM_STATISTIC_NUM_UNIQUE_SUBSCRIPTIONS, 3);
+	SETCONSTANT(ITEM_STATISTIC_NUM_UNIQUE_FAVORITES, 4);
+	SETCONSTANT(ITEM_STATISTIC_NUM_UNIQUE_FOLLOWERS, 5);
+	SETCONSTANT(ITEM_STATISTIC_NUM_UNIQUE_WEBSITE_VIEWS, 6);
+	SETCONSTANT(ITEM_STATISTIC_REPORT_SCORE, 7);
+	SETCONSTANT(ITEM_STATISTIC_NUM_SECONDS_PLAYED, 8);
+	SETCONSTANT(ITEM_STATISTIC_NUM_PLAYTIME_SESSIONS, 9);
+	SETCONSTANT(ITEM_STATISTIC_NUM_COMMENTS, 10);
+	SETCONSTANT(ITEM_STATISTIC_NUM_SECONDS_PLAYED_DURING_TIME_PERIOD, 11);
+	SETCONSTANT(ITEM_STATISTIC_NUM_PLAYTIME_SESSIONS_DURING_TIME_PERIOD, 12);
 	// EItemPreviewType
-	SETCONSTANT(ITEM_PREVIEW_TYPE__IMAGE, 0);
-	SETCONSTANT(ITEM_PREVIEW_TYPE__YOU_TUBE_VIDEO, 1);
-	SETCONSTANT(ITEM_PREVIEW_TYPE__SKETCHFAB, 2);
-	SETCONSTANT(ITEM_PREVIEW_TYPE__ENVIRONMENT_MAP__HORIZONTAL_CROSS, 3);
-	SETCONSTANT(ITEM_PREVIEW_TYPE__ENVIRONMENT_MAP__LAT_LONG, 4);
-	SETCONSTANT(ITEM_PREVIEW_TYPE__RESERVED_MAX, 255);
+	SETCONSTANT(ITEM_PREVIEW_TYPE_IMAGE, 0);
+	SETCONSTANT(ITEM_PREVIEW_TYPE_YOU_TUBE_VIDEO, 1);
+	SETCONSTANT(ITEM_PREVIEW_TYPE_SKETCHFAB, 2);
+	SETCONSTANT(ITEM_PREVIEW_TYPE_ENVIRONMENT_MAP_HORIZONTAL_CROSS, 3);
+	SETCONSTANT(ITEM_PREVIEW_TYPE_ENVIRONMENT_MAP_LAT_LONG, 4);
+	SETCONSTANT(ITEM_PREVIEW_TYPE_RESERVED_MAX, 255);
 	// ESteamItemFlags
 	SETCONSTANT(STEAM_ITEM_NO_TRADE, 1);
 	SETCONSTANT(STEAM_ITEM_REMOVED, 256);

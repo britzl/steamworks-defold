@@ -36,6 +36,9 @@ function on_input(self, action_id, action)
 	rpg.button("networking", action_id, action, function()
 		monarch.show("networking")
 	end)
+	rpg.button("music", action_id, action, function()
+		monarch.show("music")
+	end)
 end
 
 function on_reload(self)
