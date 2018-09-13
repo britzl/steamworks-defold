@@ -204,16 +204,16 @@ user_stats_get_global_stat_int(pchStatName) -> ISteamUserStats_GetGlobalStat()
 user_stats_get_global_stat_float(pchStatName) -> ISteamUserStats_GetGlobalStat()
 user_stats_get_global_stat_int_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
 user_stats_get_global_stat_float_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
-networking_send_p2_p_packet(steamIDRemote,pubData,cubData,eP2PSendType,nChannel) -> ISteamNetworking_SendP2PPacket()
-networking_is_p2_p_packet_available(nChannel) -> ISteamNetworking_IsP2PPacketAvailable()
-networking_read_p2_p_packet(pubDest,cubDest,nChannel) -> ISteamNetworking_ReadP2PPacket()
-networking_accept_p2_p_session_with_user(steamIDRemote) -> ISteamNetworking_AcceptP2PSessionWithUser()
-networking_close_p2_p_session_with_user(steamIDRemote) -> ISteamNetworking_CloseP2PSessionWithUser()
-networking_close_p2_p_channel_with_user(steamIDRemote,nChannel) -> ISteamNetworking_CloseP2PChannelWithUser()
-networking_get_p2_p_session_state(steamIDRemote) -> ISteamNetworking_GetP2PSessionState()
-networking_allow_p2_p_packet_relay(bAllow) -> ISteamNetworking_AllowP2PPacketRelay()
+networking_send_p2p_packet(steamIDRemote,pubData,cubData,eP2PSendType,nChannel) -> ISteamNetworking_SendP2PPacket()
+networking_is_p2p_packet_available(nChannel) -> ISteamNetworking_IsP2PPacketAvailable()
+networking_read_p2p_packet(pubDest,cubDest,nChannel) -> ISteamNetworking_ReadP2PPacket()
+networking_accept_p2p_session_with_user(steamIDRemote) -> ISteamNetworking_AcceptP2PSessionWithUser()
+networking_close_p2p_session_with_user(steamIDRemote) -> ISteamNetworking_CloseP2PSessionWithUser()
+networking_close_p2p_channel_with_user(steamIDRemote,nChannel) -> ISteamNetworking_CloseP2PChannelWithUser()
+networking_get_p2p_session_state(steamIDRemote) -> ISteamNetworking_GetP2PSessionState()
+networking_allow_p2p_packet_relay(bAllow) -> ISteamNetworking_AllowP2PPacketRelay()
 networking_create_listen_socket(nVirtualP2PPort,nIP,nPort,bAllowUseOfPacketRelay) -> ISteamNetworking_CreateListenSocket()
-networking_create_p2_p_connection_socket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay) -> ISteamNetworking_CreateP2PConnectionSocket()
+networking_create_p2p_connection_socket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay) -> ISteamNetworking_CreateP2PConnectionSocket()
 networking_create_connection_socket(nIP,nPort,nTimeoutSec) -> ISteamNetworking_CreateConnectionSocket()
 networking_destroy_socket(hSocket,bNotifyRemoteEnd) -> ISteamNetworking_DestroySocket()
 networking_destroy_listen_socket(hSocket,bNotifyRemoteEnd) -> ISteamNetworking_DestroyListenSocket()
@@ -12544,16 +12544,16 @@ static const luaL_reg Module_methods[] = {
 	{ "user_stats_get_global_stat_float", ISteamUserStats_GetGlobalStatFloat },
 	{ "user_stats_get_global_stat_int_history", ISteamUserStats_GetGlobalStatIntHistory },
 	{ "user_stats_get_global_stat_float_history", ISteamUserStats_GetGlobalStatFloatHistory },
-	{ "networking_send_p2_p_packet", ISteamNetworking_SendP2PPacket },
-	{ "networking_is_p2_p_packet_available", ISteamNetworking_IsP2PPacketAvailable },
-	{ "networking_read_p2_p_packet", ISteamNetworking_ReadP2PPacket },
-	{ "networking_accept_p2_p_session_with_user", ISteamNetworking_AcceptP2PSessionWithUser },
-	{ "networking_close_p2_p_session_with_user", ISteamNetworking_CloseP2PSessionWithUser },
-	{ "networking_close_p2_p_channel_with_user", ISteamNetworking_CloseP2PChannelWithUser },
-	{ "networking_get_p2_p_session_state", ISteamNetworking_GetP2PSessionState },
-	{ "networking_allow_p2_p_packet_relay", ISteamNetworking_AllowP2PPacketRelay },
+	{ "networking_send_p2p_packet", ISteamNetworking_SendP2PPacket },
+	{ "networking_is_p2p_packet_available", ISteamNetworking_IsP2PPacketAvailable },
+	{ "networking_read_p2p_packet", ISteamNetworking_ReadP2PPacket },
+	{ "networking_accept_p2p_session_with_user", ISteamNetworking_AcceptP2PSessionWithUser },
+	{ "networking_close_p2p_session_with_user", ISteamNetworking_CloseP2PSessionWithUser },
+	{ "networking_close_p2p_channel_with_user", ISteamNetworking_CloseP2PChannelWithUser },
+	{ "networking_get_p2p_session_state", ISteamNetworking_GetP2PSessionState },
+	{ "networking_allow_p2p_packet_relay", ISteamNetworking_AllowP2PPacketRelay },
 	{ "networking_create_listen_socket", ISteamNetworking_CreateListenSocket },
-	{ "networking_create_p2_p_connection_socket", ISteamNetworking_CreateP2PConnectionSocket },
+	{ "networking_create_p2p_connection_socket", ISteamNetworking_CreateP2PConnectionSocket },
 	{ "networking_create_connection_socket", ISteamNetworking_CreateConnectionSocket },
 	{ "networking_destroy_socket", ISteamNetworking_DestroySocket },
 	{ "networking_destroy_listen_socket", ISteamNetworking_DestroyListenSocket },
@@ -13097,17 +13097,17 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(REGISTER_ACTIVATION_CODE_RESULT_TIMEOUT, 3);
 	SETCONSTANT(REGISTER_ACTIVATION_CODE_ALREADY_OWNED, 4);
 	// EP2PSessionError
-	SETCONSTANT(P2_P_SESSION_ERROR_NONE, 0);
-	SETCONSTANT(P2_P_SESSION_ERROR_NOT_RUNNING_APP, 1);
-	SETCONSTANT(P2_P_SESSION_ERROR_NO_RIGHTS_TO_APP, 2);
-	SETCONSTANT(P2_P_SESSION_ERROR_DESTINATION_NOT_LOGGED_IN, 3);
-	SETCONSTANT(P2_P_SESSION_ERROR_TIMEOUT, 4);
-	SETCONSTANT(P2_P_SESSION_ERROR_MAX, 5);
+	SETCONSTANT(P2P_SESSION_ERROR_NONE, 0);
+	SETCONSTANT(P2P_SESSION_ERROR_NOT_RUNNING_APP, 1);
+	SETCONSTANT(P2P_SESSION_ERROR_NO_RIGHTS_TO_APP, 2);
+	SETCONSTANT(P2P_SESSION_ERROR_DESTINATION_NOT_LOGGED_IN, 3);
+	SETCONSTANT(P2P_SESSION_ERROR_TIMEOUT, 4);
+	SETCONSTANT(P2P_SESSION_ERROR_MAX, 5);
 	// EP2PSend
-	SETCONSTANT(P2_P_SEND_UNRELIABLE, 0);
-	SETCONSTANT(P2_P_SEND_UNRELIABLE_NO_DELAY, 1);
-	SETCONSTANT(P2_P_SEND_RELIABLE, 2);
-	SETCONSTANT(P2_P_SEND_RELIABLE_WITH_BUFFERING, 3);
+	SETCONSTANT(P2P_SEND_UNRELIABLE, 0);
+	SETCONSTANT(P2P_SEND_UNRELIABLE_NO_DELAY, 1);
+	SETCONSTANT(P2P_SEND_RELIABLE, 2);
+	SETCONSTANT(P2P_SEND_RELIABLE_WITH_BUFFERING, 3);
 	// ESNetSocketState
 	SETCONSTANT(S_NET_SOCKET_STATE_INVALID, 0);
 	SETCONSTANT(S_NET_SOCKET_STATE_CONNECTED, 1);
@@ -13149,7 +13149,7 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(HTTP_STATUS_CODE_INVALID, 0);
 	SETCONSTANT(HTTP_STATUS_CODE100_CONTINUE, 100);
 	SETCONSTANT(HTTP_STATUS_CODE101_SWITCHING_PROTOCOLS, 101);
-	SETCONSTANT(HTTP_STATUS_CODE200_OK, 200);
+	SETCONSTANT(HTTP_STATUS_CODE200OK, 200);
 	SETCONSTANT(HTTP_STATUS_CODE201_CREATED, 201);
 	SETCONSTANT(HTTP_STATUS_CODE202_ACCEPTED, 202);
 	SETCONSTANT(HTTP_STATUS_CODE203_NON_AUTHORITATIVE, 203);
@@ -13188,7 +13188,7 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(HTTP_STATUS_CODE502_BAD_GATEWAY, 502);
 	SETCONSTANT(HTTP_STATUS_CODE503_SERVICE_UNAVAILABLE, 503);
 	SETCONSTANT(HTTP_STATUS_CODE504_GATEWAY_TIMEOUT, 504);
-	SETCONSTANT(HTTP_STATUS_CODE505_HTTP_VERSION_NOT_SUPPORTED, 505);
+	SETCONSTANT(HTTP_STATUS_CODE505HTTP_VERSION_NOT_SUPPORTED, 505);
 	SETCONSTANT(HTTP_STATUS_CODE5XX_UNKNOWN, 599);
 	// ESteamControllerPad
 	SETCONSTANT(STEAM_CONTROLLER_PAD__LEFT, 0);

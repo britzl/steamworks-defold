@@ -33,6 +33,9 @@ function on_input(self, action_id, action)
 	rpg.button("matchmaking", action_id, action, function()
 		monarch.show("matchmaking")
 	end)
+	rpg.button("networking", action_id, action, function()
+		monarch.show("networking")
+	end)
 end
 
 function on_reload(self)
