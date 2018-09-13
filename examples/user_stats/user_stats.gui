@@ -1090,7 +1090,7 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "rpg/panel_blue"
-  id: "gloabl_stats_panel"
+  id: "leaderboard_panel"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -1145,7 +1145,7 @@ nodes {
   blend_mode: BLEND_MODE_ALPHA
   text: "<text>"
   font: "rpg"
-  id: "global_stats"
+  id: "leaderboard"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_NW
@@ -1163,7 +1163,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: true
-  parent: "gloabl_stats_panel"
+  parent: "leaderboard_panel"
   layer: ""
   inherit_alpha: true
   alpha: 1.0

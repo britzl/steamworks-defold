@@ -350,7 +350,7 @@ nodes {
   }
   size {
     x: 420.0
-    y: 320.0
+    y: 400.0
     z: 0.0
     w: 1.0
   }
@@ -381,6 +381,7 @@ nodes {
   clipping_visible: true
   clipping_inverted: false
   alpha: 1.0
+  overridden_fields: 4
   template_node_child: true
   size_mode: SIZE_MODE_MANUAL
 }
@@ -405,7 +406,7 @@ nodes {
   }
   size {
     x: 420.0
-    y: 300.0
+    y: 380.0
     z: 0.0
     w: 1.0
   }
@@ -436,6 +437,7 @@ nodes {
   clipping_visible: true
   clipping_inverted: false
   alpha: 1.0
+  overridden_fields: 4
   template_node_child: true
   size_mode: SIZE_MODE_MANUAL
 }

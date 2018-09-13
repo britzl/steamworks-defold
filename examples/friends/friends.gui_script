@@ -49,12 +49,12 @@ function init(self)
 	local user_id = steamworks.user_get_steam_id()
 	local name = steamworks.friends_get_persona_name()
 	local state = steamworks.friends_get_persona_state()
-	local immediate_friends = steamworks.friends_get_friend_count(steamworks.FRIENDFLAGIMMEDIATE)
+	local immediate_friends = steamworks.friends_get_friend_count(steamworks.FRIEND_FLAG_IMMEDIATE)
 	show_avatar(user_id, gui.get_node("avatar"))
 
 	local names = ""
 	for i=0,immediate_friends-1 do
-		local fid = steamworks.friends_get_friend_by_index(i, steamworks.FRIENDFLAGIMMEDIATE)
+		local fid = steamworks.friends_get_friend_by_index(i, steamworks.FRIEND_FLAG_IMMEDIATE)
 		local name = steamworks.friends_get_friend_persona_name(fid)
 		local state = steamworks.friends_get_friend_persona_state(fid)
 		local level = steamworks.friends_get_friend_steam_level(fid)
@@ -64,17 +64,6 @@ function init(self)
 		steamworks.friends_get_follower_count(fid)
 		names = names .. ("%s - %d (%s)\n"):format(name, level, personastate(state))
 	end
-
-	
-	--[[coroutine.wrap(function()
-		local co = coroutine.running()
-		for i=0,immediate_friends-1 do
-			local fid = steamworks.friends_get_friend_by_index(i, steamworks.FRIENDFLAGIMMEDIATE)
-			steamworks.friends_get_follower_count(fid)
-			
-		end
-	end)()--]]
-	
 
 	gui.set_text(gui.get_node("info"), INFO:format(user_id, name, personastate(state)))
 	gui.set_text(gui.get_node("friends"), FRIENDS:format(names))

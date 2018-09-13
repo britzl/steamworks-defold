@@ -204,6 +204,28 @@ user_stats_get_global_stat_int(pchStatName) -> ISteamUserStats_GetGlobalStat()
 user_stats_get_global_stat_float(pchStatName) -> ISteamUserStats_GetGlobalStat()
 user_stats_get_global_stat_int_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
 user_stats_get_global_stat_float_history(pchStatName,pData,cubData) -> ISteamUserStats_GetGlobalStatHistory()
+networking_send_p2_p_packet(steamIDRemote,pubData,cubData,eP2PSendType,nChannel) -> ISteamNetworking_SendP2PPacket()
+networking_is_p2_p_packet_available(nChannel) -> ISteamNetworking_IsP2PPacketAvailable()
+networking_read_p2_p_packet(pubDest,cubDest,nChannel) -> ISteamNetworking_ReadP2PPacket()
+networking_accept_p2_p_session_with_user(steamIDRemote) -> ISteamNetworking_AcceptP2PSessionWithUser()
+networking_close_p2_p_session_with_user(steamIDRemote) -> ISteamNetworking_CloseP2PSessionWithUser()
+networking_close_p2_p_channel_with_user(steamIDRemote,nChannel) -> ISteamNetworking_CloseP2PChannelWithUser()
+networking_get_p2_p_session_state(steamIDRemote) -> ISteamNetworking_GetP2PSessionState()
+networking_allow_p2_p_packet_relay(bAllow) -> ISteamNetworking_AllowP2PPacketRelay()
+networking_create_listen_socket(nVirtualP2PPort,nIP,nPort,bAllowUseOfPacketRelay) -> ISteamNetworking_CreateListenSocket()
+networking_create_p2_p_connection_socket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay) -> ISteamNetworking_CreateP2PConnectionSocket()
+networking_create_connection_socket(nIP,nPort,nTimeoutSec) -> ISteamNetworking_CreateConnectionSocket()
+networking_destroy_socket(hSocket,bNotifyRemoteEnd) -> ISteamNetworking_DestroySocket()
+networking_destroy_listen_socket(hSocket,bNotifyRemoteEnd) -> ISteamNetworking_DestroyListenSocket()
+networking_send_data_on_socket(hSocket,pubData,cubData,bReliable) -> ISteamNetworking_SendDataOnSocket()
+networking_is_data_available_on_socket(hSocket) -> ISteamNetworking_IsDataAvailableOnSocket()
+networking_retrieve_data_from_socket(hSocket,pubDest,cubDest) -> ISteamNetworking_RetrieveDataFromSocket()
+networking_is_data_available(hListenSocket) -> ISteamNetworking_IsDataAvailable()
+networking_retrieve_data(hListenSocket,pubDest,cubDest) -> ISteamNetworking_RetrieveData()
+networking_get_socket_info(hSocket) -> ISteamNetworking_GetSocketInfo()
+networking_get_listen_socket_info(hListenSocket) -> ISteamNetworking_GetListenSocketInfo()
+networking_get_socket_connection_type(hSocket) -> ISteamNetworking_GetSocketConnectionType()
+networking_get_max_packet_size(hSocket) -> ISteamNetworking_GetMaxPacketSize()
 
 */
 
@@ -234,9 +256,7 @@ static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
 static ISteamMatchmaking *matchmaking;
-
-// static ISteamClient *client;
-
+static ISteamNetworking *networking;
 
 
 
@@ -9046,7 +9066,8 @@ class SteamCallbackWrapper {
 			push_EncryptedAppTicketResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnEncryptedAppTicketResponse_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9068,7 +9089,8 @@ class SteamCallbackWrapper {
 			push_StoreAuthURLResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnStoreAuthURLResponse_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9090,7 +9112,8 @@ class SteamCallbackWrapper {
 			push_ClanOfficerListResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnClanOfficerListResponse_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9112,7 +9135,8 @@ class SteamCallbackWrapper {
 			push_DownloadClanActivityCountsResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnDownloadClanActivityCountsResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9134,7 +9158,8 @@ class SteamCallbackWrapper {
 			push_JoinClanChatRoomCompletionResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnJoinClanChatRoomCompletionResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9156,7 +9181,8 @@ class SteamCallbackWrapper {
 			push_FriendsGetFollowerCount_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnFriendsGetFollowerCount_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9178,7 +9204,8 @@ class SteamCallbackWrapper {
 			push_FriendsIsFollowing_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnFriendsIsFollowing_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9200,7 +9227,8 @@ class SteamCallbackWrapper {
 			push_FriendsEnumerateFollowingList_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnFriendsEnumerateFollowingList_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9222,7 +9250,8 @@ class SteamCallbackWrapper {
 			push_SetPersonaNameResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnSetPersonaNameResponse_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9244,7 +9273,8 @@ class SteamCallbackWrapper {
 			push_CheckFileSignature_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnCheckFileSignature_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9266,7 +9296,8 @@ class SteamCallbackWrapper {
 			push_LobbyEnter_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnLobbyEnter_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9288,7 +9319,8 @@ class SteamCallbackWrapper {
 			push_LobbyMatchList_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnLobbyMatchList_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9310,7 +9342,8 @@ class SteamCallbackWrapper {
 			push_LobbyCreated_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnLobbyCreated_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9332,7 +9365,8 @@ class SteamCallbackWrapper {
 			push_UserStatsReceived_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9354,7 +9388,8 @@ class SteamCallbackWrapper {
 			push_LeaderboardFindResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnLeaderboardFindResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9376,7 +9411,8 @@ class SteamCallbackWrapper {
 			push_LeaderboardScoresDownloaded_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnLeaderboardScoresDownloaded_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9398,7 +9434,8 @@ class SteamCallbackWrapper {
 			push_LeaderboardScoreUploaded_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnLeaderboardScoreUploaded_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9420,7 +9457,8 @@ class SteamCallbackWrapper {
 			push_NumberOfCurrentPlayers_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnNumberOfCurrentPlayers_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9442,7 +9480,8 @@ class SteamCallbackWrapper {
 			push_GlobalAchievementPercentagesReady_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnGlobalAchievementPercentagesReady_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9464,7 +9503,8 @@ class SteamCallbackWrapper {
 			push_LeaderboardUGCSet_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnLeaderboardUGCSet_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9486,7 +9526,8 @@ class SteamCallbackWrapper {
 			push_GlobalStatsReceived_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
-				lua_pop(L, 2);
+				dmLogInfo("SteamCallbackWrapper::OnGlobalStatsReceived_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
 		}
@@ -9517,7 +9558,8 @@ void SteamCallbackWrapper::OnPersonaStateChange_t(PersonaStateChange_t *pCallbac
 	push_PersonaStateChange_t(L, *pCallback);
 	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 	if (ret != 0) {
-		lua_pop(L, 2);
+		dmLogInfo("SteamCallbackWrapper::OnPersonaStateChange_t error: %s\n", lua_tostring(L, -1));
+		lua_pop(L, 1);
 	}
 	assert(top == lua_gettop(L));
 
@@ -9535,7 +9577,8 @@ void SteamCallbackWrapper::OnGameOverlayActivated_t(GameOverlayActivated_t *pCal
 	push_GameOverlayActivated_t(L, *pCallback);
 	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 	if (ret != 0) {
-		lua_pop(L, 2);
+		dmLogInfo("SteamCallbackWrapper::OnGameOverlayActivated_t error: %s\n", lua_tostring(L, -1));
+		lua_pop(L, 1);
 	}
 	assert(top == lua_gettop(L));
 
@@ -9553,7 +9596,8 @@ void SteamCallbackWrapper::OnUserStatsReceived_t(UserStatsReceived_t *pCallback)
 	push_UserStatsReceived_t(L, *pCallback);
 	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 	if (ret != 0) {
-		lua_pop(L, 2);
+		dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived_t error: %s\n", lua_tostring(L, -1));
+		lua_pop(L, 1);
 	}
 	assert(top == lua_gettop(L));
 
@@ -11747,16 +11791,15 @@ static int ISteamUserStats_DownloadLeaderboardEntriesForUsers(lua_State* L) {
 static int ISteamUserStats_GetDownloadedLeaderboardEntry(lua_State* L) {
 	int top = lua_gettop(L);
 	int cDetailsMax = check_int(L, 3); /*normal*/
-	int32 pDetails; /*out_param*/
 	struct LeaderboardEntry_t pLeaderboardEntry; /*out_param*/
 	int index = check_int(L, 2); /*normal*/
 	SteamLeaderboardEntries_t hSteamLeaderboardEntries = check_SteamLeaderboardEntries_t(L, 1); /*normal*/
+	int32 pDetails[cDetailsMax]; /*out_array*/
 
-	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries,index,&pLeaderboardEntry,&pDetails,cDetailsMax);
+	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries,index,&pLeaderboardEntry,pDetails,cDetailsMax);
 	push_bool(L, r);
-	push_int32(L, pDetails); /*out_param*/
 	push_LeaderboardEntry_t(L, pLeaderboardEntry); /*out_param*/
-	
+	push_int32_array(L, pDetails, cDetailsMax);  /*out_array*/
 	assert(top + 1 + 2 == lua_gettop(L));
 	return 1 + 2;
 }
@@ -11933,6 +11976,319 @@ static int ISteamUserStats_GetGlobalStatFloatHistory(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamNetworking_SendP2PPacket(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 5); /*normal*/
+	EP2PSend eP2PSendType = check_EP2PSend(L, 4); /*normal*/
+	uint32 cubData = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubData_buffer = check_buffer(L, 2); /*buffer_param*/
+	const void * pubData = 0x0;
+	uint32_t pubData_buffersize = 0;
+	dmBuffer::Result pubData_buffer_result = dmBuffer::GetBytes(pubData_buffer->m_Buffer, (void**)&pubData, &pubData_buffersize);
+	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->SendP2PPacket(steamIDRemote,pubData,cubData,eP2PSendType,nChannel);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_IsP2PPacketAvailable(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 1); /*normal*/
+	uint32 pcubMsgSize; /*out_param*/
+
+	bool r = networking->IsP2PPacketAvailable(&pcubMsgSize,nChannel);
+	push_bool(L, r);
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_ReadP2PPacket(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 3); /*normal*/
+	CSteamID psteamIDRemote; /*out_param*/
+	uint32 pcubMsgSize; /*out_param*/
+	uint32 cubDest = check_uint32(L, 2); /*normal*/
+	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 1); /*buffer_param*/
+	void * pubDest = 0x0;
+	uint32_t pubDest_buffersize = 0;
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
+
+	bool r = networking->ReadP2PPacket(pubDest,cubDest,&pcubMsgSize,&psteamIDRemote,nChannel);
+	push_bool(L, r);
+	push_class_CSteamID(L, psteamIDRemote); /*out_param*/
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_AcceptP2PSessionWithUser(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->AcceptP2PSessionWithUser(steamIDRemote);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CloseP2PSessionWithUser(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->CloseP2PSessionWithUser(steamIDRemote);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CloseP2PChannelWithUser(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 2); /*normal*/
+	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->CloseP2PChannelWithUser(steamIDRemote,nChannel);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_GetP2PSessionState(lua_State* L) {
+	int top = lua_gettop(L);
+	struct P2PSessionState_t pConnectionState; /*out_param*/
+	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->GetP2PSessionState(steamIDRemote,&pConnectionState);
+	push_bool(L, r);
+	push_P2PSessionState_t(L, pConnectionState); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_AllowP2PPacketRelay(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAllow = check_bool(L, 1); /*normal*/
+
+	bool r = networking->AllowP2PPacketRelay(bAllow);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CreateListenSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAllowUseOfPacketRelay = check_bool(L, 4); /*normal*/
+	uint16 nPort = check_uint16(L, 3); /*normal*/
+	uint32 nIP = check_uint32(L, 2); /*normal*/
+	int nVirtualP2PPort = check_int(L, 1); /*normal*/
+
+	SNetListenSocket_t r = networking->CreateListenSocket(nVirtualP2PPort,nIP,nPort,bAllowUseOfPacketRelay);
+	push_SNetListenSocket_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CreateP2PConnectionSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAllowUseOfPacketRelay = check_bool(L, 4); /*normal*/
+	int nTimeoutSec = check_int(L, 3); /*normal*/
+	int nVirtualPort = check_int(L, 2); /*normal*/
+	class CSteamID steamIDTarget = check_class_CSteamID(L, 1); /*normal*/
+
+	SNetSocket_t r = networking->CreateP2PConnectionSocket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay);
+	push_SNetSocket_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CreateConnectionSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	int nTimeoutSec = check_int(L, 3); /*normal*/
+	uint16 nPort = check_uint16(L, 2); /*normal*/
+	uint32 nIP = check_uint32(L, 1); /*normal*/
+
+	SNetSocket_t r = networking->CreateConnectionSocket(nIP,nPort,nTimeoutSec);
+	push_SNetSocket_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_DestroySocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->DestroySocket(hSocket,bNotifyRemoteEnd);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_DestroyListenSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
+	SNetListenSocket_t hSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->DestroyListenSocket(hSocket,bNotifyRemoteEnd);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_SendDataOnSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReliable = check_bool(L, 4); /*normal*/
+	uint32 cubData = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubData_buffer = check_buffer(L, 2); /*buffer_param*/
+	void * pubData = 0x0;
+	uint32_t pubData_buffersize = 0;
+	dmBuffer::Result pubData_buffer_result = dmBuffer::GetBytes(pubData_buffer->m_Buffer, (void**)&pubData, &pubData_buffersize);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->SendDataOnSocket(hSocket,pubData,cubData,bReliable);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_IsDataAvailableOnSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 pcubMsgSize; /*out_param*/
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->IsDataAvailableOnSocket(hSocket,&pcubMsgSize);
+	push_bool(L, r);
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_RetrieveDataFromSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 pcubMsgSize; /*out_param*/
+	uint32 cubDest = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
+	void * pubDest = 0x0;
+	uint32_t pubDest_buffersize = 0;
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->RetrieveDataFromSocket(hSocket,pubDest,cubDest,&pcubMsgSize);
+	push_bool(L, r);
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_IsDataAvailable(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t phSocket; /*out_param*/
+	uint32 pcubMsgSize; /*out_param*/
+	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->IsDataAvailable(hListenSocket,&pcubMsgSize,&phSocket);
+	push_bool(L, r);
+	push_SNetSocket_t(L, phSocket); /*out_param*/
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_RetrieveData(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t phSocket; /*out_param*/
+	uint32 pcubMsgSize; /*out_param*/
+	uint32 cubDest = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
+	void * pubDest = 0x0;
+	uint32_t pubDest_buffersize = 0;
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
+	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->RetrieveData(hListenSocket,pubDest,cubDest,&pcubMsgSize,&phSocket);
+	push_bool(L, r);
+	push_SNetSocket_t(L, phSocket); /*out_param*/
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_GetSocketInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	uint16 punPortRemote; /*out_param*/
+	uint32 punIPRemote; /*out_param*/
+	int peSocketStatus; /*out_param*/
+	CSteamID pSteamIDRemote; /*out_param*/
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->GetSocketInfo(hSocket,&pSteamIDRemote,&peSocketStatus,&punIPRemote,&punPortRemote);
+	push_bool(L, r);
+	push_uint16(L, punPortRemote); /*out_param*/
+	push_uint32(L, punIPRemote); /*out_param*/
+	push_int(L, peSocketStatus); /*out_param*/
+	push_class_CSteamID(L, pSteamIDRemote); /*out_param*/
+	
+	assert(top + 1 + 4 == lua_gettop(L));
+	return 1 + 4;
+}
+
+static int ISteamNetworking_GetListenSocketInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	uint16 pnPort; /*out_param*/
+	uint32 pnIP; /*out_param*/
+	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->GetListenSocketInfo(hListenSocket,&pnIP,&pnPort);
+	push_bool(L, r);
+	push_uint16(L, pnPort); /*out_param*/
+	push_uint32(L, pnIP); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_GetSocketConnectionType(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	ESNetSocketConnectionType r = networking->GetSocketConnectionType(hSocket);
+	push_ESNetSocketConnectionType(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_GetMaxPacketSize(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	int r = networking->GetMaxPacketSize(hSocket);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 
 
 
@@ -11958,6 +12314,7 @@ static int Init(lua_State* L) {
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
 	matchmaking = SteamMatchmaking();
+	networking = SteamNetworking();
 	//client = SteamClient();
 	return 0;
 }
@@ -12187,6 +12544,28 @@ static const luaL_reg Module_methods[] = {
 	{ "user_stats_get_global_stat_float", ISteamUserStats_GetGlobalStatFloat },
 	{ "user_stats_get_global_stat_int_history", ISteamUserStats_GetGlobalStatIntHistory },
 	{ "user_stats_get_global_stat_float_history", ISteamUserStats_GetGlobalStatFloatHistory },
+	{ "networking_send_p2_p_packet", ISteamNetworking_SendP2PPacket },
+	{ "networking_is_p2_p_packet_available", ISteamNetworking_IsP2PPacketAvailable },
+	{ "networking_read_p2_p_packet", ISteamNetworking_ReadP2PPacket },
+	{ "networking_accept_p2_p_session_with_user", ISteamNetworking_AcceptP2PSessionWithUser },
+	{ "networking_close_p2_p_session_with_user", ISteamNetworking_CloseP2PSessionWithUser },
+	{ "networking_close_p2_p_channel_with_user", ISteamNetworking_CloseP2PChannelWithUser },
+	{ "networking_get_p2_p_session_state", ISteamNetworking_GetP2PSessionState },
+	{ "networking_allow_p2_p_packet_relay", ISteamNetworking_AllowP2PPacketRelay },
+	{ "networking_create_listen_socket", ISteamNetworking_CreateListenSocket },
+	{ "networking_create_p2_p_connection_socket", ISteamNetworking_CreateP2PConnectionSocket },
+	{ "networking_create_connection_socket", ISteamNetworking_CreateConnectionSocket },
+	{ "networking_destroy_socket", ISteamNetworking_DestroySocket },
+	{ "networking_destroy_listen_socket", ISteamNetworking_DestroyListenSocket },
+	{ "networking_send_data_on_socket", ISteamNetworking_SendDataOnSocket },
+	{ "networking_is_data_available_on_socket", ISteamNetworking_IsDataAvailableOnSocket },
+	{ "networking_retrieve_data_from_socket", ISteamNetworking_RetrieveDataFromSocket },
+	{ "networking_is_data_available", ISteamNetworking_IsDataAvailable },
+	{ "networking_retrieve_data", ISteamNetworking_RetrieveData },
+	{ "networking_get_socket_info", ISteamNetworking_GetSocketInfo },
+	{ "networking_get_listen_socket_info", ISteamNetworking_GetListenSocketInfo },
+	{ "networking_get_socket_connection_type", ISteamNetworking_GetSocketConnectionType },
+	{ "networking_get_max_packet_size", ISteamNetworking_GetMaxPacketSize },
 	{ 0, 0 }
 };
 
@@ -12199,971 +12578,971 @@ static void LuaInit(lua_State* L) {
 	lua_setfield(L, -2, #name);
 
 	// EUniverse
-	SETCONSTANT(UNIVERSEINVALID, 0);
-	SETCONSTANT(UNIVERSEPUBLIC, 1);
-	SETCONSTANT(UNIVERSEBETA, 2);
-	SETCONSTANT(UNIVERSEINTERNAL, 3);
-	SETCONSTANT(UNIVERSEDEV, 4);
-	SETCONSTANT(UNIVERSEMAX, 5);
+	SETCONSTANT(UNIVERSE_INVALID, 0);
+	SETCONSTANT(UNIVERSE_PUBLIC, 1);
+	SETCONSTANT(UNIVERSE_BETA, 2);
+	SETCONSTANT(UNIVERSE_INTERNAL, 3);
+	SETCONSTANT(UNIVERSE_DEV, 4);
+	SETCONSTANT(UNIVERSE_MAX, 5);
 	// EResult
-	SETCONSTANT(RESULTOK, 1);
-	SETCONSTANT(RESULTFAIL, 2);
-	SETCONSTANT(RESULTNOCONNECTION, 3);
-	SETCONSTANT(RESULTINVALIDPASSWORD, 5);
-	SETCONSTANT(RESULTLOGGEDINELSEWHERE, 6);
-	SETCONSTANT(RESULTINVALIDPROTOCOLVER, 7);
-	SETCONSTANT(RESULTINVALIDPARAM, 8);
-	SETCONSTANT(RESULTFILENOTFOUND, 9);
-	SETCONSTANT(RESULTBUSY, 10);
-	SETCONSTANT(RESULTINVALIDSTATE, 11);
-	SETCONSTANT(RESULTINVALIDNAME, 12);
-	SETCONSTANT(RESULTINVALIDEMAIL, 13);
-	SETCONSTANT(RESULTDUPLICATENAME, 14);
-	SETCONSTANT(RESULTACCESSDENIED, 15);
-	SETCONSTANT(RESULTTIMEOUT, 16);
-	SETCONSTANT(RESULTBANNED, 17);
-	SETCONSTANT(RESULTACCOUNTNOTFOUND, 18);
-	SETCONSTANT(RESULTINVALIDSTEAMID, 19);
-	SETCONSTANT(RESULTSERVICEUNAVAILABLE, 20);
-	SETCONSTANT(RESULTNOTLOGGEDON, 21);
-	SETCONSTANT(RESULTPENDING, 22);
-	SETCONSTANT(RESULTENCRYPTIONFAILURE, 23);
-	SETCONSTANT(RESULTINSUFFICIENTPRIVILEGE, 24);
-	SETCONSTANT(RESULTLIMITEXCEEDED, 25);
-	SETCONSTANT(RESULTREVOKED, 26);
-	SETCONSTANT(RESULTEXPIRED, 27);
-	SETCONSTANT(RESULTALREADYREDEEMED, 28);
-	SETCONSTANT(RESULTDUPLICATEREQUEST, 29);
-	SETCONSTANT(RESULTALREADYOWNED, 30);
-	SETCONSTANT(RESULTIPNOTFOUND, 31);
-	SETCONSTANT(RESULTPERSISTFAILED, 32);
-	SETCONSTANT(RESULTLOCKINGFAILED, 33);
-	SETCONSTANT(RESULTLOGONSESSIONREPLACED, 34);
-	SETCONSTANT(RESULTCONNECTFAILED, 35);
-	SETCONSTANT(RESULTHANDSHAKEFAILED, 36);
-	SETCONSTANT(RESULTIOFAILURE, 37);
-	SETCONSTANT(RESULTREMOTEDISCONNECT, 38);
-	SETCONSTANT(RESULTSHOPPINGCARTNOTFOUND, 39);
-	SETCONSTANT(RESULTBLOCKED, 40);
-	SETCONSTANT(RESULTIGNORED, 41);
-	SETCONSTANT(RESULTNOMATCH, 42);
-	SETCONSTANT(RESULTACCOUNTDISABLED, 43);
-	SETCONSTANT(RESULTSERVICEREADONLY, 44);
-	SETCONSTANT(RESULTACCOUNTNOTFEATURED, 45);
-	SETCONSTANT(RESULTADMINISTRATOROK, 46);
-	SETCONSTANT(RESULTCONTENTVERSION, 47);
-	SETCONSTANT(RESULTTRYANOTHERCM, 48);
-	SETCONSTANT(RESULTPASSWORDREQUIREDTOKICKSESSION, 49);
-	SETCONSTANT(RESULTALREADYLOGGEDINELSEWHERE, 50);
-	SETCONSTANT(RESULTSUSPENDED, 51);
-	SETCONSTANT(RESULTCANCELLED, 52);
-	SETCONSTANT(RESULTDATACORRUPTION, 53);
-	SETCONSTANT(RESULTDISKFULL, 54);
-	SETCONSTANT(RESULTREMOTECALLFAILED, 55);
-	SETCONSTANT(RESULTPASSWORDUNSET, 56);
-	SETCONSTANT(RESULTEXTERNALACCOUNTUNLINKED, 57);
-	SETCONSTANT(RESULTPSNTICKETINVALID, 58);
-	SETCONSTANT(RESULTEXTERNALACCOUNTALREADYLINKED, 59);
-	SETCONSTANT(RESULTREMOTEFILECONFLICT, 60);
-	SETCONSTANT(RESULTILLEGALPASSWORD, 61);
-	SETCONSTANT(RESULTSAMEASPREVIOUSVALUE, 62);
-	SETCONSTANT(RESULTACCOUNTLOGONDENIED, 63);
-	SETCONSTANT(RESULTCANNOTUSEOLDPASSWORD, 64);
-	SETCONSTANT(RESULTINVALIDLOGINAUTHCODE, 65);
-	SETCONSTANT(RESULTACCOUNTLOGONDENIEDNOMAIL, 66);
-	SETCONSTANT(RESULTHARDWARENOTCAPABLEOFIPT, 67);
-	SETCONSTANT(RESULTIPTINITERROR, 68);
-	SETCONSTANT(RESULTPARENTALCONTROLRESTRICTED, 69);
-	SETCONSTANT(RESULTFACEBOOKQUERYERROR, 70);
-	SETCONSTANT(RESULTEXPIREDLOGINAUTHCODE, 71);
-	SETCONSTANT(RESULTIPLOGINRESTRICTIONFAILED, 72);
-	SETCONSTANT(RESULTACCOUNTLOCKEDDOWN, 73);
-	SETCONSTANT(RESULTACCOUNTLOGONDENIEDVERIFIEDEMAILREQUIRED, 74);
-	SETCONSTANT(RESULTNOMATCHINGURL, 75);
-	SETCONSTANT(RESULTBADRESPONSE, 76);
-	SETCONSTANT(RESULTREQUIREPASSWORDREENTRY, 77);
-	SETCONSTANT(RESULTVALUEOUTOFRANGE, 78);
-	SETCONSTANT(RESULTUNEXPECTEDERROR, 79);
-	SETCONSTANT(RESULTDISABLED, 80);
-	SETCONSTANT(RESULTINVALIDCEGSUBMISSION, 81);
-	SETCONSTANT(RESULTRESTRICTEDDEVICE, 82);
-	SETCONSTANT(RESULTREGIONLOCKED, 83);
-	SETCONSTANT(RESULTRATELIMITEXCEEDED, 84);
-	SETCONSTANT(RESULTACCOUNTLOGINDENIEDNEEDTWOFACTOR, 85);
-	SETCONSTANT(RESULTITEMDELETED, 86);
-	SETCONSTANT(RESULTACCOUNTLOGINDENIEDTHROTTLE, 87);
-	SETCONSTANT(RESULTTWOFACTORCODEMISMATCH, 88);
-	SETCONSTANT(RESULTTWOFACTORACTIVATIONCODEMISMATCH, 89);
-	SETCONSTANT(RESULTACCOUNTASSOCIATEDTOMULTIPLEPARTNERS, 90);
-	SETCONSTANT(RESULTNOTMODIFIED, 91);
-	SETCONSTANT(RESULTNOMOBILEDEVICE, 92);
-	SETCONSTANT(RESULTTIMENOTSYNCED, 93);
-	SETCONSTANT(RESULTSMSCODEFAILED, 94);
-	SETCONSTANT(RESULTACCOUNTLIMITEXCEEDED, 95);
-	SETCONSTANT(RESULTACCOUNTACTIVITYLIMITEXCEEDED, 96);
-	SETCONSTANT(RESULTPHONEACTIVITYLIMITEXCEEDED, 97);
-	SETCONSTANT(RESULTREFUNDTOWALLET, 98);
-	SETCONSTANT(RESULTEMAILSENDFAILURE, 99);
-	SETCONSTANT(RESULTNOTSETTLED, 100);
-	SETCONSTANT(RESULTNEEDCAPTCHA, 101);
-	SETCONSTANT(RESULTGSLTDENIED, 102);
-	SETCONSTANT(RESULTGSOWNERDENIED, 103);
-	SETCONSTANT(RESULTINVALIDITEMTYPE, 104);
-	SETCONSTANT(RESULTIPBANNED, 105);
-	SETCONSTANT(RESULTGSLTEXPIRED, 106);
-	SETCONSTANT(RESULTINSUFFICIENTFUNDS, 107);
-	SETCONSTANT(RESULTTOOMANYPENDING, 108);
-	SETCONSTANT(RESULTNOSITELICENSESFOUND, 109);
-	SETCONSTANT(RESULTWGNETWORKSENDEXCEEDED, 110);
-	SETCONSTANT(RESULTACCOUNTNOTFRIENDS, 111);
-	SETCONSTANT(RESULTLIMITEDUSERACCOUNT, 112);
+	SETCONSTANT(RESULT_OK, 1);
+	SETCONSTANT(RESULT_FAIL, 2);
+	SETCONSTANT(RESULT_NO_CONNECTION, 3);
+	SETCONSTANT(RESULT_INVALID_PASSWORD, 5);
+	SETCONSTANT(RESULT_LOGGED_IN_ELSEWHERE, 6);
+	SETCONSTANT(RESULT_INVALID_PROTOCOL_VER, 7);
+	SETCONSTANT(RESULT_INVALID_PARAM, 8);
+	SETCONSTANT(RESULT_FILE_NOT_FOUND, 9);
+	SETCONSTANT(RESULT_BUSY, 10);
+	SETCONSTANT(RESULT_INVALID_STATE, 11);
+	SETCONSTANT(RESULT_INVALID_NAME, 12);
+	SETCONSTANT(RESULT_INVALID_EMAIL, 13);
+	SETCONSTANT(RESULT_DUPLICATE_NAME, 14);
+	SETCONSTANT(RESULT_ACCESS_DENIED, 15);
+	SETCONSTANT(RESULT_TIMEOUT, 16);
+	SETCONSTANT(RESULT_BANNED, 17);
+	SETCONSTANT(RESULT_ACCOUNT_NOT_FOUND, 18);
+	SETCONSTANT(RESULT_INVALID_STEAM_ID, 19);
+	SETCONSTANT(RESULT_SERVICE_UNAVAILABLE, 20);
+	SETCONSTANT(RESULT_NOT_LOGGED_ON, 21);
+	SETCONSTANT(RESULT_PENDING, 22);
+	SETCONSTANT(RESULT_ENCRYPTION_FAILURE, 23);
+	SETCONSTANT(RESULT_INSUFFICIENT_PRIVILEGE, 24);
+	SETCONSTANT(RESULT_LIMIT_EXCEEDED, 25);
+	SETCONSTANT(RESULT_REVOKED, 26);
+	SETCONSTANT(RESULT_EXPIRED, 27);
+	SETCONSTANT(RESULT_ALREADY_REDEEMED, 28);
+	SETCONSTANT(RESULT_DUPLICATE_REQUEST, 29);
+	SETCONSTANT(RESULT_ALREADY_OWNED, 30);
+	SETCONSTANT(RESULT_IP_NOT_FOUND, 31);
+	SETCONSTANT(RESULT_PERSIST_FAILED, 32);
+	SETCONSTANT(RESULT_LOCKING_FAILED, 33);
+	SETCONSTANT(RESULT_LOGON_SESSION_REPLACED, 34);
+	SETCONSTANT(RESULT_CONNECT_FAILED, 35);
+	SETCONSTANT(RESULT_HANDSHAKE_FAILED, 36);
+	SETCONSTANT(RESULT_IO_FAILURE, 37);
+	SETCONSTANT(RESULT_REMOTE_DISCONNECT, 38);
+	SETCONSTANT(RESULT_SHOPPING_CART_NOT_FOUND, 39);
+	SETCONSTANT(RESULT_BLOCKED, 40);
+	SETCONSTANT(RESULT_IGNORED, 41);
+	SETCONSTANT(RESULT_NO_MATCH, 42);
+	SETCONSTANT(RESULT_ACCOUNT_DISABLED, 43);
+	SETCONSTANT(RESULT_SERVICE_READ_ONLY, 44);
+	SETCONSTANT(RESULT_ACCOUNT_NOT_FEATURED, 45);
+	SETCONSTANT(RESULT_ADMINISTRATOR_OK, 46);
+	SETCONSTANT(RESULT_CONTENT_VERSION, 47);
+	SETCONSTANT(RESULT_TRY_ANOTHER_CM, 48);
+	SETCONSTANT(RESULT_PASSWORD_REQUIRED_TO_KICK_SESSION, 49);
+	SETCONSTANT(RESULT_ALREADY_LOGGED_IN_ELSEWHERE, 50);
+	SETCONSTANT(RESULT_SUSPENDED, 51);
+	SETCONSTANT(RESULT_CANCELLED, 52);
+	SETCONSTANT(RESULT_DATA_CORRUPTION, 53);
+	SETCONSTANT(RESULT_DISK_FULL, 54);
+	SETCONSTANT(RESULT_REMOTE_CALL_FAILED, 55);
+	SETCONSTANT(RESULT_PASSWORD_UNSET, 56);
+	SETCONSTANT(RESULT_EXTERNAL_ACCOUNT_UNLINKED, 57);
+	SETCONSTANT(RESULT_PSN_TICKET_INVALID, 58);
+	SETCONSTANT(RESULT_EXTERNAL_ACCOUNT_ALREADY_LINKED, 59);
+	SETCONSTANT(RESULT_REMOTE_FILE_CONFLICT, 60);
+	SETCONSTANT(RESULT_ILLEGAL_PASSWORD, 61);
+	SETCONSTANT(RESULT_SAME_AS_PREVIOUS_VALUE, 62);
+	SETCONSTANT(RESULT_ACCOUNT_LOGON_DENIED, 63);
+	SETCONSTANT(RESULT_CANNOT_USE_OLD_PASSWORD, 64);
+	SETCONSTANT(RESULT_INVALID_LOGIN_AUTH_CODE, 65);
+	SETCONSTANT(RESULT_ACCOUNT_LOGON_DENIED_NO_MAIL, 66);
+	SETCONSTANT(RESULT_HARDWARE_NOT_CAPABLE_OF_IPT, 67);
+	SETCONSTANT(RESULT_IPT_INIT_ERROR, 68);
+	SETCONSTANT(RESULT_PARENTAL_CONTROL_RESTRICTED, 69);
+	SETCONSTANT(RESULT_FACEBOOK_QUERY_ERROR, 70);
+	SETCONSTANT(RESULT_EXPIRED_LOGIN_AUTH_CODE, 71);
+	SETCONSTANT(RESULT_IP_LOGIN_RESTRICTION_FAILED, 72);
+	SETCONSTANT(RESULT_ACCOUNT_LOCKED_DOWN, 73);
+	SETCONSTANT(RESULT_ACCOUNT_LOGON_DENIED_VERIFIED_EMAIL_REQUIRED, 74);
+	SETCONSTANT(RESULT_NO_MATCHING_URL, 75);
+	SETCONSTANT(RESULT_BAD_RESPONSE, 76);
+	SETCONSTANT(RESULT_REQUIRE_PASSWORD_RE_ENTRY, 77);
+	SETCONSTANT(RESULT_VALUE_OUT_OF_RANGE, 78);
+	SETCONSTANT(RESULT_UNEXPECTED_ERROR, 79);
+	SETCONSTANT(RESULT_DISABLED, 80);
+	SETCONSTANT(RESULT_INVALID_CEG_SUBMISSION, 81);
+	SETCONSTANT(RESULT_RESTRICTED_DEVICE, 82);
+	SETCONSTANT(RESULT_REGION_LOCKED, 83);
+	SETCONSTANT(RESULT_RATE_LIMIT_EXCEEDED, 84);
+	SETCONSTANT(RESULT_ACCOUNT_LOGIN_DENIED_NEED_TWO_FACTOR, 85);
+	SETCONSTANT(RESULT_ITEM_DELETED, 86);
+	SETCONSTANT(RESULT_ACCOUNT_LOGIN_DENIED_THROTTLE, 87);
+	SETCONSTANT(RESULT_TWO_FACTOR_CODE_MISMATCH, 88);
+	SETCONSTANT(RESULT_TWO_FACTOR_ACTIVATION_CODE_MISMATCH, 89);
+	SETCONSTANT(RESULT_ACCOUNT_ASSOCIATED_TO_MULTIPLE_PARTNERS, 90);
+	SETCONSTANT(RESULT_NOT_MODIFIED, 91);
+	SETCONSTANT(RESULT_NO_MOBILE_DEVICE, 92);
+	SETCONSTANT(RESULT_TIME_NOT_SYNCED, 93);
+	SETCONSTANT(RESULT_SMS_CODE_FAILED, 94);
+	SETCONSTANT(RESULT_ACCOUNT_LIMIT_EXCEEDED, 95);
+	SETCONSTANT(RESULT_ACCOUNT_ACTIVITY_LIMIT_EXCEEDED, 96);
+	SETCONSTANT(RESULT_PHONE_ACTIVITY_LIMIT_EXCEEDED, 97);
+	SETCONSTANT(RESULT_REFUND_TO_WALLET, 98);
+	SETCONSTANT(RESULT_EMAIL_SEND_FAILURE, 99);
+	SETCONSTANT(RESULT_NOT_SETTLED, 100);
+	SETCONSTANT(RESULT_NEED_CAPTCHA, 101);
+	SETCONSTANT(RESULT_GSLT_DENIED, 102);
+	SETCONSTANT(RESULT_GS_OWNER_DENIED, 103);
+	SETCONSTANT(RESULT_INVALID_ITEM_TYPE, 104);
+	SETCONSTANT(RESULT_IP_BANNED, 105);
+	SETCONSTANT(RESULT_GSLT_EXPIRED, 106);
+	SETCONSTANT(RESULT_INSUFFICIENT_FUNDS, 107);
+	SETCONSTANT(RESULT_TOO_MANY_PENDING, 108);
+	SETCONSTANT(RESULT_NO_SITE_LICENSES_FOUND, 109);
+	SETCONSTANT(RESULT_WG_NETWORK_SEND_EXCEEDED, 110);
+	SETCONSTANT(RESULT_ACCOUNT_NOT_FRIENDS, 111);
+	SETCONSTANT(RESULT_LIMITED_USER_ACCOUNT, 112);
 	// EVoiceResult
-	SETCONSTANT(VOICERESULTOK, 0);
-	SETCONSTANT(VOICERESULTNOTINITIALIZED, 1);
-	SETCONSTANT(VOICERESULTNOTRECORDING, 2);
-	SETCONSTANT(VOICERESULTNODATA, 3);
-	SETCONSTANT(VOICERESULTBUFFERTOOSMALL, 4);
-	SETCONSTANT(VOICERESULTDATACORRUPTED, 5);
-	SETCONSTANT(VOICERESULTRESTRICTED, 6);
-	SETCONSTANT(VOICERESULTUNSUPPORTEDCODEC, 7);
-	SETCONSTANT(VOICERESULTRECEIVEROUTOFDATE, 8);
-	SETCONSTANT(VOICERESULTRECEIVERDIDNOTANSWER, 9);
+	SETCONSTANT(VOICE_RESULT_OK, 0);
+	SETCONSTANT(VOICE_RESULT_NOT_INITIALIZED, 1);
+	SETCONSTANT(VOICE_RESULT_NOT_RECORDING, 2);
+	SETCONSTANT(VOICE_RESULT_NO_DATA, 3);
+	SETCONSTANT(VOICE_RESULT_BUFFER_TOO_SMALL, 4);
+	SETCONSTANT(VOICE_RESULT_DATA_CORRUPTED, 5);
+	SETCONSTANT(VOICE_RESULT_RESTRICTED, 6);
+	SETCONSTANT(VOICE_RESULT_UNSUPPORTED_CODEC, 7);
+	SETCONSTANT(VOICE_RESULT_RECEIVER_OUT_OF_DATE, 8);
+	SETCONSTANT(VOICE_RESULT_RECEIVER_DID_NOT_ANSWER, 9);
 	// EDenyReason
-	SETCONSTANT(DENYINVALID, 0);
-	SETCONSTANT(DENYINVALIDVERSION, 1);
-	SETCONSTANT(DENYGENERIC, 2);
-	SETCONSTANT(DENYNOTLOGGEDON, 3);
-	SETCONSTANT(DENYNOLICENSE, 4);
-	SETCONSTANT(DENYCHEATER, 5);
-	SETCONSTANT(DENYLOGGEDINELSEWHERE, 6);
-	SETCONSTANT(DENYUNKNOWNTEXT, 7);
-	SETCONSTANT(DENYINCOMPATIBLEANTICHEAT, 8);
-	SETCONSTANT(DENYMEMORYCORRUPTION, 9);
-	SETCONSTANT(DENYINCOMPATIBLESOFTWARE, 10);
-	SETCONSTANT(DENYSTEAMCONNECTIONLOST, 11);
-	SETCONSTANT(DENYSTEAMCONNECTIONERROR, 12);
-	SETCONSTANT(DENYSTEAMRESPONSETIMEDOUT, 13);
-	SETCONSTANT(DENYSTEAMVALIDATIONSTALLED, 14);
-	SETCONSTANT(DENYSTEAMOWNERLEFTGUESTUSER, 15);
+	SETCONSTANT(DENY_INVALID, 0);
+	SETCONSTANT(DENY_INVALID_VERSION, 1);
+	SETCONSTANT(DENY_GENERIC, 2);
+	SETCONSTANT(DENY_NOT_LOGGED_ON, 3);
+	SETCONSTANT(DENY_NO_LICENSE, 4);
+	SETCONSTANT(DENY_CHEATER, 5);
+	SETCONSTANT(DENY_LOGGED_IN_ELSE_WHERE, 6);
+	SETCONSTANT(DENY_UNKNOWN_TEXT, 7);
+	SETCONSTANT(DENY_INCOMPATIBLE_ANTICHEAT, 8);
+	SETCONSTANT(DENY_MEMORY_CORRUPTION, 9);
+	SETCONSTANT(DENY_INCOMPATIBLE_SOFTWARE, 10);
+	SETCONSTANT(DENY_STEAM_CONNECTION_LOST, 11);
+	SETCONSTANT(DENY_STEAM_CONNECTION_ERROR, 12);
+	SETCONSTANT(DENY_STEAM_RESPONSE_TIMED_OUT, 13);
+	SETCONSTANT(DENY_STEAM_VALIDATION_STALLED, 14);
+	SETCONSTANT(DENY_STEAM_OWNER_LEFT_GUEST_USER, 15);
 	// EBeginAuthSessionResult
-	SETCONSTANT(BEGINAUTHSESSIONRESULTOK, 0);
-	SETCONSTANT(BEGINAUTHSESSIONRESULTINVALIDTICKET, 1);
-	SETCONSTANT(BEGINAUTHSESSIONRESULTDUPLICATEREQUEST, 2);
-	SETCONSTANT(BEGINAUTHSESSIONRESULTINVALIDVERSION, 3);
-	SETCONSTANT(BEGINAUTHSESSIONRESULTGAMEMISMATCH, 4);
-	SETCONSTANT(BEGINAUTHSESSIONRESULTEXPIREDTICKET, 5);
+	SETCONSTANT(BEGIN_AUTH_SESSION_RESULT_OK, 0);
+	SETCONSTANT(BEGIN_AUTH_SESSION_RESULT_INVALID_TICKET, 1);
+	SETCONSTANT(BEGIN_AUTH_SESSION_RESULT_DUPLICATE_REQUEST, 2);
+	SETCONSTANT(BEGIN_AUTH_SESSION_RESULT_INVALID_VERSION, 3);
+	SETCONSTANT(BEGIN_AUTH_SESSION_RESULT_GAME_MISMATCH, 4);
+	SETCONSTANT(BEGIN_AUTH_SESSION_RESULT_EXPIRED_TICKET, 5);
 	// EAuthSessionResponse
-	SETCONSTANT(AUTHSESSIONRESPONSEOK, 0);
-	SETCONSTANT(AUTHSESSIONRESPONSEUSERNOTCONNECTEDTOSTEAM, 1);
-	SETCONSTANT(AUTHSESSIONRESPONSENOLICENSEOREXPIRED, 2);
-	SETCONSTANT(AUTHSESSIONRESPONSEVACBANNED, 3);
-	SETCONSTANT(AUTHSESSIONRESPONSELOGGEDINELSEWHERE, 4);
-	SETCONSTANT(AUTHSESSIONRESPONSEVACCHECKTIMEDOUT, 5);
-	SETCONSTANT(AUTHSESSIONRESPONSEAUTHTICKETCANCELED, 6);
-	SETCONSTANT(AUTHSESSIONRESPONSEAUTHTICKETINVALIDALREADYUSED, 7);
-	SETCONSTANT(AUTHSESSIONRESPONSEAUTHTICKETINVALID, 8);
-	SETCONSTANT(AUTHSESSIONRESPONSEPUBLISHERISSUEDBAN, 9);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_OK, 0);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_USER_NOT_CONNECTED_TO_STEAM, 1);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_NO_LICENSE_OR_EXPIRED, 2);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_VAC_BANNED, 3);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_LOGGED_IN_ELSE_WHERE, 4);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_VAC_CHECK_TIMED_OUT, 5);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_AUTH_TICKET_CANCELED, 6);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_AUTH_TICKET_INVALID_ALREADY_USED, 7);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_AUTH_TICKET_INVALID, 8);
+	SETCONSTANT(AUTH_SESSION_RESPONSE_PUBLISHER_ISSUED_BAN, 9);
 	// EUserHasLicenseForAppResult
-	SETCONSTANT(USERHASLICENSERESULTHASLICENSE, 0);
-	SETCONSTANT(USERHASLICENSERESULTDOESNOTHAVELICENSE, 1);
-	SETCONSTANT(USERHASLICENSERESULTNOAUTH, 2);
+	SETCONSTANT(USER_HAS_LICENSE_RESULT_HAS_LICENSE, 0);
+	SETCONSTANT(USER_HAS_LICENSE_RESULT_DOES_NOT_HAVE_LICENSE, 1);
+	SETCONSTANT(USER_HAS_LICENSE_RESULT_NO_AUTH, 2);
 	// EAccountType
-	SETCONSTANT(ACCOUNTTYPEINVALID, 0);
-	SETCONSTANT(ACCOUNTTYPEINDIVIDUAL, 1);
-	SETCONSTANT(ACCOUNTTYPEMULTISEAT, 2);
-	SETCONSTANT(ACCOUNTTYPEGAMESERVER, 3);
-	SETCONSTANT(ACCOUNTTYPEANONGAMESERVER, 4);
-	SETCONSTANT(ACCOUNTTYPEPENDING, 5);
-	SETCONSTANT(ACCOUNTTYPECONTENTSERVER, 6);
-	SETCONSTANT(ACCOUNTTYPECLAN, 7);
-	SETCONSTANT(ACCOUNTTYPECHAT, 8);
-	SETCONSTANT(ACCOUNTTYPECONSOLEUSER, 9);
-	SETCONSTANT(ACCOUNTTYPEANONUSER, 10);
-	SETCONSTANT(ACCOUNTTYPEMAX, 11);
+	SETCONSTANT(ACCOUNT_TYPE_INVALID, 0);
+	SETCONSTANT(ACCOUNT_TYPE_INDIVIDUAL, 1);
+	SETCONSTANT(ACCOUNT_TYPE_MULTISEAT, 2);
+	SETCONSTANT(ACCOUNT_TYPE_GAME_SERVER, 3);
+	SETCONSTANT(ACCOUNT_TYPE_ANON_GAME_SERVER, 4);
+	SETCONSTANT(ACCOUNT_TYPE_PENDING, 5);
+	SETCONSTANT(ACCOUNT_TYPE_CONTENT_SERVER, 6);
+	SETCONSTANT(ACCOUNT_TYPE_CLAN, 7);
+	SETCONSTANT(ACCOUNT_TYPE_CHAT, 8);
+	SETCONSTANT(ACCOUNT_TYPE_CONSOLE_USER, 9);
+	SETCONSTANT(ACCOUNT_TYPE_ANON_USER, 10);
+	SETCONSTANT(ACCOUNT_TYPE_MAX, 11);
 	// EAppReleaseState
-	SETCONSTANT(APPRELEASESTATE_UNKNOWN, 0);
-	SETCONSTANT(APPRELEASESTATE_UNAVAILABLE, 1);
-	SETCONSTANT(APPRELEASESTATE_PRERELEASE, 2);
-	SETCONSTANT(APPRELEASESTATE_PRELOADONLY, 3);
-	SETCONSTANT(APPRELEASESTATE_RELEASED, 4);
+	SETCONSTANT(APP_RELEASE_STATE__UNKNOWN, 0);
+	SETCONSTANT(APP_RELEASE_STATE__UNAVAILABLE, 1);
+	SETCONSTANT(APP_RELEASE_STATE__PRERELEASE, 2);
+	SETCONSTANT(APP_RELEASE_STATE__PRELOAD_ONLY, 3);
+	SETCONSTANT(APP_RELEASE_STATE__RELEASED, 4);
 	// EAppOwnershipFlags
-	SETCONSTANT(APPOWNERSHIPFLAGS_NONE, 0);
-	SETCONSTANT(APPOWNERSHIPFLAGS_OWNSLICENSE, 1);
-	SETCONSTANT(APPOWNERSHIPFLAGS_FREELICENSE, 2);
-	SETCONSTANT(APPOWNERSHIPFLAGS_REGIONRESTRICTED, 4);
-	SETCONSTANT(APPOWNERSHIPFLAGS_LOWVIOLENCE, 8);
-	SETCONSTANT(APPOWNERSHIPFLAGS_INVALIDPLATFORM, 16);
-	SETCONSTANT(APPOWNERSHIPFLAGS_SHAREDLICENSE, 32);
-	SETCONSTANT(APPOWNERSHIPFLAGS_FREEWEEKEND, 64);
-	SETCONSTANT(APPOWNERSHIPFLAGS_RETAILLICENSE, 128);
-	SETCONSTANT(APPOWNERSHIPFLAGS_LICENSELOCKED, 256);
-	SETCONSTANT(APPOWNERSHIPFLAGS_LICENSEPENDING, 512);
-	SETCONSTANT(APPOWNERSHIPFLAGS_LICENSEEXPIRED, 1024);
-	SETCONSTANT(APPOWNERSHIPFLAGS_LICENSEPERMANENT, 2048);
-	SETCONSTANT(APPOWNERSHIPFLAGS_LICENSERECURRING, 4096);
-	SETCONSTANT(APPOWNERSHIPFLAGS_LICENSECANCELED, 8192);
-	SETCONSTANT(APPOWNERSHIPFLAGS_AUTOGRANT, 16384);
-	SETCONSTANT(APPOWNERSHIPFLAGS_PENDINGGIFT, 32768);
-	SETCONSTANT(APPOWNERSHIPFLAGS_RENTALNOTACTIVATED, 65536);
-	SETCONSTANT(APPOWNERSHIPFLAGS_RENTAL, 131072);
-	SETCONSTANT(APPOWNERSHIPFLAGS_SITELICENSE, 262144);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__NONE, 0);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__OWNS_LICENSE, 1);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__FREE_LICENSE, 2);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__REGION_RESTRICTED, 4);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__LOW_VIOLENCE, 8);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__INVALID_PLATFORM, 16);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__SHARED_LICENSE, 32);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__FREE_WEEKEND, 64);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__RETAIL_LICENSE, 128);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_LOCKED, 256);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_PENDING, 512);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_EXPIRED, 1024);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_PERMANENT, 2048);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_RECURRING, 4096);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__LICENSE_CANCELED, 8192);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__AUTO_GRANT, 16384);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__PENDING_GIFT, 32768);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__RENTAL_NOT_ACTIVATED, 65536);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__RENTAL, 131072);
+	SETCONSTANT(APP_OWNERSHIP_FLAGS__SITE_LICENSE, 262144);
 	// EAppType
-	SETCONSTANT(APPTYPE_INVALID, 0);
-	SETCONSTANT(APPTYPE_GAME, 1);
-	SETCONSTANT(APPTYPE_APPLICATION, 2);
-	SETCONSTANT(APPTYPE_TOOL, 4);
-	SETCONSTANT(APPTYPE_DEMO, 8);
-	SETCONSTANT(APPTYPE_MEDIA_DEPRECATED, 16);
-	SETCONSTANT(APPTYPE_DLC, 32);
-	SETCONSTANT(APPTYPE_GUIDE, 64);
-	SETCONSTANT(APPTYPE_DRIVER, 128);
-	SETCONSTANT(APPTYPE_CONFIG, 256);
-	SETCONSTANT(APPTYPE_HARDWARE, 512);
-	SETCONSTANT(APPTYPE_FRANCHISE, 1024);
-	SETCONSTANT(APPTYPE_VIDEO, 2048);
-	SETCONSTANT(APPTYPE_PLUGIN, 4096);
-	SETCONSTANT(APPTYPE_MUSIC, 8192);
-	SETCONSTANT(APPTYPE_SERIES, 16384);
-	SETCONSTANT(APPTYPE_COMIC, 32768);
-	SETCONSTANT(APPTYPE_SHORTCUT, 1073741824);
-	SETCONSTANT(APPTYPE_DEPOTONLY, -2147483648);
+	SETCONSTANT(APP_TYPE__INVALID, 0);
+	SETCONSTANT(APP_TYPE__GAME, 1);
+	SETCONSTANT(APP_TYPE__APPLICATION, 2);
+	SETCONSTANT(APP_TYPE__TOOL, 4);
+	SETCONSTANT(APP_TYPE__DEMO, 8);
+	SETCONSTANT(APP_TYPE__MEDIA_DEPRECATED, 16);
+	SETCONSTANT(APP_TYPE_DLC, 32);
+	SETCONSTANT(APP_TYPE__GUIDE, 64);
+	SETCONSTANT(APP_TYPE__DRIVER, 128);
+	SETCONSTANT(APP_TYPE__CONFIG, 256);
+	SETCONSTANT(APP_TYPE__HARDWARE, 512);
+	SETCONSTANT(APP_TYPE__FRANCHISE, 1024);
+	SETCONSTANT(APP_TYPE__VIDEO, 2048);
+	SETCONSTANT(APP_TYPE__PLUGIN, 4096);
+	SETCONSTANT(APP_TYPE__MUSIC, 8192);
+	SETCONSTANT(APP_TYPE__SERIES, 16384);
+	SETCONSTANT(APP_TYPE__COMIC, 32768);
+	SETCONSTANT(APP_TYPE__SHORTCUT, 1073741824);
+	SETCONSTANT(APP_TYPE__DEPOT_ONLY, -2147483648);
 	// ESteamUserStatType
-	SETCONSTANT(STEAMUSERSTATTYPEINVALID, 0);
-	SETCONSTANT(STEAMUSERSTATTYPEINT, 1);
-	SETCONSTANT(STEAMUSERSTATTYPEFLOAT, 2);
-	SETCONSTANT(STEAMUSERSTATTYPEAVGRATE, 3);
-	SETCONSTANT(STEAMUSERSTATTYPEACHIEVEMENTS, 4);
-	SETCONSTANT(STEAMUSERSTATTYPEGROUPACHIEVEMENTS, 5);
-	SETCONSTANT(STEAMUSERSTATTYPEMAX, 6);
+	SETCONSTANT(STEAM_USER_STAT_TYPE_INVALID, 0);
+	SETCONSTANT(STEAM_USER_STAT_TYPE_INT, 1);
+	SETCONSTANT(STEAM_USER_STAT_TYPE_FLOAT, 2);
+	SETCONSTANT(STEAM_USER_STAT_TYPE_AVGRATE, 3);
+	SETCONSTANT(STEAM_USER_STAT_TYPE_ACHIEVEMENTS, 4);
+	SETCONSTANT(STEAM_USER_STAT_TYPE_GROUPACHIEVEMENTS, 5);
+	SETCONSTANT(STEAM_USER_STAT_TYPE_MAX, 6);
 	// EChatEntryType
-	SETCONSTANT(CHATENTRYTYPEINVALID, 0);
-	SETCONSTANT(CHATENTRYTYPECHATMSG, 1);
-	SETCONSTANT(CHATENTRYTYPETYPING, 2);
-	SETCONSTANT(CHATENTRYTYPEINVITEGAME, 3);
-	SETCONSTANT(CHATENTRYTYPEEMOTE, 4);
-	SETCONSTANT(CHATENTRYTYPELEFTCONVERSATION, 6);
-	SETCONSTANT(CHATENTRYTYPEENTERED, 7);
-	SETCONSTANT(CHATENTRYTYPEWASKICKED, 8);
-	SETCONSTANT(CHATENTRYTYPEWASBANNED, 9);
-	SETCONSTANT(CHATENTRYTYPEDISCONNECTED, 10);
-	SETCONSTANT(CHATENTRYTYPEHISTORICALCHAT, 11);
-	SETCONSTANT(CHATENTRYTYPELINKBLOCKED, 14);
+	SETCONSTANT(CHAT_ENTRY_TYPE_INVALID, 0);
+	SETCONSTANT(CHAT_ENTRY_TYPE_CHAT_MSG, 1);
+	SETCONSTANT(CHAT_ENTRY_TYPE_TYPING, 2);
+	SETCONSTANT(CHAT_ENTRY_TYPE_INVITE_GAME, 3);
+	SETCONSTANT(CHAT_ENTRY_TYPE_EMOTE, 4);
+	SETCONSTANT(CHAT_ENTRY_TYPE_LEFT_CONVERSATION, 6);
+	SETCONSTANT(CHAT_ENTRY_TYPE_ENTERED, 7);
+	SETCONSTANT(CHAT_ENTRY_TYPE_WAS_KICKED, 8);
+	SETCONSTANT(CHAT_ENTRY_TYPE_WAS_BANNED, 9);
+	SETCONSTANT(CHAT_ENTRY_TYPE_DISCONNECTED, 10);
+	SETCONSTANT(CHAT_ENTRY_TYPE_HISTORICAL_CHAT, 11);
+	SETCONSTANT(CHAT_ENTRY_TYPE_LINK_BLOCKED, 14);
 	// EChatRoomEnterResponse
-	SETCONSTANT(CHATROOMENTERRESPONSESUCCESS, 1);
-	SETCONSTANT(CHATROOMENTERRESPONSEDOESNTEXIST, 2);
-	SETCONSTANT(CHATROOMENTERRESPONSENOTALLOWED, 3);
-	SETCONSTANT(CHATROOMENTERRESPONSEFULL, 4);
-	SETCONSTANT(CHATROOMENTERRESPONSEERROR, 5);
-	SETCONSTANT(CHATROOMENTERRESPONSEBANNED, 6);
-	SETCONSTANT(CHATROOMENTERRESPONSELIMITED, 7);
-	SETCONSTANT(CHATROOMENTERRESPONSECLANDISABLED, 8);
-	SETCONSTANT(CHATROOMENTERRESPONSECOMMUNITYBAN, 9);
-	SETCONSTANT(CHATROOMENTERRESPONSEMEMBERBLOCKEDYOU, 10);
-	SETCONSTANT(CHATROOMENTERRESPONSEYOUBLOCKEDMEMBER, 11);
-	SETCONSTANT(CHATROOMENTERRESPONSERATELIMITEXCEEDED, 15);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_SUCCESS, 1);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_DOESNT_EXIST, 2);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_NOT_ALLOWED, 3);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_FULL, 4);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_ERROR, 5);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_BANNED, 6);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_LIMITED, 7);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_CLAN_DISABLED, 8);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_COMMUNITY_BAN, 9);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_MEMBER_BLOCKED_YOU, 10);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_YOU_BLOCKED_MEMBER, 11);
+	SETCONSTANT(CHAT_ROOM_ENTER_RESPONSE_RATELIMIT_EXCEEDED, 15);
 	// EChatSteamIDInstanceFlags
-	SETCONSTANT(CHATACCOUNTINSTANCEMASK, 4095);
-	SETCONSTANT(CHATINSTANCEFLAGCLAN, 524288);
-	SETCONSTANT(CHATINSTANCEFLAGLOBBY, 262144);
-	SETCONSTANT(CHATINSTANCEFLAGMMSLOBBY, 131072);
+	SETCONSTANT(CHAT_ACCOUNT_INSTANCE_MASK, 4095);
+	SETCONSTANT(CHAT_INSTANCE_FLAG_CLAN, 524288);
+	SETCONSTANT(CHAT_INSTANCE_FLAG_LOBBY, 262144);
+	SETCONSTANT(CHAT_INSTANCE_FLAG_MMS_LOBBY, 131072);
 	// EMarketingMessageFlags
-	SETCONSTANT(MARKETINGMESSAGEFLAGSNONE, 0);
-	SETCONSTANT(MARKETINGMESSAGEFLAGSHIGHPRIORITY, 1);
-	SETCONSTANT(MARKETINGMESSAGEFLAGSPLATFORMWINDOWS, 2);
-	SETCONSTANT(MARKETINGMESSAGEFLAGSPLATFORMMAC, 4);
-	SETCONSTANT(MARKETINGMESSAGEFLAGSPLATFORMLINUX, 8);
-	SETCONSTANT(MARKETINGMESSAGEFLAGSPLATFORMRESTRICTIONS, 14);
+	SETCONSTANT(MARKETING_MESSAGE_FLAGS_NONE, 0);
+	SETCONSTANT(MARKETING_MESSAGE_FLAGS_HIGH_PRIORITY, 1);
+	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_WINDOWS, 2);
+	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_MAC, 4);
+	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_LINUX, 8);
+	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_RESTRICTIONS, 14);
 	// ENotificationPosition
-	SETCONSTANT(POSITIONTOPLEFT, 0);
-	SETCONSTANT(POSITIONTOPRIGHT, 1);
-	SETCONSTANT(POSITIONBOTTOMLEFT, 2);
-	SETCONSTANT(POSITIONBOTTOMRIGHT, 3);
+	SETCONSTANT(POSITION_TOP_LEFT, 0);
+	SETCONSTANT(POSITION_TOP_RIGHT, 1);
+	SETCONSTANT(POSITION_BOTTOM_LEFT, 2);
+	SETCONSTANT(POSITION_BOTTOM_RIGHT, 3);
 	// EBroadcastUploadResult
-	SETCONSTANT(BROADCASTUPLOADRESULTNONE, 0);
-	SETCONSTANT(BROADCASTUPLOADRESULTOK, 1);
-	SETCONSTANT(BROADCASTUPLOADRESULTINITFAILED, 2);
-	SETCONSTANT(BROADCASTUPLOADRESULTFRAMEFAILED, 3);
-	SETCONSTANT(BROADCASTUPLOADRESULTTIMEOUT, 4);
-	SETCONSTANT(BROADCASTUPLOADRESULTBANDWIDTHEXCEEDED, 5);
-	SETCONSTANT(BROADCASTUPLOADRESULTLOWFPS, 6);
-	SETCONSTANT(BROADCASTUPLOADRESULTMISSINGKEYFRAMES, 7);
-	SETCONSTANT(BROADCASTUPLOADRESULTNOCONNECTION, 8);
-	SETCONSTANT(BROADCASTUPLOADRESULTRELAYFAILED, 9);
-	SETCONSTANT(BROADCASTUPLOADRESULTSETTINGSCHANGED, 10);
-	SETCONSTANT(BROADCASTUPLOADRESULTMISSINGAUDIO, 11);
-	SETCONSTANT(BROADCASTUPLOADRESULTTOOFARBEHIND, 12);
-	SETCONSTANT(BROADCASTUPLOADRESULTTRANSCODEBEHIND, 13);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_NONE, 0);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_OK, 1);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_INIT_FAILED, 2);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_FRAME_FAILED, 3);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_TIMEOUT, 4);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_BANDWIDTH_EXCEEDED, 5);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_LOW_FPS, 6);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_MISSING_KEY_FRAMES, 7);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_NO_CONNECTION, 8);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_RELAY_FAILED, 9);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_SETTINGS_CHANGED, 10);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_MISSING_AUDIO, 11);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_TOO_FAR_BEHIND, 12);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_TRANSCODE_BEHIND, 13);
 	// ELaunchOptionType
-	SETCONSTANT(LAUNCHOPTIONTYPE_NONE, 0);
-	SETCONSTANT(LAUNCHOPTIONTYPE_DEFAULT, 1);
-	SETCONSTANT(LAUNCHOPTIONTYPE_SAFEMODE, 2);
-	SETCONSTANT(LAUNCHOPTIONTYPE_MULTIPLAYER, 3);
-	SETCONSTANT(LAUNCHOPTIONTYPE_CONFIG, 4);
-	SETCONSTANT(LAUNCHOPTIONTYPE_OPENVR, 5);
-	SETCONSTANT(LAUNCHOPTIONTYPE_SERVER, 6);
-	SETCONSTANT(LAUNCHOPTIONTYPE_EDITOR, 7);
-	SETCONSTANT(LAUNCHOPTIONTYPE_MANUAL, 8);
-	SETCONSTANT(LAUNCHOPTIONTYPE_BENCHMARK, 9);
-	SETCONSTANT(LAUNCHOPTIONTYPE_OPTION1, 10);
-	SETCONSTANT(LAUNCHOPTIONTYPE_OPTION2, 11);
-	SETCONSTANT(LAUNCHOPTIONTYPE_OPTION3, 12);
-	SETCONSTANT(LAUNCHOPTIONTYPE_OCULUSVR, 13);
-	SETCONSTANT(LAUNCHOPTIONTYPE_OPENVROVERLAY, 14);
-	SETCONSTANT(LAUNCHOPTIONTYPE_OSVR, 15);
-	SETCONSTANT(LAUNCHOPTIONTYPE_DIALOG, 1000);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__NONE, 0);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__DEFAULT, 1);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__SAFE_MODE, 2);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__MULTIPLAYER, 3);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__CONFIG, 4);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__OPEN_VR, 5);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__SERVER, 6);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__EDITOR, 7);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__MANUAL, 8);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__BENCHMARK, 9);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__OPTION1, 10);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__OPTION2, 11);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__OPTION3, 12);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__OCULUS_VR, 13);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__OPEN_VR_OVERLAY, 14);
+	SETCONSTANT(LAUNCH_OPTION_TYPE_OSVR, 15);
+	SETCONSTANT(LAUNCH_OPTION_TYPE__DIALOG, 1000);
 	// EVRHMDType
-	SETCONSTANT(EVRHMDTYPE_NONE, -1);
-	SETCONSTANT(EVRHMDTYPE_UNKNOWN, 0);
-	SETCONSTANT(EVRHMDTYPE_HTC_DEV, 1);
-	SETCONSTANT(EVRHMDTYPE_HTC_VIVEPRE, 2);
-	SETCONSTANT(EVRHMDTYPE_HTC_VIVE, 3);
-	SETCONSTANT(EVRHMDTYPE_HTC_UNKNOWN, 20);
-	SETCONSTANT(EVRHMDTYPE_OCULUS_DK1, 21);
-	SETCONSTANT(EVRHMDTYPE_OCULUS_DK2, 22);
-	SETCONSTANT(EVRHMDTYPE_OCULUS_RIFT, 23);
-	SETCONSTANT(EVRHMDTYPE_OCULUS_UNKNOWN, 40);
-	SETCONSTANT(EVRHMDTYPE_ACER_UNKNOWN, 50);
-	SETCONSTANT(EVRHMDTYPE_ACER_WINDOWSMR, 51);
-	SETCONSTANT(EVRHMDTYPE_DELL_UNKNOWN, 60);
-	SETCONSTANT(EVRHMDTYPE_DELL_VISOR, 61);
-	SETCONSTANT(EVRHMDTYPE_LENOVO_UNKNOWN, 70);
-	SETCONSTANT(EVRHMDTYPE_LENOVO_EXPLORER, 71);
-	SETCONSTANT(EVRHMDTYPE_HP_UNKNOWN, 80);
-	SETCONSTANT(EVRHMDTYPE_HP_WINDOWSMR, 81);
-	SETCONSTANT(EVRHMDTYPE_SAMSUNG_UNKNOWN, 90);
-	SETCONSTANT(EVRHMDTYPE_SAMSUNG_ODYSSEY, 91);
-	SETCONSTANT(EVRHMDTYPE_UNANNOUNCED_UNKNOWN, 100);
-	SETCONSTANT(EVRHMDTYPE_UNANNOUNCED_WINDOWSMR, 101);
+	SETCONSTANT(EVRHMD_TYPE__NONE, -1);
+	SETCONSTANT(EVRHMD_TYPE__UNKNOWN, 0);
+	SETCONSTANT(EVRHMD_TYPE_HTC__DEV, 1);
+	SETCONSTANT(EVRHMD_TYPE_HTC__VIVE_PRE, 2);
+	SETCONSTANT(EVRHMD_TYPE_HTC__VIVE, 3);
+	SETCONSTANT(EVRHMD_TYPE_HTC__UNKNOWN, 20);
+	SETCONSTANT(EVRHMD_TYPE__OCULUS_DK1, 21);
+	SETCONSTANT(EVRHMD_TYPE__OCULUS_DK2, 22);
+	SETCONSTANT(EVRHMD_TYPE__OCULUS__RIFT, 23);
+	SETCONSTANT(EVRHMD_TYPE__OCULUS__UNKNOWN, 40);
+	SETCONSTANT(EVRHMD_TYPE__ACER__UNKNOWN, 50);
+	SETCONSTANT(EVRHMD_TYPE__ACER__WINDOWS_MR, 51);
+	SETCONSTANT(EVRHMD_TYPE__DELL__UNKNOWN, 60);
+	SETCONSTANT(EVRHMD_TYPE__DELL__VISOR, 61);
+	SETCONSTANT(EVRHMD_TYPE__LENOVO__UNKNOWN, 70);
+	SETCONSTANT(EVRHMD_TYPE__LENOVO__EXPLORER, 71);
+	SETCONSTANT(EVRHMD_TYPE_HP__UNKNOWN, 80);
+	SETCONSTANT(EVRHMD_TYPE_HP__WINDOWS_MR, 81);
+	SETCONSTANT(EVRHMD_TYPE__SAMSUNG__UNKNOWN, 90);
+	SETCONSTANT(EVRHMD_TYPE__SAMSUNG__ODYSSEY, 91);
+	SETCONSTANT(EVRHMD_TYPE__UNANNOUNCED__UNKNOWN, 100);
+	SETCONSTANT(EVRHMD_TYPE__UNANNOUNCED__WINDOWS_MR, 101);
 	// EFriendRelationship
-	SETCONSTANT(FRIENDRELATIONSHIPNONE, 0);
-	SETCONSTANT(FRIENDRELATIONSHIPBLOCKED, 1);
-	SETCONSTANT(FRIENDRELATIONSHIPREQUESTRECIPIENT, 2);
-	SETCONSTANT(FRIENDRELATIONSHIPFRIEND, 3);
-	SETCONSTANT(FRIENDRELATIONSHIPREQUESTINITIATOR, 4);
-	SETCONSTANT(FRIENDRELATIONSHIPIGNORED, 5);
-	SETCONSTANT(FRIENDRELATIONSHIPIGNOREDFRIEND, 6);
-	SETCONSTANT(FRIENDRELATIONSHIPSUGGESTED_DEPRECATED, 7);
-	SETCONSTANT(FRIENDRELATIONSHIPMAX, 8);
+	SETCONSTANT(FRIEND_RELATIONSHIP_NONE, 0);
+	SETCONSTANT(FRIEND_RELATIONSHIP_BLOCKED, 1);
+	SETCONSTANT(FRIEND_RELATIONSHIP_REQUEST_RECIPIENT, 2);
+	SETCONSTANT(FRIEND_RELATIONSHIP_FRIEND, 3);
+	SETCONSTANT(FRIEND_RELATIONSHIP_REQUEST_INITIATOR, 4);
+	SETCONSTANT(FRIEND_RELATIONSHIP_IGNORED, 5);
+	SETCONSTANT(FRIEND_RELATIONSHIP_IGNORED_FRIEND, 6);
+	SETCONSTANT(FRIEND_RELATIONSHIP_SUGGESTED_DEPRECATED, 7);
+	SETCONSTANT(FRIEND_RELATIONSHIP_MAX, 8);
 	// EPersonaState
-	SETCONSTANT(PERSONASTATEOFFLINE, 0);
-	SETCONSTANT(PERSONASTATEONLINE, 1);
-	SETCONSTANT(PERSONASTATEBUSY, 2);
-	SETCONSTANT(PERSONASTATEAWAY, 3);
-	SETCONSTANT(PERSONASTATESNOOZE, 4);
-	SETCONSTANT(PERSONASTATELOOKINGTOTRADE, 5);
-	SETCONSTANT(PERSONASTATELOOKINGTOPLAY, 6);
-	SETCONSTANT(PERSONASTATEMAX, 7);
+	SETCONSTANT(PERSONA_STATE_OFFLINE, 0);
+	SETCONSTANT(PERSONA_STATE_ONLINE, 1);
+	SETCONSTANT(PERSONA_STATE_BUSY, 2);
+	SETCONSTANT(PERSONA_STATE_AWAY, 3);
+	SETCONSTANT(PERSONA_STATE_SNOOZE, 4);
+	SETCONSTANT(PERSONA_STATE_LOOKING_TO_TRADE, 5);
+	SETCONSTANT(PERSONA_STATE_LOOKING_TO_PLAY, 6);
+	SETCONSTANT(PERSONA_STATE_MAX, 7);
 	// EFriendFlags
-	SETCONSTANT(FRIENDFLAGNONE, 0);
-	SETCONSTANT(FRIENDFLAGBLOCKED, 1);
-	SETCONSTANT(FRIENDFLAGFRIENDSHIPREQUESTED, 2);
-	SETCONSTANT(FRIENDFLAGIMMEDIATE, 4);
-	SETCONSTANT(FRIENDFLAGCLANMEMBER, 8);
-	SETCONSTANT(FRIENDFLAGONGAMESERVER, 16);
-	SETCONSTANT(FRIENDFLAGREQUESTINGFRIENDSHIP, 128);
-	SETCONSTANT(FRIENDFLAGREQUESTINGINFO, 256);
-	SETCONSTANT(FRIENDFLAGIGNORED, 512);
-	SETCONSTANT(FRIENDFLAGIGNOREDFRIEND, 1024);
-	SETCONSTANT(FRIENDFLAGCHATMEMBER, 4096);
-	SETCONSTANT(FRIENDFLAGALL, 65535);
+	SETCONSTANT(FRIEND_FLAG_NONE, 0);
+	SETCONSTANT(FRIEND_FLAG_BLOCKED, 1);
+	SETCONSTANT(FRIEND_FLAG_FRIENDSHIP_REQUESTED, 2);
+	SETCONSTANT(FRIEND_FLAG_IMMEDIATE, 4);
+	SETCONSTANT(FRIEND_FLAG_CLAN_MEMBER, 8);
+	SETCONSTANT(FRIEND_FLAG_ON_GAME_SERVER, 16);
+	SETCONSTANT(FRIEND_FLAG_REQUESTING_FRIENDSHIP, 128);
+	SETCONSTANT(FRIEND_FLAG_REQUESTING_INFO, 256);
+	SETCONSTANT(FRIEND_FLAG_IGNORED, 512);
+	SETCONSTANT(FRIEND_FLAG_IGNORED_FRIEND, 1024);
+	SETCONSTANT(FRIEND_FLAG_CHAT_MEMBER, 4096);
+	SETCONSTANT(FRIEND_FLAG_ALL, 65535);
 	// EUserRestriction
-	SETCONSTANT(USERRESTRICTIONNONE, 0);
-	SETCONSTANT(USERRESTRICTIONUNKNOWN, 1);
-	SETCONSTANT(USERRESTRICTIONANYCHAT, 2);
-	SETCONSTANT(USERRESTRICTIONVOICECHAT, 4);
-	SETCONSTANT(USERRESTRICTIONGROUPCHAT, 8);
-	SETCONSTANT(USERRESTRICTIONRATING, 16);
-	SETCONSTANT(USERRESTRICTIONGAMEINVITES, 32);
-	SETCONSTANT(USERRESTRICTIONTRADING, 64);
+	SETCONSTANT(USER_RESTRICTION_NONE, 0);
+	SETCONSTANT(USER_RESTRICTION_UNKNOWN, 1);
+	SETCONSTANT(USER_RESTRICTION_ANY_CHAT, 2);
+	SETCONSTANT(USER_RESTRICTION_VOICE_CHAT, 4);
+	SETCONSTANT(USER_RESTRICTION_GROUP_CHAT, 8);
+	SETCONSTANT(USER_RESTRICTION_RATING, 16);
+	SETCONSTANT(USER_RESTRICTION_GAME_INVITES, 32);
+	SETCONSTANT(USER_RESTRICTION_TRADING, 64);
 	// EOverlayToStoreFlag
-	SETCONSTANT(OVERLAYTOSTOREFLAG_NONE, 0);
-	SETCONSTANT(OVERLAYTOSTOREFLAG_ADDTOCART, 1);
-	SETCONSTANT(OVERLAYTOSTOREFLAG_ADDTOCARTANDSHOW, 2);
+	SETCONSTANT(OVERLAY_TO_STORE_FLAG__NONE, 0);
+	SETCONSTANT(OVERLAY_TO_STORE_FLAG__ADD_TO_CART, 1);
+	SETCONSTANT(OVERLAY_TO_STORE_FLAG__ADD_TO_CART_AND_SHOW, 2);
 	// EPersonaChange
-	SETCONSTANT(PERSONACHANGENAME, 1);
-	SETCONSTANT(PERSONACHANGESTATUS, 2);
-	SETCONSTANT(PERSONACHANGECOMEONLINE, 4);
-	SETCONSTANT(PERSONACHANGEGONEOFFLINE, 8);
-	SETCONSTANT(PERSONACHANGEGAMEPLAYED, 16);
-	SETCONSTANT(PERSONACHANGEGAMESERVER, 32);
-	SETCONSTANT(PERSONACHANGEAVATAR, 64);
-	SETCONSTANT(PERSONACHANGEJOINEDSOURCE, 128);
-	SETCONSTANT(PERSONACHANGELEFTSOURCE, 256);
-	SETCONSTANT(PERSONACHANGERELATIONSHIPCHANGED, 512);
-	SETCONSTANT(PERSONACHANGENAMEFIRSTSET, 1024);
-	SETCONSTANT(PERSONACHANGEFACEBOOKINFO, 2048);
-	SETCONSTANT(PERSONACHANGENICKNAME, 4096);
-	SETCONSTANT(PERSONACHANGESTEAMLEVEL, 8192);
+	SETCONSTANT(PERSONA_CHANGE_NAME, 1);
+	SETCONSTANT(PERSONA_CHANGE_STATUS, 2);
+	SETCONSTANT(PERSONA_CHANGE_COME_ONLINE, 4);
+	SETCONSTANT(PERSONA_CHANGE_GONE_OFFLINE, 8);
+	SETCONSTANT(PERSONA_CHANGE_GAME_PLAYED, 16);
+	SETCONSTANT(PERSONA_CHANGE_GAME_SERVER, 32);
+	SETCONSTANT(PERSONA_CHANGE_AVATAR, 64);
+	SETCONSTANT(PERSONA_CHANGE_JOINED_SOURCE, 128);
+	SETCONSTANT(PERSONA_CHANGE_LEFT_SOURCE, 256);
+	SETCONSTANT(PERSONA_CHANGE_RELATIONSHIP_CHANGED, 512);
+	SETCONSTANT(PERSONA_CHANGE_NAME_FIRST_SET, 1024);
+	SETCONSTANT(PERSONA_CHANGE_FACEBOOK_INFO, 2048);
+	SETCONSTANT(PERSONA_CHANGE_NICKNAME, 4096);
+	SETCONSTANT(PERSONA_CHANGE_STEAM_LEVEL, 8192);
 	// ESteamAPICallFailure
-	SETCONSTANT(STEAMAPICALLFAILURENONE, -1);
-	SETCONSTANT(STEAMAPICALLFAILURESTEAMGONE, 0);
-	SETCONSTANT(STEAMAPICALLFAILURENETWORKFAILURE, 1);
-	SETCONSTANT(STEAMAPICALLFAILUREINVALIDHANDLE, 2);
-	SETCONSTANT(STEAMAPICALLFAILUREMISMATCHEDCALLBACK, 3);
+	SETCONSTANT(STEAM_API_CALL_FAILURE_NONE, -1);
+	SETCONSTANT(STEAM_API_CALL_FAILURE_STEAM_GONE, 0);
+	SETCONSTANT(STEAM_API_CALL_FAILURE_NETWORK_FAILURE, 1);
+	SETCONSTANT(STEAM_API_CALL_FAILURE_INVALID_HANDLE, 2);
+	SETCONSTANT(STEAM_API_CALL_FAILURE_MISMATCHED_CALLBACK, 3);
 	// EGamepadTextInputMode
-	SETCONSTANT(GAMEPADTEXTINPUTMODENORMAL, 0);
-	SETCONSTANT(GAMEPADTEXTINPUTMODEPASSWORD, 1);
+	SETCONSTANT(GAMEPAD_TEXT_INPUT_MODE_NORMAL, 0);
+	SETCONSTANT(GAMEPAD_TEXT_INPUT_MODE_PASSWORD, 1);
 	// EGamepadTextInputLineMode
-	SETCONSTANT(GAMEPADTEXTINPUTLINEMODESINGLELINE, 0);
-	SETCONSTANT(GAMEPADTEXTINPUTLINEMODEMULTIPLELINES, 1);
+	SETCONSTANT(GAMEPAD_TEXT_INPUT_LINE_MODE_SINGLE_LINE, 0);
+	SETCONSTANT(GAMEPAD_TEXT_INPUT_LINE_MODE_MULTIPLE_LINES, 1);
 	// ECheckFileSignature
-	SETCONSTANT(CHECKFILESIGNATUREINVALIDSIGNATURE, 0);
-	SETCONSTANT(CHECKFILESIGNATUREVALIDSIGNATURE, 1);
-	SETCONSTANT(CHECKFILESIGNATUREFILENOTFOUND, 2);
-	SETCONSTANT(CHECKFILESIGNATURENOSIGNATURESFOUNDFORTHISAPP, 3);
-	SETCONSTANT(CHECKFILESIGNATURENOSIGNATURESFOUNDFORTHISFILE, 4);
+	SETCONSTANT(CHECK_FILE_SIGNATURE_INVALID_SIGNATURE, 0);
+	SETCONSTANT(CHECK_FILE_SIGNATURE_VALID_SIGNATURE, 1);
+	SETCONSTANT(CHECK_FILE_SIGNATURE_FILE_NOT_FOUND, 2);
+	SETCONSTANT(CHECK_FILE_SIGNATURE_NO_SIGNATURES_FOUND_FOR_THIS_APP, 3);
+	SETCONSTANT(CHECK_FILE_SIGNATURE_NO_SIGNATURES_FOUND_FOR_THIS_FILE, 4);
 	// EMatchMakingServerResponse
-	SETCONSTANT(ESERVERRESPONDED, 0);
-	SETCONSTANT(ESERVERFAILEDTORESPOND, 1);
-	SETCONSTANT(ENOSERVERSLISTEDONMASTERSERVER, 2);
+	SETCONSTANT(E_SERVER_RESPONDED, 0);
+	SETCONSTANT(E_SERVER_FAILED_TO_RESPOND, 1);
+	SETCONSTANT(E_NO_SERVERS_LISTED_ON_MASTER_SERVER, 2);
 	// ELobbyType
-	SETCONSTANT(LOBBYTYPEPRIVATE, 0);
-	SETCONSTANT(LOBBYTYPEFRIENDSONLY, 1);
-	SETCONSTANT(LOBBYTYPEPUBLIC, 2);
-	SETCONSTANT(LOBBYTYPEINVISIBLE, 3);
+	SETCONSTANT(LOBBY_TYPE_PRIVATE, 0);
+	SETCONSTANT(LOBBY_TYPE_FRIENDS_ONLY, 1);
+	SETCONSTANT(LOBBY_TYPE_PUBLIC, 2);
+	SETCONSTANT(LOBBY_TYPE_INVISIBLE, 3);
 	// ELobbyComparison
-	SETCONSTANT(LOBBYCOMPARISONEQUALTOORLESSTHAN, -2);
-	SETCONSTANT(LOBBYCOMPARISONLESSTHAN, -1);
-	SETCONSTANT(LOBBYCOMPARISONEQUAL, 0);
-	SETCONSTANT(LOBBYCOMPARISONGREATERTHAN, 1);
-	SETCONSTANT(LOBBYCOMPARISONEQUALTOORGREATERTHAN, 2);
-	SETCONSTANT(LOBBYCOMPARISONNOTEQUAL, 3);
+	SETCONSTANT(LOBBY_COMPARISON_EQUAL_TO_OR_LESS_THAN, -2);
+	SETCONSTANT(LOBBY_COMPARISON_LESS_THAN, -1);
+	SETCONSTANT(LOBBY_COMPARISON_EQUAL, 0);
+	SETCONSTANT(LOBBY_COMPARISON_GREATER_THAN, 1);
+	SETCONSTANT(LOBBY_COMPARISON_EQUAL_TO_OR_GREATER_THAN, 2);
+	SETCONSTANT(LOBBY_COMPARISON_NOT_EQUAL, 3);
 	// ELobbyDistanceFilter
-	SETCONSTANT(LOBBYDISTANCEFILTERCLOSE, 0);
-	SETCONSTANT(LOBBYDISTANCEFILTERDEFAULT, 1);
-	SETCONSTANT(LOBBYDISTANCEFILTERFAR, 2);
-	SETCONSTANT(LOBBYDISTANCEFILTERWORLDWIDE, 3);
+	SETCONSTANT(LOBBY_DISTANCE_FILTER_CLOSE, 0);
+	SETCONSTANT(LOBBY_DISTANCE_FILTER_DEFAULT, 1);
+	SETCONSTANT(LOBBY_DISTANCE_FILTER_FAR, 2);
+	SETCONSTANT(LOBBY_DISTANCE_FILTER_WORLDWIDE, 3);
 	// EChatMemberStateChange
-	SETCONSTANT(CHATMEMBERSTATECHANGEENTERED, 1);
-	SETCONSTANT(CHATMEMBERSTATECHANGELEFT, 2);
-	SETCONSTANT(CHATMEMBERSTATECHANGEDISCONNECTED, 4);
-	SETCONSTANT(CHATMEMBERSTATECHANGEKICKED, 8);
-	SETCONSTANT(CHATMEMBERSTATECHANGEBANNED, 16);
+	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_ENTERED, 1);
+	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_LEFT, 2);
+	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_DISCONNECTED, 4);
+	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_KICKED, 8);
+	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_BANNED, 16);
 	// ERemoteStoragePlatform
-	SETCONSTANT(REMOTESTORAGEPLATFORMNONE, 0);
-	SETCONSTANT(REMOTESTORAGEPLATFORMWINDOWS, 1);
-	SETCONSTANT(REMOTESTORAGEPLATFORMOSX, 2);
-	SETCONSTANT(REMOTESTORAGEPLATFORMPS3, 4);
-	SETCONSTANT(REMOTESTORAGEPLATFORMLINUX, 8);
-	SETCONSTANT(REMOTESTORAGEPLATFORMRESERVED2, 16);
-	SETCONSTANT(REMOTESTORAGEPLATFORMALL, -1);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_NONE, 0);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_WINDOWS, 1);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_OSX, 2);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_PS3, 4);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_LINUX, 8);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_RESERVED2, 16);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_ALL, -1);
 	// ERemoteStoragePublishedFileVisibility
-	SETCONSTANT(REMOTESTORAGEPUBLISHEDFILEVISIBILITYPUBLIC, 0);
-	SETCONSTANT(REMOTESTORAGEPUBLISHEDFILEVISIBILITYFRIENDSONLY, 1);
-	SETCONSTANT(REMOTESTORAGEPUBLISHEDFILEVISIBILITYPRIVATE, 2);
+	SETCONSTANT(REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_PUBLIC, 0);
+	SETCONSTANT(REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_FRIENDS_ONLY, 1);
+	SETCONSTANT(REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_PRIVATE, 2);
 	// EWorkshopFileType
-	SETCONSTANT(WORKSHOPFILETYPEFIRST, 0);
-	SETCONSTANT(WORKSHOPFILETYPECOMMUNITY, 0);
-	SETCONSTANT(WORKSHOPFILETYPEMICROTRANSACTION, 1);
-	SETCONSTANT(WORKSHOPFILETYPECOLLECTION, 2);
-	SETCONSTANT(WORKSHOPFILETYPEART, 3);
-	SETCONSTANT(WORKSHOPFILETYPEVIDEO, 4);
-	SETCONSTANT(WORKSHOPFILETYPESCREENSHOT, 5);
-	SETCONSTANT(WORKSHOPFILETYPEGAME, 6);
-	SETCONSTANT(WORKSHOPFILETYPESOFTWARE, 7);
-	SETCONSTANT(WORKSHOPFILETYPECONCEPT, 8);
-	SETCONSTANT(WORKSHOPFILETYPEWEBGUIDE, 9);
-	SETCONSTANT(WORKSHOPFILETYPEINTEGRATEDGUIDE, 10);
-	SETCONSTANT(WORKSHOPFILETYPEMERCH, 11);
-	SETCONSTANT(WORKSHOPFILETYPECONTROLLERBINDING, 12);
-	SETCONSTANT(WORKSHOPFILETYPESTEAMWORKSACCESSINVITE, 13);
-	SETCONSTANT(WORKSHOPFILETYPESTEAMVIDEO, 14);
-	SETCONSTANT(WORKSHOPFILETYPEGAMEMANAGEDITEM, 15);
-	SETCONSTANT(WORKSHOPFILETYPEMAX, 16);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_FIRST, 0);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_COMMUNITY, 0);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_MICROTRANSACTION, 1);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_COLLECTION, 2);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_ART, 3);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_VIDEO, 4);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_SCREENSHOT, 5);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_GAME, 6);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_SOFTWARE, 7);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_CONCEPT, 8);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_WEB_GUIDE, 9);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_INTEGRATED_GUIDE, 10);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_MERCH, 11);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_CONTROLLER_BINDING, 12);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_STEAMWORKS_ACCESS_INVITE, 13);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_STEAM_VIDEO, 14);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_GAME_MANAGED_ITEM, 15);
+	SETCONSTANT(WORKSHOP_FILE_TYPE_MAX, 16);
 	// EWorkshopVote
-	SETCONSTANT(WORKSHOPVOTEUNVOTED, 0);
-	SETCONSTANT(WORKSHOPVOTEFOR, 1);
-	SETCONSTANT(WORKSHOPVOTEAGAINST, 2);
-	SETCONSTANT(WORKSHOPVOTELATER, 3);
+	SETCONSTANT(WORKSHOP_VOTE_UNVOTED, 0);
+	SETCONSTANT(WORKSHOP_VOTE_FOR, 1);
+	SETCONSTANT(WORKSHOP_VOTE_AGAINST, 2);
+	SETCONSTANT(WORKSHOP_VOTE_LATER, 3);
 	// EWorkshopFileAction
-	SETCONSTANT(WORKSHOPFILEACTIONPLAYED, 0);
-	SETCONSTANT(WORKSHOPFILEACTIONCOMPLETED, 1);
+	SETCONSTANT(WORKSHOP_FILE_ACTION_PLAYED, 0);
+	SETCONSTANT(WORKSHOP_FILE_ACTION_COMPLETED, 1);
 	// EWorkshopEnumerationType
-	SETCONSTANT(WORKSHOPENUMERATIONTYPERANKEDBYVOTE, 0);
-	SETCONSTANT(WORKSHOPENUMERATIONTYPERECENT, 1);
-	SETCONSTANT(WORKSHOPENUMERATIONTYPETRENDING, 2);
-	SETCONSTANT(WORKSHOPENUMERATIONTYPEFAVORITESOFFRIENDS, 3);
-	SETCONSTANT(WORKSHOPENUMERATIONTYPEVOTEDBYFRIENDS, 4);
-	SETCONSTANT(WORKSHOPENUMERATIONTYPECONTENTBYFRIENDS, 5);
-	SETCONSTANT(WORKSHOPENUMERATIONTYPERECENTFROMFOLLOWEDUSERS, 6);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_RANKED_BY_VOTE, 0);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_RECENT, 1);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_TRENDING, 2);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_FAVORITES_OF_FRIENDS, 3);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_VOTED_BY_FRIENDS, 4);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_CONTENT_BY_FRIENDS, 5);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_RECENT_FROM_FOLLOWED_USERS, 6);
 	// EWorkshopVideoProvider
-	SETCONSTANT(WORKSHOPVIDEOPROVIDERNONE, 0);
-	SETCONSTANT(WORKSHOPVIDEOPROVIDERYOUTUBE, 1);
+	SETCONSTANT(WORKSHOP_VIDEO_PROVIDER_NONE, 0);
+	SETCONSTANT(WORKSHOP_VIDEO_PROVIDER_YOUTUBE, 1);
 	// EUGCReadAction
-	SETCONSTANT(UGCREAD_CONTINUEREADINGUNTILFINISHED, 0);
-	SETCONSTANT(UGCREAD_CONTINUEREADING, 1);
-	SETCONSTANT(UGCREAD_CLOSE, 2);
+	SETCONSTANT(UGC_READ__CONTINUE_READING_UNTIL_FINISHED, 0);
+	SETCONSTANT(UGC_READ__CONTINUE_READING, 1);
+	SETCONSTANT(UGC_READ__CLOSE, 2);
 	// ELeaderboardDataRequest
-	SETCONSTANT(LEADERBOARDDATAREQUESTGLOBAL, 0);
-	SETCONSTANT(LEADERBOARDDATAREQUESTGLOBALAROUNDUSER, 1);
-	SETCONSTANT(LEADERBOARDDATAREQUESTFRIENDS, 2);
-	SETCONSTANT(LEADERBOARDDATAREQUESTUSERS, 3);
+	SETCONSTANT(LEADERBOARD_DATA_REQUEST_GLOBAL, 0);
+	SETCONSTANT(LEADERBOARD_DATA_REQUEST_GLOBAL_AROUND_USER, 1);
+	SETCONSTANT(LEADERBOARD_DATA_REQUEST_FRIENDS, 2);
+	SETCONSTANT(LEADERBOARD_DATA_REQUEST_USERS, 3);
 	// ELeaderboardSortMethod
-	SETCONSTANT(LEADERBOARDSORTMETHODNONE, 0);
-	SETCONSTANT(LEADERBOARDSORTMETHODASCENDING, 1);
-	SETCONSTANT(LEADERBOARDSORTMETHODDESCENDING, 2);
+	SETCONSTANT(LEADERBOARD_SORT_METHOD_NONE, 0);
+	SETCONSTANT(LEADERBOARD_SORT_METHOD_ASCENDING, 1);
+	SETCONSTANT(LEADERBOARD_SORT_METHOD_DESCENDING, 2);
 	// ELeaderboardDisplayType
-	SETCONSTANT(LEADERBOARDDISPLAYTYPENONE, 0);
-	SETCONSTANT(LEADERBOARDDISPLAYTYPENUMERIC, 1);
-	SETCONSTANT(LEADERBOARDDISPLAYTYPETIMESECONDS, 2);
-	SETCONSTANT(LEADERBOARDDISPLAYTYPETIMEMILLISECONDS, 3);
+	SETCONSTANT(LEADERBOARD_DISPLAY_TYPE_NONE, 0);
+	SETCONSTANT(LEADERBOARD_DISPLAY_TYPE_NUMERIC, 1);
+	SETCONSTANT(LEADERBOARD_DISPLAY_TYPE_TIME_SECONDS, 2);
+	SETCONSTANT(LEADERBOARD_DISPLAY_TYPE_TIME_MILLI_SECONDS, 3);
 	// ELeaderboardUploadScoreMethod
-	SETCONSTANT(LEADERBOARDUPLOADSCOREMETHODNONE, 0);
-	SETCONSTANT(LEADERBOARDUPLOADSCOREMETHODKEEPBEST, 1);
-	SETCONSTANT(LEADERBOARDUPLOADSCOREMETHODFORCEUPDATE, 2);
+	SETCONSTANT(LEADERBOARD_UPLOAD_SCORE_METHOD_NONE, 0);
+	SETCONSTANT(LEADERBOARD_UPLOAD_SCORE_METHOD_KEEP_BEST, 1);
+	SETCONSTANT(LEADERBOARD_UPLOAD_SCORE_METHOD_FORCE_UPDATE, 2);
 	// ERegisterActivationCodeResult
-	SETCONSTANT(REGISTERACTIVATIONCODERESULTOK, 0);
-	SETCONSTANT(REGISTERACTIVATIONCODERESULTFAIL, 1);
-	SETCONSTANT(REGISTERACTIVATIONCODERESULTALREADYREGISTERED, 2);
-	SETCONSTANT(REGISTERACTIVATIONCODERESULTTIMEOUT, 3);
-	SETCONSTANT(REGISTERACTIVATIONCODEALREADYOWNED, 4);
+	SETCONSTANT(REGISTER_ACTIVATION_CODE_RESULT_OK, 0);
+	SETCONSTANT(REGISTER_ACTIVATION_CODE_RESULT_FAIL, 1);
+	SETCONSTANT(REGISTER_ACTIVATION_CODE_RESULT_ALREADY_REGISTERED, 2);
+	SETCONSTANT(REGISTER_ACTIVATION_CODE_RESULT_TIMEOUT, 3);
+	SETCONSTANT(REGISTER_ACTIVATION_CODE_ALREADY_OWNED, 4);
 	// EP2PSessionError
-	SETCONSTANT(P2PSESSIONERRORNONE, 0);
-	SETCONSTANT(P2PSESSIONERRORNOTRUNNINGAPP, 1);
-	SETCONSTANT(P2PSESSIONERRORNORIGHTSTOAPP, 2);
-	SETCONSTANT(P2PSESSIONERRORDESTINATIONNOTLOGGEDIN, 3);
-	SETCONSTANT(P2PSESSIONERRORTIMEOUT, 4);
-	SETCONSTANT(P2PSESSIONERRORMAX, 5);
+	SETCONSTANT(P2_P_SESSION_ERROR_NONE, 0);
+	SETCONSTANT(P2_P_SESSION_ERROR_NOT_RUNNING_APP, 1);
+	SETCONSTANT(P2_P_SESSION_ERROR_NO_RIGHTS_TO_APP, 2);
+	SETCONSTANT(P2_P_SESSION_ERROR_DESTINATION_NOT_LOGGED_IN, 3);
+	SETCONSTANT(P2_P_SESSION_ERROR_TIMEOUT, 4);
+	SETCONSTANT(P2_P_SESSION_ERROR_MAX, 5);
 	// EP2PSend
-	SETCONSTANT(P2PSENDUNRELIABLE, 0);
-	SETCONSTANT(P2PSENDUNRELIABLENODELAY, 1);
-	SETCONSTANT(P2PSENDRELIABLE, 2);
-	SETCONSTANT(P2PSENDRELIABLEWITHBUFFERING, 3);
+	SETCONSTANT(P2_P_SEND_UNRELIABLE, 0);
+	SETCONSTANT(P2_P_SEND_UNRELIABLE_NO_DELAY, 1);
+	SETCONSTANT(P2_P_SEND_RELIABLE, 2);
+	SETCONSTANT(P2_P_SEND_RELIABLE_WITH_BUFFERING, 3);
 	// ESNetSocketState
-	SETCONSTANT(SNETSOCKETSTATEINVALID, 0);
-	SETCONSTANT(SNETSOCKETSTATECONNECTED, 1);
-	SETCONSTANT(SNETSOCKETSTATEINITIATED, 10);
-	SETCONSTANT(SNETSOCKETSTATELOCALCANDIDATESFOUND, 11);
-	SETCONSTANT(SNETSOCKETSTATERECEIVEDREMOTECANDIDATES, 12);
-	SETCONSTANT(SNETSOCKETSTATECHALLENGEHANDSHAKE, 15);
-	SETCONSTANT(SNETSOCKETSTATEDISCONNECTING, 21);
-	SETCONSTANT(SNETSOCKETSTATELOCALDISCONNECT, 22);
-	SETCONSTANT(SNETSOCKETSTATETIMEOUTDURINGCONNECT, 23);
-	SETCONSTANT(SNETSOCKETSTATEREMOTEENDDISCONNECTED, 24);
-	SETCONSTANT(SNETSOCKETSTATECONNECTIONBROKEN, 25);
+	SETCONSTANT(S_NET_SOCKET_STATE_INVALID, 0);
+	SETCONSTANT(S_NET_SOCKET_STATE_CONNECTED, 1);
+	SETCONSTANT(S_NET_SOCKET_STATE_INITIATED, 10);
+	SETCONSTANT(S_NET_SOCKET_STATE_LOCAL_CANDIDATES_FOUND, 11);
+	SETCONSTANT(S_NET_SOCKET_STATE_RECEIVED_REMOTE_CANDIDATES, 12);
+	SETCONSTANT(S_NET_SOCKET_STATE_CHALLENGE_HANDSHAKE, 15);
+	SETCONSTANT(S_NET_SOCKET_STATE_DISCONNECTING, 21);
+	SETCONSTANT(S_NET_SOCKET_STATE_LOCAL_DISCONNECT, 22);
+	SETCONSTANT(S_NET_SOCKET_STATE_TIMEOUT_DURING_CONNECT, 23);
+	SETCONSTANT(S_NET_SOCKET_STATE_REMOTE_END_DISCONNECTED, 24);
+	SETCONSTANT(S_NET_SOCKET_STATE_CONNECTION_BROKEN, 25);
 	// ESNetSocketConnectionType
-	SETCONSTANT(SNETSOCKETCONNECTIONTYPENOTCONNECTED, 0);
-	SETCONSTANT(SNETSOCKETCONNECTIONTYPEUDP, 1);
-	SETCONSTANT(SNETSOCKETCONNECTIONTYPEUDPRELAY, 2);
+	SETCONSTANT(S_NET_SOCKET_CONNECTION_TYPE_NOT_CONNECTED, 0);
+	SETCONSTANT(S_NET_SOCKET_CONNECTION_TYPE_UDP, 1);
+	SETCONSTANT(S_NET_SOCKET_CONNECTION_TYPE_UDP_RELAY, 2);
 	// EVRScreenshotType
-	SETCONSTANT(VRSCREENSHOTTYPE_NONE, 0);
-	SETCONSTANT(VRSCREENSHOTTYPE_MONO, 1);
-	SETCONSTANT(VRSCREENSHOTTYPE_STEREO, 2);
-	SETCONSTANT(VRSCREENSHOTTYPE_MONOCUBEMAP, 3);
-	SETCONSTANT(VRSCREENSHOTTYPE_MONOPANORAMA, 4);
-	SETCONSTANT(VRSCREENSHOTTYPE_STEREOPANORAMA, 5);
+	SETCONSTANT(VR_SCREENSHOT_TYPE__NONE, 0);
+	SETCONSTANT(VR_SCREENSHOT_TYPE__MONO, 1);
+	SETCONSTANT(VR_SCREENSHOT_TYPE__STEREO, 2);
+	SETCONSTANT(VR_SCREENSHOT_TYPE__MONO_CUBEMAP, 3);
+	SETCONSTANT(VR_SCREENSHOT_TYPE__MONO_PANORAMA, 4);
+	SETCONSTANT(VR_SCREENSHOT_TYPE__STEREO_PANORAMA, 5);
 	// AudioPlayback_Status
-	SETCONSTANT(AUDIOPLAYBACK_UNDEFINED, 0);
-	SETCONSTANT(AUDIOPLAYBACK_PLAYING, 1);
-	SETCONSTANT(AUDIOPLAYBACK_PAUSED, 2);
-	SETCONSTANT(AUDIOPLAYBACK_IDLE, 3);
+	SETCONSTANT(AUDIO_PLAYBACK__UNDEFINED, 0);
+	SETCONSTANT(AUDIO_PLAYBACK__PLAYING, 1);
+	SETCONSTANT(AUDIO_PLAYBACK__PAUSED, 2);
+	SETCONSTANT(AUDIO_PLAYBACK__IDLE, 3);
 	// EHTTPMethod
-	SETCONSTANT(HTTPMETHODINVALID, 0);
-	SETCONSTANT(HTTPMETHODGET, 1);
-	SETCONSTANT(HTTPMETHODHEAD, 2);
-	SETCONSTANT(HTTPMETHODPOST, 3);
-	SETCONSTANT(HTTPMETHODPUT, 4);
-	SETCONSTANT(HTTPMETHODDELETE, 5);
-	SETCONSTANT(HTTPMETHODOPTIONS, 6);
-	SETCONSTANT(HTTPMETHODPATCH, 7);
+	SETCONSTANT(HTTP_METHOD_INVALID, 0);
+	SETCONSTANT(HTTP_METHOD_GET, 1);
+	SETCONSTANT(HTTP_METHOD_HEAD, 2);
+	SETCONSTANT(HTTP_METHOD_POST, 3);
+	SETCONSTANT(HTTP_METHOD_PUT, 4);
+	SETCONSTANT(HTTP_METHOD_DELETE, 5);
+	SETCONSTANT(HTTP_METHOD_OPTIONS, 6);
+	SETCONSTANT(HTTP_METHOD_PATCH, 7);
 	// EHTTPStatusCode
-	SETCONSTANT(HTTPSTATUSCODEINVALID, 0);
-	SETCONSTANT(HTTPSTATUSCODE100CONTINUE, 100);
-	SETCONSTANT(HTTPSTATUSCODE101SWITCHINGPROTOCOLS, 101);
-	SETCONSTANT(HTTPSTATUSCODE200OK, 200);
-	SETCONSTANT(HTTPSTATUSCODE201CREATED, 201);
-	SETCONSTANT(HTTPSTATUSCODE202ACCEPTED, 202);
-	SETCONSTANT(HTTPSTATUSCODE203NONAUTHORITATIVE, 203);
-	SETCONSTANT(HTTPSTATUSCODE204NOCONTENT, 204);
-	SETCONSTANT(HTTPSTATUSCODE205RESETCONTENT, 205);
-	SETCONSTANT(HTTPSTATUSCODE206PARTIALCONTENT, 206);
-	SETCONSTANT(HTTPSTATUSCODE300MULTIPLECHOICES, 300);
-	SETCONSTANT(HTTPSTATUSCODE301MOVEDPERMANENTLY, 301);
-	SETCONSTANT(HTTPSTATUSCODE302FOUND, 302);
-	SETCONSTANT(HTTPSTATUSCODE303SEEOTHER, 303);
-	SETCONSTANT(HTTPSTATUSCODE304NOTMODIFIED, 304);
-	SETCONSTANT(HTTPSTATUSCODE305USEPROXY, 305);
-	SETCONSTANT(HTTPSTATUSCODE307TEMPORARYREDIRECT, 307);
-	SETCONSTANT(HTTPSTATUSCODE400BADREQUEST, 400);
-	SETCONSTANT(HTTPSTATUSCODE401UNAUTHORIZED, 401);
-	SETCONSTANT(HTTPSTATUSCODE402PAYMENTREQUIRED, 402);
-	SETCONSTANT(HTTPSTATUSCODE403FORBIDDEN, 403);
-	SETCONSTANT(HTTPSTATUSCODE404NOTFOUND, 404);
-	SETCONSTANT(HTTPSTATUSCODE405METHODNOTALLOWED, 405);
-	SETCONSTANT(HTTPSTATUSCODE406NOTACCEPTABLE, 406);
-	SETCONSTANT(HTTPSTATUSCODE407PROXYAUTHREQUIRED, 407);
-	SETCONSTANT(HTTPSTATUSCODE408REQUESTTIMEOUT, 408);
-	SETCONSTANT(HTTPSTATUSCODE409CONFLICT, 409);
-	SETCONSTANT(HTTPSTATUSCODE410GONE, 410);
-	SETCONSTANT(HTTPSTATUSCODE411LENGTHREQUIRED, 411);
-	SETCONSTANT(HTTPSTATUSCODE412PRECONDITIONFAILED, 412);
-	SETCONSTANT(HTTPSTATUSCODE413REQUESTENTITYTOOLARGE, 413);
-	SETCONSTANT(HTTPSTATUSCODE414REQUESTURITOOLONG, 414);
-	SETCONSTANT(HTTPSTATUSCODE415UNSUPPORTEDMEDIATYPE, 415);
-	SETCONSTANT(HTTPSTATUSCODE416REQUESTEDRANGENOTSATISFIABLE, 416);
-	SETCONSTANT(HTTPSTATUSCODE417EXPECTATIONFAILED, 417);
-	SETCONSTANT(HTTPSTATUSCODE4XXUNKNOWN, 418);
-	SETCONSTANT(HTTPSTATUSCODE429TOOMANYREQUESTS, 429);
-	SETCONSTANT(HTTPSTATUSCODE500INTERNALSERVERERROR, 500);
-	SETCONSTANT(HTTPSTATUSCODE501NOTIMPLEMENTED, 501);
-	SETCONSTANT(HTTPSTATUSCODE502BADGATEWAY, 502);
-	SETCONSTANT(HTTPSTATUSCODE503SERVICEUNAVAILABLE, 503);
-	SETCONSTANT(HTTPSTATUSCODE504GATEWAYTIMEOUT, 504);
-	SETCONSTANT(HTTPSTATUSCODE505HTTPVERSIONNOTSUPPORTED, 505);
-	SETCONSTANT(HTTPSTATUSCODE5XXUNKNOWN, 599);
+	SETCONSTANT(HTTP_STATUS_CODE_INVALID, 0);
+	SETCONSTANT(HTTP_STATUS_CODE100_CONTINUE, 100);
+	SETCONSTANT(HTTP_STATUS_CODE101_SWITCHING_PROTOCOLS, 101);
+	SETCONSTANT(HTTP_STATUS_CODE200_OK, 200);
+	SETCONSTANT(HTTP_STATUS_CODE201_CREATED, 201);
+	SETCONSTANT(HTTP_STATUS_CODE202_ACCEPTED, 202);
+	SETCONSTANT(HTTP_STATUS_CODE203_NON_AUTHORITATIVE, 203);
+	SETCONSTANT(HTTP_STATUS_CODE204_NO_CONTENT, 204);
+	SETCONSTANT(HTTP_STATUS_CODE205_RESET_CONTENT, 205);
+	SETCONSTANT(HTTP_STATUS_CODE206_PARTIAL_CONTENT, 206);
+	SETCONSTANT(HTTP_STATUS_CODE300_MULTIPLE_CHOICES, 300);
+	SETCONSTANT(HTTP_STATUS_CODE301_MOVED_PERMANENTLY, 301);
+	SETCONSTANT(HTTP_STATUS_CODE302_FOUND, 302);
+	SETCONSTANT(HTTP_STATUS_CODE303_SEE_OTHER, 303);
+	SETCONSTANT(HTTP_STATUS_CODE304_NOT_MODIFIED, 304);
+	SETCONSTANT(HTTP_STATUS_CODE305_USE_PROXY, 305);
+	SETCONSTANT(HTTP_STATUS_CODE307_TEMPORARY_REDIRECT, 307);
+	SETCONSTANT(HTTP_STATUS_CODE400_BAD_REQUEST, 400);
+	SETCONSTANT(HTTP_STATUS_CODE401_UNAUTHORIZED, 401);
+	SETCONSTANT(HTTP_STATUS_CODE402_PAYMENT_REQUIRED, 402);
+	SETCONSTANT(HTTP_STATUS_CODE403_FORBIDDEN, 403);
+	SETCONSTANT(HTTP_STATUS_CODE404_NOT_FOUND, 404);
+	SETCONSTANT(HTTP_STATUS_CODE405_METHOD_NOT_ALLOWED, 405);
+	SETCONSTANT(HTTP_STATUS_CODE406_NOT_ACCEPTABLE, 406);
+	SETCONSTANT(HTTP_STATUS_CODE407_PROXY_AUTH_REQUIRED, 407);
+	SETCONSTANT(HTTP_STATUS_CODE408_REQUEST_TIMEOUT, 408);
+	SETCONSTANT(HTTP_STATUS_CODE409_CONFLICT, 409);
+	SETCONSTANT(HTTP_STATUS_CODE410_GONE, 410);
+	SETCONSTANT(HTTP_STATUS_CODE411_LENGTH_REQUIRED, 411);
+	SETCONSTANT(HTTP_STATUS_CODE412_PRECONDITION_FAILED, 412);
+	SETCONSTANT(HTTP_STATUS_CODE413_REQUEST_ENTITY_TOO_LARGE, 413);
+	SETCONSTANT(HTTP_STATUS_CODE414_REQUEST_URI_TOO_LONG, 414);
+	SETCONSTANT(HTTP_STATUS_CODE415_UNSUPPORTED_MEDIA_TYPE, 415);
+	SETCONSTANT(HTTP_STATUS_CODE416_REQUESTED_RANGE_NOT_SATISFIABLE, 416);
+	SETCONSTANT(HTTP_STATUS_CODE417_EXPECTATION_FAILED, 417);
+	SETCONSTANT(HTTP_STATUS_CODE4XX_UNKNOWN, 418);
+	SETCONSTANT(HTTP_STATUS_CODE429_TOO_MANY_REQUESTS, 429);
+	SETCONSTANT(HTTP_STATUS_CODE500_INTERNAL_SERVER_ERROR, 500);
+	SETCONSTANT(HTTP_STATUS_CODE501_NOT_IMPLEMENTED, 501);
+	SETCONSTANT(HTTP_STATUS_CODE502_BAD_GATEWAY, 502);
+	SETCONSTANT(HTTP_STATUS_CODE503_SERVICE_UNAVAILABLE, 503);
+	SETCONSTANT(HTTP_STATUS_CODE504_GATEWAY_TIMEOUT, 504);
+	SETCONSTANT(HTTP_STATUS_CODE505_HTTP_VERSION_NOT_SUPPORTED, 505);
+	SETCONSTANT(HTTP_STATUS_CODE5XX_UNKNOWN, 599);
 	// ESteamControllerPad
-	SETCONSTANT(STEAMCONTROLLERPAD_LEFT, 0);
-	SETCONSTANT(STEAMCONTROLLERPAD_RIGHT, 1);
+	SETCONSTANT(STEAM_CONTROLLER_PAD__LEFT, 0);
+	SETCONSTANT(STEAM_CONTROLLER_PAD__RIGHT, 1);
 	// EControllerSource
-	SETCONSTANT(CONTROLLERSOURCE_NONE, 0);
-	SETCONSTANT(CONTROLLERSOURCE_LEFTTRACKPAD, 1);
-	SETCONSTANT(CONTROLLERSOURCE_RIGHTTRACKPAD, 2);
-	SETCONSTANT(CONTROLLERSOURCE_JOYSTICK, 3);
-	SETCONSTANT(CONTROLLERSOURCE_ABXY, 4);
-	SETCONSTANT(CONTROLLERSOURCE_SWITCH, 5);
-	SETCONSTANT(CONTROLLERSOURCE_LEFTTRIGGER, 6);
-	SETCONSTANT(CONTROLLERSOURCE_RIGHTTRIGGER, 7);
-	SETCONSTANT(CONTROLLERSOURCE_GYRO, 8);
-	SETCONSTANT(CONTROLLERSOURCE_CENTERTRACKPAD, 9);
-	SETCONSTANT(CONTROLLERSOURCE_RIGHTJOYSTICK, 10);
-	SETCONSTANT(CONTROLLERSOURCE_DPAD, 11);
-	SETCONSTANT(CONTROLLERSOURCE_KEY, 12);
-	SETCONSTANT(CONTROLLERSOURCE_MOUSE, 13);
-	SETCONSTANT(CONTROLLERSOURCE_COUNT, 14);
+	SETCONSTANT(CONTROLLER_SOURCE__NONE, 0);
+	SETCONSTANT(CONTROLLER_SOURCE__LEFT_TRACKPAD, 1);
+	SETCONSTANT(CONTROLLER_SOURCE__RIGHT_TRACKPAD, 2);
+	SETCONSTANT(CONTROLLER_SOURCE__JOYSTICK, 3);
+	SETCONSTANT(CONTROLLER_SOURCE_ABXY, 4);
+	SETCONSTANT(CONTROLLER_SOURCE__SWITCH, 5);
+	SETCONSTANT(CONTROLLER_SOURCE__LEFT_TRIGGER, 6);
+	SETCONSTANT(CONTROLLER_SOURCE__RIGHT_TRIGGER, 7);
+	SETCONSTANT(CONTROLLER_SOURCE__GYRO, 8);
+	SETCONSTANT(CONTROLLER_SOURCE__CENTER_TRACKPAD, 9);
+	SETCONSTANT(CONTROLLER_SOURCE__RIGHT_JOYSTICK, 10);
+	SETCONSTANT(CONTROLLER_SOURCE_D_PAD, 11);
+	SETCONSTANT(CONTROLLER_SOURCE__KEY, 12);
+	SETCONSTANT(CONTROLLER_SOURCE__MOUSE, 13);
+	SETCONSTANT(CONTROLLER_SOURCE__COUNT, 14);
 	// EControllerSourceMode
-	SETCONSTANT(CONTROLLERSOURCEMODE_NONE, 0);
-	SETCONSTANT(CONTROLLERSOURCEMODE_DPAD, 1);
-	SETCONSTANT(CONTROLLERSOURCEMODE_BUTTONS, 2);
-	SETCONSTANT(CONTROLLERSOURCEMODE_FOURBUTTONS, 3);
-	SETCONSTANT(CONTROLLERSOURCEMODE_ABSOLUTEMOUSE, 4);
-	SETCONSTANT(CONTROLLERSOURCEMODE_RELATIVEMOUSE, 5);
-	SETCONSTANT(CONTROLLERSOURCEMODE_JOYSTICKMOVE, 6);
-	SETCONSTANT(CONTROLLERSOURCEMODE_JOYSTICKMOUSE, 7);
-	SETCONSTANT(CONTROLLERSOURCEMODE_JOYSTICKCAMERA, 8);
-	SETCONSTANT(CONTROLLERSOURCEMODE_SCROLLWHEEL, 9);
-	SETCONSTANT(CONTROLLERSOURCEMODE_TRIGGER, 10);
-	SETCONSTANT(CONTROLLERSOURCEMODE_TOUCHMENU, 11);
-	SETCONSTANT(CONTROLLERSOURCEMODE_MOUSEJOYSTICK, 12);
-	SETCONSTANT(CONTROLLERSOURCEMODE_MOUSEREGION, 13);
-	SETCONSTANT(CONTROLLERSOURCEMODE_RADIALMENU, 14);
-	SETCONSTANT(CONTROLLERSOURCEMODE_SINGLEBUTTON, 15);
-	SETCONSTANT(CONTROLLERSOURCEMODE_SWITCHES, 16);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__NONE, 0);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__DPAD, 1);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__BUTTONS, 2);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__FOUR_BUTTONS, 3);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__ABSOLUTE_MOUSE, 4);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__RELATIVE_MOUSE, 5);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__JOYSTICK_MOVE, 6);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__JOYSTICK_MOUSE, 7);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__JOYSTICK_CAMERA, 8);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__SCROLL_WHEEL, 9);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__TRIGGER, 10);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__TOUCH_MENU, 11);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__MOUSE_JOYSTICK, 12);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__MOUSE_REGION, 13);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__RADIAL_MENU, 14);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__SINGLE_BUTTON, 15);
+	SETCONSTANT(CONTROLLER_SOURCE_MODE__SWITCHES, 16);
 	// EControllerActionOrigin
-	SETCONSTANT(CONTROLLERACTIONORIGIN_NONE, 0);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_A, 1);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_B, 2);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_X, 3);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_Y, 4);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTBUMPER, 5);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTBUMPER, 6);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTGRIP, 7);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTGRIP, 8);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_START, 9);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_BACK, 10);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTPAD_TOUCH, 11);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTPAD_SWIPE, 12);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTPAD_CLICK, 13);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTPAD_DPADNORTH, 14);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTPAD_DPADSOUTH, 15);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTPAD_DPADWEST, 16);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTPAD_DPADEAST, 17);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTPAD_TOUCH, 18);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTPAD_SWIPE, 19);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTPAD_CLICK, 20);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTPAD_DPADNORTH, 21);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTPAD_DPADSOUTH, 22);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTPAD_DPADWEST, 23);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTPAD_DPADEAST, 24);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTTRIGGER_PULL, 25);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTTRIGGER_CLICK, 26);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTTRIGGER_PULL, 27);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_RIGHTTRIGGER_CLICK, 28);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTSTICK_MOVE, 29);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTSTICK_CLICK, 30);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTSTICK_DPADNORTH, 31);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTSTICK_DPADSOUTH, 32);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTSTICK_DPADWEST, 33);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_LEFTSTICK_DPADEAST, 34);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_GYRO_MOVE, 35);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_GYRO_PITCH, 36);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_GYRO_YAW, 37);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_GYRO_ROLL, 38);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_X, 39);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CIRCLE, 40);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_TRIANGLE, 41);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_SQUARE, 42);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTBUMPER, 43);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTBUMPER, 44);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_OPTIONS, 45);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_SHARE, 46);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTPAD_TOUCH, 47);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTPAD_SWIPE, 48);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTPAD_CLICK, 49);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTPAD_DPADNORTH, 50);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTPAD_DPADSOUTH, 51);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTPAD_DPADWEST, 52);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTPAD_DPADEAST, 53);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTPAD_TOUCH, 54);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTPAD_SWIPE, 55);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTPAD_CLICK, 56);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTPAD_DPADNORTH, 57);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTPAD_DPADSOUTH, 58);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTPAD_DPADWEST, 59);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTPAD_DPADEAST, 60);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CENTERPAD_TOUCH, 61);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CENTERPAD_SWIPE, 62);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CENTERPAD_CLICK, 63);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CENTERPAD_DPADNORTH, 64);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CENTERPAD_DPADSOUTH, 65);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CENTERPAD_DPADWEST, 66);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_CENTERPAD_DPADEAST, 67);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTTRIGGER_PULL, 68);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTTRIGGER_CLICK, 69);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTTRIGGER_PULL, 70);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTTRIGGER_CLICK, 71);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTSTICK_MOVE, 72);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTSTICK_CLICK, 73);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTSTICK_DPADNORTH, 74);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTSTICK_DPADSOUTH, 75);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTSTICK_DPADWEST, 76);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_LEFTSTICK_DPADEAST, 77);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTSTICK_MOVE, 78);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTSTICK_CLICK, 79);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTSTICK_DPADNORTH, 80);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTSTICK_DPADSOUTH, 81);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTSTICK_DPADWEST, 82);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_RIGHTSTICK_DPADEAST, 83);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_DPAD_NORTH, 84);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_DPAD_SOUTH, 85);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_DPAD_WEST, 86);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_DPAD_EAST, 87);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_GYRO_MOVE, 88);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_GYRO_PITCH, 89);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_GYRO_YAW, 90);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_PS4_GYRO_ROLL, 91);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_A, 92);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_B, 93);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_X, 94);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_Y, 95);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTBUMPER, 96);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTBUMPER, 97);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_MENU, 98);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_VIEW, 99);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTTRIGGER_PULL, 100);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTTRIGGER_CLICK, 101);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTTRIGGER_PULL, 102);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTTRIGGER_CLICK, 103);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTSTICK_MOVE, 104);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTSTICK_CLICK, 105);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTSTICK_DPADNORTH, 106);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTSTICK_DPADSOUTH, 107);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTSTICK_DPADWEST, 108);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_LEFTSTICK_DPADEAST, 109);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTSTICK_MOVE, 110);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTSTICK_CLICK, 111);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTSTICK_DPADNORTH, 112);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTSTICK_DPADSOUTH, 113);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTSTICK_DPADWEST, 114);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_RIGHTSTICK_DPADEAST, 115);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_DPAD_NORTH, 116);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_DPAD_SOUTH, 117);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_DPAD_WEST, 118);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOXONE_DPAD_EAST, 119);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_A, 120);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_B, 121);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_X, 122);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_Y, 123);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTBUMPER, 124);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTBUMPER, 125);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_START, 126);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_BACK, 127);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTTRIGGER_PULL, 128);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTTRIGGER_CLICK, 129);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTTRIGGER_PULL, 130);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTTRIGGER_CLICK, 131);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTSTICK_MOVE, 132);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTSTICK_CLICK, 133);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTSTICK_DPADNORTH, 134);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTSTICK_DPADSOUTH, 135);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTSTICK_DPADWEST, 136);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_LEFTSTICK_DPADEAST, 137);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTSTICK_MOVE, 138);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTSTICK_CLICK, 139);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTSTICK_DPADNORTH, 140);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTSTICK_DPADSOUTH, 141);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTSTICK_DPADWEST, 142);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_RIGHTSTICK_DPADEAST, 143);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_DPAD_NORTH, 144);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_DPAD_SOUTH, 145);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_DPAD_WEST, 146);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_XBOX360_DPAD_EAST, 147);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_A, 148);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_B, 149);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_X, 150);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_Y, 151);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTBUMPER, 152);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTBUMPER, 153);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTGRIP, 154);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTGRIP, 155);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTGRIP_UPPER, 156);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTGRIP_UPPER, 157);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTBUMPER_PRESSURE, 158);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTBUMPER_PRESSURE, 159);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTGRIP_PRESSURE, 160);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTGRIP_PRESSURE, 161);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTGRIP_UPPER_PRESSURE, 162);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTGRIP_UPPER_PRESSURE, 163);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_START, 164);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_BACK, 165);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_TOUCH, 166);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_SWIPE, 167);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_CLICK, 168);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_PRESSURE, 169);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_DPADNORTH, 170);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_DPADSOUTH, 171);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_DPADWEST, 172);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTPAD_DPADEAST, 173);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_TOUCH, 174);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_SWIPE, 175);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_CLICK, 176);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_PRESSURE, 177);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_DPADNORTH, 178);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_DPADSOUTH, 179);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_DPADWEST, 180);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTPAD_DPADEAST, 181);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTTRIGGER_PULL, 182);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTTRIGGER_CLICK, 183);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTTRIGGER_PULL, 184);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_RIGHTTRIGGER_CLICK, 185);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTSTICK_MOVE, 186);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTSTICK_CLICK, 187);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTSTICK_DPADNORTH, 188);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTSTICK_DPADSOUTH, 189);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTSTICK_DPADWEST, 190);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_LEFTSTICK_DPADEAST, 191);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_GYRO_MOVE, 192);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_GYRO_PITCH, 193);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_GYRO_YAW, 194);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_STEAMV2_GYRO_ROLL, 195);
-	SETCONSTANT(CONTROLLERACTIONORIGIN_COUNT, 196);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__NONE, 0);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_A, 1);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_B, 2);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X, 3);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_Y, 4);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_BUMPER, 5);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_BUMPER, 6);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_GRIP, 7);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_GRIP, 8);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__START, 9);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__BACK, 10);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD__TOUCH, 11);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD__SWIPE, 12);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD__CLICK, 13);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_NORTH, 14);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_SOUTH, 15);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_WEST, 16);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_PAD_D_PAD_EAST, 17);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD__TOUCH, 18);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD__SWIPE, 19);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD__CLICK, 20);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_NORTH, 21);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_SOUTH, 22);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_WEST, 23);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_PAD_D_PAD_EAST, 24);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_TRIGGER__PULL, 25);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_TRIGGER__CLICK, 26);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_TRIGGER__PULL, 27);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__RIGHT_TRIGGER__CLICK, 28);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK__MOVE, 29);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK__CLICK, 30);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_NORTH, 31);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_SOUTH, 32);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_WEST, 33);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__LEFT_STICK_D_PAD_EAST, 34);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__MOVE, 35);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__PITCH, 36);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__YAW, 37);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__GYRO__ROLL, 38);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_X, 39);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CIRCLE, 40);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__TRIANGLE, 41);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__SQUARE, 42);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_BUMPER, 43);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_BUMPER, 44);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__OPTIONS, 45);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__SHARE, 46);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD__TOUCH, 47);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD__SWIPE, 48);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD__CLICK, 49);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_NORTH, 50);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_SOUTH, 51);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_WEST, 52);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_PAD_D_PAD_EAST, 53);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD__TOUCH, 54);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD__SWIPE, 55);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD__CLICK, 56);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_NORTH, 57);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_SOUTH, 58);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_WEST, 59);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_PAD_D_PAD_EAST, 60);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD__TOUCH, 61);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD__SWIPE, 62);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD__CLICK, 63);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_NORTH, 64);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_SOUTH, 65);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_WEST, 66);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__CENTER_PAD_D_PAD_EAST, 67);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_TRIGGER__PULL, 68);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_TRIGGER__CLICK, 69);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_TRIGGER__PULL, 70);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_TRIGGER__CLICK, 71);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK__MOVE, 72);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK__CLICK, 73);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_NORTH, 74);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_SOUTH, 75);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_WEST, 76);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__LEFT_STICK_D_PAD_EAST, 77);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK__MOVE, 78);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK__CLICK, 79);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_NORTH, 80);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_SOUTH, 81);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_WEST, 82);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__RIGHT_STICK_D_PAD_EAST, 83);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__NORTH, 84);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__SOUTH, 85);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__WEST, 86);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD__EAST, 87);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__MOVE, 88);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__PITCH, 89);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__YAW, 90);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4__GYRO__ROLL, 91);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_A, 92);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_B, 93);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_X, 94);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_Y, 95);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_BUMPER, 96);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_BUMPER, 97);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__MENU, 98);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__VIEW, 99);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_TRIGGER__PULL, 100);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_TRIGGER__CLICK, 101);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_TRIGGER__PULL, 102);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_TRIGGER__CLICK, 103);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK__MOVE, 104);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK__CLICK, 105);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_NORTH, 106);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_SOUTH, 107);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_WEST, 108);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__LEFT_STICK_D_PAD_EAST, 109);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK__MOVE, 110);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK__CLICK, 111);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_NORTH, 112);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_SOUTH, 113);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_WEST, 114);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE__RIGHT_STICK_D_PAD_EAST, 115);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__NORTH, 116);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__SOUTH, 117);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__WEST, 118);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD__EAST, 119);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_A, 120);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_B, 121);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_X, 122);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_Y, 123);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_BUMPER, 124);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_BUMPER, 125);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__START, 126);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__BACK, 127);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_TRIGGER__PULL, 128);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_TRIGGER__CLICK, 129);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_TRIGGER__PULL, 130);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_TRIGGER__CLICK, 131);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK__MOVE, 132);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK__CLICK, 133);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_NORTH, 134);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_SOUTH, 135);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_WEST, 136);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__LEFT_STICK_D_PAD_EAST, 137);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK__MOVE, 138);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK__CLICK, 139);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_NORTH, 140);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_SOUTH, 141);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_WEST, 142);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360__RIGHT_STICK_D_PAD_EAST, 143);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__NORTH, 144);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__SOUTH, 145);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__WEST, 146);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD__EAST, 147);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_A, 148);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_B, 149);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_X, 150);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2_Y, 151);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_BUMPER, 152);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_BUMPER, 153);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP, 154);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP, 155);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP__UPPER, 156);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP__UPPER, 157);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_BUMPER__PRESSURE, 158);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_BUMPER__PRESSURE, 159);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP__PRESSURE, 160);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP__PRESSURE, 161);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_GRIP__UPPER__PRESSURE, 162);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_GRIP__UPPER__PRESSURE, 163);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__START, 164);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__BACK, 165);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__TOUCH, 166);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__SWIPE, 167);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__CLICK, 168);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD__PRESSURE, 169);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_NORTH, 170);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_SOUTH, 171);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_WEST, 172);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_PAD_D_PAD_EAST, 173);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__TOUCH, 174);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__SWIPE, 175);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__CLICK, 176);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD__PRESSURE, 177);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_NORTH, 178);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_SOUTH, 179);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_WEST, 180);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_PAD_D_PAD_EAST, 181);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_TRIGGER__PULL, 182);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_TRIGGER__CLICK, 183);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_TRIGGER__PULL, 184);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__RIGHT_TRIGGER__CLICK, 185);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK__MOVE, 186);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK__CLICK, 187);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_NORTH, 188);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_SOUTH, 189);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_WEST, 190);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__LEFT_STICK_D_PAD_EAST, 191);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__MOVE, 192);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__PITCH, 193);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__YAW, 194);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__STEAM_V2__GYRO__ROLL, 195);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN__COUNT, 196);
 	// ESteamControllerLEDFlag
-	SETCONSTANT(STEAMCONTROLLERLEDFLAG_SETCOLOR, 0);
-	SETCONSTANT(STEAMCONTROLLERLEDFLAG_RESTOREUSERDEFAULT, 1);
+	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG__SET_COLOR, 0);
+	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG__RESTORE_USER_DEFAULT, 1);
 	// ESteamInputType
-	SETCONSTANT(STEAMINPUTTYPE_UNKNOWN, 0);
-	SETCONSTANT(STEAMINPUTTYPE_STEAMCONTROLLER, 1);
-	SETCONSTANT(STEAMINPUTTYPE_XBOX360CONTROLLER, 2);
-	SETCONSTANT(STEAMINPUTTYPE_XBOXONECONTROLLER, 3);
-	SETCONSTANT(STEAMINPUTTYPE_GENERICXINPUT, 4);
-	SETCONSTANT(STEAMINPUTTYPE_PS4CONTROLLER, 5);
+	SETCONSTANT(STEAM_INPUT_TYPE__UNKNOWN, 0);
+	SETCONSTANT(STEAM_INPUT_TYPE__STEAM_CONTROLLER, 1);
+	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX360_CONTROLLER, 2);
+	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX_ONE_CONTROLLER, 3);
+	SETCONSTANT(STEAM_INPUT_TYPE__GENERIC_X_INPUT, 4);
+	SETCONSTANT(STEAM_INPUT_TYPE_PS4_CONTROLLER, 5);
 	// EUGCMatchingUGCType
-	SETCONSTANT(UGCMATCHINGUGCTYPE_ITEMS, 0);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_ITEMS_MTX, 1);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_ITEMS_READYTOUSE, 2);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_COLLECTIONS, 3);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_ARTWORK, 4);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_VIDEOS, 5);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_SCREENSHOTS, 6);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_ALLGUIDES, 7);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_WEBGUIDES, 8);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_INTEGRATEDGUIDES, 9);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_USABLEINGAME, 10);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_CONTROLLERBINDINGS, 11);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_GAMEMANAGEDITEMS, 12);
-	SETCONSTANT(UGCMATCHINGUGCTYPE_ALL, -1);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ITEMS, 0);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ITEMS__MTX, 1);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ITEMS__READY_TO_USE, 2);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__COLLECTIONS, 3);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ARTWORK, 4);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__VIDEOS, 5);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__SCREENSHOTS, 6);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ALL_GUIDES, 7);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__WEB_GUIDES, 8);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__INTEGRATED_GUIDES, 9);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__USABLE_IN_GAME, 10);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__CONTROLLER_BINDINGS, 11);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__GAME_MANAGED_ITEMS, 12);
+	SETCONSTANT(UGC_MATCHING_UGC_TYPE__ALL, -1);
 	// EUserUGCList
-	SETCONSTANT(USERUGCLIST_PUBLISHED, 0);
-	SETCONSTANT(USERUGCLIST_VOTEDON, 1);
-	SETCONSTANT(USERUGCLIST_VOTEDUP, 2);
-	SETCONSTANT(USERUGCLIST_VOTEDDOWN, 3);
-	SETCONSTANT(USERUGCLIST_WILLVOTELATER, 4);
-	SETCONSTANT(USERUGCLIST_FAVORITED, 5);
-	SETCONSTANT(USERUGCLIST_SUBSCRIBED, 6);
-	SETCONSTANT(USERUGCLIST_USEDORPLAYED, 7);
-	SETCONSTANT(USERUGCLIST_FOLLOWED, 8);
+	SETCONSTANT(USER_UGC_LIST__PUBLISHED, 0);
+	SETCONSTANT(USER_UGC_LIST__VOTED_ON, 1);
+	SETCONSTANT(USER_UGC_LIST__VOTED_UP, 2);
+	SETCONSTANT(USER_UGC_LIST__VOTED_DOWN, 3);
+	SETCONSTANT(USER_UGC_LIST__WILL_VOTE_LATER, 4);
+	SETCONSTANT(USER_UGC_LIST__FAVORITED, 5);
+	SETCONSTANT(USER_UGC_LIST__SUBSCRIBED, 6);
+	SETCONSTANT(USER_UGC_LIST__USED_OR_PLAYED, 7);
+	SETCONSTANT(USER_UGC_LIST__FOLLOWED, 8);
 	// EUserUGCListSortOrder
-	SETCONSTANT(USERUGCLISTSORTORDER_CREATIONORDERDESC, 0);
-	SETCONSTANT(USERUGCLISTSORTORDER_CREATIONORDERASC, 1);
-	SETCONSTANT(USERUGCLISTSORTORDER_TITLEASC, 2);
-	SETCONSTANT(USERUGCLISTSORTORDER_LASTUPDATEDDESC, 3);
-	SETCONSTANT(USERUGCLISTSORTORDER_SUBSCRIPTIONDATEDESC, 4);
-	SETCONSTANT(USERUGCLISTSORTORDER_VOTESCOREDESC, 5);
-	SETCONSTANT(USERUGCLISTSORTORDER_FORMODERATION, 6);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__CREATION_ORDER_DESC, 0);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__CREATION_ORDER_ASC, 1);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__TITLE_ASC, 2);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__LAST_UPDATED_DESC, 3);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__SUBSCRIPTION_DATE_DESC, 4);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__VOTE_SCORE_DESC, 5);
+	SETCONSTANT(USER_UGC_LIST_SORT_ORDER__FOR_MODERATION, 6);
 	// EUGCQuery
-	SETCONSTANT(UGCQUERY_RANKEDBYVOTE, 0);
-	SETCONSTANT(UGCQUERY_RANKEDBYPUBLICATIONDATE, 1);
-	SETCONSTANT(UGCQUERY_ACCEPTEDFORGAMERANKEDBYACCEPTANCEDATE, 2);
-	SETCONSTANT(UGCQUERY_RANKEDBYTREND, 3);
-	SETCONSTANT(UGCQUERY_FAVORITEDBYFRIENDSRANKEDBYPUBLICATIONDATE, 4);
-	SETCONSTANT(UGCQUERY_CREATEDBYFRIENDSRANKEDBYPUBLICATIONDATE, 5);
-	SETCONSTANT(UGCQUERY_RANKEDBYNUMTIMESREPORTED, 6);
-	SETCONSTANT(UGCQUERY_CREATEDBYFOLLOWEDUSERSRANKEDBYPUBLICATIONDATE, 7);
-	SETCONSTANT(UGCQUERY_NOTYETRATED, 8);
-	SETCONSTANT(UGCQUERY_RANKEDBYTOTALVOTESASC, 9);
-	SETCONSTANT(UGCQUERY_RANKEDBYVOTESUP, 10);
-	SETCONSTANT(UGCQUERY_RANKEDBYTEXTSEARCH, 11);
-	SETCONSTANT(UGCQUERY_RANKEDBYTOTALUNIQUESUBSCRIPTIONS, 12);
-	SETCONSTANT(UGCQUERY_RANKEDBYPLAYTIMETREND, 13);
-	SETCONSTANT(UGCQUERY_RANKEDBYTOTALPLAYTIME, 14);
-	SETCONSTANT(UGCQUERY_RANKEDBYAVERAGEPLAYTIMETREND, 15);
-	SETCONSTANT(UGCQUERY_RANKEDBYLIFETIMEAVERAGEPLAYTIME, 16);
-	SETCONSTANT(UGCQUERY_RANKEDBYPLAYTIMESESSIONSTREND, 17);
-	SETCONSTANT(UGCQUERY_RANKEDBYLIFETIMEPLAYTIMESESSIONS, 18);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_VOTE, 0);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_PUBLICATION_DATE, 1);
+	SETCONSTANT(UGC_QUERY__ACCEPTED_FOR_GAME_RANKED_BY_ACCEPTANCE_DATE, 2);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_TREND, 3);
+	SETCONSTANT(UGC_QUERY__FAVORITED_BY_FRIENDS_RANKED_BY_PUBLICATION_DATE, 4);
+	SETCONSTANT(UGC_QUERY__CREATED_BY_FRIENDS_RANKED_BY_PUBLICATION_DATE, 5);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_NUM_TIMES_REPORTED, 6);
+	SETCONSTANT(UGC_QUERY__CREATED_BY_FOLLOWED_USERS_RANKED_BY_PUBLICATION_DATE, 7);
+	SETCONSTANT(UGC_QUERY__NOT_YET_RATED, 8);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_TOTAL_VOTES_ASC, 9);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_VOTES_UP, 10);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_TEXT_SEARCH, 11);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_TOTAL_UNIQUE_SUBSCRIPTIONS, 12);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_PLAYTIME_TREND, 13);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_TOTAL_PLAYTIME, 14);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_AVERAGE_PLAYTIME_TREND, 15);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_LIFETIME_AVERAGE_PLAYTIME, 16);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_PLAYTIME_SESSIONS_TREND, 17);
+	SETCONSTANT(UGC_QUERY__RANKED_BY_LIFETIME_PLAYTIME_SESSIONS, 18);
 	// EItemUpdateStatus
-	SETCONSTANT(ITEMUPDATESTATUSINVALID, 0);
-	SETCONSTANT(ITEMUPDATESTATUSPREPARINGCONFIG, 1);
-	SETCONSTANT(ITEMUPDATESTATUSPREPARINGCONTENT, 2);
-	SETCONSTANT(ITEMUPDATESTATUSUPLOADINGCONTENT, 3);
-	SETCONSTANT(ITEMUPDATESTATUSUPLOADINGPREVIEWFILE, 4);
-	SETCONSTANT(ITEMUPDATESTATUSCOMMITTINGCHANGES, 5);
+	SETCONSTANT(ITEM_UPDATE_STATUS_INVALID, 0);
+	SETCONSTANT(ITEM_UPDATE_STATUS_PREPARING_CONFIG, 1);
+	SETCONSTANT(ITEM_UPDATE_STATUS_PREPARING_CONTENT, 2);
+	SETCONSTANT(ITEM_UPDATE_STATUS_UPLOADING_CONTENT, 3);
+	SETCONSTANT(ITEM_UPDATE_STATUS_UPLOADING_PREVIEW_FILE, 4);
+	SETCONSTANT(ITEM_UPDATE_STATUS_COMMITTING_CHANGES, 5);
 	// EItemState
-	SETCONSTANT(ITEMSTATENONE, 0);
-	SETCONSTANT(ITEMSTATESUBSCRIBED, 1);
-	SETCONSTANT(ITEMSTATELEGACYITEM, 2);
-	SETCONSTANT(ITEMSTATEINSTALLED, 4);
-	SETCONSTANT(ITEMSTATENEEDSUPDATE, 8);
-	SETCONSTANT(ITEMSTATEDOWNLOADING, 16);
-	SETCONSTANT(ITEMSTATEDOWNLOADPENDING, 32);
+	SETCONSTANT(ITEM_STATE_NONE, 0);
+	SETCONSTANT(ITEM_STATE_SUBSCRIBED, 1);
+	SETCONSTANT(ITEM_STATE_LEGACY_ITEM, 2);
+	SETCONSTANT(ITEM_STATE_INSTALLED, 4);
+	SETCONSTANT(ITEM_STATE_NEEDS_UPDATE, 8);
+	SETCONSTANT(ITEM_STATE_DOWNLOADING, 16);
+	SETCONSTANT(ITEM_STATE_DOWNLOAD_PENDING, 32);
 	// EItemStatistic
-	SETCONSTANT(ITEMSTATISTIC_NUMSUBSCRIPTIONS, 0);
-	SETCONSTANT(ITEMSTATISTIC_NUMFAVORITES, 1);
-	SETCONSTANT(ITEMSTATISTIC_NUMFOLLOWERS, 2);
-	SETCONSTANT(ITEMSTATISTIC_NUMUNIQUESUBSCRIPTIONS, 3);
-	SETCONSTANT(ITEMSTATISTIC_NUMUNIQUEFAVORITES, 4);
-	SETCONSTANT(ITEMSTATISTIC_NUMUNIQUEFOLLOWERS, 5);
-	SETCONSTANT(ITEMSTATISTIC_NUMUNIQUEWEBSITEVIEWS, 6);
-	SETCONSTANT(ITEMSTATISTIC_REPORTSCORE, 7);
-	SETCONSTANT(ITEMSTATISTIC_NUMSECONDSPLAYED, 8);
-	SETCONSTANT(ITEMSTATISTIC_NUMPLAYTIMESESSIONS, 9);
-	SETCONSTANT(ITEMSTATISTIC_NUMCOMMENTS, 10);
-	SETCONSTANT(ITEMSTATISTIC_NUMSECONDSPLAYEDDURINGTIMEPERIOD, 11);
-	SETCONSTANT(ITEMSTATISTIC_NUMPLAYTIMESESSIONSDURINGTIMEPERIOD, 12);
+	SETCONSTANT(ITEM_STATISTIC__NUM_SUBSCRIPTIONS, 0);
+	SETCONSTANT(ITEM_STATISTIC__NUM_FAVORITES, 1);
+	SETCONSTANT(ITEM_STATISTIC__NUM_FOLLOWERS, 2);
+	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_SUBSCRIPTIONS, 3);
+	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_FAVORITES, 4);
+	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_FOLLOWERS, 5);
+	SETCONSTANT(ITEM_STATISTIC__NUM_UNIQUE_WEBSITE_VIEWS, 6);
+	SETCONSTANT(ITEM_STATISTIC__REPORT_SCORE, 7);
+	SETCONSTANT(ITEM_STATISTIC__NUM_SECONDS_PLAYED, 8);
+	SETCONSTANT(ITEM_STATISTIC__NUM_PLAYTIME_SESSIONS, 9);
+	SETCONSTANT(ITEM_STATISTIC__NUM_COMMENTS, 10);
+	SETCONSTANT(ITEM_STATISTIC__NUM_SECONDS_PLAYED_DURING_TIME_PERIOD, 11);
+	SETCONSTANT(ITEM_STATISTIC__NUM_PLAYTIME_SESSIONS_DURING_TIME_PERIOD, 12);
 	// EItemPreviewType
-	SETCONSTANT(ITEMPREVIEWTYPE_IMAGE, 0);
-	SETCONSTANT(ITEMPREVIEWTYPE_YOUTUBEVIDEO, 1);
-	SETCONSTANT(ITEMPREVIEWTYPE_SKETCHFAB, 2);
-	SETCONSTANT(ITEMPREVIEWTYPE_ENVIRONMENTMAP_HORIZONTALCROSS, 3);
-	SETCONSTANT(ITEMPREVIEWTYPE_ENVIRONMENTMAP_LATLONG, 4);
-	SETCONSTANT(ITEMPREVIEWTYPE_RESERVEDMAX, 255);
+	SETCONSTANT(ITEM_PREVIEW_TYPE__IMAGE, 0);
+	SETCONSTANT(ITEM_PREVIEW_TYPE__YOU_TUBE_VIDEO, 1);
+	SETCONSTANT(ITEM_PREVIEW_TYPE__SKETCHFAB, 2);
+	SETCONSTANT(ITEM_PREVIEW_TYPE__ENVIRONMENT_MAP__HORIZONTAL_CROSS, 3);
+	SETCONSTANT(ITEM_PREVIEW_TYPE__ENVIRONMENT_MAP__LAT_LONG, 4);
+	SETCONSTANT(ITEM_PREVIEW_TYPE__RESERVED_MAX, 255);
 	// ESteamItemFlags
-	SETCONSTANT(STEAMITEMNOTRADE, 1);
-	SETCONSTANT(STEAMITEMREMOVED, 256);
-	SETCONSTANT(STEAMITEMCONSUMED, 512);
+	SETCONSTANT(STEAM_ITEM_NO_TRADE, 1);
+	SETCONSTANT(STEAM_ITEM_REMOVED, 256);
+	SETCONSTANT(STEAM_ITEM_CONSUMED, 512);
 	// EParentalFeature
-	SETCONSTANT(FEATUREINVALID, 0);
-	SETCONSTANT(FEATURESTORE, 1);
-	SETCONSTANT(FEATURECOMMUNITY, 2);
-	SETCONSTANT(FEATUREPROFILE, 3);
-	SETCONSTANT(FEATUREFRIENDS, 4);
-	SETCONSTANT(FEATURENEWS, 5);
-	SETCONSTANT(FEATURETRADING, 6);
-	SETCONSTANT(FEATURESETTINGS, 7);
-	SETCONSTANT(FEATURECONSOLE, 8);
-	SETCONSTANT(FEATUREBROWSER, 9);
-	SETCONSTANT(FEATUREPARENTALSETUP, 10);
-	SETCONSTANT(FEATURELIBRARY, 11);
-	SETCONSTANT(FEATURETEST, 12);
-	SETCONSTANT(FEATUREMAX, 13);
+	SETCONSTANT(FEATURE_INVALID, 0);
+	SETCONSTANT(FEATURE_STORE, 1);
+	SETCONSTANT(FEATURE_COMMUNITY, 2);
+	SETCONSTANT(FEATURE_PROFILE, 3);
+	SETCONSTANT(FEATURE_FRIENDS, 4);
+	SETCONSTANT(FEATURE_NEWS, 5);
+	SETCONSTANT(FEATURE_TRADING, 6);
+	SETCONSTANT(FEATURE_SETTINGS, 7);
+	SETCONSTANT(FEATURE_CONSOLE, 8);
+	SETCONSTANT(FEATURE_BROWSER, 9);
+	SETCONSTANT(FEATURE_PARENTAL_SETUP, 10);
+	SETCONSTANT(FEATURE_LIBRARY, 11);
+	SETCONSTANT(FEATURE_TEST, 12);
+	SETCONSTANT(FEATURE_MAX, 13);
 	#undef SETCONSTANT
 
 	lua_pop(L, 1);

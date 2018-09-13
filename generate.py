@@ -13,7 +13,7 @@ def to_snake_case(name):
 
 
 def parse_methods(methods):
-    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking"]
+    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking"]
     DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection"]
     SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook"]
     m = []
@@ -42,6 +42,14 @@ def parse_methods(methods):
                         param["paramtype"] = paramtype.replace(" *", "")
                         p.append(param)
                         method["paramnames"].append("&" + paramname)
+                    # An array that will be populated with data by the method
+                    # The size of the array is specified by another parameter
+                    elif param.get("out_array") is not None:
+                        param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
+                        param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
+                        p.append(param)
+                        method["paramnames"].append(paramname)
+                        method["paramcount_out"] = method["paramcount_out"] + 1
                     # An array to be populated by the method
                     # The size of the array is retrieved through a separate function call
                     elif param.get("out_array_call") is not None:
@@ -120,7 +128,7 @@ def parse_enums(enums):
         if "::" not in enum.get("enumname"):
             v = []
             for value in enum.get("values"):
-                value["name"] = value.get("name").replace("k_E", "").replace("k_e", "").replace("k_n", "").upper()
+                value["name"] = to_snake_case(value.get("name").replace("k_E", "").replace("k_e", "").replace("k_n", "")).upper()
                 v.append(value)
             enum["values"] = v
             e.append(enum)

@@ -1,6 +1,13 @@
 local rpg = require "gooey.themes.rpg.rpg"
 local monarch = require "monarch.monarch"
 
+local LEADERBOARD = [[
+NAME: %s
+
+ENTRIES
+%s
+]]
+
 function init(self)
 	msg.post(".", "acquire_input_focus")
 
@@ -11,10 +18,14 @@ function init(self)
 		print("listener event", e)
 		pprint(t)
 		if e == "UserStatsReceived_t" then
-			msg.post("#", "refresh_user_stats")
-			msg.post("#", "refresh_user_achievements")
+			msg.post("#", "refresh_user_stats", t)
+			msg.post("#", "refresh_user_achievements", t)
 		elseif e == "GlobalStatsReceived_t" then
-			msg.post("#", "refresh_global_stats")
+			msg.post("#", "refresh_global_stats", t)
+		elseif e == "LeaderboardFindResult_t" then
+			steamworks.user_stats_download_leaderboard_entries(t.m_hSteamLeaderboard, steamworks.LEADERBOARD_DATA_REQUEST_GLOBAL, 1, 10)
+		elseif e == "LeaderboardScoresDownloaded_t" then
+			msg.post("#", "refresh_leaderboard", t)
 		end
 	end)
 
@@ -22,6 +33,7 @@ function init(self)
 	--steamworks.user_stats_request_user_stats(user_id)
 	steamworks.user_stats_request_current_stats()
 	steamworks.user_stats_request_global_stats(7)
+	steamworks.user_stats_find_leaderboard("Feet Traveled")
 end
 
 function final(self)
@@ -98,8 +110,21 @@ function on_message(self, message_id, message, sender)
 			end
 		end
 		gui.set_text(gui.get_node("achievements"), s)
-	elseif message_id == hash("refresh_global_stats") then
-		--local ok, stat = steamworks.user_stats_get_global_stat()
-		gui.set_text(gui.get_node("global_stats"), "")
+	elseif message_id == hash("refresh_leaderboard") then
+		local leaderboard_id = message.m_hSteamLeaderboard
+		local name = steamworks.user_stats_get_leaderboard_name(leaderboard_id)
+		local entry_count = message.m_cEntryCount
+		local entries = {}
+		for i=0,entry_count-1 do
+			local ok, details, entry = steamworks.user_stats_get_downloaded_leaderboard_entry(message.m_hSteamLeaderboardEntries, i, 0)
+			if ok then
+				pprint(details)
+				local name = steamworks.friends_get_friend_persona_name(details.m_steamIDUser)
+				local s = ("#%d %s - %d"):format(details.m_nGlobalRank, name, details.m_nScore)
+				table.insert(entries, s)
+			end
+		end
+		local text = LEADERBOARD:format(name, table.concat(entries, "\n"))
+		gui.set_text(gui.get_node("leaderboard"), text)
 	end
 end

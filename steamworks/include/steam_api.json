@@ -4813,7 +4813,7 @@
 {	"paramname": "hSteamLeaderboardEntries" ,"paramtype": "SteamLeaderboardEntries_t"},
 {	"paramname": "index" ,"paramtype": "int"},
 {	"paramname": "pLeaderboardEntry" ,"paramtype": "struct LeaderboardEntry_t *"},
-{	"paramname": "pDetails" ,"paramtype": "int32 *"},
+{	"paramname": "pDetails" ,"paramtype": "int32 *", "out_array": "cDetailsMax"},
 {	"paramname": "cDetailsMax" ,"paramtype": "int"}
 	 ]
 }
