@@ -23,6 +23,3 @@ shared_state = 1
 [library]
 include_dirs = steamworks
 
-[native_extension]
-app_manifest = /generated.appmanifest
-

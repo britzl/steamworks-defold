@@ -224,7 +224,7 @@ def generate():
         j["callbacks"] = parse_callbacks(j["methods"])
 
         result = pystache.render(extension_mtl, j)
-        with codecs.open("steamworks/src/generated.cpp", 'wb' "utf-8") as f:
+        with codecs.open("steamworks/src/extension.cpp", 'wb' "utf-8") as f:
             f.write(HTMLParser.HTMLParser().unescape(result))
 
 
