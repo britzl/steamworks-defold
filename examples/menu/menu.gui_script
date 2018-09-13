@@ -3,6 +3,13 @@ local monarch = require "monarch.monarch"
 
 
 function init(self)
+	local status, error = pcall(steamworks.init)
+	if not status then
+		print("Error: " .. error)
+		gui.set_text(gui.get_node("status"), error)
+		return
+	end
+	
 	msg.post(".", "acquire_input_focus")
 end
 
