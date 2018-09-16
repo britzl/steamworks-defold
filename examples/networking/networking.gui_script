@@ -19,16 +19,10 @@ function init(self)
 			local member = steamworks.matchmaking_get_lobby_member_by_index(lobby_id, 0)
 			local member_name = steamworks.friends_get_friend_persona_name(member)
 
-			local databuffer = buffer.create(100, { {name=hash("data"), type=buffer.VALUE_TYPE_UINT8, count=1 } })
-			local datastream = buffer.get_stream(databuffer, hash("data"))
-			datastream[1] = string.byte("f")
-			datastream[2] = string.byte("o")
-			datastream[3] = string.byte("o")
-			datastream[4] = 0	
-
 			print("sending data to", member_name)
 			-- not a very good test, but at least we check that nothing crashes
-			local ok = steamworks.networking_send_p2p_packet(member, databuffer, 4, steamworks.P2P_SEND_UNRELIABLE, 0)
+			local data = "foobar"
+			local ok = steamworks.networking_send_p2p_packet(member, data, #data, steamworks.P2P_SEND_UNRELIABLE, 0)
 			print("ok", ok)
 		end
 	end)
