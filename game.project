@@ -23,3 +23,6 @@ shared_state = 1
 [library]
 include_dirs = steamworks
 
+[collection_proxy]
+max_count = 12
+

@@ -22,12 +22,12 @@ function init(self)
 	local user_id = steamworks.user_get_steam_id()
 	local steam_level = steamworks.user_get_player_steam_level()
 	local badge_level = steamworks.user_get_game_badge_level(1, true)
-	local logged_on = steamworks.user_b_logged_on()
-	local behind_nat = steamworks.user_b_is_behind_nat()
-	local phone_status = (steamworks.user_b_is_phone_verified() and "VERIFIED")
-	or (steamworks.user_b_is_phone_identifying() and "IDENTIFYING")
-	or (steamworks.user_b_is_phone_requiring_verification() and "REQ.VERIFICATION")
-	local two_factor_enabled = steamworks.user_b_is_two_factor_enabled()
+	local logged_on = steamworks.user_logged_on()
+	local behind_nat = steamworks.user_is_behind_nat()
+	local phone_status = (steamworks.user_is_phone_verified() and "VERIFIED")
+	or (steamworks.user_is_phone_identifying() and "IDENTIFYING")
+	or (steamworks.user_is_phone_requiring_verification() and "REQ.VERIFICATION")
+	local two_factor_enabled = steamworks.user_is_two_factor_enabled()
 	gui.set_text(gui.get_node("userinfo"), USER_TEXT:format(
 		user_id,
 		steam_level,

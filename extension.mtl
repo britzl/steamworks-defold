@@ -39,6 +39,7 @@ static ISteamNetworking *networking;
 static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
+static ISteamRemoteStorage *remote_storage;
 
 
 
@@ -637,6 +638,7 @@ static int Init(lua_State* L) {
 	matchmaking = SteamMatchmaking();
 	music = SteamMusic();
 	networking = SteamNetworking();
+	remote_storage = SteamRemoteStorage();
 	user = SteamUser();
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);

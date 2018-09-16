@@ -48,8 +48,7 @@ The extension does not support the following APIs:
 * ISteamHTMLSurface
 * ISteamHTTP (use http.request instead)
 * ISteamMatchmakingServers
-* ISteamMusic
-* 
+* ISteamMusicRemote
 
 ### Naming convention
 Function names are converted to snake case using the following convention:

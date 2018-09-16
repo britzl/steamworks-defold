@@ -13,8 +13,8 @@ def to_snake_case(name):
 
 
 def parse_methods(methods):
-    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking", "ISteamApps", "ISteamMusic"]
-    DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection"]
+    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking", "ISteamApps", "ISteamMusic", "ISteamRemoteStorage"]
+    DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection", "CommitPublishedFileUpdate", "CreatePublishedFileUpdateRequest", "DeletePublishedFile", "EnumeratePublishedFilesByUserAction", "EnumeratePublishedWorkshopFiles", "EnumerateUserPublishedFiles", "EnumerateUserSharedWorkshopFiles", "EnumerateUserSubscribedFiles", "FileFetch", "FilePersist", "GetFileListFromServer", "GetPublishedFileDetails", "GetPublishedItemVoteDetails", "GetUserPublishedItemVoteDetails", "PublishVideo", "PublishWorkshopFile", "ResetFileRequestState", "SetUserPublishedFileAction", "SubscribePublishedFile", "SynchronizeToClient", "SynchronizeToServer", "UnsubscribePublishedFile", "UpdatePublishedFileDescription", "UpdatePublishedFileFile", "UpdatePublishedFilePreviewFile", "UpdatePublishedFileSetChangeDescription", "UpdatePublishedFileTags", "UpdatePublishedFileTitle", "UpdatePublishedFileVisibility", "UpdateUserPublishedItemVote"]
     SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook", "ActivateGameOverlay", "ActivateGameOverlayToUser", "ActivateGameOverlayToWebPage", "ActivateGameOverlayToStore", "SetOverlayNotificationPosition", "IsOverlayEnabled"]
     m = []
     for method in methods:
@@ -127,9 +127,11 @@ def parse_methods(methods):
 
 
 def parse_enums(enums):
+    DEPRECATED_ENUMS = ["EWorkshopEnumerationType", "EWorkshopFileAction", "EWorkshopVideoProvider", "EWorkshopVote"]
     e = []
     for enum in enums:
-        if "::" not in enum.get("enumname"):
+        enumname = enum.get("enumname")
+        if "::" not in enumname and enumname not in DEPRECATED_ENUMS:
             v = []
             for value in enum.get("values"):
                 value["name"] = to_snake_case(value.get("name").replace("k_E", "").replace("k_e", "").replace("k_n", "")).upper().replace("__", "_")
@@ -140,6 +142,7 @@ def parse_enums(enums):
 
 
 def parse_typedefs(typedefs):
+    DEPRECATED_TYPEDEFS = ["PublishedFileUpdateHandle_t"]
     INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
     t = {}
     int = []
@@ -154,22 +157,24 @@ def parse_typedefs(typedefs):
     t["struct"] = struct
 
     for typedef in typedefs:
-        t["types"].append(typedef)
-        type = typedef.get("type")
-        if type in INTEGERS:
-            int.append(typedef)
-        elif type == "uint64" or type == "ulint64":
-            uint64.append(typedef)
-        elif type == "int64":
-            int64.append(typedef)
-        elif type.startswith("struct "):
-            struct.append(typedef)
+        if typedef not in DEPRECATED_TYPEDEFS:
+            t["types"].append(typedef)
+            type = typedef.get("type")
+            if type in INTEGERS:
+                int.append(typedef)
+            elif type == "uint64" or type == "ulint64":
+                uint64.append(typedef)
+            elif type == "int64":
+                int64.append(typedef)
+            elif type.startswith("struct "):
+                struct.append(typedef)
 
     return t
 
 
 def parse_structs(structs, methods):
     SKIP_STRUCTS = ["CallbackMsg_t", "CCallbackBase", "CCallResult", "CCallback", "CSteamID", "CSteamAPIContext", "CSteamID::SteamID_t", "CSteamID::SteamID_t::SteamIDComponent_t", "CGameID::GameID_t", "CGameID::(anonymous)", "servernetadr_t", "gameserveritem_t", "SteamParamStringArray_t"]
+    DEPRECATED_STRUCTS = ["RemoteStorageAppSyncedClient_t", "RemoteStorageAppSyncedServer_t", "RemoteStorageAppSyncProgress_t", "RemoteStorageAppSyncStatusCheck_t", "RemoteStorageDeletePublishedFileResult_t", "RemoteStorageEnumeratePublishedFilesByUserActionResult_t", "RemoteStorageEnumerateUserPublishedFilesResult_t", "RemoteStorageEnumerateUserSharedWorkshopFilesResult_t", "RemoteStorageEnumerateUserSubscribedFilesResult_t", "RemoteStorageEnumerateWorkshopFilesResult_t", "RemoteStorageGetPublishedFileDetailsResult_t", "RemoteStorageGetPublishedItemVoteDetailsResult_t", "RemoteStoragePublishedFileDeleted_t", "RemoteStoragePublishedFileSubscribed_t", "RemoteStoragePublishedFileUnsubscribed_t", "RemoteStoragePublishedFileUpdated_t", "RemoteStoragePublishFileProgress_t", "RemoteStoragePublishFileResult_t", "RemoteStorageSetUserPublishedFileActionResult_t", "RemoteStorageUpdatePublishedFileResult_t", "RemoteStorageUpdateUserPublishedItemVoteResult_t", "RemoteStorageUserVoteDetails_t", "SteamParamStringArray_t", ""]
     CALLRESULT_STRUCT = []
 
     # Include all structs that are used as a CallResult
@@ -181,7 +186,7 @@ def parse_structs(structs, methods):
     s = []
     for struct in structs:
         structname = struct.get("struct")
-        if structname not in SKIP_STRUCTS:
+        if structname not in SKIP_STRUCTS and structname not in DEPRECATED_STRUCTS:
             if structname in CALLRESULT_STRUCT:
                 struct["callresult"] = True
             struct["name"] = re.sub(".*::", "", structname.replace("::(anonymous)", ""))
