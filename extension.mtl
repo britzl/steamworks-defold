@@ -91,6 +91,9 @@ static void push_char_array(lua_State* L, char ca[], unsigned int size) {
 static void push_const_char_ptr(lua_State* L, const char * s) {
 	lua_pushstring(L, s);
 }
+static void push_char_ptr(lua_State* L, char * s) {
+	lua_pushstring(L, s);
+}
 {{#typedefs.int}}
 static void push_{{typedef}}(lua_State* L, {{type}} n) {
 	lua_pushinteger(L, n);
@@ -569,7 +572,8 @@ static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^metho
 	{{#params}}
 {{#normal_param}}	{{paramtype}} {{paramname}} = check_{{paramtypestring}}(L, {{paramindex}}); /*normal*/
 {{/normal_param}}{{#out_struct}}	{{paramtype}} {{paramname}}; /*out_struct*/
-{{/out_struct}}{{#out_array_call}}	{{out_array_call_counter}} = {{classname_lower}}->{{out_array_call_function}}({{out_array_call_params}});/*out_array_call*/
+{{/out_struct}}{{#out_string}}	{{paramtype}} {{paramname}}; /*out_string*/
+{{/out_string}}{{#out_array_call}}	{{out_array_call_counter}} = {{classname_lower}}->{{out_array_call_function}}({{out_array_call_params}});/*out_array_call*/
 	{{paramtype}} {{paramname}}[{{out_array_call_counter}}];
 {{/out_array_call}}{{#out_array_call_param}}	{{paramtype}} {{paramname}}; /*out_array_call_param*/
 {{/out_array_call_param}}{{#out_array_param}}	{{paramtype}} {{paramname}}; /*out_array_param*/
@@ -601,7 +605,8 @@ static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^metho
 	{{^steamapicall}}
 	push_{{returntypestring}}(L, r);
 	{{#params}}{{#out_param}}push_{{paramtypestring}}(L, {{paramname}}); /*out_param*/
-	{{/out_param}}{{#out_array}}push_{{paramtypestring}}_array(L, {{paramname}}, {{out_array}});  /*out_array*/{{/out_array}}{{/params}}
+	{{/out_param}}{{#out_string}}push_{{paramtypestring}}(L, *{{paramname}}); /*out_string*/
+	{{/out_string}}{{#out_array}}push_{{paramtypestring}}_array(L, {{paramname}}, {{out_array}});  /*out_array*/{{/out_array}}{{/params}}
 	assert(top + 1 + {{paramcount_out}} == lua_gettop(L));
 	return 1 + {{paramcount_out}};
 	{{/steamapicall}}

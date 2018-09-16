@@ -46,6 +46,12 @@ def parse_methods(methods):
                         param["paramtype"] = paramtype.replace(" *", "")
                         p.append(param)
                         method["paramnames"].append("&" + paramname)
+                    # A string that will be populated with data by the method
+                    elif param.get("out_string") is not None:
+                        param["paramtypestring"] = paramtype.replace(" **", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
+                        p.append(param)
+                        method["paramnames"].append(paramname)
+                        method["paramcount_out"] = method["paramcount_out"] + 1
                     # An array that will be populated with data by the method
                     # The size of the array is specified by another parameter
                     elif param.get("out_array") is not None:
@@ -72,9 +78,17 @@ def parse_methods(methods):
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
+                    # A "data blob" input parameter
+                    elif "const char *" in paramtype or "const void *" in paramtype:
+                        param["normal_param"] = True
+                        param["paramindex"] = len(method["paramnames_in"]) + 1
+                        param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_")
+                        p.insert(0, param)
+                        method["paramnames"].append(paramname)
+                        method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
                     # In this case we treat it as a Defold buffer
-                    elif "void *" in paramtype or "uint8 *" in paramtype:
+                    elif "char *" in paramtype or "void *" in paramtype or "uint8 *" in paramtype:
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["buffer_param"] = True
                         # param["paramtype"] = paramtype.replace("void *", "dmScript::LuaHBuffer *")
@@ -83,13 +97,12 @@ def parse_methods(methods):
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
-                    elif "char *" in paramtype:
-                        param["normal_param"] = True
-                        param["paramindex"] = len(method["paramnames_in"]) + 1
-                        param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
+                    elif "char *" in paramtype or "void *" in paramtype or "uint8 *" in paramtype:
+                        param["out_param"] = True
+                        param["paramtypestring"] = paramtype.replace(" *", "_ptr")
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
-                        method["paramnames_in"].append(paramname)
+                        method["paramcount_out"] = method["paramcount_out"] + 1
                     # A parameter that the method writes a return value to
                     elif " *" in paramtype and "const" not in paramtype:
                         param["out_param"] = True
