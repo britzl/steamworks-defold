@@ -27,7 +27,7 @@ The extension exports the following enums:
 {{#enums}}
 ## {{enumname}}
 {{#values}}
-steamworks.{{name}} {{value}}
+* steamworks.{{name}} {{value}}
 {{/values}}
 
 {{/enums}}
