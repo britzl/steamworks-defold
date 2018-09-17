@@ -1,7 +1,5 @@
 # steamworks-defold
-Steamworks support for Defold using the Defold extension system
-
-This extension is a work in progress and not production ready. Please contribute!
+[Steamworks](https://partner.steamgames.com/home) support for Defold using the Defold extension system
 
 ## Installation
 You can use Steamworks in your own project by adding this project as a [Defold library dependency](http://www.defold.com/manuals/libraries/). Open your game.project file and in the dependencies field under project add:
@@ -14,7 +12,7 @@ Or point to the ZIP file of a [specific release](https://github.com/britzl/steam
 You need to bundle your app with the required Steam lib. Use the [bundle_resources setting in game.project](https://www.defold.com/manuals/project-settings/#_project) to specify folders to include. The libs you need to include can be found in the `steamworks/bundle/` folder.
 
 ### App ID
-The Steamworks API will not initialize if it does not know the App ID of your game. When you launch your app from Steam itself then it will automatically have the App ID available. While developing you will need to hint this to Steam with a text file. Create the a text file called steam_appid.txt next to your executable containing just the App ID and nothing else. This overrides the value that Steam provides. You should not ship this with your builds.
+The Steamworks API will not initialize if it does not know the App ID of your game. When you launch your app from Steam itself then it will automatically have the App ID available. While developing you will need to hint this to Steam with a text file. Create the a text file called `steam_appid.txt` next to your executable containing just the App ID and nothing else. This overrides the value that Steam provides. You should not ship this with your builds.
 
 ## Usage
 ### Basic example
@@ -39,31 +37,33 @@ The Steamworks API will not initialize if it does not know the App ID of your ga
 The extension exposes most of the Steamworks functionality through an auto-generated API.
 
 * Supported APIs
-  * ISteamApps
-  * ISteamAppTicket
-  * ISteamClient
-  * ISteamFriends
-  * ISteamInventory
-  * ISteamMatchmaking
-  * ISteamMusic
-  * ISteamNetworking
-  * ISteamRemoteStorage
-  * ISteamUser
-  * ISteamUserStats
-  * ISteamUtils
+  * [ISteamApps](https://partner.steamgames.com/doc/api/ISteamApps)
+  * [ISteamAppTicket](https://partner.steamgames.com/doc/api/ISteamAppTicket)
+  * [ISteamClient](https://partner.steamgames.com/doc/api/ISteamClient)
+  * [ISteamFriends](https://partner.steamgames.com/doc/api/ISteamFriends)
+  * [ISteamInventory](https://partner.steamgames.com/doc/api/ISteamInventory)
+  * [ISteamMatchmaking](https://partner.steamgames.com/doc/api/ISteamMatchmaking)
+  * [ISteamMusic](https://partner.steamgames.com/doc/api/ISteamMusic)
+  * [ISteamNetworking](https://partner.steamgames.com/doc/api/ISteamNetworking)
+  * [ISteamRemoteStorage](https://partner.steamgames.com/doc/api/ISteamRemoteStorage)
+  * [ISteamUser](https://partner.steamgames.com/doc/api/ISteamUser)
+  * [ISteamUserStats](https://partner.steamgames.com/doc/api/ISteamUserStats)
+  * [ISteamUtils](https://partner.steamgames.com/doc/api/ISteamUtils)
 * Unsupported APIs
-  * ISteamController
-  * ISteamGameCoordinator (deprecated)
-  * ISteamGameServer (for game servers, could be supported in the future)
-  * ISteamGameServerStats (for game servers, could be supported in the future)
-  * ISteamHTMLSurface
-  * ISteamHTTP (use http.request instead)
-  * ISteamMatchmakingServers
-  * ISteamMusicRemote
-  * ISteamScreenshots
-  * ISteamUGC
-  * ISteamUnifiedMessages
-  * ISteamVideo
+  * [ISteamController](https://partner.steamgames.com/doc/api/ISteamController)
+  * [ISteamGameCoordinator](https://partner.steamgames.com/doc/api/ISteamGameCoordinator) (deprecated)
+  * [ISteamGameServer](https://partner.steamgames.com/doc/api/ISteamGameServer) (for game servers, could be supported in the future)
+  * [ISteamGameServerStats](https://partner.steamgames.com/doc/api/ISteamGameServerStats) (for game servers, could be supported in the future)
+  * [ISteamHTMLSurface](https://partner.steamgames.com/doc/api/ISteamHTMLSurface)
+  * [ISteamHTTP](https://partner.steamgames.com/doc/api/ISteamHTTP) (use http.request instead)
+  * [ISteamMatchmakingServers](https://partner.steamgames.com/doc/api/ISteamMatchmakingServers)
+  * [ISteamMusicRemote](https://partner.steamgames.com/doc/api/ISteamMusicRemote)
+  * [ISteamScreenshots](https://partner.steamgames.com/doc/api/ISteamScreenshots)
+  * [ISteamUGC](https://partner.steamgames.com/doc/api/ISteamUGC)
+  * [ISteamUnifiedMessages](https://partner.steamgames.com/doc/api/ISteamUnifiedMessages)
+  * [ISteamVideo](https://partner.steamgames.com/doc/api/ISteamVideo)
+
+NOTE: Please [create a ticket](https://github.com/britzl/steamworks-defold/issues/new) if there's an unsupported API that you need!
 
 ### Naming convention
 Function names are converted to snake case using the following convention:
