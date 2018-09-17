@@ -1,6 +1,326 @@
 # Steamworks API
 
 * [Functions](#functions)
+  * [steamworks.user_get_h_steam_user](#user_get_h_steam_user)
+  * [steamworks.user_logged_on](#user_logged_on)
+  * [steamworks.user_get_steam_id](#user_get_steam_id)
+  * [steamworks.user_terminate_game_connection](#user_terminate_game_connection)
+  * [steamworks.user_get_auth_session_ticket](#user_get_auth_session_ticket)
+  * [steamworks.user_begin_auth_session](#user_begin_auth_session)
+  * [steamworks.user_end_auth_session](#user_end_auth_session)
+  * [steamworks.user_cancel_auth_ticket](#user_cancel_auth_ticket)
+  * [steamworks.user_user_has_license_for_app](#user_user_has_license_for_app)
+  * [steamworks.user_is_behind_nat](#user_is_behind_nat)
+  * [steamworks.user_advertise_game](#user_advertise_game)
+  * [steamworks.user_request_encrypted_app_ticket](#user_request_encrypted_app_ticket)
+  * [steamworks.user_get_encrypted_app_ticket](#user_get_encrypted_app_ticket)
+  * [steamworks.user_get_game_badge_level](#user_get_game_badge_level)
+  * [steamworks.user_get_player_steam_level](#user_get_player_steam_level)
+  * [steamworks.user_request_store_auth_url](#user_request_store_auth_url)
+  * [steamworks.user_is_phone_verified](#user_is_phone_verified)
+  * [steamworks.user_is_two_factor_enabled](#user_is_two_factor_enabled)
+  * [steamworks.user_is_phone_identifying](#user_is_phone_identifying)
+  * [steamworks.user_is_phone_requiring_verification](#user_is_phone_requiring_verification)
+  * [steamworks.friends_get_persona_name](#friends_get_persona_name)
+  * [steamworks.friends_set_persona_name](#friends_set_persona_name)
+  * [steamworks.friends_get_persona_state](#friends_get_persona_state)
+  * [steamworks.friends_get_friend_count](#friends_get_friend_count)
+  * [steamworks.friends_get_friend_by_index](#friends_get_friend_by_index)
+  * [steamworks.friends_get_friend_relationship](#friends_get_friend_relationship)
+  * [steamworks.friends_get_friend_persona_state](#friends_get_friend_persona_state)
+  * [steamworks.friends_get_friend_persona_name](#friends_get_friend_persona_name)
+  * [steamworks.friends_get_friend_game_played](#friends_get_friend_game_played)
+  * [steamworks.friends_get_friend_persona_name_history](#friends_get_friend_persona_name_history)
+  * [steamworks.friends_get_friend_steam_level](#friends_get_friend_steam_level)
+  * [steamworks.friends_get_player_nickname](#friends_get_player_nickname)
+  * [steamworks.friends_get_friends_group_count](#friends_get_friends_group_count)
+  * [steamworks.friends_get_friends_group_id_by_index](#friends_get_friends_group_id_by_index)
+  * [steamworks.friends_get_friends_group_name](#friends_get_friends_group_name)
+  * [steamworks.friends_get_friends_group_members_count](#friends_get_friends_group_members_count)
+  * [steamworks.friends_get_friends_group_members_list](#friends_get_friends_group_members_list)
+  * [steamworks.friends_has_friend](#friends_has_friend)
+  * [steamworks.friends_get_clan_count](#friends_get_clan_count)
+  * [steamworks.friends_get_clan_by_index](#friends_get_clan_by_index)
+  * [steamworks.friends_get_clan_name](#friends_get_clan_name)
+  * [steamworks.friends_get_clan_tag](#friends_get_clan_tag)
+  * [steamworks.friends_get_clan_activity_counts](#friends_get_clan_activity_counts)
+  * [steamworks.friends_download_clan_activity_counts](#friends_download_clan_activity_counts)
+  * [steamworks.friends_get_friend_count_from_source](#friends_get_friend_count_from_source)
+  * [steamworks.friends_get_friend_from_source_by_index](#friends_get_friend_from_source_by_index)
+  * [steamworks.friends_is_user_in_source](#friends_is_user_in_source)
+  * [steamworks.friends_set_in_game_voice_speaking](#friends_set_in_game_voice_speaking)
+  * [steamworks.friends_set_played_with](#friends_set_played_with)
+  * [steamworks.friends_activate_game_overlay_invite_dialog](#friends_activate_game_overlay_invite_dialog)
+  * [steamworks.friends_get_small_friend_avatar](#friends_get_small_friend_avatar)
+  * [steamworks.friends_get_medium_friend_avatar](#friends_get_medium_friend_avatar)
+  * [steamworks.friends_get_large_friend_avatar](#friends_get_large_friend_avatar)
+  * [steamworks.friends_request_user_information](#friends_request_user_information)
+  * [steamworks.friends_request_clan_officer_list](#friends_request_clan_officer_list)
+  * [steamworks.friends_get_clan_owner](#friends_get_clan_owner)
+  * [steamworks.friends_get_clan_officer_count](#friends_get_clan_officer_count)
+  * [steamworks.friends_get_clan_officer_by_index](#friends_get_clan_officer_by_index)
+  * [steamworks.friends_get_user_restrictions](#friends_get_user_restrictions)
+  * [steamworks.friends_set_rich_presence](#friends_set_rich_presence)
+  * [steamworks.friends_clear_rich_presence](#friends_clear_rich_presence)
+  * [steamworks.friends_get_friend_rich_presence](#friends_get_friend_rich_presence)
+  * [steamworks.friends_get_friend_rich_presence_key_count](#friends_get_friend_rich_presence_key_count)
+  * [steamworks.friends_get_friend_rich_presence_key_by_index](#friends_get_friend_rich_presence_key_by_index)
+  * [steamworks.friends_request_friend_rich_presence](#friends_request_friend_rich_presence)
+  * [steamworks.friends_invite_user_to_game](#friends_invite_user_to_game)
+  * [steamworks.friends_get_coplay_friend_count](#friends_get_coplay_friend_count)
+  * [steamworks.friends_get_coplay_friend](#friends_get_coplay_friend)
+  * [steamworks.friends_get_friend_coplay_time](#friends_get_friend_coplay_time)
+  * [steamworks.friends_get_friend_coplay_game](#friends_get_friend_coplay_game)
+  * [steamworks.friends_join_clan_chat_room](#friends_join_clan_chat_room)
+  * [steamworks.friends_leave_clan_chat_room](#friends_leave_clan_chat_room)
+  * [steamworks.friends_get_clan_chat_member_count](#friends_get_clan_chat_member_count)
+  * [steamworks.friends_get_chat_member_by_index](#friends_get_chat_member_by_index)
+  * [steamworks.friends_send_clan_chat_message](#friends_send_clan_chat_message)
+  * [steamworks.friends_get_clan_chat_message](#friends_get_clan_chat_message)
+  * [steamworks.friends_is_clan_chat_admin](#friends_is_clan_chat_admin)
+  * [steamworks.friends_is_clan_chat_window_open_in_steam](#friends_is_clan_chat_window_open_in_steam)
+  * [steamworks.friends_open_clan_chat_window_in_steam](#friends_open_clan_chat_window_in_steam)
+  * [steamworks.friends_close_clan_chat_window_in_steam](#friends_close_clan_chat_window_in_steam)
+  * [steamworks.friends_set_listen_for_friends_messages](#friends_set_listen_for_friends_messages)
+  * [steamworks.friends_reply_to_friend_message](#friends_reply_to_friend_message)
+  * [steamworks.friends_get_friend_message](#friends_get_friend_message)
+  * [steamworks.friends_get_follower_count](#friends_get_follower_count)
+  * [steamworks.friends_is_following](#friends_is_following)
+  * [steamworks.friends_enumerate_following_list](#friends_enumerate_following_list)
+  * [steamworks.friends_is_clan_public](#friends_is_clan_public)
+  * [steamworks.friends_is_clan_official_game_group](#friends_is_clan_official_game_group)
+  * [steamworks.utils_get_seconds_since_app_active](#utils_get_seconds_since_app_active)
+  * [steamworks.utils_get_seconds_since_computer_active](#utils_get_seconds_since_computer_active)
+  * [steamworks.utils_get_connected_universe](#utils_get_connected_universe)
+  * [steamworks.utils_get_server_real_time](#utils_get_server_real_time)
+  * [steamworks.utils_get_ip_country](#utils_get_ip_country)
+  * [steamworks.utils_get_image_size](#utils_get_image_size)
+  * [steamworks.utils_get_image_rgba](#utils_get_image_rgba)
+  * [steamworks.utils_get_cserip_port](#utils_get_cserip_port)
+  * [steamworks.utils_get_current_battery_power](#utils_get_current_battery_power)
+  * [steamworks.utils_get_app_id](#utils_get_app_id)
+  * [steamworks.utils_is_api_call_completed](#utils_is_api_call_completed)
+  * [steamworks.utils_get_api_call_failure_reason](#utils_get_api_call_failure_reason)
+  * [steamworks.utils_get_api_call_result](#utils_get_api_call_result)
+  * [steamworks.utils_get_ipc_call_count](#utils_get_ipc_call_count)
+  * [steamworks.utils_overlay_needs_present](#utils_overlay_needs_present)
+  * [steamworks.utils_check_file_signature](#utils_check_file_signature)
+  * [steamworks.utils_show_gamepad_text_input](#utils_show_gamepad_text_input)
+  * [steamworks.utils_get_entered_gamepad_text_length](#utils_get_entered_gamepad_text_length)
+  * [steamworks.utils_get_entered_gamepad_text_input](#utils_get_entered_gamepad_text_input)
+  * [steamworks.utils_get_steam_ui_language](#utils_get_steam_ui_language)
+  * [steamworks.utils_is_steam_running_in_vr](#utils_is_steam_running_in_vr)
+  * [steamworks.utils_set_overlay_notification_inset](#utils_set_overlay_notification_inset)
+  * [steamworks.utils_is_steam_in_big_picture_mode](#utils_is_steam_in_big_picture_mode)
+  * [steamworks.utils_start_vr_dashboard](#utils_start_vr_dashboard)
+  * [steamworks.utils_is_vr_headset_streaming_enabled](#utils_is_vr_headset_streaming_enabled)
+  * [steamworks.utils_set_vr_headset_streaming_enabled](#utils_set_vr_headset_streaming_enabled)
+  * [steamworks.matchmaking_get_favorite_game_count](#matchmaking_get_favorite_game_count)
+  * [steamworks.matchmaking_get_favorite_game](#matchmaking_get_favorite_game)
+  * [steamworks.matchmaking_add_favorite_game](#matchmaking_add_favorite_game)
+  * [steamworks.matchmaking_remove_favorite_game](#matchmaking_remove_favorite_game)
+  * [steamworks.matchmaking_request_lobby_list](#matchmaking_request_lobby_list)
+  * [steamworks.matchmaking_add_request_lobby_list_string_filter](#matchmaking_add_request_lobby_list_string_filter)
+  * [steamworks.matchmaking_add_request_lobby_list_numerical_filter](#matchmaking_add_request_lobby_list_numerical_filter)
+  * [steamworks.matchmaking_add_request_lobby_list_near_value_filter](#matchmaking_add_request_lobby_list_near_value_filter)
+  * [steamworks.matchmaking_add_request_lobby_list_filter_slots_available](#matchmaking_add_request_lobby_list_filter_slots_available)
+  * [steamworks.matchmaking_add_request_lobby_list_distance_filter](#matchmaking_add_request_lobby_list_distance_filter)
+  * [steamworks.matchmaking_add_request_lobby_list_result_count_filter](#matchmaking_add_request_lobby_list_result_count_filter)
+  * [steamworks.matchmaking_add_request_lobby_list_compatible_members_filter](#matchmaking_add_request_lobby_list_compatible_members_filter)
+  * [steamworks.matchmaking_get_lobby_by_index](#matchmaking_get_lobby_by_index)
+  * [steamworks.matchmaking_create_lobby](#matchmaking_create_lobby)
+  * [steamworks.matchmaking_join_lobby](#matchmaking_join_lobby)
+  * [steamworks.matchmaking_leave_lobby](#matchmaking_leave_lobby)
+  * [steamworks.matchmaking_invite_user_to_lobby](#matchmaking_invite_user_to_lobby)
+  * [steamworks.matchmaking_get_num_lobby_members](#matchmaking_get_num_lobby_members)
+  * [steamworks.matchmaking_get_lobby_member_by_index](#matchmaking_get_lobby_member_by_index)
+  * [steamworks.matchmaking_get_lobby_data](#matchmaking_get_lobby_data)
+  * [steamworks.matchmaking_set_lobby_data](#matchmaking_set_lobby_data)
+  * [steamworks.matchmaking_get_lobby_data_count](#matchmaking_get_lobby_data_count)
+  * [steamworks.matchmaking_get_lobby_data_by_index](#matchmaking_get_lobby_data_by_index)
+  * [steamworks.matchmaking_delete_lobby_data](#matchmaking_delete_lobby_data)
+  * [steamworks.matchmaking_get_lobby_member_data](#matchmaking_get_lobby_member_data)
+  * [steamworks.matchmaking_set_lobby_member_data](#matchmaking_set_lobby_member_data)
+  * [steamworks.matchmaking_send_lobby_chat_msg](#matchmaking_send_lobby_chat_msg)
+  * [steamworks.matchmaking_get_lobby_chat_entry](#matchmaking_get_lobby_chat_entry)
+  * [steamworks.matchmaking_request_lobby_data](#matchmaking_request_lobby_data)
+  * [steamworks.matchmaking_set_lobby_game_server](#matchmaking_set_lobby_game_server)
+  * [steamworks.matchmaking_get_lobby_game_server](#matchmaking_get_lobby_game_server)
+  * [steamworks.matchmaking_set_lobby_member_limit](#matchmaking_set_lobby_member_limit)
+  * [steamworks.matchmaking_get_lobby_member_limit](#matchmaking_get_lobby_member_limit)
+  * [steamworks.matchmaking_set_lobby_type](#matchmaking_set_lobby_type)
+  * [steamworks.matchmaking_set_lobby_joinable](#matchmaking_set_lobby_joinable)
+  * [steamworks.matchmaking_get_lobby_owner](#matchmaking_get_lobby_owner)
+  * [steamworks.matchmaking_set_lobby_owner](#matchmaking_set_lobby_owner)
+  * [steamworks.matchmaking_set_linked_lobby](#matchmaking_set_linked_lobby)
+  * [steamworks.remote_storage_file_write](#remote_storage_file_write)
+  * [steamworks.remote_storage_file_read](#remote_storage_file_read)
+  * [steamworks.remote_storage_file_write_async](#remote_storage_file_write_async)
+  * [steamworks.remote_storage_file_read_async](#remote_storage_file_read_async)
+  * [steamworks.remote_storage_file_read_async_complete](#remote_storage_file_read_async_complete)
+  * [steamworks.remote_storage_file_forget](#remote_storage_file_forget)
+  * [steamworks.remote_storage_file_delete](#remote_storage_file_delete)
+  * [steamworks.remote_storage_file_share](#remote_storage_file_share)
+  * [steamworks.remote_storage_set_sync_platforms](#remote_storage_set_sync_platforms)
+  * [steamworks.remote_storage_file_write_stream_open](#remote_storage_file_write_stream_open)
+  * [steamworks.remote_storage_file_write_stream_write_chunk](#remote_storage_file_write_stream_write_chunk)
+  * [steamworks.remote_storage_file_write_stream_close](#remote_storage_file_write_stream_close)
+  * [steamworks.remote_storage_file_write_stream_cancel](#remote_storage_file_write_stream_cancel)
+  * [steamworks.remote_storage_file_exists](#remote_storage_file_exists)
+  * [steamworks.remote_storage_file_persisted](#remote_storage_file_persisted)
+  * [steamworks.remote_storage_get_file_size](#remote_storage_get_file_size)
+  * [steamworks.remote_storage_get_file_timestamp](#remote_storage_get_file_timestamp)
+  * [steamworks.remote_storage_get_sync_platforms](#remote_storage_get_sync_platforms)
+  * [steamworks.remote_storage_get_file_count](#remote_storage_get_file_count)
+  * [steamworks.remote_storage_get_file_name_and_size](#remote_storage_get_file_name_and_size)
+  * [steamworks.remote_storage_get_quota](#remote_storage_get_quota)
+  * [steamworks.remote_storage_is_cloud_enabled_for_account](#remote_storage_is_cloud_enabled_for_account)
+  * [steamworks.remote_storage_is_cloud_enabled_for_app](#remote_storage_is_cloud_enabled_for_app)
+  * [steamworks.remote_storage_set_cloud_enabled_for_app](#remote_storage_set_cloud_enabled_for_app)
+  * [steamworks.remote_storage_ugc_download](#remote_storage_ugc_download)
+  * [steamworks.remote_storage_get_ugc_download_progress](#remote_storage_get_ugc_download_progress)
+  * [steamworks.remote_storage_get_ugc_details](#remote_storage_get_ugc_details)
+  * [steamworks.remote_storage_ugc_read](#remote_storage_ugc_read)
+  * [steamworks.remote_storage_get_cached_ugc_count](#remote_storage_get_cached_ugc_count)
+  * [steamworks.remote_storage_get_cached_ugc_handle](#remote_storage_get_cached_ugc_handle)
+  * [steamworks.remote_storage_ugc_download_to_location](#remote_storage_ugc_download_to_location)
+  * [steamworks.user_stats_request_current_stats](#user_stats_request_current_stats)
+  * [steamworks.user_stats_get_stat_int](#user_stats_get_stat_int)
+  * [steamworks.user_stats_get_stat_float](#user_stats_get_stat_float)
+  * [steamworks.user_stats_set_stat_int](#user_stats_set_stat_int)
+  * [steamworks.user_stats_set_stat_float](#user_stats_set_stat_float)
+  * [steamworks.user_stats_update_avg_rate_stat](#user_stats_update_avg_rate_stat)
+  * [steamworks.user_stats_get_achievement](#user_stats_get_achievement)
+  * [steamworks.user_stats_set_achievement](#user_stats_set_achievement)
+  * [steamworks.user_stats_clear_achievement](#user_stats_clear_achievement)
+  * [steamworks.user_stats_get_achievement_and_unlock_time](#user_stats_get_achievement_and_unlock_time)
+  * [steamworks.user_stats_store_stats](#user_stats_store_stats)
+  * [steamworks.user_stats_get_achievement_icon](#user_stats_get_achievement_icon)
+  * [steamworks.user_stats_get_achievement_display_attribute](#user_stats_get_achievement_display_attribute)
+  * [steamworks.user_stats_indicate_achievement_progress](#user_stats_indicate_achievement_progress)
+  * [steamworks.user_stats_get_num_achievements](#user_stats_get_num_achievements)
+  * [steamworks.user_stats_get_achievement_name](#user_stats_get_achievement_name)
+  * [steamworks.user_stats_request_user_stats](#user_stats_request_user_stats)
+  * [steamworks.user_stats_get_user_stat_int](#user_stats_get_user_stat_int)
+  * [steamworks.user_stats_get_user_stat_float](#user_stats_get_user_stat_float)
+  * [steamworks.user_stats_get_user_achievement](#user_stats_get_user_achievement)
+  * [steamworks.user_stats_get_user_achievement_and_unlock_time](#user_stats_get_user_achievement_and_unlock_time)
+  * [steamworks.user_stats_reset_all_stats](#user_stats_reset_all_stats)
+  * [steamworks.user_stats_find_or_create_leaderboard](#user_stats_find_or_create_leaderboard)
+  * [steamworks.user_stats_find_leaderboard](#user_stats_find_leaderboard)
+  * [steamworks.user_stats_get_leaderboard_name](#user_stats_get_leaderboard_name)
+  * [steamworks.user_stats_get_leaderboard_entry_count](#user_stats_get_leaderboard_entry_count)
+  * [steamworks.user_stats_get_leaderboard_sort_method](#user_stats_get_leaderboard_sort_method)
+  * [steamworks.user_stats_get_leaderboard_display_type](#user_stats_get_leaderboard_display_type)
+  * [steamworks.user_stats_download_leaderboard_entries](#user_stats_download_leaderboard_entries)
+  * [steamworks.user_stats_download_leaderboard_entries_for_users](#user_stats_download_leaderboard_entries_for_users)
+  * [steamworks.user_stats_get_downloaded_leaderboard_entry](#user_stats_get_downloaded_leaderboard_entry)
+  * [steamworks.user_stats_upload_leaderboard_score](#user_stats_upload_leaderboard_score)
+  * [steamworks.user_stats_attach_leaderboard_ugc](#user_stats_attach_leaderboard_ugc)
+  * [steamworks.user_stats_get_number_of_current_players](#user_stats_get_number_of_current_players)
+  * [steamworks.user_stats_request_global_achievement_percentages](#user_stats_request_global_achievement_percentages)
+  * [steamworks.user_stats_get_most_achieved_achievement_info](#user_stats_get_most_achieved_achievement_info)
+  * [steamworks.user_stats_get_next_most_achieved_achievement_info](#user_stats_get_next_most_achieved_achievement_info)
+  * [steamworks.user_stats_get_achievement_achieved_percent](#user_stats_get_achievement_achieved_percent)
+  * [steamworks.user_stats_request_global_stats](#user_stats_request_global_stats)
+  * [steamworks.user_stats_get_global_stat_int](#user_stats_get_global_stat_int)
+  * [steamworks.user_stats_get_global_stat_float](#user_stats_get_global_stat_float)
+  * [steamworks.user_stats_get_global_stat_int_history](#user_stats_get_global_stat_int_history)
+  * [steamworks.user_stats_get_global_stat_float_history](#user_stats_get_global_stat_float_history)
+  * [steamworks.apps_is_subscribed](#apps_is_subscribed)
+  * [steamworks.apps_is_low_violence](#apps_is_low_violence)
+  * [steamworks.apps_is_cybercafe](#apps_is_cybercafe)
+  * [steamworks.apps_is_vac_banned](#apps_is_vac_banned)
+  * [steamworks.apps_get_current_game_language](#apps_get_current_game_language)
+  * [steamworks.apps_get_available_game_languages](#apps_get_available_game_languages)
+  * [steamworks.apps_is_subscribed_app](#apps_is_subscribed_app)
+  * [steamworks.apps_is_dlc_installed](#apps_is_dlc_installed)
+  * [steamworks.apps_get_earliest_purchase_unix_time](#apps_get_earliest_purchase_unix_time)
+  * [steamworks.apps_is_subscribed_from_free_weekend](#apps_is_subscribed_from_free_weekend)
+  * [steamworks.apps_get_dlc_count](#apps_get_dlc_count)
+  * [steamworks.apps_get_dlc_data_by_index](#apps_get_dlc_data_by_index)
+  * [steamworks.apps_install_dlc](#apps_install_dlc)
+  * [steamworks.apps_uninstall_dlc](#apps_uninstall_dlc)
+  * [steamworks.apps_request_app_proof_of_purchase_key](#apps_request_app_proof_of_purchase_key)
+  * [steamworks.apps_get_current_beta_name](#apps_get_current_beta_name)
+  * [steamworks.apps_mark_content_corrupt](#apps_mark_content_corrupt)
+  * [steamworks.apps_get_installed_depots](#apps_get_installed_depots)
+  * [steamworks.apps_get_app_install_dir](#apps_get_app_install_dir)
+  * [steamworks.apps_is_app_installed](#apps_is_app_installed)
+  * [steamworks.apps_get_app_owner](#apps_get_app_owner)
+  * [steamworks.apps_get_launch_query_param](#apps_get_launch_query_param)
+  * [steamworks.apps_get_dlc_download_progress](#apps_get_dlc_download_progress)
+  * [steamworks.apps_get_app_build_id](#apps_get_app_build_id)
+  * [steamworks.apps_request_all_proof_of_purchase_keys](#apps_request_all_proof_of_purchase_keys)
+  * [steamworks.apps_get_file_details](#apps_get_file_details)
+  * [steamworks.networking_send_p2p_packet](#networking_send_p2p_packet)
+  * [steamworks.networking_is_p2p_packet_available](#networking_is_p2p_packet_available)
+  * [steamworks.networking_read_p2p_packet](#networking_read_p2p_packet)
+  * [steamworks.networking_accept_p2p_session_with_user](#networking_accept_p2p_session_with_user)
+  * [steamworks.networking_close_p2p_session_with_user](#networking_close_p2p_session_with_user)
+  * [steamworks.networking_close_p2p_channel_with_user](#networking_close_p2p_channel_with_user)
+  * [steamworks.networking_get_p2p_session_state](#networking_get_p2p_session_state)
+  * [steamworks.networking_allow_p2p_packet_relay](#networking_allow_p2p_packet_relay)
+  * [steamworks.networking_create_listen_socket](#networking_create_listen_socket)
+  * [steamworks.networking_create_p2p_connection_socket](#networking_create_p2p_connection_socket)
+  * [steamworks.networking_create_connection_socket](#networking_create_connection_socket)
+  * [steamworks.networking_destroy_socket](#networking_destroy_socket)
+  * [steamworks.networking_destroy_listen_socket](#networking_destroy_listen_socket)
+  * [steamworks.networking_send_data_on_socket](#networking_send_data_on_socket)
+  * [steamworks.networking_is_data_available_on_socket](#networking_is_data_available_on_socket)
+  * [steamworks.networking_retrieve_data_from_socket](#networking_retrieve_data_from_socket)
+  * [steamworks.networking_is_data_available](#networking_is_data_available)
+  * [steamworks.networking_retrieve_data](#networking_retrieve_data)
+  * [steamworks.networking_get_socket_info](#networking_get_socket_info)
+  * [steamworks.networking_get_listen_socket_info](#networking_get_listen_socket_info)
+  * [steamworks.networking_get_socket_connection_type](#networking_get_socket_connection_type)
+  * [steamworks.networking_get_max_packet_size](#networking_get_max_packet_size)
+  * [steamworks.music_is_enabled](#music_is_enabled)
+  * [steamworks.music_is_playing](#music_is_playing)
+  * [steamworks.music_get_playback_status](#music_get_playback_status)
+  * [steamworks.music_play](#music_play)
+  * [steamworks.music_pause](#music_pause)
+  * [steamworks.music_play_previous](#music_play_previous)
+  * [steamworks.music_play_next](#music_play_next)
+  * [steamworks.music_set_volume](#music_set_volume)
+  * [steamworks.music_get_volume](#music_get_volume)
+  * [steamworks.inventory_get_result_status](#inventory_get_result_status)
+  * [steamworks.inventory_get_result_items](#inventory_get_result_items)
+  * [steamworks.inventory_get_result_item_property](#inventory_get_result_item_property)
+  * [steamworks.inventory_get_result_timestamp](#inventory_get_result_timestamp)
+  * [steamworks.inventory_check_result_steam_id](#inventory_check_result_steam_id)
+  * [steamworks.inventory_destroy_result](#inventory_destroy_result)
+  * [steamworks.inventory_get_all_items](#inventory_get_all_items)
+  * [steamworks.inventory_get_items_by_id](#inventory_get_items_by_id)
+  * [steamworks.inventory_serialize_result](#inventory_serialize_result)
+  * [steamworks.inventory_deserialize_result](#inventory_deserialize_result)
+  * [steamworks.inventory_generate_items](#inventory_generate_items)
+  * [steamworks.inventory_grant_promo_items](#inventory_grant_promo_items)
+  * [steamworks.inventory_add_promo_item](#inventory_add_promo_item)
+  * [steamworks.inventory_add_promo_items](#inventory_add_promo_items)
+  * [steamworks.inventory_consume_item](#inventory_consume_item)
+  * [steamworks.inventory_exchange_items](#inventory_exchange_items)
+  * [steamworks.inventory_transfer_item_quantity](#inventory_transfer_item_quantity)
+  * [steamworks.inventory_send_item_drop_heartbeat](#inventory_send_item_drop_heartbeat)
+  * [steamworks.inventory_trigger_item_drop](#inventory_trigger_item_drop)
+  * [steamworks.inventory_trade_items](#inventory_trade_items)
+  * [steamworks.inventory_load_item_definitions](#inventory_load_item_definitions)
+  * [steamworks.inventory_get_item_definition_i_ds](#inventory_get_item_definition_i_ds)
+  * [steamworks.inventory_get_item_definition_property](#inventory_get_item_definition_property)
+  * [steamworks.inventory_request_eligible_promo_item_definitions_i_ds](#inventory_request_eligible_promo_item_definitions_i_ds)
+  * [steamworks.inventory_get_eligible_promo_item_definition_i_ds](#inventory_get_eligible_promo_item_definition_i_ds)
+  * [steamworks.inventory_start_purchase](#inventory_start_purchase)
+  * [steamworks.inventory_request_prices](#inventory_request_prices)
+  * [steamworks.inventory_get_num_items_with_prices](#inventory_get_num_items_with_prices)
+  * [steamworks.inventory_get_items_with_prices](#inventory_get_items_with_prices)
+  * [steamworks.inventory_get_item_price](#inventory_get_item_price)
+  * [steamworks.inventory_start_update_properties](#inventory_start_update_properties)
+  * [steamworks.inventory_remove_property](#inventory_remove_property)
+  * [steamworks.inventory_set_property_string](#inventory_set_property_string)
+  * [steamworks.inventory_set_property_bool](#inventory_set_property_bool)
+  * [steamworks.inventory_set_property_int](#inventory_set_property_int)
+  * [steamworks.inventory_set_property_float](#inventory_set_property_float)
+  * [steamworks.inventory_submit_update_properties](#inventory_submit_update_properties)
 * [Call results](#callresults)
 * [Callback](#callbacks)
 * [Enums](#enums)
@@ -8,286 +328,243 @@
 ## <a name="functions"></a>Functions
 The extension exports the following functions:
 
-### steamworks.user_get_h_steam_user()
-[ISteamUser#GetHSteamUser](https://partner.steamgames.com/doc/api/ISteamUser#GetHSteamUser)
+### <a name="user_get_h_steam_user"></a>steamworks.user_get_h_steam_user() - [ISteamUser#GetHSteamUser](https://partner.steamgames.com/doc/api/ISteamUser#GetHSteamUser)
 
 **RETURN**
 * `r` (HSteamUser)
 
 
-### steamworks.user_logged_on()
-[ISteamUser#BLoggedOn](https://partner.steamgames.com/doc/api/ISteamUser#BLoggedOn)
+### <a name="user_logged_on"></a>steamworks.user_logged_on() - [ISteamUser#BLoggedOn](https://partner.steamgames.com/doc/api/ISteamUser#BLoggedOn)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_get_steam_id()
-[ISteamUser#GetSteamID](https://partner.steamgames.com/doc/api/ISteamUser#GetSteamID)
+### <a name="user_get_steam_id"></a>steamworks.user_get_steam_id() - [ISteamUser#GetSteamID](https://partner.steamgames.com/doc/api/ISteamUser#GetSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.user_terminate_game_connection(unIPServer,usPortServer)
-[ISteamUser#TerminateGameConnection](https://partner.steamgames.com/doc/api/ISteamUser#TerminateGameConnection)
+### <a name="user_terminate_game_connection"></a>steamworks.user_terminate_game_connection(unIPServer,usPortServer) - [ISteamUser#TerminateGameConnection](https://partner.steamgames.com/doc/api/ISteamUser#TerminateGameConnection)
 
 
-### steamworks.user_get_auth_session_ticket(pTicket,cbMaxTicket)
-[ISteamUser#GetAuthSessionTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetAuthSessionTicket)
+### <a name="user_get_auth_session_ticket"></a>steamworks.user_get_auth_session_ticket(pTicket,cbMaxTicket) - [ISteamUser#GetAuthSessionTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetAuthSessionTicket)
 
 **RETURN**
 * `r` (HAuthTicket)
 * `pcbTicket` (uint32)
 
 
-### steamworks.user_begin_auth_session(pAuthTicket,cbAuthTicket,steamID)
-[ISteamUser#BeginAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession)
+### <a name="user_begin_auth_session"></a>steamworks.user_begin_auth_session(pAuthTicket,cbAuthTicket,steamID) - [ISteamUser#BeginAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession)
 
 **RETURN**
 * `r` (EBeginAuthSessionResult)
 
 
-### steamworks.user_end_auth_session(steamID)
-[ISteamUser#EndAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#EndAuthSession)
+### <a name="user_end_auth_session"></a>steamworks.user_end_auth_session(steamID) - [ISteamUser#EndAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#EndAuthSession)
 
 
-### steamworks.user_cancel_auth_ticket(hAuthTicket)
-[ISteamUser#CancelAuthTicket](https://partner.steamgames.com/doc/api/ISteamUser#CancelAuthTicket)
+### <a name="user_cancel_auth_ticket"></a>steamworks.user_cancel_auth_ticket(hAuthTicket) - [ISteamUser#CancelAuthTicket](https://partner.steamgames.com/doc/api/ISteamUser#CancelAuthTicket)
 
 
-### steamworks.user_user_has_license_for_app(steamID,appID)
-[ISteamUser#UserHasLicenseForApp](https://partner.steamgames.com/doc/api/ISteamUser#UserHasLicenseForApp)
+### <a name="user_user_has_license_for_app"></a>steamworks.user_user_has_license_for_app(steamID,appID) - [ISteamUser#UserHasLicenseForApp](https://partner.steamgames.com/doc/api/ISteamUser#UserHasLicenseForApp)
 
 **RETURN**
 * `r` (EUserHasLicenseForAppResult)
 
 
-### steamworks.user_is_behind_nat()
-[ISteamUser#BIsBehindNAT](https://partner.steamgames.com/doc/api/ISteamUser#BIsBehindNAT)
+### <a name="user_is_behind_nat"></a>steamworks.user_is_behind_nat() - [ISteamUser#BIsBehindNAT](https://partner.steamgames.com/doc/api/ISteamUser#BIsBehindNAT)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_advertise_game(steamIDGameServer,unIPServer,usPortServer)
-[ISteamUser#AdvertiseGame](https://partner.steamgames.com/doc/api/ISteamUser#AdvertiseGame)
+### <a name="user_advertise_game"></a>steamworks.user_advertise_game(steamIDGameServer,unIPServer,usPortServer) - [ISteamUser#AdvertiseGame](https://partner.steamgames.com/doc/api/ISteamUser#AdvertiseGame)
 
 
-### steamworks.user_request_encrypted_app_ticket(pDataToInclude,cbDataToInclude)
-[ISteamUser#RequestEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket)
+### <a name="user_request_encrypted_app_ticket"></a>steamworks.user_request_encrypted_app_ticket(pDataToInclude,cbDataToInclude) - [ISteamUser#RequestEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket)
 
 **CALLBACK**
 * `EncryptedAppTicketResponse_t`
 
-### steamworks.user_get_encrypted_app_ticket(pTicket,cbMaxTicket)
-[ISteamUser#GetEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetEncryptedAppTicket)
+### <a name="user_get_encrypted_app_ticket"></a>steamworks.user_get_encrypted_app_ticket(pTicket,cbMaxTicket) - [ISteamUser#GetEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetEncryptedAppTicket)
 
 **RETURN**
 * `r` (bool)
 * `pcbTicket` (uint32)
 
 
-### steamworks.user_get_game_badge_level(nSeries,bFoil)
-[ISteamUser#GetGameBadgeLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetGameBadgeLevel)
+### <a name="user_get_game_badge_level"></a>steamworks.user_get_game_badge_level(nSeries,bFoil) - [ISteamUser#GetGameBadgeLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetGameBadgeLevel)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.user_get_player_steam_level()
-[ISteamUser#GetPlayerSteamLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetPlayerSteamLevel)
+### <a name="user_get_player_steam_level"></a>steamworks.user_get_player_steam_level() - [ISteamUser#GetPlayerSteamLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetPlayerSteamLevel)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.user_request_store_auth_url(pchRedirectURL)
-[ISteamUser#RequestStoreAuthURL](https://partner.steamgames.com/doc/api/ISteamUser#RequestStoreAuthURL)
+### <a name="user_request_store_auth_url"></a>steamworks.user_request_store_auth_url(pchRedirectURL) - [ISteamUser#RequestStoreAuthURL](https://partner.steamgames.com/doc/api/ISteamUser#RequestStoreAuthURL)
 
 **CALLBACK**
 * `StoreAuthURLResponse_t`
 
-### steamworks.user_is_phone_verified()
-[ISteamUser#BIsPhoneVerified](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneVerified)
+### <a name="user_is_phone_verified"></a>steamworks.user_is_phone_verified() - [ISteamUser#BIsPhoneVerified](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneVerified)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_is_two_factor_enabled()
-[ISteamUser#BIsTwoFactorEnabled](https://partner.steamgames.com/doc/api/ISteamUser#BIsTwoFactorEnabled)
+### <a name="user_is_two_factor_enabled"></a>steamworks.user_is_two_factor_enabled() - [ISteamUser#BIsTwoFactorEnabled](https://partner.steamgames.com/doc/api/ISteamUser#BIsTwoFactorEnabled)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_is_phone_identifying()
-[ISteamUser#BIsPhoneIdentifying](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneIdentifying)
+### <a name="user_is_phone_identifying"></a>steamworks.user_is_phone_identifying() - [ISteamUser#BIsPhoneIdentifying](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneIdentifying)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_is_phone_requiring_verification()
-[ISteamUser#BIsPhoneRequiringVerification](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneRequiringVerification)
+### <a name="user_is_phone_requiring_verification"></a>steamworks.user_is_phone_requiring_verification() - [ISteamUser#BIsPhoneRequiringVerification](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneRequiringVerification)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_get_persona_name()
-[ISteamFriends#GetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaName)
+### <a name="friends_get_persona_name"></a>steamworks.friends_get_persona_name() - [ISteamFriends#GetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaName)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_set_persona_name(pchPersonaName)
-[ISteamFriends#SetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#SetPersonaName)
+### <a name="friends_set_persona_name"></a>steamworks.friends_set_persona_name(pchPersonaName) - [ISteamFriends#SetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#SetPersonaName)
 
 **CALLBACK**
 * `SetPersonaNameResponse_t`
 
-### steamworks.friends_get_persona_state()
-[ISteamFriends#GetPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaState)
+### <a name="friends_get_persona_state"></a>steamworks.friends_get_persona_state() - [ISteamFriends#GetPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaState)
 
 **RETURN**
 * `r` (EPersonaState)
 
 
-### steamworks.friends_get_friend_count(iFriendFlags)
-[ISteamFriends#GetFriendCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCount)
+### <a name="friends_get_friend_count"></a>steamworks.friends_get_friend_count(iFriendFlags) - [ISteamFriends#GetFriendCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_friend_by_index(iFriend,iFriendFlags)
-[ISteamFriends#GetFriendByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendByIndex)
+### <a name="friends_get_friend_by_index"></a>steamworks.friends_get_friend_by_index(iFriend,iFriendFlags) - [ISteamFriends#GetFriendByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendByIndex)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.friends_get_friend_relationship(steamIDFriend)
-[ISteamFriends#GetFriendRelationship](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRelationship)
+### <a name="friends_get_friend_relationship"></a>steamworks.friends_get_friend_relationship(steamIDFriend) - [ISteamFriends#GetFriendRelationship](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRelationship)
 
 **RETURN**
 * `r` (EFriendRelationship)
 
 
-### steamworks.friends_get_friend_persona_state(steamIDFriend)
-[ISteamFriends#GetFriendPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaState)
+### <a name="friends_get_friend_persona_state"></a>steamworks.friends_get_friend_persona_state(steamIDFriend) - [ISteamFriends#GetFriendPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaState)
 
 **RETURN**
 * `r` (EPersonaState)
 
 
-### steamworks.friends_get_friend_persona_name(steamIDFriend)
-[ISteamFriends#GetFriendPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaName)
+### <a name="friends_get_friend_persona_name"></a>steamworks.friends_get_friend_persona_name(steamIDFriend) - [ISteamFriends#GetFriendPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaName)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_get_friend_game_played(steamIDFriend)
-[ISteamFriends#GetFriendGamePlayed](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendGamePlayed)
+### <a name="friends_get_friend_game_played"></a>steamworks.friends_get_friend_game_played(steamIDFriend) - [ISteamFriends#GetFriendGamePlayed](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendGamePlayed)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_get_friend_persona_name_history(steamIDFriend,iPersonaName)
-[ISteamFriends#GetFriendPersonaNameHistory](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaNameHistory)
+### <a name="friends_get_friend_persona_name_history"></a>steamworks.friends_get_friend_persona_name_history(steamIDFriend,iPersonaName) - [ISteamFriends#GetFriendPersonaNameHistory](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaNameHistory)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_get_friend_steam_level(steamIDFriend)
-[ISteamFriends#GetFriendSteamLevel](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendSteamLevel)
+### <a name="friends_get_friend_steam_level"></a>steamworks.friends_get_friend_steam_level(steamIDFriend) - [ISteamFriends#GetFriendSteamLevel](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendSteamLevel)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_player_nickname(steamIDPlayer)
-[ISteamFriends#GetPlayerNickname](https://partner.steamgames.com/doc/api/ISteamFriends#GetPlayerNickname)
+### <a name="friends_get_player_nickname"></a>steamworks.friends_get_player_nickname(steamIDPlayer) - [ISteamFriends#GetPlayerNickname](https://partner.steamgames.com/doc/api/ISteamFriends#GetPlayerNickname)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_get_friends_group_count()
-[ISteamFriends#GetFriendsGroupCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupCount)
+### <a name="friends_get_friends_group_count"></a>steamworks.friends_get_friends_group_count() - [ISteamFriends#GetFriendsGroupCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_friends_group_id_by_index(iFG)
-[ISteamFriends#GetFriendsGroupIDByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupIDByIndex)
+### <a name="friends_get_friends_group_id_by_index"></a>steamworks.friends_get_friends_group_id_by_index(iFG) - [ISteamFriends#GetFriendsGroupIDByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupIDByIndex)
 
 **RETURN**
 * `r` (FriendsGroupID_t)
 
 
-### steamworks.friends_get_friends_group_name(friendsGroupID)
-[ISteamFriends#GetFriendsGroupName](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupName)
+### <a name="friends_get_friends_group_name"></a>steamworks.friends_get_friends_group_name(friendsGroupID) - [ISteamFriends#GetFriendsGroupName](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupName)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_get_friends_group_members_count(friendsGroupID)
-[ISteamFriends#GetFriendsGroupMembersCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersCount)
+### <a name="friends_get_friends_group_members_count"></a>steamworks.friends_get_friends_group_members_count(friendsGroupID) - [ISteamFriends#GetFriendsGroupMembersCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_friends_group_members_list(friendsGroupID)
-[ISteamFriends#GetFriendsGroupMembersList](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersList)
+### <a name="friends_get_friends_group_members_list"></a>steamworks.friends_get_friends_group_members_list(friendsGroupID) - [ISteamFriends#GetFriendsGroupMembersList](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersList)
 
 
-### steamworks.friends_has_friend(steamIDFriend,iFriendFlags)
-[ISteamFriends#HasFriend](https://partner.steamgames.com/doc/api/ISteamFriends#HasFriend)
+### <a name="friends_has_friend"></a>steamworks.friends_has_friend(steamIDFriend,iFriendFlags) - [ISteamFriends#HasFriend](https://partner.steamgames.com/doc/api/ISteamFriends#HasFriend)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_get_clan_count()
-[ISteamFriends#GetClanCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanCount)
+### <a name="friends_get_clan_count"></a>steamworks.friends_get_clan_count() - [ISteamFriends#GetClanCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_clan_by_index(iClan)
-[ISteamFriends#GetClanByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanByIndex)
+### <a name="friends_get_clan_by_index"></a>steamworks.friends_get_clan_by_index(iClan) - [ISteamFriends#GetClanByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanByIndex)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.friends_get_clan_name(steamIDClan)
-[ISteamFriends#GetClanName](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanName)
+### <a name="friends_get_clan_name"></a>steamworks.friends_get_clan_name(steamIDClan) - [ISteamFriends#GetClanName](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanName)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_get_clan_tag(steamIDClan)
-[ISteamFriends#GetClanTag](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanTag)
+### <a name="friends_get_clan_tag"></a>steamworks.friends_get_clan_tag(steamIDClan) - [ISteamFriends#GetClanTag](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanTag)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_get_clan_activity_counts(steamIDClan)
-[ISteamFriends#GetClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanActivityCounts)
+### <a name="friends_get_clan_activity_counts"></a>steamworks.friends_get_clan_activity_counts(steamIDClan) - [ISteamFriends#GetClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanActivityCounts)
 
 **RETURN**
 * `r` (bool)
@@ -296,339 +573,288 @@ The extension exports the following functions:
 * `pnOnline` (int)
 
 
-### steamworks.friends_download_clan_activity_counts(psteamIDClans,cClansToRequest)
-[ISteamFriends#DownloadClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#DownloadClanActivityCounts)
+### <a name="friends_download_clan_activity_counts"></a>steamworks.friends_download_clan_activity_counts(psteamIDClans,cClansToRequest) - [ISteamFriends#DownloadClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#DownloadClanActivityCounts)
 
 **CALLBACK**
 * `DownloadClanActivityCountsResult_t`
 
-### steamworks.friends_get_friend_count_from_source(steamIDSource)
-[ISteamFriends#GetFriendCountFromSource](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCountFromSource)
+### <a name="friends_get_friend_count_from_source"></a>steamworks.friends_get_friend_count_from_source(steamIDSource) - [ISteamFriends#GetFriendCountFromSource](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCountFromSource)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_friend_from_source_by_index(steamIDSource,iFriend)
-[ISteamFriends#GetFriendFromSourceByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendFromSourceByIndex)
+### <a name="friends_get_friend_from_source_by_index"></a>steamworks.friends_get_friend_from_source_by_index(steamIDSource,iFriend) - [ISteamFriends#GetFriendFromSourceByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendFromSourceByIndex)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.friends_is_user_in_source(steamIDUser,steamIDSource)
-[ISteamFriends#IsUserInSource](https://partner.steamgames.com/doc/api/ISteamFriends#IsUserInSource)
+### <a name="friends_is_user_in_source"></a>steamworks.friends_is_user_in_source(steamIDUser,steamIDSource) - [ISteamFriends#IsUserInSource](https://partner.steamgames.com/doc/api/ISteamFriends#IsUserInSource)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_set_in_game_voice_speaking(steamIDUser,bSpeaking)
-[ISteamFriends#SetInGameVoiceSpeaking](https://partner.steamgames.com/doc/api/ISteamFriends#SetInGameVoiceSpeaking)
+### <a name="friends_set_in_game_voice_speaking"></a>steamworks.friends_set_in_game_voice_speaking(steamIDUser,bSpeaking) - [ISteamFriends#SetInGameVoiceSpeaking](https://partner.steamgames.com/doc/api/ISteamFriends#SetInGameVoiceSpeaking)
 
 
-### steamworks.friends_set_played_with(steamIDUserPlayedWith)
-[ISteamFriends#SetPlayedWith](https://partner.steamgames.com/doc/api/ISteamFriends#SetPlayedWith)
+### <a name="friends_set_played_with"></a>steamworks.friends_set_played_with(steamIDUserPlayedWith) - [ISteamFriends#SetPlayedWith](https://partner.steamgames.com/doc/api/ISteamFriends#SetPlayedWith)
 
 
-### steamworks.friends_activate_game_overlay_invite_dialog(steamIDLobby)
-[ISteamFriends#ActivateGameOverlayInviteDialog](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayInviteDialog)
+### <a name="friends_activate_game_overlay_invite_dialog"></a>steamworks.friends_activate_game_overlay_invite_dialog(steamIDLobby) - [ISteamFriends#ActivateGameOverlayInviteDialog](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayInviteDialog)
 
 
-### steamworks.friends_get_small_friend_avatar(steamIDFriend)
-[ISteamFriends#GetSmallFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetSmallFriendAvatar)
+### <a name="friends_get_small_friend_avatar"></a>steamworks.friends_get_small_friend_avatar(steamIDFriend) - [ISteamFriends#GetSmallFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetSmallFriendAvatar)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_medium_friend_avatar(steamIDFriend)
-[ISteamFriends#GetMediumFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetMediumFriendAvatar)
+### <a name="friends_get_medium_friend_avatar"></a>steamworks.friends_get_medium_friend_avatar(steamIDFriend) - [ISteamFriends#GetMediumFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetMediumFriendAvatar)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_large_friend_avatar(steamIDFriend)
-[ISteamFriends#GetLargeFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetLargeFriendAvatar)
+### <a name="friends_get_large_friend_avatar"></a>steamworks.friends_get_large_friend_avatar(steamIDFriend) - [ISteamFriends#GetLargeFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetLargeFriendAvatar)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_request_user_information(steamIDUser,bRequireNameOnly)
-[ISteamFriends#RequestUserInformation](https://partner.steamgames.com/doc/api/ISteamFriends#RequestUserInformation)
+### <a name="friends_request_user_information"></a>steamworks.friends_request_user_information(steamIDUser,bRequireNameOnly) - [ISteamFriends#RequestUserInformation](https://partner.steamgames.com/doc/api/ISteamFriends#RequestUserInformation)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_request_clan_officer_list(steamIDClan)
-[ISteamFriends#RequestClanOfficerList](https://partner.steamgames.com/doc/api/ISteamFriends#RequestClanOfficerList)
+### <a name="friends_request_clan_officer_list"></a>steamworks.friends_request_clan_officer_list(steamIDClan) - [ISteamFriends#RequestClanOfficerList](https://partner.steamgames.com/doc/api/ISteamFriends#RequestClanOfficerList)
 
 **CALLBACK**
 * `ClanOfficerListResponse_t`
 
-### steamworks.friends_get_clan_owner(steamIDClan)
-[ISteamFriends#GetClanOwner](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOwner)
+### <a name="friends_get_clan_owner"></a>steamworks.friends_get_clan_owner(steamIDClan) - [ISteamFriends#GetClanOwner](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOwner)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.friends_get_clan_officer_count(steamIDClan)
-[ISteamFriends#GetClanOfficerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerCount)
+### <a name="friends_get_clan_officer_count"></a>steamworks.friends_get_clan_officer_count(steamIDClan) - [ISteamFriends#GetClanOfficerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_clan_officer_by_index(steamIDClan,iOfficer)
-[ISteamFriends#GetClanOfficerByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerByIndex)
+### <a name="friends_get_clan_officer_by_index"></a>steamworks.friends_get_clan_officer_by_index(steamIDClan,iOfficer) - [ISteamFriends#GetClanOfficerByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerByIndex)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.friends_get_user_restrictions()
-[ISteamFriends#GetUserRestrictions](https://partner.steamgames.com/doc/api/ISteamFriends#GetUserRestrictions)
+### <a name="friends_get_user_restrictions"></a>steamworks.friends_get_user_restrictions() - [ISteamFriends#GetUserRestrictions](https://partner.steamgames.com/doc/api/ISteamFriends#GetUserRestrictions)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.friends_set_rich_presence(pchKey,pchValue)
-[ISteamFriends#SetRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence)
+### <a name="friends_set_rich_presence"></a>steamworks.friends_set_rich_presence(pchKey,pchValue) - [ISteamFriends#SetRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_clear_rich_presence()
-[ISteamFriends#ClearRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#ClearRichPresence)
+### <a name="friends_clear_rich_presence"></a>steamworks.friends_clear_rich_presence() - [ISteamFriends#ClearRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#ClearRichPresence)
 
 
-### steamworks.friends_get_friend_rich_presence(steamIDFriend,pchKey)
-[ISteamFriends#GetFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresence)
+### <a name="friends_get_friend_rich_presence"></a>steamworks.friends_get_friend_rich_presence(steamIDFriend,pchKey) - [ISteamFriends#GetFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresence)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_get_friend_rich_presence_key_count(steamIDFriend)
-[ISteamFriends#GetFriendRichPresenceKeyCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyCount)
+### <a name="friends_get_friend_rich_presence_key_count"></a>steamworks.friends_get_friend_rich_presence_key_count(steamIDFriend) - [ISteamFriends#GetFriendRichPresenceKeyCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_friend_rich_presence_key_by_index(steamIDFriend,iKey)
-[ISteamFriends#GetFriendRichPresenceKeyByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyByIndex)
+### <a name="friends_get_friend_rich_presence_key_by_index"></a>steamworks.friends_get_friend_rich_presence_key_by_index(steamIDFriend,iKey) - [ISteamFriends#GetFriendRichPresenceKeyByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyByIndex)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.friends_request_friend_rich_presence(steamIDFriend)
-[ISteamFriends#RequestFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#RequestFriendRichPresence)
+### <a name="friends_request_friend_rich_presence"></a>steamworks.friends_request_friend_rich_presence(steamIDFriend) - [ISteamFriends#RequestFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#RequestFriendRichPresence)
 
 
-### steamworks.friends_invite_user_to_game(steamIDFriend,pchConnectString)
-[ISteamFriends#InviteUserToGame](https://partner.steamgames.com/doc/api/ISteamFriends#InviteUserToGame)
+### <a name="friends_invite_user_to_game"></a>steamworks.friends_invite_user_to_game(steamIDFriend,pchConnectString) - [ISteamFriends#InviteUserToGame](https://partner.steamgames.com/doc/api/ISteamFriends#InviteUserToGame)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_get_coplay_friend_count()
-[ISteamFriends#GetCoplayFriendCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriendCount)
+### <a name="friends_get_coplay_friend_count"></a>steamworks.friends_get_coplay_friend_count() - [ISteamFriends#GetCoplayFriendCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriendCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_coplay_friend(iCoplayFriend)
-[ISteamFriends#GetCoplayFriend](https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriend)
+### <a name="friends_get_coplay_friend"></a>steamworks.friends_get_coplay_friend(iCoplayFriend) - [ISteamFriends#GetCoplayFriend](https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriend)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.friends_get_friend_coplay_time(steamIDFriend)
-[ISteamFriends#GetFriendCoplayTime](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayTime)
+### <a name="friends_get_friend_coplay_time"></a>steamworks.friends_get_friend_coplay_time(steamIDFriend) - [ISteamFriends#GetFriendCoplayTime](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayTime)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_friend_coplay_game(steamIDFriend)
-[ISteamFriends#GetFriendCoplayGame](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayGame)
+### <a name="friends_get_friend_coplay_game"></a>steamworks.friends_get_friend_coplay_game(steamIDFriend) - [ISteamFriends#GetFriendCoplayGame](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayGame)
 
 **RETURN**
 * `r` (AppId_t)
 
 
-### steamworks.friends_join_clan_chat_room(steamIDClan)
-[ISteamFriends#JoinClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#JoinClanChatRoom)
+### <a name="friends_join_clan_chat_room"></a>steamworks.friends_join_clan_chat_room(steamIDClan) - [ISteamFriends#JoinClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#JoinClanChatRoom)
 
 **CALLBACK**
 * `JoinClanChatRoomCompletionResult_t`
 
-### steamworks.friends_leave_clan_chat_room(steamIDClan)
-[ISteamFriends#LeaveClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#LeaveClanChatRoom)
+### <a name="friends_leave_clan_chat_room"></a>steamworks.friends_leave_clan_chat_room(steamIDClan) - [ISteamFriends#LeaveClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#LeaveClanChatRoom)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_get_clan_chat_member_count(steamIDClan)
-[ISteamFriends#GetClanChatMemberCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMemberCount)
+### <a name="friends_get_clan_chat_member_count"></a>steamworks.friends_get_clan_chat_member_count(steamIDClan) - [ISteamFriends#GetClanChatMemberCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMemberCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.friends_get_chat_member_by_index(steamIDClan,iUser)
-[ISteamFriends#GetChatMemberByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetChatMemberByIndex)
+### <a name="friends_get_chat_member_by_index"></a>steamworks.friends_get_chat_member_by_index(steamIDClan,iUser) - [ISteamFriends#GetChatMemberByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetChatMemberByIndex)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.friends_send_clan_chat_message(steamIDClanChat,pchText)
-[ISteamFriends#SendClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#SendClanChatMessage)
+### <a name="friends_send_clan_chat_message"></a>steamworks.friends_send_clan_chat_message(steamIDClanChat,pchText) - [ISteamFriends#SendClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#SendClanChatMessage)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_get_clan_chat_message(steamIDClanChat,iMessage,prgchText,cchTextMax)
-[ISteamFriends#GetClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMessage)
+### <a name="friends_get_clan_chat_message"></a>steamworks.friends_get_clan_chat_message(steamIDClanChat,iMessage,prgchText,cchTextMax) - [ISteamFriends#GetClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMessage)
 
 **RETURN**
 * `r` (int)
 * `peChatEntryType` (EChatEntryType)
 
 
-### steamworks.friends_is_clan_chat_admin(steamIDClanChat,steamIDUser)
-[ISteamFriends#IsClanChatAdmin](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatAdmin)
+### <a name="friends_is_clan_chat_admin"></a>steamworks.friends_is_clan_chat_admin(steamIDClanChat,steamIDUser) - [ISteamFriends#IsClanChatAdmin](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatAdmin)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_is_clan_chat_window_open_in_steam(steamIDClanChat)
-[ISteamFriends#IsClanChatWindowOpenInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatWindowOpenInSteam)
+### <a name="friends_is_clan_chat_window_open_in_steam"></a>steamworks.friends_is_clan_chat_window_open_in_steam(steamIDClanChat) - [ISteamFriends#IsClanChatWindowOpenInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatWindowOpenInSteam)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_open_clan_chat_window_in_steam(steamIDClanChat)
-[ISteamFriends#OpenClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#OpenClanChatWindowInSteam)
+### <a name="friends_open_clan_chat_window_in_steam"></a>steamworks.friends_open_clan_chat_window_in_steam(steamIDClanChat) - [ISteamFriends#OpenClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#OpenClanChatWindowInSteam)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_close_clan_chat_window_in_steam(steamIDClanChat)
-[ISteamFriends#CloseClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#CloseClanChatWindowInSteam)
+### <a name="friends_close_clan_chat_window_in_steam"></a>steamworks.friends_close_clan_chat_window_in_steam(steamIDClanChat) - [ISteamFriends#CloseClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#CloseClanChatWindowInSteam)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_set_listen_for_friends_messages(bInterceptEnabled)
-[ISteamFriends#SetListenForFriendsMessages](https://partner.steamgames.com/doc/api/ISteamFriends#SetListenForFriendsMessages)
+### <a name="friends_set_listen_for_friends_messages"></a>steamworks.friends_set_listen_for_friends_messages(bInterceptEnabled) - [ISteamFriends#SetListenForFriendsMessages](https://partner.steamgames.com/doc/api/ISteamFriends#SetListenForFriendsMessages)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_reply_to_friend_message(steamIDFriend,pchMsgToSend)
-[ISteamFriends#ReplyToFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#ReplyToFriendMessage)
+### <a name="friends_reply_to_friend_message"></a>steamworks.friends_reply_to_friend_message(steamIDFriend,pchMsgToSend) - [ISteamFriends#ReplyToFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#ReplyToFriendMessage)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_get_friend_message(steamIDFriend,iMessageID,pvData,cubData)
-[ISteamFriends#GetFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendMessage)
+### <a name="friends_get_friend_message"></a>steamworks.friends_get_friend_message(steamIDFriend,iMessageID,pvData,cubData) - [ISteamFriends#GetFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendMessage)
 
 **RETURN**
 * `r` (int)
 * `peChatEntryType` (EChatEntryType)
 
 
-### steamworks.friends_get_follower_count(steamID)
-[ISteamFriends#GetFollowerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFollowerCount)
+### <a name="friends_get_follower_count"></a>steamworks.friends_get_follower_count(steamID) - [ISteamFriends#GetFollowerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFollowerCount)
 
 **CALLBACK**
 * `FriendsGetFollowerCount_t`
 
-### steamworks.friends_is_following(steamID)
-[ISteamFriends#IsFollowing](https://partner.steamgames.com/doc/api/ISteamFriends#IsFollowing)
+### <a name="friends_is_following"></a>steamworks.friends_is_following(steamID) - [ISteamFriends#IsFollowing](https://partner.steamgames.com/doc/api/ISteamFriends#IsFollowing)
 
 **CALLBACK**
 * `FriendsIsFollowing_t`
 
-### steamworks.friends_enumerate_following_list(unStartIndex)
-[ISteamFriends#EnumerateFollowingList](https://partner.steamgames.com/doc/api/ISteamFriends#EnumerateFollowingList)
+### <a name="friends_enumerate_following_list"></a>steamworks.friends_enumerate_following_list(unStartIndex) - [ISteamFriends#EnumerateFollowingList](https://partner.steamgames.com/doc/api/ISteamFriends#EnumerateFollowingList)
 
 **CALLBACK**
 * `FriendsEnumerateFollowingList_t`
 
-### steamworks.friends_is_clan_public(steamIDClan)
-[ISteamFriends#IsClanPublic](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanPublic)
+### <a name="friends_is_clan_public"></a>steamworks.friends_is_clan_public(steamIDClan) - [ISteamFriends#IsClanPublic](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanPublic)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.friends_is_clan_official_game_group(steamIDClan)
-[ISteamFriends#IsClanOfficialGameGroup](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanOfficialGameGroup)
+### <a name="friends_is_clan_official_game_group"></a>steamworks.friends_is_clan_official_game_group(steamIDClan) - [ISteamFriends#IsClanOfficialGameGroup](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanOfficialGameGroup)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_get_seconds_since_app_active()
-[ISteamUtils#GetSecondsSinceAppActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceAppActive)
+### <a name="utils_get_seconds_since_app_active"></a>steamworks.utils_get_seconds_since_app_active() - [ISteamUtils#GetSecondsSinceAppActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceAppActive)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.utils_get_seconds_since_computer_active()
-[ISteamUtils#GetSecondsSinceComputerActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceComputerActive)
+### <a name="utils_get_seconds_since_computer_active"></a>steamworks.utils_get_seconds_since_computer_active() - [ISteamUtils#GetSecondsSinceComputerActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceComputerActive)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.utils_get_connected_universe()
-[ISteamUtils#GetConnectedUniverse](https://partner.steamgames.com/doc/api/ISteamUtils#GetConnectedUniverse)
+### <a name="utils_get_connected_universe"></a>steamworks.utils_get_connected_universe() - [ISteamUtils#GetConnectedUniverse](https://partner.steamgames.com/doc/api/ISteamUtils#GetConnectedUniverse)
 
 **RETURN**
 * `r` (EUniverse)
 
 
-### steamworks.utils_get_server_real_time()
-[ISteamUtils#GetServerRealTime](https://partner.steamgames.com/doc/api/ISteamUtils#GetServerRealTime)
+### <a name="utils_get_server_real_time"></a>steamworks.utils_get_server_real_time() - [ISteamUtils#GetServerRealTime](https://partner.steamgames.com/doc/api/ISteamUtils#GetServerRealTime)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.utils_get_ip_country()
-[ISteamUtils#GetIPCountry](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCountry)
+### <a name="utils_get_ip_country"></a>steamworks.utils_get_ip_country() - [ISteamUtils#GetIPCountry](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCountry)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.utils_get_image_size(iImage)
-[ISteamUtils#GetImageSize](https://partner.steamgames.com/doc/api/ISteamUtils#GetImageSize)
+### <a name="utils_get_image_size"></a>steamworks.utils_get_image_size(iImage) - [ISteamUtils#GetImageSize](https://partner.steamgames.com/doc/api/ISteamUtils#GetImageSize)
 
 **RETURN**
 * `r` (bool)
@@ -636,15 +862,13 @@ The extension exports the following functions:
 * `pnWidth` (uint32)
 
 
-### steamworks.utils_get_image_rgba(iImage,pubDest,nDestBufferSize)
-[ISteamUtils#GetImageRGBA](https://partner.steamgames.com/doc/api/ISteamUtils#GetImageRGBA)
+### <a name="utils_get_image_rgba"></a>steamworks.utils_get_image_rgba(iImage,pubDest,nDestBufferSize) - [ISteamUtils#GetImageRGBA](https://partner.steamgames.com/doc/api/ISteamUtils#GetImageRGBA)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_get_cserip_port()
-[ISteamUtils#GetCSERIPPort](https://partner.steamgames.com/doc/api/ISteamUtils#GetCSERIPPort)
+### <a name="utils_get_cserip_port"></a>steamworks.utils_get_cserip_port() - [ISteamUtils#GetCSERIPPort](https://partner.steamgames.com/doc/api/ISteamUtils#GetCSERIPPort)
 
 **RETURN**
 * `r` (bool)
@@ -652,133 +876,113 @@ The extension exports the following functions:
 * `unIP` (uint32)
 
 
-### steamworks.utils_get_current_battery_power()
-[ISteamUtils#GetCurrentBatteryPower](https://partner.steamgames.com/doc/api/ISteamUtils#GetCurrentBatteryPower)
+### <a name="utils_get_current_battery_power"></a>steamworks.utils_get_current_battery_power() - [ISteamUtils#GetCurrentBatteryPower](https://partner.steamgames.com/doc/api/ISteamUtils#GetCurrentBatteryPower)
 
 **RETURN**
 * `r` (uint8)
 
 
-### steamworks.utils_get_app_id()
-[ISteamUtils#GetAppID](https://partner.steamgames.com/doc/api/ISteamUtils#GetAppID)
+### <a name="utils_get_app_id"></a>steamworks.utils_get_app_id() - [ISteamUtils#GetAppID](https://partner.steamgames.com/doc/api/ISteamUtils#GetAppID)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.utils_is_api_call_completed(hSteamAPICall)
-[ISteamUtils#IsAPICallCompleted](https://partner.steamgames.com/doc/api/ISteamUtils#IsAPICallCompleted)
+### <a name="utils_is_api_call_completed"></a>steamworks.utils_is_api_call_completed(hSteamAPICall) - [ISteamUtils#IsAPICallCompleted](https://partner.steamgames.com/doc/api/ISteamUtils#IsAPICallCompleted)
 
 **RETURN**
 * `r` (bool)
 * `pbFailed` (bool)
 
 
-### steamworks.utils_get_api_call_failure_reason(hSteamAPICall)
-[ISteamUtils#GetAPICallFailureReason](https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallFailureReason)
+### <a name="utils_get_api_call_failure_reason"></a>steamworks.utils_get_api_call_failure_reason(hSteamAPICall) - [ISteamUtils#GetAPICallFailureReason](https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallFailureReason)
 
 **RETURN**
 * `r` (ESteamAPICallFailure)
 
 
-### steamworks.utils_get_api_call_result(hSteamAPICall,pCallback,cubCallback,iCallbackExpected)
-[ISteamUtils#GetAPICallResult](https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallResult)
+### <a name="utils_get_api_call_result"></a>steamworks.utils_get_api_call_result(hSteamAPICall,pCallback,cubCallback,iCallbackExpected) - [ISteamUtils#GetAPICallResult](https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallResult)
 
 **RETURN**
 * `r` (bool)
 * `pbFailed` (bool)
 
 
-### steamworks.utils_get_ipc_call_count()
-[ISteamUtils#GetIPCCallCount](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCCallCount)
+### <a name="utils_get_ipc_call_count"></a>steamworks.utils_get_ipc_call_count() - [ISteamUtils#GetIPCCallCount](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCCallCount)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.utils_overlay_needs_present()
-[ISteamUtils#BOverlayNeedsPresent](https://partner.steamgames.com/doc/api/ISteamUtils#BOverlayNeedsPresent)
+### <a name="utils_overlay_needs_present"></a>steamworks.utils_overlay_needs_present() - [ISteamUtils#BOverlayNeedsPresent](https://partner.steamgames.com/doc/api/ISteamUtils#BOverlayNeedsPresent)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_check_file_signature(szFileName)
-[ISteamUtils#CheckFileSignature](https://partner.steamgames.com/doc/api/ISteamUtils#CheckFileSignature)
+### <a name="utils_check_file_signature"></a>steamworks.utils_check_file_signature(szFileName) - [ISteamUtils#CheckFileSignature](https://partner.steamgames.com/doc/api/ISteamUtils#CheckFileSignature)
 
 **CALLBACK**
 * `CheckFileSignature_t`
 
-### steamworks.utils_show_gamepad_text_input(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText)
-[ISteamUtils#ShowGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#ShowGamepadTextInput)
+### <a name="utils_show_gamepad_text_input"></a>steamworks.utils_show_gamepad_text_input(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText) - [ISteamUtils#ShowGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#ShowGamepadTextInput)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_get_entered_gamepad_text_length()
-[ISteamUtils#GetEnteredGamepadTextLength](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextLength)
+### <a name="utils_get_entered_gamepad_text_length"></a>steamworks.utils_get_entered_gamepad_text_length() - [ISteamUtils#GetEnteredGamepadTextLength](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextLength)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.utils_get_entered_gamepad_text_input(pchText,cchText)
-[ISteamUtils#GetEnteredGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextInput)
+### <a name="utils_get_entered_gamepad_text_input"></a>steamworks.utils_get_entered_gamepad_text_input(pchText,cchText) - [ISteamUtils#GetEnteredGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextInput)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_get_steam_ui_language()
-[ISteamUtils#GetSteamUILanguage](https://partner.steamgames.com/doc/api/ISteamUtils#GetSteamUILanguage)
+### <a name="utils_get_steam_ui_language"></a>steamworks.utils_get_steam_ui_language() - [ISteamUtils#GetSteamUILanguage](https://partner.steamgames.com/doc/api/ISteamUtils#GetSteamUILanguage)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.utils_is_steam_running_in_vr()
-[ISteamUtils#IsSteamRunningInVR](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamRunningInVR)
+### <a name="utils_is_steam_running_in_vr"></a>steamworks.utils_is_steam_running_in_vr() - [ISteamUtils#IsSteamRunningInVR](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamRunningInVR)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_set_overlay_notification_inset(nHorizontalInset,nVerticalInset)
-[ISteamUtils#SetOverlayNotificationInset](https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationInset)
+### <a name="utils_set_overlay_notification_inset"></a>steamworks.utils_set_overlay_notification_inset(nHorizontalInset,nVerticalInset) - [ISteamUtils#SetOverlayNotificationInset](https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationInset)
 
 
-### steamworks.utils_is_steam_in_big_picture_mode()
-[ISteamUtils#IsSteamInBigPictureMode](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamInBigPictureMode)
+### <a name="utils_is_steam_in_big_picture_mode"></a>steamworks.utils_is_steam_in_big_picture_mode() - [ISteamUtils#IsSteamInBigPictureMode](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamInBigPictureMode)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_start_vr_dashboard()
-[ISteamUtils#StartVRDashboard](https://partner.steamgames.com/doc/api/ISteamUtils#StartVRDashboard)
+### <a name="utils_start_vr_dashboard"></a>steamworks.utils_start_vr_dashboard() - [ISteamUtils#StartVRDashboard](https://partner.steamgames.com/doc/api/ISteamUtils#StartVRDashboard)
 
 
-### steamworks.utils_is_vr_headset_streaming_enabled()
-[ISteamUtils#IsVRHeadsetStreamingEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#IsVRHeadsetStreamingEnabled)
+### <a name="utils_is_vr_headset_streaming_enabled"></a>steamworks.utils_is_vr_headset_streaming_enabled() - [ISteamUtils#IsVRHeadsetStreamingEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#IsVRHeadsetStreamingEnabled)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.utils_set_vr_headset_streaming_enabled(bEnabled)
-[ISteamUtils#SetVRHeadsetStreamingEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#SetVRHeadsetStreamingEnabled)
+### <a name="utils_set_vr_headset_streaming_enabled"></a>steamworks.utils_set_vr_headset_streaming_enabled(bEnabled) - [ISteamUtils#SetVRHeadsetStreamingEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#SetVRHeadsetStreamingEnabled)
 
 
-### steamworks.matchmaking_get_favorite_game_count()
-[ISteamMatchmaking#GetFavoriteGameCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGameCount)
+### <a name="matchmaking_get_favorite_game_count"></a>steamworks.matchmaking_get_favorite_game_count() - [ISteamMatchmaking#GetFavoriteGameCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGameCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.matchmaking_get_favorite_game(iGame)
-[ISteamMatchmaking#GetFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGame)
+### <a name="matchmaking_get_favorite_game"></a>steamworks.matchmaking_get_favorite_game(iGame) - [ISteamMatchmaking#GetFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGame)
 
 **RETURN**
 * `r` (bool)
@@ -790,172 +994,143 @@ The extension exports the following functions:
 * `pnAppID` (AppId_t)
 
 
-### steamworks.matchmaking_add_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags,rTime32LastPlayedOnServer)
-[ISteamMatchmaking#AddFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddFavoriteGame)
+### <a name="matchmaking_add_favorite_game"></a>steamworks.matchmaking_add_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags,rTime32LastPlayedOnServer) - [ISteamMatchmaking#AddFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddFavoriteGame)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.matchmaking_remove_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags)
-[ISteamMatchmaking#RemoveFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RemoveFavoriteGame)
+### <a name="matchmaking_remove_favorite_game"></a>steamworks.matchmaking_remove_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags) - [ISteamMatchmaking#RemoveFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RemoveFavoriteGame)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_request_lobby_list()
-[ISteamMatchmaking#RequestLobbyList](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyList)
+### <a name="matchmaking_request_lobby_list"></a>steamworks.matchmaking_request_lobby_list() - [ISteamMatchmaking#RequestLobbyList](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyList)
 
 **CALLBACK**
 * `LobbyMatchList_t`
 
-### steamworks.matchmaking_add_request_lobby_list_string_filter(pchKeyToMatch,pchValueToMatch,eComparisonType)
-[ISteamMatchmaking#AddRequestLobbyListStringFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListStringFilter)
+### <a name="matchmaking_add_request_lobby_list_string_filter"></a>steamworks.matchmaking_add_request_lobby_list_string_filter(pchKeyToMatch,pchValueToMatch,eComparisonType) - [ISteamMatchmaking#AddRequestLobbyListStringFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListStringFilter)
 
 
-### steamworks.matchmaking_add_request_lobby_list_numerical_filter(pchKeyToMatch,nValueToMatch,eComparisonType)
-[ISteamMatchmaking#AddRequestLobbyListNumericalFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNumericalFilter)
+### <a name="matchmaking_add_request_lobby_list_numerical_filter"></a>steamworks.matchmaking_add_request_lobby_list_numerical_filter(pchKeyToMatch,nValueToMatch,eComparisonType) - [ISteamMatchmaking#AddRequestLobbyListNumericalFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNumericalFilter)
 
 
-### steamworks.matchmaking_add_request_lobby_list_near_value_filter(pchKeyToMatch,nValueToBeCloseTo)
-[ISteamMatchmaking#AddRequestLobbyListNearValueFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNearValueFilter)
+### <a name="matchmaking_add_request_lobby_list_near_value_filter"></a>steamworks.matchmaking_add_request_lobby_list_near_value_filter(pchKeyToMatch,nValueToBeCloseTo) - [ISteamMatchmaking#AddRequestLobbyListNearValueFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNearValueFilter)
 
 
-### steamworks.matchmaking_add_request_lobby_list_filter_slots_available(nSlotsAvailable)
-[ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable)
+### <a name="matchmaking_add_request_lobby_list_filter_slots_available"></a>steamworks.matchmaking_add_request_lobby_list_filter_slots_available(nSlotsAvailable) - [ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable)
 
 
-### steamworks.matchmaking_add_request_lobby_list_distance_filter(eLobbyDistanceFilter)
-[ISteamMatchmaking#AddRequestLobbyListDistanceFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListDistanceFilter)
+### <a name="matchmaking_add_request_lobby_list_distance_filter"></a>steamworks.matchmaking_add_request_lobby_list_distance_filter(eLobbyDistanceFilter) - [ISteamMatchmaking#AddRequestLobbyListDistanceFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListDistanceFilter)
 
 
-### steamworks.matchmaking_add_request_lobby_list_result_count_filter(cMaxResults)
-[ISteamMatchmaking#AddRequestLobbyListResultCountFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListResultCountFilter)
+### <a name="matchmaking_add_request_lobby_list_result_count_filter"></a>steamworks.matchmaking_add_request_lobby_list_result_count_filter(cMaxResults) - [ISteamMatchmaking#AddRequestLobbyListResultCountFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListResultCountFilter)
 
 
-### steamworks.matchmaking_add_request_lobby_list_compatible_members_filter(steamIDLobby)
-[ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter)
+### <a name="matchmaking_add_request_lobby_list_compatible_members_filter"></a>steamworks.matchmaking_add_request_lobby_list_compatible_members_filter(steamIDLobby) - [ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter)
 
 
-### steamworks.matchmaking_get_lobby_by_index(iLobby)
-[ISteamMatchmaking#GetLobbyByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyByIndex)
+### <a name="matchmaking_get_lobby_by_index"></a>steamworks.matchmaking_get_lobby_by_index(iLobby) - [ISteamMatchmaking#GetLobbyByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyByIndex)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.matchmaking_create_lobby(eLobbyType,cMaxMembers)
-[ISteamMatchmaking#CreateLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby)
+### <a name="matchmaking_create_lobby"></a>steamworks.matchmaking_create_lobby(eLobbyType,cMaxMembers) - [ISteamMatchmaking#CreateLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby)
 
 **CALLBACK**
 * `LobbyCreated_t`
 
-### steamworks.matchmaking_join_lobby(steamIDLobby)
-[ISteamMatchmaking#JoinLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#JoinLobby)
+### <a name="matchmaking_join_lobby"></a>steamworks.matchmaking_join_lobby(steamIDLobby) - [ISteamMatchmaking#JoinLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#JoinLobby)
 
 **CALLBACK**
 * `LobbyEnter_t`
 
-### steamworks.matchmaking_leave_lobby(steamIDLobby)
-[ISteamMatchmaking#LeaveLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#LeaveLobby)
+### <a name="matchmaking_leave_lobby"></a>steamworks.matchmaking_leave_lobby(steamIDLobby) - [ISteamMatchmaking#LeaveLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#LeaveLobby)
 
 
-### steamworks.matchmaking_invite_user_to_lobby(steamIDLobby,steamIDInvitee)
-[ISteamMatchmaking#InviteUserToLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#InviteUserToLobby)
+### <a name="matchmaking_invite_user_to_lobby"></a>steamworks.matchmaking_invite_user_to_lobby(steamIDLobby,steamIDInvitee) - [ISteamMatchmaking#InviteUserToLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#InviteUserToLobby)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_get_num_lobby_members(steamIDLobby)
-[ISteamMatchmaking#GetNumLobbyMembers](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetNumLobbyMembers)
+### <a name="matchmaking_get_num_lobby_members"></a>steamworks.matchmaking_get_num_lobby_members(steamIDLobby) - [ISteamMatchmaking#GetNumLobbyMembers](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetNumLobbyMembers)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.matchmaking_get_lobby_member_by_index(steamIDLobby,iMember)
-[ISteamMatchmaking#GetLobbyMemberByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberByIndex)
+### <a name="matchmaking_get_lobby_member_by_index"></a>steamworks.matchmaking_get_lobby_member_by_index(steamIDLobby,iMember) - [ISteamMatchmaking#GetLobbyMemberByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberByIndex)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.matchmaking_get_lobby_data(steamIDLobby,pchKey)
-[ISteamMatchmaking#GetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyData)
+### <a name="matchmaking_get_lobby_data"></a>steamworks.matchmaking_get_lobby_data(steamIDLobby,pchKey) - [ISteamMatchmaking#GetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyData)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.matchmaking_set_lobby_data(steamIDLobby,pchKey,pchValue)
-[ISteamMatchmaking#SetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyData)
+### <a name="matchmaking_set_lobby_data"></a>steamworks.matchmaking_set_lobby_data(steamIDLobby,pchKey,pchValue) - [ISteamMatchmaking#SetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyData)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_get_lobby_data_count(steamIDLobby)
-[ISteamMatchmaking#GetLobbyDataCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataCount)
+### <a name="matchmaking_get_lobby_data_count"></a>steamworks.matchmaking_get_lobby_data_count(steamIDLobby) - [ISteamMatchmaking#GetLobbyDataCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.matchmaking_get_lobby_data_by_index(steamIDLobby,iLobbyData,pchKey,cchKeyBufferSize,pchValue,cchValueBufferSize)
-[ISteamMatchmaking#GetLobbyDataByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataByIndex)
+### <a name="matchmaking_get_lobby_data_by_index"></a>steamworks.matchmaking_get_lobby_data_by_index(steamIDLobby,iLobbyData,pchKey,cchKeyBufferSize,pchValue,cchValueBufferSize) - [ISteamMatchmaking#GetLobbyDataByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataByIndex)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_delete_lobby_data(steamIDLobby,pchKey)
-[ISteamMatchmaking#DeleteLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#DeleteLobbyData)
+### <a name="matchmaking_delete_lobby_data"></a>steamworks.matchmaking_delete_lobby_data(steamIDLobby,pchKey) - [ISteamMatchmaking#DeleteLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#DeleteLobbyData)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_get_lobby_member_data(steamIDLobby,steamIDUser,pchKey)
-[ISteamMatchmaking#GetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData)
+### <a name="matchmaking_get_lobby_member_data"></a>steamworks.matchmaking_get_lobby_member_data(steamIDLobby,steamIDUser,pchKey) - [ISteamMatchmaking#GetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.matchmaking_set_lobby_member_data(steamIDLobby,pchKey,pchValue)
-[ISteamMatchmaking#SetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberData)
+### <a name="matchmaking_set_lobby_member_data"></a>steamworks.matchmaking_set_lobby_member_data(steamIDLobby,pchKey,pchValue) - [ISteamMatchmaking#SetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberData)
 
 
-### steamworks.matchmaking_send_lobby_chat_msg(steamIDLobby,pvMsgBody,cubMsgBody)
-[ISteamMatchmaking#SendLobbyChatMsg](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg)
+### <a name="matchmaking_send_lobby_chat_msg"></a>steamworks.matchmaking_send_lobby_chat_msg(steamIDLobby,pvMsgBody,cubMsgBody) - [ISteamMatchmaking#SendLobbyChatMsg](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_get_lobby_chat_entry(steamIDLobby,iChatID,pvData,cubData)
-[ISteamMatchmaking#GetLobbyChatEntry](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry)
+### <a name="matchmaking_get_lobby_chat_entry"></a>steamworks.matchmaking_get_lobby_chat_entry(steamIDLobby,iChatID,pvData,cubData) - [ISteamMatchmaking#GetLobbyChatEntry](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry)
 
 **RETURN**
 * `r` (int)
 * `peChatEntryType` (EChatEntryType)
 
 
-### steamworks.matchmaking_request_lobby_data(steamIDLobby)
-[ISteamMatchmaking#RequestLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyData)
+### <a name="matchmaking_request_lobby_data"></a>steamworks.matchmaking_request_lobby_data(steamIDLobby) - [ISteamMatchmaking#RequestLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyData)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_set_lobby_game_server(steamIDLobby,unGameServerIP,unGameServerPort,steamIDGameServer)
-[ISteamMatchmaking#SetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer)
+### <a name="matchmaking_set_lobby_game_server"></a>steamworks.matchmaking_set_lobby_game_server(steamIDLobby,unGameServerIP,unGameServerPort,steamIDGameServer) - [ISteamMatchmaking#SetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer)
 
 
-### steamworks.matchmaking_get_lobby_game_server(steamIDLobby)
-[ISteamMatchmaking#GetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyGameServer)
+### <a name="matchmaking_get_lobby_game_server"></a>steamworks.matchmaking_get_lobby_game_server(steamIDLobby) - [ISteamMatchmaking#GetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyGameServer)
 
 **RETURN**
 * `r` (bool)
@@ -963,195 +1138,167 @@ The extension exports the following functions:
 * `punGameServerIP` (uint32)
 
 
-### steamworks.matchmaking_set_lobby_member_limit(steamIDLobby,cMaxMembers)
-[ISteamMatchmaking#SetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberLimit)
+### <a name="matchmaking_set_lobby_member_limit"></a>steamworks.matchmaking_set_lobby_member_limit(steamIDLobby,cMaxMembers) - [ISteamMatchmaking#SetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberLimit)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_get_lobby_member_limit(steamIDLobby)
-[ISteamMatchmaking#GetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberLimit)
+### <a name="matchmaking_get_lobby_member_limit"></a>steamworks.matchmaking_get_lobby_member_limit(steamIDLobby) - [ISteamMatchmaking#GetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberLimit)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.matchmaking_set_lobby_type(steamIDLobby,eLobbyType)
-[ISteamMatchmaking#SetLobbyType](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyType)
+### <a name="matchmaking_set_lobby_type"></a>steamworks.matchmaking_set_lobby_type(steamIDLobby,eLobbyType) - [ISteamMatchmaking#SetLobbyType](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyType)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_set_lobby_joinable(steamIDLobby,bLobbyJoinable)
-[ISteamMatchmaking#SetLobbyJoinable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyJoinable)
+### <a name="matchmaking_set_lobby_joinable"></a>steamworks.matchmaking_set_lobby_joinable(steamIDLobby,bLobbyJoinable) - [ISteamMatchmaking#SetLobbyJoinable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyJoinable)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_get_lobby_owner(steamIDLobby)
-[ISteamMatchmaking#GetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyOwner)
+### <a name="matchmaking_get_lobby_owner"></a>steamworks.matchmaking_get_lobby_owner(steamIDLobby) - [ISteamMatchmaking#GetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyOwner)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.matchmaking_set_lobby_owner(steamIDLobby,steamIDNewOwner)
-[ISteamMatchmaking#SetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyOwner)
+### <a name="matchmaking_set_lobby_owner"></a>steamworks.matchmaking_set_lobby_owner(steamIDLobby,steamIDNewOwner) - [ISteamMatchmaking#SetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyOwner)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.matchmaking_set_linked_lobby(steamIDLobby,steamIDLobbyDependent)
-[ISteamMatchmaking#SetLinkedLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLinkedLobby)
+### <a name="matchmaking_set_linked_lobby"></a>steamworks.matchmaking_set_linked_lobby(steamIDLobby,steamIDLobbyDependent) - [ISteamMatchmaking#SetLinkedLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLinkedLobby)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_write(pchFile,pvData,cubData)
-[ISteamRemoteStorage#FileWrite](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWrite)
+### <a name="remote_storage_file_write"></a>steamworks.remote_storage_file_write(pchFile,pvData,cubData) - [ISteamRemoteStorage#FileWrite](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWrite)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_read(pchFile,pvData,cubDataToRead)
-[ISteamRemoteStorage#FileRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileRead)
+### <a name="remote_storage_file_read"></a>steamworks.remote_storage_file_read(pchFile,pvData,cubDataToRead) - [ISteamRemoteStorage#FileRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileRead)
 
 **RETURN**
 * `r` (int32)
 
 
-### steamworks.remote_storage_file_write_async(pchFile,pvData,cubData)
-[ISteamRemoteStorage#FileWriteAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteAsync)
+### <a name="remote_storage_file_write_async"></a>steamworks.remote_storage_file_write_async(pchFile,pvData,cubData) - [ISteamRemoteStorage#FileWriteAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteAsync)
 
 **CALLBACK**
 * `RemoteStorageFileWriteAsyncComplete_t`
 
-### steamworks.remote_storage_file_read_async(pchFile,nOffset,cubToRead)
-[ISteamRemoteStorage#FileReadAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsync)
+### <a name="remote_storage_file_read_async"></a>steamworks.remote_storage_file_read_async(pchFile,nOffset,cubToRead) - [ISteamRemoteStorage#FileReadAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsync)
 
 **CALLBACK**
 * `RemoteStorageFileReadAsyncComplete_t`
 
-### steamworks.remote_storage_file_read_async_complete(hReadCall,pvBuffer,cubToRead)
-[ISteamRemoteStorage#FileReadAsyncComplete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsyncComplete)
+### <a name="remote_storage_file_read_async_complete"></a>steamworks.remote_storage_file_read_async_complete(hReadCall,pvBuffer,cubToRead) - [ISteamRemoteStorage#FileReadAsyncComplete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsyncComplete)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_forget(pchFile)
-[ISteamRemoteStorage#FileForget](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileForget)
+### <a name="remote_storage_file_forget"></a>steamworks.remote_storage_file_forget(pchFile) - [ISteamRemoteStorage#FileForget](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileForget)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_delete(pchFile)
-[ISteamRemoteStorage#FileDelete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileDelete)
+### <a name="remote_storage_file_delete"></a>steamworks.remote_storage_file_delete(pchFile) - [ISteamRemoteStorage#FileDelete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileDelete)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_share(pchFile)
-[ISteamRemoteStorage#FileShare](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileShare)
+### <a name="remote_storage_file_share"></a>steamworks.remote_storage_file_share(pchFile) - [ISteamRemoteStorage#FileShare](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileShare)
 
 **CALLBACK**
 * `RemoteStorageFileShareResult_t`
 
-### steamworks.remote_storage_set_sync_platforms(pchFile,eRemoteStoragePlatform)
-[ISteamRemoteStorage#SetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetSyncPlatforms)
+### <a name="remote_storage_set_sync_platforms"></a>steamworks.remote_storage_set_sync_platforms(pchFile,eRemoteStoragePlatform) - [ISteamRemoteStorage#SetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetSyncPlatforms)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_write_stream_open(pchFile)
-[ISteamRemoteStorage#FileWriteStreamOpen](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamOpen)
+### <a name="remote_storage_file_write_stream_open"></a>steamworks.remote_storage_file_write_stream_open(pchFile) - [ISteamRemoteStorage#FileWriteStreamOpen](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamOpen)
 
 **RETURN**
 * `r` (UGCFileWriteStreamHandle_t)
 
 
-### steamworks.remote_storage_file_write_stream_write_chunk(writeHandle,pvData,cubData)
-[ISteamRemoteStorage#FileWriteStreamWriteChunk](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamWriteChunk)
+### <a name="remote_storage_file_write_stream_write_chunk"></a>steamworks.remote_storage_file_write_stream_write_chunk(writeHandle,pvData,cubData) - [ISteamRemoteStorage#FileWriteStreamWriteChunk](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamWriteChunk)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_write_stream_close(writeHandle)
-[ISteamRemoteStorage#FileWriteStreamClose](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamClose)
+### <a name="remote_storage_file_write_stream_close"></a>steamworks.remote_storage_file_write_stream_close(writeHandle) - [ISteamRemoteStorage#FileWriteStreamClose](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamClose)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_write_stream_cancel(writeHandle)
-[ISteamRemoteStorage#FileWriteStreamCancel](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamCancel)
+### <a name="remote_storage_file_write_stream_cancel"></a>steamworks.remote_storage_file_write_stream_cancel(writeHandle) - [ISteamRemoteStorage#FileWriteStreamCancel](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamCancel)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_exists(pchFile)
-[ISteamRemoteStorage#FileExists](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileExists)
+### <a name="remote_storage_file_exists"></a>steamworks.remote_storage_file_exists(pchFile) - [ISteamRemoteStorage#FileExists](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileExists)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_file_persisted(pchFile)
-[ISteamRemoteStorage#FilePersisted](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FilePersisted)
+### <a name="remote_storage_file_persisted"></a>steamworks.remote_storage_file_persisted(pchFile) - [ISteamRemoteStorage#FilePersisted](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FilePersisted)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_get_file_size(pchFile)
-[ISteamRemoteStorage#GetFileSize](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileSize)
+### <a name="remote_storage_get_file_size"></a>steamworks.remote_storage_get_file_size(pchFile) - [ISteamRemoteStorage#GetFileSize](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileSize)
 
 **RETURN**
 * `r` (int32)
 
 
-### steamworks.remote_storage_get_file_timestamp(pchFile)
-[ISteamRemoteStorage#GetFileTimestamp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileTimestamp)
+### <a name="remote_storage_get_file_timestamp"></a>steamworks.remote_storage_get_file_timestamp(pchFile) - [ISteamRemoteStorage#GetFileTimestamp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileTimestamp)
 
 **RETURN**
 * `r` (int64)
 
 
-### steamworks.remote_storage_get_sync_platforms(pchFile)
-[ISteamRemoteStorage#GetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetSyncPlatforms)
+### <a name="remote_storage_get_sync_platforms"></a>steamworks.remote_storage_get_sync_platforms(pchFile) - [ISteamRemoteStorage#GetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetSyncPlatforms)
 
 **RETURN**
 * `r` (ERemoteStoragePlatform)
 
 
-### steamworks.remote_storage_get_file_count()
-[ISteamRemoteStorage#GetFileCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileCount)
+### <a name="remote_storage_get_file_count"></a>steamworks.remote_storage_get_file_count() - [ISteamRemoteStorage#GetFileCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileCount)
 
 **RETURN**
 * `r` (int32)
 
 
-### steamworks.remote_storage_get_file_name_and_size(iFile)
-[ISteamRemoteStorage#GetFileNameAndSize](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileNameAndSize)
+### <a name="remote_storage_get_file_name_and_size"></a>steamworks.remote_storage_get_file_name_and_size(iFile) - [ISteamRemoteStorage#GetFileNameAndSize](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileNameAndSize)
 
 **RETURN**
 * `r` (const_char_ptr)
 * `pnFileSizeInBytes` (int32)
 
 
-### steamworks.remote_storage_get_quota()
-[ISteamRemoteStorage#GetQuota](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetQuota)
+### <a name="remote_storage_get_quota"></a>steamworks.remote_storage_get_quota() - [ISteamRemoteStorage#GetQuota](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetQuota)
 
 **RETURN**
 * `r` (bool)
@@ -1159,32 +1306,27 @@ The extension exports the following functions:
 * `pnTotalBytes` (uint64)
 
 
-### steamworks.remote_storage_is_cloud_enabled_for_account()
-[ISteamRemoteStorage#IsCloudEnabledForAccount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForAccount)
+### <a name="remote_storage_is_cloud_enabled_for_account"></a>steamworks.remote_storage_is_cloud_enabled_for_account() - [ISteamRemoteStorage#IsCloudEnabledForAccount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForAccount)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_is_cloud_enabled_for_app()
-[ISteamRemoteStorage#IsCloudEnabledForApp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForApp)
+### <a name="remote_storage_is_cloud_enabled_for_app"></a>steamworks.remote_storage_is_cloud_enabled_for_app() - [ISteamRemoteStorage#IsCloudEnabledForApp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForApp)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.remote_storage_set_cloud_enabled_for_app(bEnabled)
-[ISteamRemoteStorage#SetCloudEnabledForApp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetCloudEnabledForApp)
+### <a name="remote_storage_set_cloud_enabled_for_app"></a>steamworks.remote_storage_set_cloud_enabled_for_app(bEnabled) - [ISteamRemoteStorage#SetCloudEnabledForApp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetCloudEnabledForApp)
 
 
-### steamworks.remote_storage_ugc_download(hContent,unPriority)
-[ISteamRemoteStorage#UGCDownload](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload)
+### <a name="remote_storage_ugc_download"></a>steamworks.remote_storage_ugc_download(hContent,unPriority) - [ISteamRemoteStorage#UGCDownload](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload)
 
 **CALLBACK**
 * `RemoteStorageDownloadUGCResult_t`
 
-### steamworks.remote_storage_get_ugc_download_progress(hContent)
-[ISteamRemoteStorage#GetUGCDownloadProgress](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDownloadProgress)
+### <a name="remote_storage_get_ugc_download_progress"></a>steamworks.remote_storage_get_ugc_download_progress(hContent) - [ISteamRemoteStorage#GetUGCDownloadProgress](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDownloadProgress)
 
 **RETURN**
 * `r` (bool)
@@ -1192,8 +1334,7 @@ The extension exports the following functions:
 * `pnBytesDownloaded` (int32)
 
 
-### steamworks.remote_storage_get_ugc_details(hContent)
-[ISteamRemoteStorage#GetUGCDetails](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDetails)
+### <a name="remote_storage_get_ugc_details"></a>steamworks.remote_storage_get_ugc_details(hContent) - [ISteamRemoteStorage#GetUGCDetails](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDetails)
 
 **RETURN**
 * `r` (bool)
@@ -1202,101 +1343,87 @@ The extension exports the following functions:
 * `ppchName` (string)
 
 
-### steamworks.remote_storage_ugc_read(hContent,pvData,cubDataToRead,cOffset,eAction)
-[ISteamRemoteStorage#UGCRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCRead)
+### <a name="remote_storage_ugc_read"></a>steamworks.remote_storage_ugc_read(hContent,pvData,cubDataToRead,cOffset,eAction) - [ISteamRemoteStorage#UGCRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCRead)
 
 **RETURN**
 * `r` (int32)
 
 
-### steamworks.remote_storage_get_cached_ugc_count()
-[ISteamRemoteStorage#GetCachedUGCCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCCount)
+### <a name="remote_storage_get_cached_ugc_count"></a>steamworks.remote_storage_get_cached_ugc_count() - [ISteamRemoteStorage#GetCachedUGCCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCCount)
 
 **RETURN**
 * `r` (int32)
 
 
-### steamworks.remote_storage_get_cached_ugc_handle(iCachedContent)
-[ISteamRemoteStorage#GetCachedUGCHandle](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCHandle)
+### <a name="remote_storage_get_cached_ugc_handle"></a>steamworks.remote_storage_get_cached_ugc_handle(iCachedContent) - [ISteamRemoteStorage#GetCachedUGCHandle](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCHandle)
 
 **RETURN**
 * `r` (UGCHandle_t)
 
 
-### steamworks.remote_storage_ugc_download_to_location(hContent,pchLocation,unPriority)
-[ISteamRemoteStorage#UGCDownloadToLocation](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation)
+### <a name="remote_storage_ugc_download_to_location"></a>steamworks.remote_storage_ugc_download_to_location(hContent,pchLocation,unPriority) - [ISteamRemoteStorage#UGCDownloadToLocation](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation)
 
 **CALLBACK**
 * `RemoteStorageDownloadUGCResult_t`
 
-### steamworks.user_stats_request_current_stats()
-[ISteamUserStats#RequestCurrentStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestCurrentStats)
+### <a name="user_stats_request_current_stats"></a>steamworks.user_stats_request_current_stats() - [ISteamUserStats#RequestCurrentStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestCurrentStats)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_get_stat_int(pchName)
-[ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
+### <a name="user_stats_get_stat_int"></a>steamworks.user_stats_get_stat_int(pchName) - [ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
 
 **RETURN**
 * `r` (bool)
 * `pData` (int32)
 
 
-### steamworks.user_stats_get_stat_float(pchName)
-[ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
+### <a name="user_stats_get_stat_float"></a>steamworks.user_stats_get_stat_float(pchName) - [ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
 
 **RETURN**
 * `r` (bool)
 * `pData` (float)
 
 
-### steamworks.user_stats_set_stat_int(pchName,nData)
-[ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
+### <a name="user_stats_set_stat_int"></a>steamworks.user_stats_set_stat_int(pchName,nData) - [ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_set_stat_float(pchName,fData)
-[ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
+### <a name="user_stats_set_stat_float"></a>steamworks.user_stats_set_stat_float(pchName,fData) - [ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_update_avg_rate_stat(pchName,flCountThisSession,dSessionLength)
-[ISteamUserStats#UpdateAvgRateStat](https://partner.steamgames.com/doc/api/ISteamUserStats#UpdateAvgRateStat)
+### <a name="user_stats_update_avg_rate_stat"></a>steamworks.user_stats_update_avg_rate_stat(pchName,flCountThisSession,dSessionLength) - [ISteamUserStats#UpdateAvgRateStat](https://partner.steamgames.com/doc/api/ISteamUserStats#UpdateAvgRateStat)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_get_achievement(pchName)
-[ISteamUserStats#GetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievement)
+### <a name="user_stats_get_achievement"></a>steamworks.user_stats_get_achievement(pchName) - [ISteamUserStats#GetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievement)
 
 **RETURN**
 * `r` (bool)
 * `pbAchieved` (bool)
 
 
-### steamworks.user_stats_set_achievement(pchName)
-[ISteamUserStats#SetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#SetAchievement)
+### <a name="user_stats_set_achievement"></a>steamworks.user_stats_set_achievement(pchName) - [ISteamUserStats#SetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#SetAchievement)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_clear_achievement(pchName)
-[ISteamUserStats#ClearAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#ClearAchievement)
+### <a name="user_stats_clear_achievement"></a>steamworks.user_stats_clear_achievement(pchName) - [ISteamUserStats#ClearAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#ClearAchievement)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_get_achievement_and_unlock_time(pchName)
-[ISteamUserStats#GetAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAndUnlockTime)
+### <a name="user_stats_get_achievement_and_unlock_time"></a>steamworks.user_stats_get_achievement_and_unlock_time(pchName) - [ISteamUserStats#GetAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAndUnlockTime)
 
 **RETURN**
 * `r` (bool)
@@ -1304,80 +1431,69 @@ The extension exports the following functions:
 * `pbAchieved` (bool)
 
 
-### steamworks.user_stats_store_stats()
-[ISteamUserStats#StoreStats](https://partner.steamgames.com/doc/api/ISteamUserStats#StoreStats)
+### <a name="user_stats_store_stats"></a>steamworks.user_stats_store_stats() - [ISteamUserStats#StoreStats](https://partner.steamgames.com/doc/api/ISteamUserStats#StoreStats)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_get_achievement_icon(pchName)
-[ISteamUserStats#GetAchievementIcon](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementIcon)
+### <a name="user_stats_get_achievement_icon"></a>steamworks.user_stats_get_achievement_icon(pchName) - [ISteamUserStats#GetAchievementIcon](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementIcon)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.user_stats_get_achievement_display_attribute(pchName,pchKey)
-[ISteamUserStats#GetAchievementDisplayAttribute](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementDisplayAttribute)
+### <a name="user_stats_get_achievement_display_attribute"></a>steamworks.user_stats_get_achievement_display_attribute(pchName,pchKey) - [ISteamUserStats#GetAchievementDisplayAttribute](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementDisplayAttribute)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.user_stats_indicate_achievement_progress(pchName,nCurProgress,nMaxProgress)
-[ISteamUserStats#IndicateAchievementProgress](https://partner.steamgames.com/doc/api/ISteamUserStats#IndicateAchievementProgress)
+### <a name="user_stats_indicate_achievement_progress"></a>steamworks.user_stats_indicate_achievement_progress(pchName,nCurProgress,nMaxProgress) - [ISteamUserStats#IndicateAchievementProgress](https://partner.steamgames.com/doc/api/ISteamUserStats#IndicateAchievementProgress)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_get_num_achievements()
-[ISteamUserStats#GetNumAchievements](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumAchievements)
+### <a name="user_stats_get_num_achievements"></a>steamworks.user_stats_get_num_achievements() - [ISteamUserStats#GetNumAchievements](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumAchievements)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.user_stats_get_achievement_name(iAchievement)
-[ISteamUserStats#GetAchievementName](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementName)
+### <a name="user_stats_get_achievement_name"></a>steamworks.user_stats_get_achievement_name(iAchievement) - [ISteamUserStats#GetAchievementName](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementName)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.user_stats_request_user_stats(steamIDUser)
-[ISteamUserStats#RequestUserStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats)
+### <a name="user_stats_request_user_stats"></a>steamworks.user_stats_request_user_stats(steamIDUser) - [ISteamUserStats#RequestUserStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats)
 
 **CALLBACK**
 * `UserStatsReceived_t`
 
-### steamworks.user_stats_get_user_stat_int(steamIDUser,pchName)
-[ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
+### <a name="user_stats_get_user_stat_int"></a>steamworks.user_stats_get_user_stat_int(steamIDUser,pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
 
 **RETURN**
 * `r` (bool)
 * `pData` (int32)
 
 
-### steamworks.user_stats_get_user_stat_float(steamIDUser,pchName)
-[ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
+### <a name="user_stats_get_user_stat_float"></a>steamworks.user_stats_get_user_stat_float(steamIDUser,pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
 
 **RETURN**
 * `r` (bool)
 * `pData` (float)
 
 
-### steamworks.user_stats_get_user_achievement(steamIDUser,pchName)
-[ISteamUserStats#GetUserAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement)
+### <a name="user_stats_get_user_achievement"></a>steamworks.user_stats_get_user_achievement(steamIDUser,pchName) - [ISteamUserStats#GetUserAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement)
 
 **RETURN**
 * `r` (bool)
 * `pbAchieved` (bool)
 
 
-### steamworks.user_stats_get_user_achievement_and_unlock_time(steamIDUser,pchName)
-[ISteamUserStats#GetUserAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime)
+### <a name="user_stats_get_user_achievement_and_unlock_time"></a>steamworks.user_stats_get_user_achievement_and_unlock_time(steamIDUser,pchName) - [ISteamUserStats#GetUserAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime)
 
 **RETURN**
 * `r` (bool)
@@ -1385,67 +1501,57 @@ The extension exports the following functions:
 * `pbAchieved` (bool)
 
 
-### steamworks.user_stats_reset_all_stats(bAchievementsToo)
-[ISteamUserStats#ResetAllStats](https://partner.steamgames.com/doc/api/ISteamUserStats#ResetAllStats)
+### <a name="user_stats_reset_all_stats"></a>steamworks.user_stats_reset_all_stats(bAchievementsToo) - [ISteamUserStats#ResetAllStats](https://partner.steamgames.com/doc/api/ISteamUserStats#ResetAllStats)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.user_stats_find_or_create_leaderboard(pchLeaderboardName,eLeaderboardSortMethod,eLeaderboardDisplayType)
-[ISteamUserStats#FindOrCreateLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindOrCreateLeaderboard)
+### <a name="user_stats_find_or_create_leaderboard"></a>steamworks.user_stats_find_or_create_leaderboard(pchLeaderboardName,eLeaderboardSortMethod,eLeaderboardDisplayType) - [ISteamUserStats#FindOrCreateLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindOrCreateLeaderboard)
 
 **CALLBACK**
 * `LeaderboardFindResult_t`
 
-### steamworks.user_stats_find_leaderboard(pchLeaderboardName)
-[ISteamUserStats#FindLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindLeaderboard)
+### <a name="user_stats_find_leaderboard"></a>steamworks.user_stats_find_leaderboard(pchLeaderboardName) - [ISteamUserStats#FindLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindLeaderboard)
 
 **CALLBACK**
 * `LeaderboardFindResult_t`
 
-### steamworks.user_stats_get_leaderboard_name(hSteamLeaderboard)
-[ISteamUserStats#GetLeaderboardName](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardName)
+### <a name="user_stats_get_leaderboard_name"></a>steamworks.user_stats_get_leaderboard_name(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardName](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardName)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.user_stats_get_leaderboard_entry_count(hSteamLeaderboard)
-[ISteamUserStats#GetLeaderboardEntryCount](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardEntryCount)
+### <a name="user_stats_get_leaderboard_entry_count"></a>steamworks.user_stats_get_leaderboard_entry_count(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardEntryCount](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardEntryCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.user_stats_get_leaderboard_sort_method(hSteamLeaderboard)
-[ISteamUserStats#GetLeaderboardSortMethod](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardSortMethod)
+### <a name="user_stats_get_leaderboard_sort_method"></a>steamworks.user_stats_get_leaderboard_sort_method(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardSortMethod](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardSortMethod)
 
 **RETURN**
 * `r` (ELeaderboardSortMethod)
 
 
-### steamworks.user_stats_get_leaderboard_display_type(hSteamLeaderboard)
-[ISteamUserStats#GetLeaderboardDisplayType](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardDisplayType)
+### <a name="user_stats_get_leaderboard_display_type"></a>steamworks.user_stats_get_leaderboard_display_type(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardDisplayType](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardDisplayType)
 
 **RETURN**
 * `r` (ELeaderboardDisplayType)
 
 
-### steamworks.user_stats_download_leaderboard_entries(hSteamLeaderboard,eLeaderboardDataRequest,nRangeStart,nRangeEnd)
-[ISteamUserStats#DownloadLeaderboardEntries](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries)
+### <a name="user_stats_download_leaderboard_entries"></a>steamworks.user_stats_download_leaderboard_entries(hSteamLeaderboard,eLeaderboardDataRequest,nRangeStart,nRangeEnd) - [ISteamUserStats#DownloadLeaderboardEntries](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries)
 
 **CALLBACK**
 * `LeaderboardScoresDownloaded_t`
 
-### steamworks.user_stats_download_leaderboard_entries_for_users(hSteamLeaderboard,prgUsers,cUsers)
-[ISteamUserStats#DownloadLeaderboardEntriesForUsers](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers)
+### <a name="user_stats_download_leaderboard_entries_for_users"></a>steamworks.user_stats_download_leaderboard_entries_for_users(hSteamLeaderboard,prgUsers,cUsers) - [ISteamUserStats#DownloadLeaderboardEntriesForUsers](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers)
 
 **CALLBACK**
 * `LeaderboardScoresDownloaded_t`
 
-### steamworks.user_stats_get_downloaded_leaderboard_entry(hSteamLeaderboardEntries,index,cDetailsMax)
-[ISteamUserStats#GetDownloadedLeaderboardEntry](https://partner.steamgames.com/doc/api/ISteamUserStats#GetDownloadedLeaderboardEntry)
+### <a name="user_stats_get_downloaded_leaderboard_entry"></a>steamworks.user_stats_get_downloaded_leaderboard_entry(hSteamLeaderboardEntries,index,cDetailsMax) - [ISteamUserStats#GetDownloadedLeaderboardEntry](https://partner.steamgames.com/doc/api/ISteamUserStats#GetDownloadedLeaderboardEntry)
 
 **RETURN**
 * `r` (bool)
@@ -1453,32 +1559,27 @@ The extension exports the following functions:
 * `pDetails` (table) cDetailsMax
 
 
-### steamworks.user_stats_upload_leaderboard_score(hSteamLeaderboard,eLeaderboardUploadScoreMethod,nScore,pScoreDetails,cScoreDetailsCount)
-[ISteamUserStats#UploadLeaderboardScore](https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore)
+### <a name="user_stats_upload_leaderboard_score"></a>steamworks.user_stats_upload_leaderboard_score(hSteamLeaderboard,eLeaderboardUploadScoreMethod,nScore,pScoreDetails,cScoreDetailsCount) - [ISteamUserStats#UploadLeaderboardScore](https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore)
 
 **CALLBACK**
 * `LeaderboardScoreUploaded_t`
 
-### steamworks.user_stats_attach_leaderboard_ugc(hSteamLeaderboard,hUGC)
-[ISteamUserStats#AttachLeaderboardUGC](https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC)
+### <a name="user_stats_attach_leaderboard_ugc"></a>steamworks.user_stats_attach_leaderboard_ugc(hSteamLeaderboard,hUGC) - [ISteamUserStats#AttachLeaderboardUGC](https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC)
 
 **CALLBACK**
 * `LeaderboardUGCSet_t`
 
-### steamworks.user_stats_get_number_of_current_players()
-[ISteamUserStats#GetNumberOfCurrentPlayers](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers)
+### <a name="user_stats_get_number_of_current_players"></a>steamworks.user_stats_get_number_of_current_players() - [ISteamUserStats#GetNumberOfCurrentPlayers](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers)
 
 **CALLBACK**
 * `NumberOfCurrentPlayers_t`
 
-### steamworks.user_stats_request_global_achievement_percentages()
-[ISteamUserStats#RequestGlobalAchievementPercentages](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages)
+### <a name="user_stats_request_global_achievement_percentages"></a>steamworks.user_stats_request_global_achievement_percentages() - [ISteamUserStats#RequestGlobalAchievementPercentages](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages)
 
 **CALLBACK**
 * `GlobalAchievementPercentagesReady_t`
 
-### steamworks.user_stats_get_most_achieved_achievement_info(pchName,unNameBufLen)
-[ISteamUserStats#GetMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetMostAchievedAchievementInfo)
+### <a name="user_stats_get_most_achieved_achievement_info"></a>steamworks.user_stats_get_most_achieved_achievement_info(pchName,unNameBufLen) - [ISteamUserStats#GetMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetMostAchievedAchievementInfo)
 
 **RETURN**
 * `r` (int)
@@ -1486,8 +1587,7 @@ The extension exports the following functions:
 * `pflPercent` (float)
 
 
-### steamworks.user_stats_get_next_most_achieved_achievement_info(iIteratorPrevious,pchName,unNameBufLen)
-[ISteamUserStats#GetNextMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNextMostAchievedAchievementInfo)
+### <a name="user_stats_get_next_most_achieved_achievement_info"></a>steamworks.user_stats_get_next_most_achieved_achievement_info(iIteratorPrevious,pchName,unNameBufLen) - [ISteamUserStats#GetNextMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNextMostAchievedAchievementInfo)
 
 **RETURN**
 * `r` (int)
@@ -1495,129 +1595,111 @@ The extension exports the following functions:
 * `pflPercent` (float)
 
 
-### steamworks.user_stats_get_achievement_achieved_percent(pchName)
-[ISteamUserStats#GetAchievementAchievedPercent](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAchievedPercent)
+### <a name="user_stats_get_achievement_achieved_percent"></a>steamworks.user_stats_get_achievement_achieved_percent(pchName) - [ISteamUserStats#GetAchievementAchievedPercent](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAchievedPercent)
 
 **RETURN**
 * `r` (bool)
 * `pflPercent` (float)
 
 
-### steamworks.user_stats_request_global_stats(nHistoryDays)
-[ISteamUserStats#RequestGlobalStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalStats)
+### <a name="user_stats_request_global_stats"></a>steamworks.user_stats_request_global_stats(nHistoryDays) - [ISteamUserStats#RequestGlobalStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalStats)
 
 **CALLBACK**
 * `GlobalStatsReceived_t`
 
-### steamworks.user_stats_get_global_stat_int(pchStatName)
-[ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
+### <a name="user_stats_get_global_stat_int"></a>steamworks.user_stats_get_global_stat_int(pchStatName) - [ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
 
 **RETURN**
 * `r` (bool)
 * `pData` (int64)
 
 
-### steamworks.user_stats_get_global_stat_float(pchStatName)
-[ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
+### <a name="user_stats_get_global_stat_float"></a>steamworks.user_stats_get_global_stat_float(pchStatName) - [ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
 
 **RETURN**
 * `r` (bool)
 * `pData` (double)
 
 
-### steamworks.user_stats_get_global_stat_int_history(pchStatName,pData,cubData)
-[ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
+### <a name="user_stats_get_global_stat_int_history"></a>steamworks.user_stats_get_global_stat_int_history(pchStatName,pData,cubData) - [ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
 
 **RETURN**
 * `r` (int32)
 
 
-### steamworks.user_stats_get_global_stat_float_history(pchStatName,pData,cubData)
-[ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
+### <a name="user_stats_get_global_stat_float_history"></a>steamworks.user_stats_get_global_stat_float_history(pchStatName,pData,cubData) - [ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
 
 **RETURN**
 * `r` (int32)
 
 
-### steamworks.apps_is_subscribed()
-[ISteamApps#BIsSubscribed](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribed)
+### <a name="apps_is_subscribed"></a>steamworks.apps_is_subscribed() - [ISteamApps#BIsSubscribed](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribed)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_is_low_violence()
-[ISteamApps#BIsLowViolence](https://partner.steamgames.com/doc/api/ISteamApps#BIsLowViolence)
+### <a name="apps_is_low_violence"></a>steamworks.apps_is_low_violence() - [ISteamApps#BIsLowViolence](https://partner.steamgames.com/doc/api/ISteamApps#BIsLowViolence)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_is_cybercafe()
-[ISteamApps#BIsCybercafe](https://partner.steamgames.com/doc/api/ISteamApps#BIsCybercafe)
+### <a name="apps_is_cybercafe"></a>steamworks.apps_is_cybercafe() - [ISteamApps#BIsCybercafe](https://partner.steamgames.com/doc/api/ISteamApps#BIsCybercafe)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_is_vac_banned()
-[ISteamApps#BIsVACBanned](https://partner.steamgames.com/doc/api/ISteamApps#BIsVACBanned)
+### <a name="apps_is_vac_banned"></a>steamworks.apps_is_vac_banned() - [ISteamApps#BIsVACBanned](https://partner.steamgames.com/doc/api/ISteamApps#BIsVACBanned)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_get_current_game_language()
-[ISteamApps#GetCurrentGameLanguage](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentGameLanguage)
+### <a name="apps_get_current_game_language"></a>steamworks.apps_get_current_game_language() - [ISteamApps#GetCurrentGameLanguage](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentGameLanguage)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.apps_get_available_game_languages()
-[ISteamApps#GetAvailableGameLanguages](https://partner.steamgames.com/doc/api/ISteamApps#GetAvailableGameLanguages)
+### <a name="apps_get_available_game_languages"></a>steamworks.apps_get_available_game_languages() - [ISteamApps#GetAvailableGameLanguages](https://partner.steamgames.com/doc/api/ISteamApps#GetAvailableGameLanguages)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.apps_is_subscribed_app(appID)
-[ISteamApps#BIsSubscribedApp](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedApp)
+### <a name="apps_is_subscribed_app"></a>steamworks.apps_is_subscribed_app(appID) - [ISteamApps#BIsSubscribedApp](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedApp)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_is_dlc_installed(appID)
-[ISteamApps#BIsDlcInstalled](https://partner.steamgames.com/doc/api/ISteamApps#BIsDlcInstalled)
+### <a name="apps_is_dlc_installed"></a>steamworks.apps_is_dlc_installed(appID) - [ISteamApps#BIsDlcInstalled](https://partner.steamgames.com/doc/api/ISteamApps#BIsDlcInstalled)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_get_earliest_purchase_unix_time(nAppID)
-[ISteamApps#GetEarliestPurchaseUnixTime](https://partner.steamgames.com/doc/api/ISteamApps#GetEarliestPurchaseUnixTime)
+### <a name="apps_get_earliest_purchase_unix_time"></a>steamworks.apps_get_earliest_purchase_unix_time(nAppID) - [ISteamApps#GetEarliestPurchaseUnixTime](https://partner.steamgames.com/doc/api/ISteamApps#GetEarliestPurchaseUnixTime)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.apps_is_subscribed_from_free_weekend()
-[ISteamApps#BIsSubscribedFromFreeWeekend](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFreeWeekend)
+### <a name="apps_is_subscribed_from_free_weekend"></a>steamworks.apps_is_subscribed_from_free_weekend() - [ISteamApps#BIsSubscribedFromFreeWeekend](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFreeWeekend)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_get_dlc_count()
-[ISteamApps#GetDLCCount](https://partner.steamgames.com/doc/api/ISteamApps#GetDLCCount)
+### <a name="apps_get_dlc_count"></a>steamworks.apps_get_dlc_count() - [ISteamApps#GetDLCCount](https://partner.steamgames.com/doc/api/ISteamApps#GetDLCCount)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.apps_get_dlc_data_by_index(iDLC,pchName,cchNameBufferSize)
-[ISteamApps#BGetDLCDataByIndex](https://partner.steamgames.com/doc/api/ISteamApps#BGetDLCDataByIndex)
+### <a name="apps_get_dlc_data_by_index"></a>steamworks.apps_get_dlc_data_by_index(iDLC,pchName,cchNameBufferSize) - [ISteamApps#BGetDLCDataByIndex](https://partner.steamgames.com/doc/api/ISteamApps#BGetDLCDataByIndex)
 
 **RETURN**
 * `r` (bool)
@@ -1625,70 +1707,59 @@ The extension exports the following functions:
 * `pAppID` (AppId_t)
 
 
-### steamworks.apps_install_dlc(nAppID)
-[ISteamApps#InstallDLC](https://partner.steamgames.com/doc/api/ISteamApps#InstallDLC)
+### <a name="apps_install_dlc"></a>steamworks.apps_install_dlc(nAppID) - [ISteamApps#InstallDLC](https://partner.steamgames.com/doc/api/ISteamApps#InstallDLC)
 
 
-### steamworks.apps_uninstall_dlc(nAppID)
-[ISteamApps#UninstallDLC](https://partner.steamgames.com/doc/api/ISteamApps#UninstallDLC)
+### <a name="apps_uninstall_dlc"></a>steamworks.apps_uninstall_dlc(nAppID) - [ISteamApps#UninstallDLC](https://partner.steamgames.com/doc/api/ISteamApps#UninstallDLC)
 
 
-### steamworks.apps_request_app_proof_of_purchase_key(nAppID)
-[ISteamApps#RequestAppProofOfPurchaseKey](https://partner.steamgames.com/doc/api/ISteamApps#RequestAppProofOfPurchaseKey)
+### <a name="apps_request_app_proof_of_purchase_key"></a>steamworks.apps_request_app_proof_of_purchase_key(nAppID) - [ISteamApps#RequestAppProofOfPurchaseKey](https://partner.steamgames.com/doc/api/ISteamApps#RequestAppProofOfPurchaseKey)
 
 
-### steamworks.apps_get_current_beta_name(pchName,cchNameBufferSize)
-[ISteamApps#GetCurrentBetaName](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentBetaName)
+### <a name="apps_get_current_beta_name"></a>steamworks.apps_get_current_beta_name(pchName,cchNameBufferSize) - [ISteamApps#GetCurrentBetaName](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentBetaName)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_mark_content_corrupt(bMissingFilesOnly)
-[ISteamApps#MarkContentCorrupt](https://partner.steamgames.com/doc/api/ISteamApps#MarkContentCorrupt)
+### <a name="apps_mark_content_corrupt"></a>steamworks.apps_mark_content_corrupt(bMissingFilesOnly) - [ISteamApps#MarkContentCorrupt](https://partner.steamgames.com/doc/api/ISteamApps#MarkContentCorrupt)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_get_installed_depots(appID,cMaxDepots)
-[ISteamApps#GetInstalledDepots](https://partner.steamgames.com/doc/api/ISteamApps#GetInstalledDepots)
+### <a name="apps_get_installed_depots"></a>steamworks.apps_get_installed_depots(appID,cMaxDepots) - [ISteamApps#GetInstalledDepots](https://partner.steamgames.com/doc/api/ISteamApps#GetInstalledDepots)
 
 **RETURN**
 * `r` (uint32)
 * `pvecDepots` (DepotId_t)
 
 
-### steamworks.apps_get_app_install_dir(appID,pchFolder,cchFolderBufferSize)
-[ISteamApps#GetAppInstallDir](https://partner.steamgames.com/doc/api/ISteamApps#GetAppInstallDir)
+### <a name="apps_get_app_install_dir"></a>steamworks.apps_get_app_install_dir(appID,pchFolder,cchFolderBufferSize) - [ISteamApps#GetAppInstallDir](https://partner.steamgames.com/doc/api/ISteamApps#GetAppInstallDir)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.apps_is_app_installed(appID)
-[ISteamApps#BIsAppInstalled](https://partner.steamgames.com/doc/api/ISteamApps#BIsAppInstalled)
+### <a name="apps_is_app_installed"></a>steamworks.apps_is_app_installed(appID) - [ISteamApps#BIsAppInstalled](https://partner.steamgames.com/doc/api/ISteamApps#BIsAppInstalled)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.apps_get_app_owner()
-[ISteamApps#GetAppOwner](https://partner.steamgames.com/doc/api/ISteamApps#GetAppOwner)
+### <a name="apps_get_app_owner"></a>steamworks.apps_get_app_owner() - [ISteamApps#GetAppOwner](https://partner.steamgames.com/doc/api/ISteamApps#GetAppOwner)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### steamworks.apps_get_launch_query_param(pchKey)
-[ISteamApps#GetLaunchQueryParam](https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchQueryParam)
+### <a name="apps_get_launch_query_param"></a>steamworks.apps_get_launch_query_param(pchKey) - [ISteamApps#GetLaunchQueryParam](https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchQueryParam)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### steamworks.apps_get_dlc_download_progress(nAppID)
-[ISteamApps#GetDlcDownloadProgress](https://partner.steamgames.com/doc/api/ISteamApps#GetDlcDownloadProgress)
+### <a name="apps_get_dlc_download_progress"></a>steamworks.apps_get_dlc_download_progress(nAppID) - [ISteamApps#GetDlcDownloadProgress](https://partner.steamgames.com/doc/api/ISteamApps#GetDlcDownloadProgress)
 
 **RETURN**
 * `r` (bool)
@@ -1696,40 +1767,34 @@ The extension exports the following functions:
 * `punBytesDownloaded` (uint64)
 
 
-### steamworks.apps_get_app_build_id()
-[ISteamApps#GetAppBuildId](https://partner.steamgames.com/doc/api/ISteamApps#GetAppBuildId)
+### <a name="apps_get_app_build_id"></a>steamworks.apps_get_app_build_id() - [ISteamApps#GetAppBuildId](https://partner.steamgames.com/doc/api/ISteamApps#GetAppBuildId)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.apps_request_all_proof_of_purchase_keys()
-[ISteamApps#RequestAllProofOfPurchaseKeys](https://partner.steamgames.com/doc/api/ISteamApps#RequestAllProofOfPurchaseKeys)
+### <a name="apps_request_all_proof_of_purchase_keys"></a>steamworks.apps_request_all_proof_of_purchase_keys() - [ISteamApps#RequestAllProofOfPurchaseKeys](https://partner.steamgames.com/doc/api/ISteamApps#RequestAllProofOfPurchaseKeys)
 
 
-### steamworks.apps_get_file_details(pszFileName)
-[ISteamApps#GetFileDetails](https://partner.steamgames.com/doc/api/ISteamApps#GetFileDetails)
+### <a name="apps_get_file_details"></a>steamworks.apps_get_file_details(pszFileName) - [ISteamApps#GetFileDetails](https://partner.steamgames.com/doc/api/ISteamApps#GetFileDetails)
 
 **CALLBACK**
 * `FileDetailsResult_t`
 
-### steamworks.networking_send_p2p_packet(steamIDRemote,pubData,cubData,eP2PSendType,nChannel)
-[ISteamNetworking#SendP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket)
+### <a name="networking_send_p2p_packet"></a>steamworks.networking_send_p2p_packet(steamIDRemote,pubData,cubData,eP2PSendType,nChannel) - [ISteamNetworking#SendP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_is_p2p_packet_available(nChannel)
-[ISteamNetworking#IsP2PPacketAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable)
+### <a name="networking_is_p2p_packet_available"></a>steamworks.networking_is_p2p_packet_available(nChannel) - [ISteamNetworking#IsP2PPacketAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable)
 
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
 
 
-### steamworks.networking_read_p2p_packet(pubDest,cubDest,nChannel)
-[ISteamNetworking#ReadP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket)
+### <a name="networking_read_p2p_packet"></a>steamworks.networking_read_p2p_packet(pubDest,cubDest,nChannel) - [ISteamNetworking#ReadP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket)
 
 **RETURN**
 * `r` (bool)
@@ -1737,102 +1802,88 @@ The extension exports the following functions:
 * `pcubMsgSize` (uint32)
 
 
-### steamworks.networking_accept_p2p_session_with_user(steamIDRemote)
-[ISteamNetworking#AcceptP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser)
+### <a name="networking_accept_p2p_session_with_user"></a>steamworks.networking_accept_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#AcceptP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_close_p2p_session_with_user(steamIDRemote)
-[ISteamNetworking#CloseP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser)
+### <a name="networking_close_p2p_session_with_user"></a>steamworks.networking_close_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#CloseP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_close_p2p_channel_with_user(steamIDRemote,nChannel)
-[ISteamNetworking#CloseP2PChannelWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser)
+### <a name="networking_close_p2p_channel_with_user"></a>steamworks.networking_close_p2p_channel_with_user(steamIDRemote,nChannel) - [ISteamNetworking#CloseP2PChannelWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_get_p2p_session_state(steamIDRemote)
-[ISteamNetworking#GetP2PSessionState](https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState)
+### <a name="networking_get_p2p_session_state"></a>steamworks.networking_get_p2p_session_state(steamIDRemote) - [ISteamNetworking#GetP2PSessionState](https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState)
 
 **RETURN**
 * `r` (bool)
 * `pConnectionState` (P2PSessionState_t)
 
 
-### steamworks.networking_allow_p2p_packet_relay(bAllow)
-[ISteamNetworking#AllowP2PPacketRelay](https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay)
+### <a name="networking_allow_p2p_packet_relay"></a>steamworks.networking_allow_p2p_packet_relay(bAllow) - [ISteamNetworking#AllowP2PPacketRelay](https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_create_listen_socket(nVirtualP2PPort,nIP,nPort,bAllowUseOfPacketRelay)
-[ISteamNetworking#CreateListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket)
+### <a name="networking_create_listen_socket"></a>steamworks.networking_create_listen_socket(nVirtualP2PPort,nIP,nPort,bAllowUseOfPacketRelay) - [ISteamNetworking#CreateListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket)
 
 **RETURN**
 * `r` (SNetListenSocket_t)
 
 
-### steamworks.networking_create_p2p_connection_socket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay)
-[ISteamNetworking#CreateP2PConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket)
+### <a name="networking_create_p2p_connection_socket"></a>steamworks.networking_create_p2p_connection_socket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay) - [ISteamNetworking#CreateP2PConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket)
 
 **RETURN**
 * `r` (SNetSocket_t)
 
 
-### steamworks.networking_create_connection_socket(nIP,nPort,nTimeoutSec)
-[ISteamNetworking#CreateConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket)
+### <a name="networking_create_connection_socket"></a>steamworks.networking_create_connection_socket(nIP,nPort,nTimeoutSec) - [ISteamNetworking#CreateConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket)
 
 **RETURN**
 * `r` (SNetSocket_t)
 
 
-### steamworks.networking_destroy_socket(hSocket,bNotifyRemoteEnd)
-[ISteamNetworking#DestroySocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket)
+### <a name="networking_destroy_socket"></a>steamworks.networking_destroy_socket(hSocket,bNotifyRemoteEnd) - [ISteamNetworking#DestroySocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_destroy_listen_socket(hSocket,bNotifyRemoteEnd)
-[ISteamNetworking#DestroyListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket)
+### <a name="networking_destroy_listen_socket"></a>steamworks.networking_destroy_listen_socket(hSocket,bNotifyRemoteEnd) - [ISteamNetworking#DestroyListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_send_data_on_socket(hSocket,pubData,cubData,bReliable)
-[ISteamNetworking#SendDataOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket)
+### <a name="networking_send_data_on_socket"></a>steamworks.networking_send_data_on_socket(hSocket,pubData,cubData,bReliable) - [ISteamNetworking#SendDataOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.networking_is_data_available_on_socket(hSocket)
-[ISteamNetworking#IsDataAvailableOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket)
+### <a name="networking_is_data_available_on_socket"></a>steamworks.networking_is_data_available_on_socket(hSocket) - [ISteamNetworking#IsDataAvailableOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket)
 
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
 
 
-### steamworks.networking_retrieve_data_from_socket(hSocket,pubDest,cubDest)
-[ISteamNetworking#RetrieveDataFromSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket)
+### <a name="networking_retrieve_data_from_socket"></a>steamworks.networking_retrieve_data_from_socket(hSocket,pubDest,cubDest) - [ISteamNetworking#RetrieveDataFromSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket)
 
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
 
 
-### steamworks.networking_is_data_available(hListenSocket)
-[ISteamNetworking#IsDataAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable)
+### <a name="networking_is_data_available"></a>steamworks.networking_is_data_available(hListenSocket) - [ISteamNetworking#IsDataAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable)
 
 **RETURN**
 * `r` (bool)
@@ -1840,8 +1891,7 @@ The extension exports the following functions:
 * `pcubMsgSize` (uint32)
 
 
-### steamworks.networking_retrieve_data(hListenSocket,pubDest,cubDest)
-[ISteamNetworking#RetrieveData](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData)
+### <a name="networking_retrieve_data"></a>steamworks.networking_retrieve_data(hListenSocket,pubDest,cubDest) - [ISteamNetworking#RetrieveData](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData)
 
 **RETURN**
 * `r` (bool)
@@ -1849,8 +1899,7 @@ The extension exports the following functions:
 * `pcubMsgSize` (uint32)
 
 
-### steamworks.networking_get_socket_info(hSocket)
-[ISteamNetworking#GetSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo)
+### <a name="networking_get_socket_info"></a>steamworks.networking_get_socket_info(hSocket) - [ISteamNetworking#GetSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo)
 
 **RETURN**
 * `r` (bool)
@@ -1860,8 +1909,7 @@ The extension exports the following functions:
 * `pSteamIDRemote` (class_CSteamID)
 
 
-### steamworks.networking_get_listen_socket_info(hListenSocket)
-[ISteamNetworking#GetListenSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo)
+### <a name="networking_get_listen_socket_info"></a>steamworks.networking_get_listen_socket_info(hListenSocket) - [ISteamNetworking#GetListenSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo)
 
 **RETURN**
 * `r` (bool)
@@ -1869,77 +1917,64 @@ The extension exports the following functions:
 * `pnIP` (uint32)
 
 
-### steamworks.networking_get_socket_connection_type(hSocket)
-[ISteamNetworking#GetSocketConnectionType](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType)
+### <a name="networking_get_socket_connection_type"></a>steamworks.networking_get_socket_connection_type(hSocket) - [ISteamNetworking#GetSocketConnectionType](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType)
 
 **RETURN**
 * `r` (ESNetSocketConnectionType)
 
 
-### steamworks.networking_get_max_packet_size(hSocket)
-[ISteamNetworking#GetMaxPacketSize](https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize)
+### <a name="networking_get_max_packet_size"></a>steamworks.networking_get_max_packet_size(hSocket) - [ISteamNetworking#GetMaxPacketSize](https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize)
 
 **RETURN**
 * `r` (int)
 
 
-### steamworks.music_is_enabled()
-[ISteamMusic#BIsEnabled](https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled)
+### <a name="music_is_enabled"></a>steamworks.music_is_enabled() - [ISteamMusic#BIsEnabled](https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.music_is_playing()
-[ISteamMusic#BIsPlaying](https://partner.steamgames.com/doc/api/ISteamMusic#BIsPlaying)
+### <a name="music_is_playing"></a>steamworks.music_is_playing() - [ISteamMusic#BIsPlaying](https://partner.steamgames.com/doc/api/ISteamMusic#BIsPlaying)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.music_get_playback_status()
-[ISteamMusic#GetPlaybackStatus](https://partner.steamgames.com/doc/api/ISteamMusic#GetPlaybackStatus)
+### <a name="music_get_playback_status"></a>steamworks.music_get_playback_status() - [ISteamMusic#GetPlaybackStatus](https://partner.steamgames.com/doc/api/ISteamMusic#GetPlaybackStatus)
 
 **RETURN**
 * `r` (AudioPlayback_Status)
 
 
-### steamworks.music_play()
-[ISteamMusic#Play](https://partner.steamgames.com/doc/api/ISteamMusic#Play)
+### <a name="music_play"></a>steamworks.music_play() - [ISteamMusic#Play](https://partner.steamgames.com/doc/api/ISteamMusic#Play)
 
 
-### steamworks.music_pause()
-[ISteamMusic#Pause](https://partner.steamgames.com/doc/api/ISteamMusic#Pause)
+### <a name="music_pause"></a>steamworks.music_pause() - [ISteamMusic#Pause](https://partner.steamgames.com/doc/api/ISteamMusic#Pause)
 
 
-### steamworks.music_play_previous()
-[ISteamMusic#PlayPrevious](https://partner.steamgames.com/doc/api/ISteamMusic#PlayPrevious)
+### <a name="music_play_previous"></a>steamworks.music_play_previous() - [ISteamMusic#PlayPrevious](https://partner.steamgames.com/doc/api/ISteamMusic#PlayPrevious)
 
 
-### steamworks.music_play_next()
-[ISteamMusic#PlayNext](https://partner.steamgames.com/doc/api/ISteamMusic#PlayNext)
+### <a name="music_play_next"></a>steamworks.music_play_next() - [ISteamMusic#PlayNext](https://partner.steamgames.com/doc/api/ISteamMusic#PlayNext)
 
 
-### steamworks.music_set_volume(flVolume)
-[ISteamMusic#SetVolume](https://partner.steamgames.com/doc/api/ISteamMusic#SetVolume)
+### <a name="music_set_volume"></a>steamworks.music_set_volume(flVolume) - [ISteamMusic#SetVolume](https://partner.steamgames.com/doc/api/ISteamMusic#SetVolume)
 
 
-### steamworks.music_get_volume()
-[ISteamMusic#GetVolume](https://partner.steamgames.com/doc/api/ISteamMusic#GetVolume)
+### <a name="music_get_volume"></a>steamworks.music_get_volume() - [ISteamMusic#GetVolume](https://partner.steamgames.com/doc/api/ISteamMusic#GetVolume)
 
 **RETURN**
 * `r` (float)
 
 
-### steamworks.inventory_get_result_status(resultHandle)
-[ISteamInventory#GetResultStatus](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultStatus)
+### <a name="inventory_get_result_status"></a>steamworks.inventory_get_result_status(resultHandle) - [ISteamInventory#GetResultStatus](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultStatus)
 
 **RETURN**
 * `r` (EResult)
 
 
-### steamworks.inventory_get_result_items(resultHandle)
-[ISteamInventory#GetResultItems](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItems)
+### <a name="inventory_get_result_items"></a>steamworks.inventory_get_result_items(resultHandle) - [ISteamInventory#GetResultItems](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItems)
 
 **RETURN**
 * `r` (bool)
@@ -1947,149 +1982,129 @@ The extension exports the following functions:
 * `pOutItemsArray` (table) punOutItemsArraySize
 
 
-### steamworks.inventory_get_result_item_property(resultHandle,unItemIndex,pchPropertyName,pchValueBuffer)
-[ISteamInventory#GetResultItemProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty)
+### <a name="inventory_get_result_item_property"></a>steamworks.inventory_get_result_item_property(resultHandle,unItemIndex,pchPropertyName,pchValueBuffer) - [ISteamInventory#GetResultItemProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty)
 
 **RETURN**
 * `r` (bool)
 * `punValueBufferSizeOut` (uint32)
 
 
-### steamworks.inventory_get_result_timestamp(resultHandle)
-[ISteamInventory#GetResultTimestamp](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultTimestamp)
+### <a name="inventory_get_result_timestamp"></a>steamworks.inventory_get_result_timestamp(resultHandle) - [ISteamInventory#GetResultTimestamp](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultTimestamp)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.inventory_check_result_steam_id(resultHandle,steamIDExpected)
-[ISteamInventory#CheckResultSteamID](https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID)
+### <a name="inventory_check_result_steam_id"></a>steamworks.inventory_check_result_steam_id(resultHandle,steamIDExpected) - [ISteamInventory#CheckResultSteamID](https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.inventory_destroy_result(resultHandle)
-[ISteamInventory#DestroyResult](https://partner.steamgames.com/doc/api/ISteamInventory#DestroyResult)
+### <a name="inventory_destroy_result"></a>steamworks.inventory_destroy_result(resultHandle) - [ISteamInventory#DestroyResult](https://partner.steamgames.com/doc/api/ISteamInventory#DestroyResult)
 
 
-### steamworks.inventory_get_all_items()
-[ISteamInventory#GetAllItems](https://partner.steamgames.com/doc/api/ISteamInventory#GetAllItems)
+### <a name="inventory_get_all_items"></a>steamworks.inventory_get_all_items() - [ISteamInventory#GetAllItems](https://partner.steamgames.com/doc/api/ISteamInventory#GetAllItems)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_get_items_by_id(pInstanceIDs,unCountInstanceIDs)
-[ISteamInventory#GetItemsByID](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsByID)
+### <a name="inventory_get_items_by_id"></a>steamworks.inventory_get_items_by_id(pInstanceIDs,unCountInstanceIDs) - [ISteamInventory#GetItemsByID](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsByID)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_serialize_result(resultHandle,pOutBuffer)
-[ISteamInventory#SerializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult)
+### <a name="inventory_serialize_result"></a>steamworks.inventory_serialize_result(resultHandle,pOutBuffer) - [ISteamInventory#SerializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult)
 
 **RETURN**
 * `r` (bool)
 * `punOutBufferSize` (uint32)
 
 
-### steamworks.inventory_deserialize_result(pBuffer,unBufferSize,bRESERVED_MUST_BE_FALSE)
-[ISteamInventory#DeserializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#DeserializeResult)
+### <a name="inventory_deserialize_result"></a>steamworks.inventory_deserialize_result(pBuffer,unBufferSize,bRESERVED_MUST_BE_FALSE) - [ISteamInventory#DeserializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#DeserializeResult)
 
 **RETURN**
 * `r` (bool)
 * `pOutResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_generate_items(pArrayItemDefs,punArrayQuantity,unArrayLength)
-[ISteamInventory#GenerateItems](https://partner.steamgames.com/doc/api/ISteamInventory#GenerateItems)
+### <a name="inventory_generate_items"></a>steamworks.inventory_generate_items(pArrayItemDefs,punArrayQuantity,unArrayLength) - [ISteamInventory#GenerateItems](https://partner.steamgames.com/doc/api/ISteamInventory#GenerateItems)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_grant_promo_items()
-[ISteamInventory#GrantPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#GrantPromoItems)
+### <a name="inventory_grant_promo_items"></a>steamworks.inventory_grant_promo_items() - [ISteamInventory#GrantPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#GrantPromoItems)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_add_promo_item(itemDef)
-[ISteamInventory#AddPromoItem](https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItem)
+### <a name="inventory_add_promo_item"></a>steamworks.inventory_add_promo_item(itemDef) - [ISteamInventory#AddPromoItem](https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItem)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_add_promo_items(pArrayItemDefs,unArrayLength)
-[ISteamInventory#AddPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItems)
+### <a name="inventory_add_promo_items"></a>steamworks.inventory_add_promo_items(pArrayItemDefs,unArrayLength) - [ISteamInventory#AddPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItems)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_consume_item(itemConsume,unQuantity)
-[ISteamInventory#ConsumeItem](https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem)
+### <a name="inventory_consume_item"></a>steamworks.inventory_consume_item(itemConsume,unQuantity) - [ISteamInventory#ConsumeItem](https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_exchange_items(pArrayGenerate,punArrayGenerateQuantity,unArrayGenerateLength,pArrayDestroy,punArrayDestroyQuantity,unArrayDestroyLength)
-[ISteamInventory#ExchangeItems](https://partner.steamgames.com/doc/api/ISteamInventory#ExchangeItems)
+### <a name="inventory_exchange_items"></a>steamworks.inventory_exchange_items(pArrayGenerate,punArrayGenerateQuantity,unArrayGenerateLength,pArrayDestroy,punArrayDestroyQuantity,unArrayDestroyLength) - [ISteamInventory#ExchangeItems](https://partner.steamgames.com/doc/api/ISteamInventory#ExchangeItems)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_transfer_item_quantity(itemIdSource,unQuantity,itemIdDest)
-[ISteamInventory#TransferItemQuantity](https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity)
+### <a name="inventory_transfer_item_quantity"></a>steamworks.inventory_transfer_item_quantity(itemIdSource,unQuantity,itemIdDest) - [ISteamInventory#TransferItemQuantity](https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_send_item_drop_heartbeat()
-[ISteamInventory#SendItemDropHeartbeat](https://partner.steamgames.com/doc/api/ISteamInventory#SendItemDropHeartbeat)
+### <a name="inventory_send_item_drop_heartbeat"></a>steamworks.inventory_send_item_drop_heartbeat() - [ISteamInventory#SendItemDropHeartbeat](https://partner.steamgames.com/doc/api/ISteamInventory#SendItemDropHeartbeat)
 
 
-### steamworks.inventory_trigger_item_drop(dropListDefinition)
-[ISteamInventory#TriggerItemDrop](https://partner.steamgames.com/doc/api/ISteamInventory#TriggerItemDrop)
+### <a name="inventory_trigger_item_drop"></a>steamworks.inventory_trigger_item_drop(dropListDefinition) - [ISteamInventory#TriggerItemDrop](https://partner.steamgames.com/doc/api/ISteamInventory#TriggerItemDrop)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_trade_items(steamIDTradePartner,pArrayGive,pArrayGiveQuantity,nArrayGiveLength,pArrayGet,pArrayGetQuantity,nArrayGetLength)
-[ISteamInventory#TradeItems](https://partner.steamgames.com/doc/api/ISteamInventory#TradeItems)
+### <a name="inventory_trade_items"></a>steamworks.inventory_trade_items(steamIDTradePartner,pArrayGive,pArrayGiveQuantity,nArrayGiveLength,pArrayGet,pArrayGetQuantity,nArrayGetLength) - [ISteamInventory#TradeItems](https://partner.steamgames.com/doc/api/ISteamInventory#TradeItems)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### steamworks.inventory_load_item_definitions()
-[ISteamInventory#LoadItemDefinitions](https://partner.steamgames.com/doc/api/ISteamInventory#LoadItemDefinitions)
+### <a name="inventory_load_item_definitions"></a>steamworks.inventory_load_item_definitions() - [ISteamInventory#LoadItemDefinitions](https://partner.steamgames.com/doc/api/ISteamInventory#LoadItemDefinitions)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.inventory_get_item_definition_i_ds()
-[ISteamInventory#GetItemDefinitionIDs](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionIDs)
+### <a name="inventory_get_item_definition_i_ds"></a>steamworks.inventory_get_item_definition_i_ds() - [ISteamInventory#GetItemDefinitionIDs](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionIDs)
 
 **RETURN**
 * `r` (bool)
@@ -2097,22 +2112,19 @@ The extension exports the following functions:
 * `pItemDefIDs` (table) punItemDefIDsArraySize
 
 
-### steamworks.inventory_get_item_definition_property(iDefinition,pchPropertyName,pchValueBuffer)
-[ISteamInventory#GetItemDefinitionProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionProperty)
+### <a name="inventory_get_item_definition_property"></a>steamworks.inventory_get_item_definition_property(iDefinition,pchPropertyName,pchValueBuffer) - [ISteamInventory#GetItemDefinitionProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionProperty)
 
 **RETURN**
 * `r` (bool)
 * `punValueBufferSizeOut` (uint32)
 
 
-### steamworks.inventory_request_eligible_promo_item_definitions_i_ds(steamID)
-[ISteamInventory#RequestEligiblePromoItemDefinitionsIDs](https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs)
+### <a name="inventory_request_eligible_promo_item_definitions_i_ds"></a>steamworks.inventory_request_eligible_promo_item_definitions_i_ds(steamID) - [ISteamInventory#RequestEligiblePromoItemDefinitionsIDs](https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs)
 
 **CALLBACK**
 * `SteamInventoryEligiblePromoItemDefIDs_t`
 
-### steamworks.inventory_get_eligible_promo_item_definition_i_ds(steamID)
-[ISteamInventory#GetEligiblePromoItemDefinitionIDs](https://partner.steamgames.com/doc/api/ISteamInventory#GetEligiblePromoItemDefinitionIDs)
+### <a name="inventory_get_eligible_promo_item_definition_i_ds"></a>steamworks.inventory_get_eligible_promo_item_definition_i_ds(steamID) - [ISteamInventory#GetEligiblePromoItemDefinitionIDs](https://partner.steamgames.com/doc/api/ISteamInventory#GetEligiblePromoItemDefinitionIDs)
 
 **RETURN**
 * `r` (bool)
@@ -2120,27 +2132,23 @@ The extension exports the following functions:
 * `pItemDefIDs` (table) punItemDefIDsArraySize
 
 
-### steamworks.inventory_start_purchase(pArrayItemDefs,punArrayQuantity,unArrayLength)
-[ISteamInventory#StartPurchase](https://partner.steamgames.com/doc/api/ISteamInventory#StartPurchase)
+### <a name="inventory_start_purchase"></a>steamworks.inventory_start_purchase(pArrayItemDefs,punArrayQuantity,unArrayLength) - [ISteamInventory#StartPurchase](https://partner.steamgames.com/doc/api/ISteamInventory#StartPurchase)
 
 **CALLBACK**
 * `SteamInventoryStartPurchaseResult_t`
 
-### steamworks.inventory_request_prices()
-[ISteamInventory#RequestPrices](https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices)
+### <a name="inventory_request_prices"></a>steamworks.inventory_request_prices() - [ISteamInventory#RequestPrices](https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices)
 
 **CALLBACK**
 * `SteamInventoryRequestPricesResult_t`
 
-### steamworks.inventory_get_num_items_with_prices()
-[ISteamInventory#GetNumItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetNumItemsWithPrices)
+### <a name="inventory_get_num_items_with_prices"></a>steamworks.inventory_get_num_items_with_prices() - [ISteamInventory#GetNumItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetNumItemsWithPrices)
 
 **RETURN**
 * `r` (uint32)
 
 
-### steamworks.inventory_get_items_with_prices(unArrayLength)
-[ISteamInventory#GetItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices)
+### <a name="inventory_get_items_with_prices"></a>steamworks.inventory_get_items_with_prices(unArrayLength) - [ISteamInventory#GetItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices)
 
 **RETURN**
 * `r` (bool)
@@ -2148,58 +2156,50 @@ The extension exports the following functions:
 * `pPrices` (table) unArrayLength
 
 
-### steamworks.inventory_get_item_price(iDefinition)
-[ISteamInventory#GetItemPrice](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemPrice)
+### <a name="inventory_get_item_price"></a>steamworks.inventory_get_item_price(iDefinition) - [ISteamInventory#GetItemPrice](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemPrice)
 
 **RETURN**
 * `r` (bool)
 * `pPrice` (uint64)
 
 
-### steamworks.inventory_start_update_properties()
-[ISteamInventory#StartUpdateProperties](https://partner.steamgames.com/doc/api/ISteamInventory#StartUpdateProperties)
+### <a name="inventory_start_update_properties"></a>steamworks.inventory_start_update_properties() - [ISteamInventory#StartUpdateProperties](https://partner.steamgames.com/doc/api/ISteamInventory#StartUpdateProperties)
 
 **RETURN**
 * `r` (SteamInventoryUpdateHandle_t)
 
 
-### steamworks.inventory_remove_property(handle,nItemID,pchPropertyName)
-[ISteamInventory#RemoveProperty](https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty)
+### <a name="inventory_remove_property"></a>steamworks.inventory_remove_property(handle,nItemID,pchPropertyName) - [ISteamInventory#RemoveProperty](https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.inventory_set_property_string(handle,nItemID,pchPropertyName,pchPropertyValue)
-[ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_string"></a>steamworks.inventory_set_property_string(handle,nItemID,pchPropertyName,pchPropertyValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.inventory_set_property_bool(handle,nItemID,pchPropertyName,bValue)
-[ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_bool"></a>steamworks.inventory_set_property_bool(handle,nItemID,pchPropertyName,bValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.inventory_set_property_int(handle,nItemID,pchPropertyName,nValue)
-[ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_int"></a>steamworks.inventory_set_property_int(handle,nItemID,pchPropertyName,nValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.inventory_set_property_float(handle,nItemID,pchPropertyName,flValue)
-[ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_float"></a>steamworks.inventory_set_property_float(handle,nItemID,pchPropertyName,flValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
 
 **RETURN**
 * `r` (bool)
 
 
-### steamworks.inventory_submit_update_properties(handle)
-[ISteamInventory#SubmitUpdateProperties](https://partner.steamgames.com/doc/api/ISteamInventory#SubmitUpdateProperties)
+### <a name="inventory_submit_update_properties"></a>steamworks.inventory_submit_update_properties(handle) - [ISteamInventory#SubmitUpdateProperties](https://partner.steamgames.com/doc/api/ISteamInventory#SubmitUpdateProperties)
 
 **RETURN**
 * `r` (bool)

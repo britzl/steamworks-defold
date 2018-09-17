@@ -1,16 +1,18 @@
 # Steamworks API
 
-* [Functions](#functions)
 * [Call results](#callresults)
 * [Callback](#callbacks)
 * [Enums](#enums)
+* [Functions](#functions)
+{{#methods}}
+  * [steamworks.{{classname_lower}}_{{methodname_lower}}](#{{classname_lower}}_{{methodname_lower}})
+{{/methods}}
 
 ## <a name="functions"></a>Functions
 The extension exports the following functions:
 
 {{#methods}}
-### steamworks.{{classname_lower}}_{{methodname_lower}}({{paramnames_in}})
-[{{classname}}#{{methodname}}](https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}})
+### <a name="{{classname_lower}}_{{methodname_lower}}"></a>steamworks.{{classname_lower}}_{{methodname_lower}}({{paramnames_in}}) - [{{classname}}#{{methodname}}](https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}})
 
 {{#hasreturntype}}
 {{#steamapicall}}
