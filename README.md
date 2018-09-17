@@ -38,17 +38,32 @@ The Steamworks API will not initialize if it does not know the App ID of your ga
 ## Using the SteamAPI
 The extension exposes most of the Steamworks functionality through an auto-generated API.
 
-### Excluded APIs
-The extension does not support the following APIs:
-
-* ISteamController
-* ISteamGameCoordinator (deprecated)
-* ISteamGameServer (for game servers, could be supported in the future)
-* ISteamGameServerStats (for game servers, could be supported in the future)
-* ISteamHTMLSurface
-* ISteamHTTP (use http.request instead)
-* ISteamMatchmakingServers
-* ISteamMusicRemote
+* Supported APIs
+ * ISteamApps
+ * ISteamAppTicket
+ * ISteamClient
+ * ISteamFriends
+ * ISteamInventory
+ * ISteamMatchmaking
+ * ISteamMusic
+ * ISteamNetworking
+ * ISteamRemoteStorage
+ * ISteamUser
+ * ISteamUserStats
+ * ISteamUtils
+* Unsupported APIs
+ * ISteamController
+ * ISteamGameCoordinator (deprecated)
+ * ISteamGameServer (for game servers, could be supported in the future)
+ * ISteamGameServerStats (for game servers, could be supported in the future)
+ * ISteamHTMLSurface
+ * ISteamHTTP (use http.request instead)
+ * ISteamMatchmakingServers
+ * ISteamMusicRemote
+ * ISteamScreenshots
+ * ISteamUGC
+ * ISteamUnifiedMessages
+ * ISteamVideo
 
 ### Naming convention
 Function names are converted to snake case using the following convention:
