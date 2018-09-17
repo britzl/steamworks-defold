@@ -8674,7 +8674,7 @@ static int ISteamUser_TerminateGameConnection(lua_State* L) {
 	uint16 usPortServer = check_uint16(L, 2); /*normal*/
 	uint32 unIPServer = check_uint32(L, 1); /*normal*/
 
-	user->TerminateGameConnection(unIPServer,usPortServer);
+	user->TerminateGameConnection(unIPServer, usPortServer);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -8688,7 +8688,7 @@ static int ISteamUser_GetAuthSessionTicket(lua_State* L) {
 	uint32_t pTicket_buffersize = 0;
 	dmBuffer::Result pTicket_buffer_result = dmBuffer::GetBytes(pTicket_buffer->m_Buffer, (void**)&pTicket, &pTicket_buffersize);
 
-	HAuthTicket r = user->GetAuthSessionTicket(pTicket,cbMaxTicket,&pcbTicket);
+	HAuthTicket r = user->GetAuthSessionTicket(pTicket, cbMaxTicket, &pcbTicket);
 	push_HAuthTicket(L, r);
 	push_uint32(L, pcbTicket); /*out_param*/
 	
@@ -8702,7 +8702,7 @@ static int ISteamUser_BeginAuthSession(lua_State* L) {
 	int cbAuthTicket = check_int(L, 2); /*normal*/
 	const void * pAuthTicket = check_const_void_ptr(L, 1); /*normal*/
 
-	EBeginAuthSessionResult r = user->BeginAuthSession(pAuthTicket,cbAuthTicket,steamID);
+	EBeginAuthSessionResult r = user->BeginAuthSession(pAuthTicket, cbAuthTicket, steamID);
 	push_EBeginAuthSessionResult(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -8732,7 +8732,7 @@ static int ISteamUser_UserHasLicenseForApp(lua_State* L) {
 	AppId_t appID = check_AppId_t(L, 2); /*normal*/
 	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
 
-	EUserHasLicenseForAppResult r = user->UserHasLicenseForApp(steamID,appID);
+	EUserHasLicenseForAppResult r = user->UserHasLicenseForApp(steamID, appID);
 	push_EUserHasLicenseForAppResult(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -8755,7 +8755,7 @@ static int ISteamUser_AdvertiseGame(lua_State* L) {
 	uint32 unIPServer = check_uint32(L, 2); /*normal*/
 	class CSteamID steamIDGameServer = check_class_CSteamID(L, 1); /*normal*/
 
-	user->AdvertiseGame(steamIDGameServer,unIPServer,usPortServer);
+	user->AdvertiseGame(steamIDGameServer, unIPServer, usPortServer);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -8768,7 +8768,7 @@ static int ISteamUser_RequestEncryptedAppTicket(lua_State* L) {
 	uint32_t pDataToInclude_buffersize = 0;
 	dmBuffer::Result pDataToInclude_buffer_result = dmBuffer::GetBytes(pDataToInclude_buffer->m_Buffer, (void**)&pDataToInclude, &pDataToInclude_buffersize);
 
-	SteamAPICall_t r = user->RequestEncryptedAppTicket(pDataToInclude,cbDataToInclude);
+	SteamAPICall_t r = user->RequestEncryptedAppTicket(pDataToInclude, cbDataToInclude);
 	steamCallbackWrapper->TrackSteamAPICallEncryptedAppTicketResponse_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -8783,7 +8783,7 @@ static int ISteamUser_GetEncryptedAppTicket(lua_State* L) {
 	uint32_t pTicket_buffersize = 0;
 	dmBuffer::Result pTicket_buffer_result = dmBuffer::GetBytes(pTicket_buffer->m_Buffer, (void**)&pTicket, &pTicket_buffersize);
 
-	bool r = user->GetEncryptedAppTicket(pTicket,cbMaxTicket,&pcbTicket);
+	bool r = user->GetEncryptedAppTicket(pTicket, cbMaxTicket, &pcbTicket);
 	push_bool(L, r);
 	push_uint32(L, pcbTicket); /*out_param*/
 	
@@ -8796,7 +8796,7 @@ static int ISteamUser_GetGameBadgeLevel(lua_State* L) {
 	bool bFoil = check_bool(L, 2); /*normal*/
 	int nSeries = check_int(L, 1); /*normal*/
 
-	int r = user->GetGameBadgeLevel(nSeries,bFoil);
+	int r = user->GetGameBadgeLevel(nSeries, bFoil);
 	push_int(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -8909,7 +8909,7 @@ static int ISteamFriends_GetFriendByIndex(lua_State* L) {
 	int iFriendFlags = check_int(L, 2); /*normal*/
 	int iFriend = check_int(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetFriendByIndex(iFriend,iFriendFlags);
+	class CSteamID r = friends->GetFriendByIndex(iFriend, iFriendFlags);
 	push_class_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -8954,7 +8954,7 @@ static int ISteamFriends_GetFriendGamePlayed(lua_State* L) {
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 	struct FriendGameInfo_t pFriendGameInfo; /*out_struct*/
 
-	bool r = friends->GetFriendGamePlayed(steamIDFriend,&pFriendGameInfo);
+	bool r = friends->GetFriendGamePlayed(steamIDFriend, &pFriendGameInfo);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -8966,7 +8966,7 @@ static int ISteamFriends_GetFriendPersonaNameHistory(lua_State* L) {
 	int iPersonaName = check_int(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
-	const char * r = friends->GetFriendPersonaNameHistory(steamIDFriend,iPersonaName);
+	const char * r = friends->GetFriendPersonaNameHistory(steamIDFriend, iPersonaName);
 	push_const_char_ptr(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9045,7 +9045,7 @@ static int ISteamFriends_GetFriendsGroupMembersList(lua_State* L) {
 	nMembersCount = friends->GetFriendsGroupMembersCount(friendsGroupID);/*out_array_call*/
 	CSteamID pOutSteamIDMembers[nMembersCount];
 
-	friends->GetFriendsGroupMembersList(friendsGroupID,pOutSteamIDMembers,nMembersCount);
+	friends->GetFriendsGroupMembersList(friendsGroupID, pOutSteamIDMembers, nMembersCount);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -9055,7 +9055,7 @@ static int ISteamFriends_HasFriend(lua_State* L) {
 	int iFriendFlags = check_int(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->HasFriend(steamIDFriend,iFriendFlags);
+	bool r = friends->HasFriend(steamIDFriend, iFriendFlags);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9112,7 +9112,7 @@ static int ISteamFriends_GetClanActivityCounts(lua_State* L) {
 	int pnOnline; /*out_param*/
 	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->GetClanActivityCounts(steamIDClan,&pnOnline,&pnInGame,&pnChatting);
+	bool r = friends->GetClanActivityCounts(steamIDClan, &pnOnline, &pnInGame, &pnChatting);
 	push_bool(L, r);
 	push_int(L, pnChatting); /*out_param*/
 	push_int(L, pnInGame); /*out_param*/
@@ -9133,7 +9133,7 @@ static int ISteamFriends_DownloadClanActivityCounts(lua_State* L) {
 		lua_pop(L, 1);
 	}
 
-	SteamAPICall_t r = friends->DownloadClanActivityCounts(psteamIDClans,cClansToRequest);
+	SteamAPICall_t r = friends->DownloadClanActivityCounts(psteamIDClans, cClansToRequest);
 	steamCallbackWrapper->TrackSteamAPICallDownloadClanActivityCountsResult_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -9155,7 +9155,7 @@ static int ISteamFriends_GetFriendFromSourceByIndex(lua_State* L) {
 	int iFriend = check_int(L, 2); /*normal*/
 	class CSteamID steamIDSource = check_class_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetFriendFromSourceByIndex(steamIDSource,iFriend);
+	class CSteamID r = friends->GetFriendFromSourceByIndex(steamIDSource, iFriend);
 	push_class_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9167,7 +9167,7 @@ static int ISteamFriends_IsUserInSource(lua_State* L) {
 	class CSteamID steamIDSource = check_class_CSteamID(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->IsUserInSource(steamIDUser,steamIDSource);
+	bool r = friends->IsUserInSource(steamIDUser, steamIDSource);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9179,7 +9179,7 @@ static int ISteamFriends_SetInGameVoiceSpeaking(lua_State* L) {
 	bool bSpeaking = check_bool(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
-	friends->SetInGameVoiceSpeaking(steamIDUser,bSpeaking);
+	friends->SetInGameVoiceSpeaking(steamIDUser, bSpeaking);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -9240,7 +9240,7 @@ static int ISteamFriends_RequestUserInformation(lua_State* L) {
 	bool bRequireNameOnly = check_bool(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->RequestUserInformation(steamIDUser,bRequireNameOnly);
+	bool r = friends->RequestUserInformation(steamIDUser, bRequireNameOnly);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9284,7 +9284,7 @@ static int ISteamFriends_GetClanOfficerByIndex(lua_State* L) {
 	int iOfficer = check_int(L, 2); /*normal*/
 	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetClanOfficerByIndex(steamIDClan,iOfficer);
+	class CSteamID r = friends->GetClanOfficerByIndex(steamIDClan, iOfficer);
 	push_class_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9306,7 +9306,7 @@ static int ISteamFriends_SetRichPresence(lua_State* L) {
 	const char * pchValue = check_const_char_ptr(L, 2); /*normal*/
 	const char * pchKey = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = friends->SetRichPresence(pchKey,pchValue);
+	bool r = friends->SetRichPresence(pchKey, pchValue);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9326,7 +9326,7 @@ static int ISteamFriends_GetFriendRichPresence(lua_State* L) {
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
-	const char * r = friends->GetFriendRichPresence(steamIDFriend,pchKey);
+	const char * r = friends->GetFriendRichPresence(steamIDFriend, pchKey);
 	push_const_char_ptr(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9349,7 +9349,7 @@ static int ISteamFriends_GetFriendRichPresenceKeyByIndex(lua_State* L) {
 	int iKey = check_int(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
-	const char * r = friends->GetFriendRichPresenceKeyByIndex(steamIDFriend,iKey);
+	const char * r = friends->GetFriendRichPresenceKeyByIndex(steamIDFriend, iKey);
 	push_const_char_ptr(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9370,7 +9370,7 @@ static int ISteamFriends_InviteUserToGame(lua_State* L) {
 	const char * pchConnectString = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->InviteUserToGame(steamIDFriend,pchConnectString);
+	bool r = friends->InviteUserToGame(steamIDFriend, pchConnectString);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9457,7 +9457,7 @@ static int ISteamFriends_GetChatMemberByIndex(lua_State* L) {
 	int iUser = check_int(L, 2); /*normal*/
 	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetChatMemberByIndex(steamIDClan,iUser);
+	class CSteamID r = friends->GetChatMemberByIndex(steamIDClan, iUser);
 	push_class_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9469,7 +9469,7 @@ static int ISteamFriends_SendClanChatMessage(lua_State* L) {
 	const char * pchText = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->SendClanChatMessage(steamIDClanChat,pchText);
+	bool r = friends->SendClanChatMessage(steamIDClanChat, pchText);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9488,7 +9488,7 @@ static int ISteamFriends_GetClanChatMessage(lua_State* L) {
 	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
 	class CSteamID psteamidChatter; /*out_struct*/
 
-	int r = friends->GetClanChatMessage(steamIDClanChat,iMessage,prgchText,cchTextMax,&peChatEntryType,&psteamidChatter);
+	int r = friends->GetClanChatMessage(steamIDClanChat, iMessage, prgchText, cchTextMax, &peChatEntryType, &psteamidChatter);
 	push_int(L, r);
 	push_EChatEntryType(L, peChatEntryType); /*out_param*/
 	
@@ -9501,7 +9501,7 @@ static int ISteamFriends_IsClanChatAdmin(lua_State* L) {
 	class CSteamID steamIDUser = check_class_CSteamID(L, 2); /*normal*/
 	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->IsClanChatAdmin(steamIDClanChat,steamIDUser);
+	bool r = friends->IsClanChatAdmin(steamIDClanChat, steamIDUser);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9557,7 +9557,7 @@ static int ISteamFriends_ReplyToFriendMessage(lua_State* L) {
 	const char * pchMsgToSend = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = friends->ReplyToFriendMessage(steamIDFriend,pchMsgToSend);
+	bool r = friends->ReplyToFriendMessage(steamIDFriend, pchMsgToSend);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9575,7 +9575,7 @@ static int ISteamFriends_GetFriendMessage(lua_State* L) {
 	int iMessageID = check_int(L, 2); /*normal*/
 	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
 
-	int r = friends->GetFriendMessage(steamIDFriend,iMessageID,pvData,cubData,&peChatEntryType);
+	int r = friends->GetFriendMessage(steamIDFriend, iMessageID, pvData, cubData, &peChatEntryType);
 	push_int(L, r);
 	push_EChatEntryType(L, peChatEntryType); /*out_param*/
 	
@@ -9691,7 +9691,7 @@ static int ISteamUtils_GetImageSize(lua_State* L) {
 	uint32 pnWidth; /*out_param*/
 	int iImage = check_int(L, 1); /*normal*/
 
-	bool r = utils->GetImageSize(iImage,&pnWidth,&pnHeight);
+	bool r = utils->GetImageSize(iImage, &pnWidth, &pnHeight);
 	push_bool(L, r);
 	push_uint32(L, pnHeight); /*out_param*/
 	push_uint32(L, pnWidth); /*out_param*/
@@ -9709,7 +9709,7 @@ static int ISteamUtils_GetImageRGBA(lua_State* L) {
 	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
 	int iImage = check_int(L, 1); /*normal*/
 
-	bool r = utils->GetImageRGBA(iImage,pubDest,nDestBufferSize);
+	bool r = utils->GetImageRGBA(iImage, pubDest, nDestBufferSize);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9721,7 +9721,7 @@ static int ISteamUtils_GetCSERIPPort(lua_State* L) {
 	uint16 usPort; /*out_param*/
 	uint32 unIP; /*out_param*/
 
-	bool r = utils->GetCSERIPPort(&unIP,&usPort);
+	bool r = utils->GetCSERIPPort(&unIP, &usPort);
 	push_bool(L, r);
 	push_uint16(L, usPort); /*out_param*/
 	push_uint32(L, unIP); /*out_param*/
@@ -9755,7 +9755,7 @@ static int ISteamUtils_IsAPICallCompleted(lua_State* L) {
 	bool pbFailed; /*out_param*/
 	SteamAPICall_t hSteamAPICall = check_SteamAPICall_t(L, 1); /*normal*/
 
-	bool r = utils->IsAPICallCompleted(hSteamAPICall,&pbFailed);
+	bool r = utils->IsAPICallCompleted(hSteamAPICall, &pbFailed);
 	push_bool(L, r);
 	push_bool(L, pbFailed); /*out_param*/
 	
@@ -9785,7 +9785,7 @@ static int ISteamUtils_GetAPICallResult(lua_State* L) {
 	dmBuffer::Result pCallback_buffer_result = dmBuffer::GetBytes(pCallback_buffer->m_Buffer, (void**)&pCallback, &pCallback_buffersize);
 	SteamAPICall_t hSteamAPICall = check_SteamAPICall_t(L, 1); /*normal*/
 
-	bool r = utils->GetAPICallResult(hSteamAPICall,pCallback,cubCallback,iCallbackExpected,&pbFailed);
+	bool r = utils->GetAPICallResult(hSteamAPICall, pCallback, cubCallback, iCallbackExpected, &pbFailed);
 	push_bool(L, r);
 	push_bool(L, pbFailed); /*out_param*/
 	
@@ -9831,7 +9831,7 @@ static int ISteamUtils_ShowGamepadTextInput(lua_State* L) {
 	EGamepadTextInputLineMode eLineInputMode = check_EGamepadTextInputLineMode(L, 2); /*normal*/
 	EGamepadTextInputMode eInputMode = check_EGamepadTextInputMode(L, 1); /*normal*/
 
-	bool r = utils->ShowGamepadTextInput(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText);
+	bool r = utils->ShowGamepadTextInput(eInputMode, eLineInputMode, pchDescription, unCharMax, pchExistingText);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9856,7 +9856,7 @@ static int ISteamUtils_GetEnteredGamepadTextInput(lua_State* L) {
 	uint32_t pchText_buffersize = 0;
 	dmBuffer::Result pchText_buffer_result = dmBuffer::GetBytes(pchText_buffer->m_Buffer, (void**)&pchText, &pchText_buffersize);
 
-	bool r = utils->GetEnteredGamepadTextInput(pchText,cchText);
+	bool r = utils->GetEnteredGamepadTextInput(pchText, cchText);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9888,7 +9888,7 @@ static int ISteamUtils_SetOverlayNotificationInset(lua_State* L) {
 	int nVerticalInset = check_int(L, 2); /*normal*/
 	int nHorizontalInset = check_int(L, 1); /*normal*/
 
-	utils->SetOverlayNotificationInset(nHorizontalInset,nVerticalInset);
+	utils->SetOverlayNotificationInset(nHorizontalInset, nVerticalInset);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -9950,7 +9950,7 @@ static int ISteamMatchmaking_GetFavoriteGame(lua_State* L) {
 	AppId_t pnAppID; /*out_param*/
 	int iGame = check_int(L, 1); /*normal*/
 
-	bool r = matchmaking->GetFavoriteGame(iGame,&pnAppID,&pnIP,&pnConnPort,&pnQueryPort,&punFlags,&pRTime32LastPlayedOnServer);
+	bool r = matchmaking->GetFavoriteGame(iGame, &pnAppID, &pnIP, &pnConnPort, &pnQueryPort, &punFlags, &pRTime32LastPlayedOnServer);
 	push_bool(L, r);
 	push_uint32(L, pRTime32LastPlayedOnServer); /*out_param*/
 	push_uint32(L, punFlags); /*out_param*/
@@ -9972,7 +9972,7 @@ static int ISteamMatchmaking_AddFavoriteGame(lua_State* L) {
 	uint32 nIP = check_uint32(L, 2); /*normal*/
 	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
 
-	int r = matchmaking->AddFavoriteGame(nAppID,nIP,nConnPort,nQueryPort,unFlags,rTime32LastPlayedOnServer);
+	int r = matchmaking->AddFavoriteGame(nAppID, nIP, nConnPort, nQueryPort, unFlags, rTime32LastPlayedOnServer);
 	push_int(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -9987,7 +9987,7 @@ static int ISteamMatchmaking_RemoveFavoriteGame(lua_State* L) {
 	uint32 nIP = check_uint32(L, 2); /*normal*/
 	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
 
-	bool r = matchmaking->RemoveFavoriteGame(nAppID,nIP,nConnPort,nQueryPort,unFlags);
+	bool r = matchmaking->RemoveFavoriteGame(nAppID, nIP, nConnPort, nQueryPort, unFlags);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10009,7 +10009,7 @@ static int ISteamMatchmaking_AddRequestLobbyListStringFilter(lua_State* L) {
 	const char * pchValueToMatch = check_const_char_ptr(L, 2); /*normal*/
 	const char * pchKeyToMatch = check_const_char_ptr(L, 1); /*normal*/
 
-	matchmaking->AddRequestLobbyListStringFilter(pchKeyToMatch,pchValueToMatch,eComparisonType);
+	matchmaking->AddRequestLobbyListStringFilter(pchKeyToMatch, pchValueToMatch, eComparisonType);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -10020,7 +10020,7 @@ static int ISteamMatchmaking_AddRequestLobbyListNumericalFilter(lua_State* L) {
 	int nValueToMatch = check_int(L, 2); /*normal*/
 	const char * pchKeyToMatch = check_const_char_ptr(L, 1); /*normal*/
 
-	matchmaking->AddRequestLobbyListNumericalFilter(pchKeyToMatch,nValueToMatch,eComparisonType);
+	matchmaking->AddRequestLobbyListNumericalFilter(pchKeyToMatch, nValueToMatch, eComparisonType);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -10030,7 +10030,7 @@ static int ISteamMatchmaking_AddRequestLobbyListNearValueFilter(lua_State* L) {
 	int nValueToBeCloseTo = check_int(L, 2); /*normal*/
 	const char * pchKeyToMatch = check_const_char_ptr(L, 1); /*normal*/
 
-	matchmaking->AddRequestLobbyListNearValueFilter(pchKeyToMatch,nValueToBeCloseTo);
+	matchmaking->AddRequestLobbyListNearValueFilter(pchKeyToMatch, nValueToBeCloseTo);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -10087,7 +10087,7 @@ static int ISteamMatchmaking_CreateLobby(lua_State* L) {
 	int cMaxMembers = check_int(L, 2); /*normal*/
 	ELobbyType eLobbyType = check_ELobbyType(L, 1); /*normal*/
 
-	SteamAPICall_t r = matchmaking->CreateLobby(eLobbyType,cMaxMembers);
+	SteamAPICall_t r = matchmaking->CreateLobby(eLobbyType, cMaxMembers);
 	steamCallbackWrapper->TrackSteamAPICallLobbyCreated_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -10117,7 +10117,7 @@ static int ISteamMatchmaking_InviteUserToLobby(lua_State* L) {
 	class CSteamID steamIDInvitee = check_class_CSteamID(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->InviteUserToLobby(steamIDLobby,steamIDInvitee);
+	bool r = matchmaking->InviteUserToLobby(steamIDLobby, steamIDInvitee);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10140,7 +10140,7 @@ static int ISteamMatchmaking_GetLobbyMemberByIndex(lua_State* L) {
 	int iMember = check_int(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = matchmaking->GetLobbyMemberByIndex(steamIDLobby,iMember);
+	class CSteamID r = matchmaking->GetLobbyMemberByIndex(steamIDLobby, iMember);
 	push_class_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10152,7 +10152,7 @@ static int ISteamMatchmaking_GetLobbyData(lua_State* L) {
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	const char * r = matchmaking->GetLobbyData(steamIDLobby,pchKey);
+	const char * r = matchmaking->GetLobbyData(steamIDLobby, pchKey);
 	push_const_char_ptr(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10165,7 +10165,7 @@ static int ISteamMatchmaking_SetLobbyData(lua_State* L) {
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->SetLobbyData(steamIDLobby,pchKey,pchValue);
+	bool r = matchmaking->SetLobbyData(steamIDLobby, pchKey, pchValue);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10198,7 +10198,7 @@ static int ISteamMatchmaking_GetLobbyDataByIndex(lua_State* L) {
 	int iLobbyData = check_int(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->GetLobbyDataByIndex(steamIDLobby,iLobbyData,pchKey,cchKeyBufferSize,pchValue,cchValueBufferSize);
+	bool r = matchmaking->GetLobbyDataByIndex(steamIDLobby, iLobbyData, pchKey, cchKeyBufferSize, pchValue, cchValueBufferSize);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10210,7 +10210,7 @@ static int ISteamMatchmaking_DeleteLobbyData(lua_State* L) {
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->DeleteLobbyData(steamIDLobby,pchKey);
+	bool r = matchmaking->DeleteLobbyData(steamIDLobby, pchKey);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10223,7 +10223,7 @@ static int ISteamMatchmaking_GetLobbyMemberData(lua_State* L) {
 	class CSteamID steamIDUser = check_class_CSteamID(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	const char * r = matchmaking->GetLobbyMemberData(steamIDLobby,steamIDUser,pchKey);
+	const char * r = matchmaking->GetLobbyMemberData(steamIDLobby, steamIDUser, pchKey);
 	push_const_char_ptr(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10236,7 +10236,7 @@ static int ISteamMatchmaking_SetLobbyMemberData(lua_State* L) {
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	matchmaking->SetLobbyMemberData(steamIDLobby,pchKey,pchValue);
+	matchmaking->SetLobbyMemberData(steamIDLobby, pchKey, pchValue);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -10247,7 +10247,7 @@ static int ISteamMatchmaking_SendLobbyChatMsg(lua_State* L) {
 	const void * pvMsgBody = check_const_void_ptr(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->SendLobbyChatMsg(steamIDLobby,pvMsgBody,cubMsgBody);
+	bool r = matchmaking->SendLobbyChatMsg(steamIDLobby, pvMsgBody, cubMsgBody);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10266,7 +10266,7 @@ static int ISteamMatchmaking_GetLobbyChatEntry(lua_State* L) {
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 	class CSteamID pSteamIDUser; /*out_struct*/
 
-	int r = matchmaking->GetLobbyChatEntry(steamIDLobby,iChatID,&pSteamIDUser,pvData,cubData,&peChatEntryType);
+	int r = matchmaking->GetLobbyChatEntry(steamIDLobby, iChatID, &pSteamIDUser, pvData, cubData, &peChatEntryType);
 	push_int(L, r);
 	push_EChatEntryType(L, peChatEntryType); /*out_param*/
 	
@@ -10292,7 +10292,7 @@ static int ISteamMatchmaking_SetLobbyGameServer(lua_State* L) {
 	uint32 unGameServerIP = check_uint32(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	matchmaking->SetLobbyGameServer(steamIDLobby,unGameServerIP,unGameServerPort,steamIDGameServer);
+	matchmaking->SetLobbyGameServer(steamIDLobby, unGameServerIP, unGameServerPort, steamIDGameServer);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -10304,7 +10304,7 @@ static int ISteamMatchmaking_GetLobbyGameServer(lua_State* L) {
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 	class CSteamID psteamIDGameServer; /*out_struct*/
 
-	bool r = matchmaking->GetLobbyGameServer(steamIDLobby,&punGameServerIP,&punGameServerPort,&psteamIDGameServer);
+	bool r = matchmaking->GetLobbyGameServer(steamIDLobby, &punGameServerIP, &punGameServerPort, &psteamIDGameServer);
 	push_bool(L, r);
 	push_uint16(L, punGameServerPort); /*out_param*/
 	push_uint32(L, punGameServerIP); /*out_param*/
@@ -10318,7 +10318,7 @@ static int ISteamMatchmaking_SetLobbyMemberLimit(lua_State* L) {
 	int cMaxMembers = check_int(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->SetLobbyMemberLimit(steamIDLobby,cMaxMembers);
+	bool r = matchmaking->SetLobbyMemberLimit(steamIDLobby, cMaxMembers);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10341,7 +10341,7 @@ static int ISteamMatchmaking_SetLobbyType(lua_State* L) {
 	ELobbyType eLobbyType = check_ELobbyType(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->SetLobbyType(steamIDLobby,eLobbyType);
+	bool r = matchmaking->SetLobbyType(steamIDLobby, eLobbyType);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10353,7 +10353,7 @@ static int ISteamMatchmaking_SetLobbyJoinable(lua_State* L) {
 	bool bLobbyJoinable = check_bool(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->SetLobbyJoinable(steamIDLobby,bLobbyJoinable);
+	bool r = matchmaking->SetLobbyJoinable(steamIDLobby, bLobbyJoinable);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10376,7 +10376,7 @@ static int ISteamMatchmaking_SetLobbyOwner(lua_State* L) {
 	class CSteamID steamIDNewOwner = check_class_CSteamID(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->SetLobbyOwner(steamIDLobby,steamIDNewOwner);
+	bool r = matchmaking->SetLobbyOwner(steamIDLobby, steamIDNewOwner);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10388,7 +10388,7 @@ static int ISteamMatchmaking_SetLinkedLobby(lua_State* L) {
 	class CSteamID steamIDLobbyDependent = check_class_CSteamID(L, 2); /*normal*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = matchmaking->SetLinkedLobby(steamIDLobby,steamIDLobbyDependent);
+	bool r = matchmaking->SetLinkedLobby(steamIDLobby, steamIDLobbyDependent);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10401,7 +10401,7 @@ static int ISteamRemoteStorage_FileWrite(lua_State* L) {
 	const void * pvData = check_const_void_ptr(L, 2); /*normal*/
 	const char * pchFile = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = remote_storage->FileWrite(pchFile,pvData,cubData);
+	bool r = remote_storage->FileWrite(pchFile, pvData, cubData);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10417,7 +10417,7 @@ static int ISteamRemoteStorage_FileRead(lua_State* L) {
 	dmBuffer::Result pvData_buffer_result = dmBuffer::GetBytes(pvData_buffer->m_Buffer, (void**)&pvData, &pvData_buffersize);
 	const char * pchFile = check_const_char_ptr(L, 1); /*normal*/
 
-	int32 r = remote_storage->FileRead(pchFile,pvData,cubDataToRead);
+	int32 r = remote_storage->FileRead(pchFile, pvData, cubDataToRead);
 	push_int32(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10430,7 +10430,7 @@ static int ISteamRemoteStorage_FileWriteAsync(lua_State* L) {
 	const void * pvData = check_const_void_ptr(L, 2); /*normal*/
 	const char * pchFile = check_const_char_ptr(L, 1); /*normal*/
 
-	SteamAPICall_t r = remote_storage->FileWriteAsync(pchFile,pvData,cubData);
+	SteamAPICall_t r = remote_storage->FileWriteAsync(pchFile, pvData, cubData);
 	steamCallbackWrapper->TrackSteamAPICallRemoteStorageFileWriteAsyncComplete_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -10442,7 +10442,7 @@ static int ISteamRemoteStorage_FileReadAsync(lua_State* L) {
 	uint32 nOffset = check_uint32(L, 2); /*normal*/
 	const char * pchFile = check_const_char_ptr(L, 1); /*normal*/
 
-	SteamAPICall_t r = remote_storage->FileReadAsync(pchFile,nOffset,cubToRead);
+	SteamAPICall_t r = remote_storage->FileReadAsync(pchFile, nOffset, cubToRead);
 	steamCallbackWrapper->TrackSteamAPICallRemoteStorageFileReadAsyncComplete_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -10457,7 +10457,7 @@ static int ISteamRemoteStorage_FileReadAsyncComplete(lua_State* L) {
 	dmBuffer::Result pvBuffer_buffer_result = dmBuffer::GetBytes(pvBuffer_buffer->m_Buffer, (void**)&pvBuffer, &pvBuffer_buffersize);
 	SteamAPICall_t hReadCall = check_SteamAPICall_t(L, 1); /*normal*/
 
-	bool r = remote_storage->FileReadAsyncComplete(hReadCall,pvBuffer,cubToRead);
+	bool r = remote_storage->FileReadAsyncComplete(hReadCall, pvBuffer, cubToRead);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10501,7 +10501,7 @@ static int ISteamRemoteStorage_SetSyncPlatforms(lua_State* L) {
 	ERemoteStoragePlatform eRemoteStoragePlatform = check_ERemoteStoragePlatform(L, 2); /*normal*/
 	const char * pchFile = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = remote_storage->SetSyncPlatforms(pchFile,eRemoteStoragePlatform);
+	bool r = remote_storage->SetSyncPlatforms(pchFile, eRemoteStoragePlatform);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10525,7 +10525,7 @@ static int ISteamRemoteStorage_FileWriteStreamWriteChunk(lua_State* L) {
 	const void * pvData = check_const_void_ptr(L, 2); /*normal*/
 	UGCFileWriteStreamHandle_t writeHandle = check_UGCFileWriteStreamHandle_t(L, 1); /*normal*/
 
-	bool r = remote_storage->FileWriteStreamWriteChunk(writeHandle,pvData,cubData);
+	bool r = remote_storage->FileWriteStreamWriteChunk(writeHandle, pvData, cubData);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10624,7 +10624,7 @@ static int ISteamRemoteStorage_GetFileNameAndSize(lua_State* L) {
 	int32 pnFileSizeInBytes; /*out_param*/
 	int iFile = check_int(L, 1); /*normal*/
 
-	const char * r = remote_storage->GetFileNameAndSize(iFile,&pnFileSizeInBytes);
+	const char * r = remote_storage->GetFileNameAndSize(iFile, &pnFileSizeInBytes);
 	push_const_char_ptr(L, r);
 	push_int32(L, pnFileSizeInBytes); /*out_param*/
 	
@@ -10637,7 +10637,7 @@ static int ISteamRemoteStorage_GetQuota(lua_State* L) {
 	uint64 puAvailableBytes; /*out_param*/
 	uint64 pnTotalBytes; /*out_param*/
 
-	bool r = remote_storage->GetQuota(&pnTotalBytes,&puAvailableBytes);
+	bool r = remote_storage->GetQuota(&pnTotalBytes, &puAvailableBytes);
 	push_bool(L, r);
 	push_uint64(L, puAvailableBytes); /*out_param*/
 	push_uint64(L, pnTotalBytes); /*out_param*/
@@ -10680,7 +10680,7 @@ static int ISteamRemoteStorage_UGCDownload(lua_State* L) {
 	uint32 unPriority = check_uint32(L, 2); /*normal*/
 	UGCHandle_t hContent = check_UGCHandle_t(L, 1); /*normal*/
 
-	SteamAPICall_t r = remote_storage->UGCDownload(hContent,unPriority);
+	SteamAPICall_t r = remote_storage->UGCDownload(hContent, unPriority);
 	steamCallbackWrapper->TrackSteamAPICallRemoteStorageDownloadUGCResult_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -10692,7 +10692,7 @@ static int ISteamRemoteStorage_GetUGCDownloadProgress(lua_State* L) {
 	int32 pnBytesDownloaded; /*out_param*/
 	UGCHandle_t hContent = check_UGCHandle_t(L, 1); /*normal*/
 
-	bool r = remote_storage->GetUGCDownloadProgress(hContent,&pnBytesDownloaded,&pnBytesExpected);
+	bool r = remote_storage->GetUGCDownloadProgress(hContent, &pnBytesDownloaded, &pnBytesExpected);
 	push_bool(L, r);
 	push_int32(L, pnBytesExpected); /*out_param*/
 	push_int32(L, pnBytesDownloaded); /*out_param*/
@@ -10709,7 +10709,7 @@ static int ISteamRemoteStorage_GetUGCDetails(lua_State* L) {
 	char ** ppchName; /*out_string*/
 	class CSteamID pSteamIDOwner; /*out_struct*/
 
-	bool r = remote_storage->GetUGCDetails(hContent,&pnAppID,ppchName,&pnFileSizeInBytes,&pSteamIDOwner);
+	bool r = remote_storage->GetUGCDetails(hContent, &pnAppID, ppchName, &pnFileSizeInBytes, &pSteamIDOwner);
 	push_bool(L, r);
 	push_int32(L, pnFileSizeInBytes); /*out_param*/
 	push_AppId_t(L, pnAppID); /*out_param*/
@@ -10730,7 +10730,7 @@ static int ISteamRemoteStorage_UGCRead(lua_State* L) {
 	dmBuffer::Result pvData_buffer_result = dmBuffer::GetBytes(pvData_buffer->m_Buffer, (void**)&pvData, &pvData_buffersize);
 	UGCHandle_t hContent = check_UGCHandle_t(L, 1); /*normal*/
 
-	int32 r = remote_storage->UGCRead(hContent,pvData,cubDataToRead,cOffset,eAction);
+	int32 r = remote_storage->UGCRead(hContent, pvData, cubDataToRead, cOffset, eAction);
 	push_int32(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10764,7 +10764,7 @@ static int ISteamRemoteStorage_UGCDownloadToLocation(lua_State* L) {
 	const char * pchLocation = check_const_char_ptr(L, 2); /*normal*/
 	UGCHandle_t hContent = check_UGCHandle_t(L, 1); /*normal*/
 
-	SteamAPICall_t r = remote_storage->UGCDownloadToLocation(hContent,pchLocation,unPriority);
+	SteamAPICall_t r = remote_storage->UGCDownloadToLocation(hContent, pchLocation, unPriority);
 	steamCallbackWrapper->TrackSteamAPICallRemoteStorageDownloadUGCResult_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -10785,7 +10785,7 @@ static int ISteamUserStats_GetStatInt(lua_State* L) {
 	int32 pData; /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->GetStat(pchName,&pData);
+	bool r = user_stats->GetStat(pchName, &pData);
 	push_bool(L, r);
 	push_int32(L, pData); /*out_param*/
 	
@@ -10798,7 +10798,7 @@ static int ISteamUserStats_GetStatFloat(lua_State* L) {
 	float pData; /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->GetStat(pchName,&pData);
+	bool r = user_stats->GetStat(pchName, &pData);
 	push_bool(L, r);
 	push_float(L, pData); /*out_param*/
 	
@@ -10811,7 +10811,7 @@ static int ISteamUserStats_SetStatInt(lua_State* L) {
 	int32 nData = check_int32(L, 2); /*normal*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->SetStat(pchName,nData);
+	bool r = user_stats->SetStat(pchName, nData);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10823,7 +10823,7 @@ static int ISteamUserStats_SetStatFloat(lua_State* L) {
 	float fData = check_float(L, 2); /*normal*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->SetStat(pchName,fData);
+	bool r = user_stats->SetStat(pchName, fData);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10836,7 +10836,7 @@ static int ISteamUserStats_UpdateAvgRateStat(lua_State* L) {
 	float flCountThisSession = check_float(L, 2); /*normal*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->UpdateAvgRateStat(pchName,flCountThisSession,dSessionLength);
+	bool r = user_stats->UpdateAvgRateStat(pchName, flCountThisSession, dSessionLength);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10848,7 +10848,7 @@ static int ISteamUserStats_GetAchievement(lua_State* L) {
 	bool pbAchieved; /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->GetAchievement(pchName,&pbAchieved);
+	bool r = user_stats->GetAchievement(pchName, &pbAchieved);
 	push_bool(L, r);
 	push_bool(L, pbAchieved); /*out_param*/
 	
@@ -10884,7 +10884,7 @@ static int ISteamUserStats_GetAchievementAndUnlockTime(lua_State* L) {
 	bool pbAchieved; /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->GetAchievementAndUnlockTime(pchName,&pbAchieved,&punUnlockTime);
+	bool r = user_stats->GetAchievementAndUnlockTime(pchName, &pbAchieved, &punUnlockTime);
 	push_bool(L, r);
 	push_uint32(L, punUnlockTime); /*out_param*/
 	push_bool(L, pbAchieved); /*out_param*/
@@ -10919,7 +10919,7 @@ static int ISteamUserStats_GetAchievementDisplayAttribute(lua_State* L) {
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	const char * r = user_stats->GetAchievementDisplayAttribute(pchName,pchKey);
+	const char * r = user_stats->GetAchievementDisplayAttribute(pchName, pchKey);
 	push_const_char_ptr(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10932,7 +10932,7 @@ static int ISteamUserStats_IndicateAchievementProgress(lua_State* L) {
 	uint32 nCurProgress = check_uint32(L, 2); /*normal*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->IndicateAchievementProgress(pchName,nCurProgress,nMaxProgress);
+	bool r = user_stats->IndicateAchievementProgress(pchName, nCurProgress, nMaxProgress);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -10976,7 +10976,7 @@ static int ISteamUserStats_GetUserStatInt(lua_State* L) {
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = user_stats->GetUserStat(steamIDUser,pchName,&pData);
+	bool r = user_stats->GetUserStat(steamIDUser, pchName, &pData);
 	push_bool(L, r);
 	push_int32(L, pData); /*out_param*/
 	
@@ -10990,7 +10990,7 @@ static int ISteamUserStats_GetUserStatFloat(lua_State* L) {
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = user_stats->GetUserStat(steamIDUser,pchName,&pData);
+	bool r = user_stats->GetUserStat(steamIDUser, pchName, &pData);
 	push_bool(L, r);
 	push_float(L, pData); /*out_param*/
 	
@@ -11004,7 +11004,7 @@ static int ISteamUserStats_GetUserAchievement(lua_State* L) {
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = user_stats->GetUserAchievement(steamIDUser,pchName,&pbAchieved);
+	bool r = user_stats->GetUserAchievement(steamIDUser, pchName, &pbAchieved);
 	push_bool(L, r);
 	push_bool(L, pbAchieved); /*out_param*/
 	
@@ -11019,7 +11019,7 @@ static int ISteamUserStats_GetUserAchievementAndUnlockTime(lua_State* L) {
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = user_stats->GetUserAchievementAndUnlockTime(steamIDUser,pchName,&pbAchieved,&punUnlockTime);
+	bool r = user_stats->GetUserAchievementAndUnlockTime(steamIDUser, pchName, &pbAchieved, &punUnlockTime);
 	push_bool(L, r);
 	push_uint32(L, punUnlockTime); /*out_param*/
 	push_bool(L, pbAchieved); /*out_param*/
@@ -11045,7 +11045,7 @@ static int ISteamUserStats_FindOrCreateLeaderboard(lua_State* L) {
 	ELeaderboardSortMethod eLeaderboardSortMethod = check_ELeaderboardSortMethod(L, 2); /*normal*/
 	const char * pchLeaderboardName = check_const_char_ptr(L, 1); /*normal*/
 
-	SteamAPICall_t r = user_stats->FindOrCreateLeaderboard(pchLeaderboardName,eLeaderboardSortMethod,eLeaderboardDisplayType);
+	SteamAPICall_t r = user_stats->FindOrCreateLeaderboard(pchLeaderboardName, eLeaderboardSortMethod, eLeaderboardDisplayType);
 	steamCallbackWrapper->TrackSteamAPICallLeaderboardFindResult_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -11112,7 +11112,7 @@ static int ISteamUserStats_DownloadLeaderboardEntries(lua_State* L) {
 	ELeaderboardDataRequest eLeaderboardDataRequest = check_ELeaderboardDataRequest(L, 2); /*normal*/
 	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
 
-	SteamAPICall_t r = user_stats->DownloadLeaderboardEntries(hSteamLeaderboard,eLeaderboardDataRequest,nRangeStart,nRangeEnd);
+	SteamAPICall_t r = user_stats->DownloadLeaderboardEntries(hSteamLeaderboard, eLeaderboardDataRequest, nRangeStart, nRangeEnd);
 	steamCallbackWrapper->TrackSteamAPICallLeaderboardScoresDownloaded_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -11130,7 +11130,7 @@ static int ISteamUserStats_DownloadLeaderboardEntriesForUsers(lua_State* L) {
 	}
 	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
 
-	SteamAPICall_t r = user_stats->DownloadLeaderboardEntriesForUsers(hSteamLeaderboard,prgUsers,cUsers);
+	SteamAPICall_t r = user_stats->DownloadLeaderboardEntriesForUsers(hSteamLeaderboard, prgUsers, cUsers);
 	steamCallbackWrapper->TrackSteamAPICallLeaderboardScoresDownloaded_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -11144,7 +11144,7 @@ static int ISteamUserStats_GetDownloadedLeaderboardEntry(lua_State* L) {
 	SteamLeaderboardEntries_t hSteamLeaderboardEntries = check_SteamLeaderboardEntries_t(L, 1); /*normal*/
 	int32 pDetails[cDetailsMax]; /*out_array_count*/
 
-	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries,index,&pLeaderboardEntry,pDetails,cDetailsMax);
+	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries, index, &pLeaderboardEntry, pDetails, cDetailsMax);
 	push_bool(L, r);
 	push_LeaderboardEntry_t(L, pLeaderboardEntry); /*out_param*/
 	push_int32_array(L, pDetails, cDetailsMax);  /*out_array_count*/
@@ -11167,7 +11167,7 @@ static int ISteamUserStats_UploadLeaderboardScore(lua_State* L) {
 	ELeaderboardUploadScoreMethod eLeaderboardUploadScoreMethod = check_ELeaderboardUploadScoreMethod(L, 2); /*normal*/
 	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
 
-	SteamAPICall_t r = user_stats->UploadLeaderboardScore(hSteamLeaderboard,eLeaderboardUploadScoreMethod,nScore,pScoreDetails,cScoreDetailsCount);
+	SteamAPICall_t r = user_stats->UploadLeaderboardScore(hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount);
 	steamCallbackWrapper->TrackSteamAPICallLeaderboardScoreUploaded_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -11178,7 +11178,7 @@ static int ISteamUserStats_AttachLeaderboardUGC(lua_State* L) {
 	UGCHandle_t hUGC = check_UGCHandle_t(L, 2); /*normal*/
 	SteamLeaderboard_t hSteamLeaderboard = check_SteamLeaderboard_t(L, 1); /*normal*/
 
-	SteamAPICall_t r = user_stats->AttachLeaderboardUGC(hSteamLeaderboard,hUGC);
+	SteamAPICall_t r = user_stats->AttachLeaderboardUGC(hSteamLeaderboard, hUGC);
 	steamCallbackWrapper->TrackSteamAPICallLeaderboardUGCSet_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -11212,7 +11212,7 @@ static int ISteamUserStats_GetMostAchievedAchievementInfo(lua_State* L) {
 	uint32_t pchName_buffersize = 0;
 	dmBuffer::Result pchName_buffer_result = dmBuffer::GetBytes(pchName_buffer->m_Buffer, (void**)&pchName, &pchName_buffersize);
 
-	int r = user_stats->GetMostAchievedAchievementInfo(pchName,unNameBufLen,&pflPercent,&pbAchieved);
+	int r = user_stats->GetMostAchievedAchievementInfo(pchName, unNameBufLen, &pflPercent, &pbAchieved);
 	push_int(L, r);
 	push_bool(L, pbAchieved); /*out_param*/
 	push_float(L, pflPercent); /*out_param*/
@@ -11232,7 +11232,7 @@ static int ISteamUserStats_GetNextMostAchievedAchievementInfo(lua_State* L) {
 	dmBuffer::Result pchName_buffer_result = dmBuffer::GetBytes(pchName_buffer->m_Buffer, (void**)&pchName, &pchName_buffersize);
 	int iIteratorPrevious = check_int(L, 1); /*normal*/
 
-	int r = user_stats->GetNextMostAchievedAchievementInfo(iIteratorPrevious,pchName,unNameBufLen,&pflPercent,&pbAchieved);
+	int r = user_stats->GetNextMostAchievedAchievementInfo(iIteratorPrevious, pchName, unNameBufLen, &pflPercent, &pbAchieved);
 	push_int(L, r);
 	push_bool(L, pbAchieved); /*out_param*/
 	push_float(L, pflPercent); /*out_param*/
@@ -11246,7 +11246,7 @@ static int ISteamUserStats_GetAchievementAchievedPercent(lua_State* L) {
 	float pflPercent; /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->GetAchievementAchievedPercent(pchName,&pflPercent);
+	bool r = user_stats->GetAchievementAchievedPercent(pchName, &pflPercent);
 	push_bool(L, r);
 	push_float(L, pflPercent); /*out_param*/
 	
@@ -11269,7 +11269,7 @@ static int ISteamUserStats_GetGlobalStatInt(lua_State* L) {
 	int64 pData; /*out_param*/
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->GetGlobalStat(pchStatName,&pData);
+	bool r = user_stats->GetGlobalStat(pchStatName, &pData);
 	push_bool(L, r);
 	push_int64(L, pData); /*out_param*/
 	
@@ -11282,7 +11282,7 @@ static int ISteamUserStats_GetGlobalStatFloat(lua_State* L) {
 	double pData; /*out_param*/
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
 
-	bool r = user_stats->GetGlobalStat(pchStatName,&pData);
+	bool r = user_stats->GetGlobalStat(pchStatName, &pData);
 	push_bool(L, r);
 	push_double(L, pData); /*out_param*/
 	
@@ -11302,7 +11302,7 @@ static int ISteamUserStats_GetGlobalStatIntHistory(lua_State* L) {
 	}
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
 
-	int32 r = user_stats->GetGlobalStatHistory(pchStatName,pData,cubData);
+	int32 r = user_stats->GetGlobalStatHistory(pchStatName, pData, cubData);
 	push_int32(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11321,7 +11321,7 @@ static int ISteamUserStats_GetGlobalStatFloatHistory(lua_State* L) {
 	}
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
 
-	int32 r = user_stats->GetGlobalStatHistory(pchStatName,pData,cubData);
+	int32 r = user_stats->GetGlobalStatHistory(pchStatName, pData, cubData);
 	push_int32(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11452,7 +11452,7 @@ static int ISteamApps_BGetDLCDataByIndex(lua_State* L) {
 	AppId_t pAppID; /*out_param*/
 	int iDLC = check_int(L, 1); /*normal*/
 
-	bool r = apps->BGetDLCDataByIndex(iDLC,&pAppID,&pbAvailable,pchName,cchNameBufferSize);
+	bool r = apps->BGetDLCDataByIndex(iDLC, &pAppID, &pbAvailable, pchName, cchNameBufferSize);
 	push_bool(L, r);
 	push_bool(L, pbAvailable); /*out_param*/
 	push_AppId_t(L, pAppID); /*out_param*/
@@ -11496,7 +11496,7 @@ static int ISteamApps_GetCurrentBetaName(lua_State* L) {
 	uint32_t pchName_buffersize = 0;
 	dmBuffer::Result pchName_buffer_result = dmBuffer::GetBytes(pchName_buffer->m_Buffer, (void**)&pchName, &pchName_buffersize);
 
-	bool r = apps->GetCurrentBetaName(pchName,cchNameBufferSize);
+	bool r = apps->GetCurrentBetaName(pchName, cchNameBufferSize);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11520,7 +11520,7 @@ static int ISteamApps_GetInstalledDepots(lua_State* L) {
 	DepotId_t pvecDepots; /*out_param*/
 	AppId_t appID = check_AppId_t(L, 1); /*normal*/
 
-	uint32 r = apps->GetInstalledDepots(appID,&pvecDepots,cMaxDepots);
+	uint32 r = apps->GetInstalledDepots(appID, &pvecDepots, cMaxDepots);
 	push_uint32(L, r);
 	push_DepotId_t(L, pvecDepots); /*out_param*/
 	
@@ -11537,7 +11537,7 @@ static int ISteamApps_GetAppInstallDir(lua_State* L) {
 	dmBuffer::Result pchFolder_buffer_result = dmBuffer::GetBytes(pchFolder_buffer->m_Buffer, (void**)&pchFolder, &pchFolder_buffersize);
 	AppId_t appID = check_AppId_t(L, 1); /*normal*/
 
-	uint32 r = apps->GetAppInstallDir(appID,pchFolder,cchFolderBufferSize);
+	uint32 r = apps->GetAppInstallDir(appID, pchFolder, cchFolderBufferSize);
 	push_uint32(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11582,7 +11582,7 @@ static int ISteamApps_GetDlcDownloadProgress(lua_State* L) {
 	uint64 punBytesDownloaded; /*out_param*/
 	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
 
-	bool r = apps->GetDlcDownloadProgress(nAppID,&punBytesDownloaded,&punBytesTotal);
+	bool r = apps->GetDlcDownloadProgress(nAppID, &punBytesDownloaded, &punBytesTotal);
 	push_bool(L, r);
 	push_uint64(L, punBytesTotal); /*out_param*/
 	push_uint64(L, punBytesDownloaded); /*out_param*/
@@ -11627,7 +11627,7 @@ static int ISteamNetworking_SendP2PPacket(lua_State* L) {
 	const void * pubData = check_const_void_ptr(L, 2); /*normal*/
 	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = networking->SendP2PPacket(steamIDRemote,pubData,cubData,eP2PSendType,nChannel);
+	bool r = networking->SendP2PPacket(steamIDRemote, pubData, cubData, eP2PSendType, nChannel);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11639,7 +11639,7 @@ static int ISteamNetworking_IsP2PPacketAvailable(lua_State* L) {
 	int nChannel = check_int(L, 1); /*normal*/
 	uint32 pcubMsgSize; /*out_param*/
 
-	bool r = networking->IsP2PPacketAvailable(&pcubMsgSize,nChannel);
+	bool r = networking->IsP2PPacketAvailable(&pcubMsgSize, nChannel);
 	push_bool(L, r);
 	push_uint32(L, pcubMsgSize); /*out_param*/
 	
@@ -11658,7 +11658,7 @@ static int ISteamNetworking_ReadP2PPacket(lua_State* L) {
 	uint32_t pubDest_buffersize = 0;
 	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
 
-	bool r = networking->ReadP2PPacket(pubDest,cubDest,&pcubMsgSize,&psteamIDRemote,nChannel);
+	bool r = networking->ReadP2PPacket(pubDest, cubDest, &pcubMsgSize, &psteamIDRemote, nChannel);
 	push_bool(L, r);
 	push_class_CSteamID(L, psteamIDRemote); /*out_param*/
 	push_uint32(L, pcubMsgSize); /*out_param*/
@@ -11694,7 +11694,7 @@ static int ISteamNetworking_CloseP2PChannelWithUser(lua_State* L) {
 	int nChannel = check_int(L, 2); /*normal*/
 	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = networking->CloseP2PChannelWithUser(steamIDRemote,nChannel);
+	bool r = networking->CloseP2PChannelWithUser(steamIDRemote, nChannel);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11706,7 +11706,7 @@ static int ISteamNetworking_GetP2PSessionState(lua_State* L) {
 	struct P2PSessionState_t pConnectionState; /*out_param*/
 	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
 
-	bool r = networking->GetP2PSessionState(steamIDRemote,&pConnectionState);
+	bool r = networking->GetP2PSessionState(steamIDRemote, &pConnectionState);
 	push_bool(L, r);
 	push_P2PSessionState_t(L, pConnectionState); /*out_param*/
 	
@@ -11732,7 +11732,7 @@ static int ISteamNetworking_CreateListenSocket(lua_State* L) {
 	uint32 nIP = check_uint32(L, 2); /*normal*/
 	int nVirtualP2PPort = check_int(L, 1); /*normal*/
 
-	SNetListenSocket_t r = networking->CreateListenSocket(nVirtualP2PPort,nIP,nPort,bAllowUseOfPacketRelay);
+	SNetListenSocket_t r = networking->CreateListenSocket(nVirtualP2PPort, nIP, nPort, bAllowUseOfPacketRelay);
 	push_SNetListenSocket_t(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11746,7 +11746,7 @@ static int ISteamNetworking_CreateP2PConnectionSocket(lua_State* L) {
 	int nVirtualPort = check_int(L, 2); /*normal*/
 	class CSteamID steamIDTarget = check_class_CSteamID(L, 1); /*normal*/
 
-	SNetSocket_t r = networking->CreateP2PConnectionSocket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay);
+	SNetSocket_t r = networking->CreateP2PConnectionSocket(steamIDTarget, nVirtualPort, nTimeoutSec, bAllowUseOfPacketRelay);
 	push_SNetSocket_t(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11759,7 +11759,7 @@ static int ISteamNetworking_CreateConnectionSocket(lua_State* L) {
 	uint16 nPort = check_uint16(L, 2); /*normal*/
 	uint32 nIP = check_uint32(L, 1); /*normal*/
 
-	SNetSocket_t r = networking->CreateConnectionSocket(nIP,nPort,nTimeoutSec);
+	SNetSocket_t r = networking->CreateConnectionSocket(nIP, nPort, nTimeoutSec);
 	push_SNetSocket_t(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11771,7 +11771,7 @@ static int ISteamNetworking_DestroySocket(lua_State* L) {
 	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
 	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
 
-	bool r = networking->DestroySocket(hSocket,bNotifyRemoteEnd);
+	bool r = networking->DestroySocket(hSocket, bNotifyRemoteEnd);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11783,7 +11783,7 @@ static int ISteamNetworking_DestroyListenSocket(lua_State* L) {
 	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
 	SNetListenSocket_t hSocket = check_SNetListenSocket_t(L, 1); /*normal*/
 
-	bool r = networking->DestroyListenSocket(hSocket,bNotifyRemoteEnd);
+	bool r = networking->DestroyListenSocket(hSocket, bNotifyRemoteEnd);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11800,7 +11800,7 @@ static int ISteamNetworking_SendDataOnSocket(lua_State* L) {
 	dmBuffer::Result pubData_buffer_result = dmBuffer::GetBytes(pubData_buffer->m_Buffer, (void**)&pubData, &pubData_buffersize);
 	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
 
-	bool r = networking->SendDataOnSocket(hSocket,pubData,cubData,bReliable);
+	bool r = networking->SendDataOnSocket(hSocket, pubData, cubData, bReliable);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -11812,7 +11812,7 @@ static int ISteamNetworking_IsDataAvailableOnSocket(lua_State* L) {
 	uint32 pcubMsgSize; /*out_param*/
 	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
 
-	bool r = networking->IsDataAvailableOnSocket(hSocket,&pcubMsgSize);
+	bool r = networking->IsDataAvailableOnSocket(hSocket, &pcubMsgSize);
 	push_bool(L, r);
 	push_uint32(L, pcubMsgSize); /*out_param*/
 	
@@ -11830,7 +11830,7 @@ static int ISteamNetworking_RetrieveDataFromSocket(lua_State* L) {
 	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
 	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
 
-	bool r = networking->RetrieveDataFromSocket(hSocket,pubDest,cubDest,&pcubMsgSize);
+	bool r = networking->RetrieveDataFromSocket(hSocket, pubDest, cubDest, &pcubMsgSize);
 	push_bool(L, r);
 	push_uint32(L, pcubMsgSize); /*out_param*/
 	
@@ -11844,7 +11844,7 @@ static int ISteamNetworking_IsDataAvailable(lua_State* L) {
 	uint32 pcubMsgSize; /*out_param*/
 	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
 
-	bool r = networking->IsDataAvailable(hListenSocket,&pcubMsgSize,&phSocket);
+	bool r = networking->IsDataAvailable(hListenSocket, &pcubMsgSize, &phSocket);
 	push_bool(L, r);
 	push_SNetSocket_t(L, phSocket); /*out_param*/
 	push_uint32(L, pcubMsgSize); /*out_param*/
@@ -11864,7 +11864,7 @@ static int ISteamNetworking_RetrieveData(lua_State* L) {
 	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
 	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
 
-	bool r = networking->RetrieveData(hListenSocket,pubDest,cubDest,&pcubMsgSize,&phSocket);
+	bool r = networking->RetrieveData(hListenSocket, pubDest, cubDest, &pcubMsgSize, &phSocket);
 	push_bool(L, r);
 	push_SNetSocket_t(L, phSocket); /*out_param*/
 	push_uint32(L, pcubMsgSize); /*out_param*/
@@ -11881,7 +11881,7 @@ static int ISteamNetworking_GetSocketInfo(lua_State* L) {
 	CSteamID pSteamIDRemote; /*out_param*/
 	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
 
-	bool r = networking->GetSocketInfo(hSocket,&pSteamIDRemote,&peSocketStatus,&punIPRemote,&punPortRemote);
+	bool r = networking->GetSocketInfo(hSocket, &pSteamIDRemote, &peSocketStatus, &punIPRemote, &punPortRemote);
 	push_bool(L, r);
 	push_uint16(L, punPortRemote); /*out_param*/
 	push_uint32(L, punIPRemote); /*out_param*/
@@ -11898,7 +11898,7 @@ static int ISteamNetworking_GetListenSocketInfo(lua_State* L) {
 	uint32 pnIP; /*out_param*/
 	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
 
-	bool r = networking->GetListenSocketInfo(hListenSocket,&pnIP,&pnPort);
+	bool r = networking->GetListenSocketInfo(hListenSocket, &pnIP, &pnPort);
 	push_bool(L, r);
 	push_uint16(L, pnPort); /*out_param*/
 	push_uint32(L, pnIP); /*out_param*/
@@ -12027,7 +12027,7 @@ static int ISteamInventory_GetResultItems(lua_State* L) {
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
 	struct SteamItemDetails_t pOutItemsArray[punOutItemsArraySize]; /*out_array_count*/
 
-	bool r = inventory->GetResultItems(resultHandle,pOutItemsArray,&punOutItemsArraySize);
+	bool r = inventory->GetResultItems(resultHandle, pOutItemsArray, &punOutItemsArraySize);
 	push_bool(L, r);
 	push_uint32(L, punOutItemsArraySize); /*out_param*/
 	push_SteamItemDetails_t_array(L, pOutItemsArray, punOutItemsArraySize);  /*out_array_count*/
@@ -12047,7 +12047,7 @@ static int ISteamInventory_GetResultItemProperty(lua_State* L) {
 	uint32 unItemIndex = check_uint32(L, 2); /*normal*/
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
 
-	bool r = inventory->GetResultItemProperty(resultHandle,unItemIndex,pchPropertyName,pchValueBuffer,&punValueBufferSizeOut);
+	bool r = inventory->GetResultItemProperty(resultHandle, unItemIndex, pchPropertyName, pchValueBuffer, &punValueBufferSizeOut);
 	push_bool(L, r);
 	push_uint32(L, punValueBufferSizeOut); /*out_param*/
 	
@@ -12071,7 +12071,7 @@ static int ISteamInventory_CheckResultSteamID(lua_State* L) {
 	class CSteamID steamIDExpected = check_class_CSteamID(L, 2); /*normal*/
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
 
-	bool r = inventory->CheckResultSteamID(resultHandle,steamIDExpected);
+	bool r = inventory->CheckResultSteamID(resultHandle, steamIDExpected);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -12111,7 +12111,7 @@ static int ISteamInventory_GetItemsByID(lua_State* L) {
 	}
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->GetItemsByID(&pResultHandle,pInstanceIDs,unCountInstanceIDs);
+	bool r = inventory->GetItemsByID(&pResultHandle, pInstanceIDs, unCountInstanceIDs);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12128,7 +12128,7 @@ static int ISteamInventory_SerializeResult(lua_State* L) {
 	dmBuffer::Result pOutBuffer_buffer_result = dmBuffer::GetBytes(pOutBuffer_buffer->m_Buffer, (void**)&pOutBuffer, &pOutBuffer_buffersize);
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
 
-	bool r = inventory->SerializeResult(resultHandle,pOutBuffer,&punOutBufferSize);
+	bool r = inventory->SerializeResult(resultHandle, pOutBuffer, &punOutBufferSize);
 	push_bool(L, r);
 	push_uint32(L, punOutBufferSize); /*out_param*/
 	
@@ -12143,7 +12143,7 @@ static int ISteamInventory_DeserializeResult(lua_State* L) {
 	const void * pBuffer = check_const_void_ptr(L, 1); /*normal*/
 	SteamInventoryResult_t pOutResultHandle; /*out_param*/
 
-	bool r = inventory->DeserializeResult(&pOutResultHandle,pBuffer,unBufferSize,bRESERVED_MUST_BE_FALSE);
+	bool r = inventory->DeserializeResult(&pOutResultHandle, pBuffer, unBufferSize, bRESERVED_MUST_BE_FALSE);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pOutResultHandle); /*out_param*/
 	
@@ -12170,7 +12170,7 @@ static int ISteamInventory_GenerateItems(lua_State* L) {
 	}
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->GenerateItems(&pResultHandle,pArrayItemDefs,punArrayQuantity,unArrayLength);
+	bool r = inventory->GenerateItems(&pResultHandle, pArrayItemDefs, punArrayQuantity, unArrayLength);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12195,7 +12195,7 @@ static int ISteamInventory_AddPromoItem(lua_State* L) {
 	SteamItemDef_t itemDef = check_SteamItemDef_t(L, 1); /*normal*/
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->AddPromoItem(&pResultHandle,itemDef);
+	bool r = inventory->AddPromoItem(&pResultHandle, itemDef);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12215,7 +12215,7 @@ static int ISteamInventory_AddPromoItems(lua_State* L) {
 	}
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->AddPromoItems(&pResultHandle,pArrayItemDefs,unArrayLength);
+	bool r = inventory->AddPromoItems(&pResultHandle, pArrayItemDefs, unArrayLength);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12229,7 +12229,7 @@ static int ISteamInventory_ConsumeItem(lua_State* L) {
 	SteamItemInstanceID_t itemConsume = check_SteamItemInstanceID_t(L, 1); /*normal*/
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->ConsumeItem(&pResultHandle,itemConsume,unQuantity);
+	bool r = inventory->ConsumeItem(&pResultHandle, itemConsume, unQuantity);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12271,7 +12271,7 @@ static int ISteamInventory_ExchangeItems(lua_State* L) {
 	}
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->ExchangeItems(&pResultHandle,pArrayGenerate,punArrayGenerateQuantity,unArrayGenerateLength,pArrayDestroy,punArrayDestroyQuantity,unArrayDestroyLength);
+	bool r = inventory->ExchangeItems(&pResultHandle, pArrayGenerate, punArrayGenerateQuantity, unArrayGenerateLength, pArrayDestroy, punArrayDestroyQuantity, unArrayDestroyLength);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12286,7 +12286,7 @@ static int ISteamInventory_TransferItemQuantity(lua_State* L) {
 	SteamItemInstanceID_t itemIdSource = check_SteamItemInstanceID_t(L, 1); /*normal*/
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->TransferItemQuantity(&pResultHandle,itemIdSource,unQuantity,itemIdDest);
+	bool r = inventory->TransferItemQuantity(&pResultHandle, itemIdSource, unQuantity, itemIdDest);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12307,7 +12307,7 @@ static int ISteamInventory_TriggerItemDrop(lua_State* L) {
 	SteamItemDef_t dropListDefinition = check_SteamItemDef_t(L, 1); /*normal*/
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->TriggerItemDrop(&pResultHandle,dropListDefinition);
+	bool r = inventory->TriggerItemDrop(&pResultHandle, dropListDefinition);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12350,7 +12350,7 @@ static int ISteamInventory_TradeItems(lua_State* L) {
 	class CSteamID steamIDTradePartner = check_class_CSteamID(L, 1); /*normal*/
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 
-	bool r = inventory->TradeItems(&pResultHandle,steamIDTradePartner,pArrayGive,pArrayGiveQuantity,nArrayGiveLength,pArrayGet,pArrayGetQuantity,nArrayGetLength);
+	bool r = inventory->TradeItems(&pResultHandle, steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	
@@ -12373,7 +12373,7 @@ static int ISteamInventory_GetItemDefinitionIDs(lua_State* L) {
 	uint32 punItemDefIDsArraySize; /*out_param*/
 	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize]; /*out_array_count*/
 
-	bool r = inventory->GetItemDefinitionIDs(pItemDefIDs,&punItemDefIDsArraySize);
+	bool r = inventory->GetItemDefinitionIDs(pItemDefIDs, &punItemDefIDsArraySize);
 	push_bool(L, r);
 	push_uint32(L, punItemDefIDsArraySize); /*out_param*/
 	push_SteamItemDef_t_array(L, pItemDefIDs, punItemDefIDsArraySize);  /*out_array_count*/
@@ -12392,7 +12392,7 @@ static int ISteamInventory_GetItemDefinitionProperty(lua_State* L) {
 	const char * pchPropertyName = check_const_char_ptr(L, 2); /*normal*/
 	SteamItemDef_t iDefinition = check_SteamItemDef_t(L, 1); /*normal*/
 
-	bool r = inventory->GetItemDefinitionProperty(iDefinition,pchPropertyName,pchValueBuffer,&punValueBufferSizeOut);
+	bool r = inventory->GetItemDefinitionProperty(iDefinition, pchPropertyName, pchValueBuffer, &punValueBufferSizeOut);
 	push_bool(L, r);
 	push_uint32(L, punValueBufferSizeOut); /*out_param*/
 	
@@ -12416,7 +12416,7 @@ static int ISteamInventory_GetEligiblePromoItemDefinitionIDs(lua_State* L) {
 	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
 	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize]; /*out_array_count*/
 
-	bool r = inventory->GetEligiblePromoItemDefinitionIDs(steamID,pItemDefIDs,&punItemDefIDsArraySize);
+	bool r = inventory->GetEligiblePromoItemDefinitionIDs(steamID, pItemDefIDs, &punItemDefIDsArraySize);
 	push_bool(L, r);
 	push_uint32(L, punItemDefIDsArraySize); /*out_param*/
 	push_SteamItemDef_t_array(L, pItemDefIDs, punItemDefIDsArraySize);  /*out_array_count*/
@@ -12443,7 +12443,7 @@ static int ISteamInventory_StartPurchase(lua_State* L) {
 		lua_pop(L, 1);
 	}
 
-	SteamAPICall_t r = inventory->StartPurchase(pArrayItemDefs,punArrayQuantity,unArrayLength);
+	SteamAPICall_t r = inventory->StartPurchase(pArrayItemDefs, punArrayQuantity, unArrayLength);
 	steamCallbackWrapper->TrackSteamAPICallSteamInventoryStartPurchaseResult_t(r);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
@@ -12474,7 +12474,7 @@ static int ISteamInventory_GetItemsWithPrices(lua_State* L) {
 	SteamItemDef_t pArrayItemDefs[unArrayLength]; /*out_array_count*/
 	uint64 pPrices[unArrayLength]; /*out_array_count*/
 
-	bool r = inventory->GetItemsWithPrices(pArrayItemDefs,pPrices,unArrayLength);
+	bool r = inventory->GetItemsWithPrices(pArrayItemDefs, pPrices, unArrayLength);
 	push_bool(L, r);
 	push_SteamItemDef_t_array(L, pArrayItemDefs, unArrayLength);  /*out_array_count*/
 	push_uint64_array(L, pPrices, unArrayLength);  /*out_array_count*/
@@ -12488,7 +12488,7 @@ static int ISteamInventory_GetItemPrice(lua_State* L) {
 	uint64 pPrice; /*out_param*/
 	SteamItemDef_t iDefinition = check_SteamItemDef_t(L, 1); /*normal*/
 
-	bool r = inventory->GetItemPrice(iDefinition,&pPrice);
+	bool r = inventory->GetItemPrice(iDefinition, &pPrice);
 	push_bool(L, r);
 	push_uint64(L, pPrice); /*out_param*/
 	
@@ -12512,7 +12512,7 @@ static int ISteamInventory_RemoveProperty(lua_State* L) {
 	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
 	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = inventory->RemoveProperty(handle,nItemID,pchPropertyName);
+	bool r = inventory->RemoveProperty(handle, nItemID, pchPropertyName);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -12526,7 +12526,7 @@ static int ISteamInventory_SetPropertyString(lua_State* L) {
 	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
 	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,pchPropertyValue);
+	bool r = inventory->SetProperty(handle, nItemID, pchPropertyName, pchPropertyValue);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -12540,7 +12540,7 @@ static int ISteamInventory_SetPropertyBool(lua_State* L) {
 	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
 	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,bValue);
+	bool r = inventory->SetProperty(handle, nItemID, pchPropertyName, bValue);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -12554,7 +12554,7 @@ static int ISteamInventory_SetPropertyInt(lua_State* L) {
 	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
 	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,nValue);
+	bool r = inventory->SetProperty(handle, nItemID, pchPropertyName, nValue);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -12568,7 +12568,7 @@ static int ISteamInventory_SetPropertyFloat(lua_State* L) {
 	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
 	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,flValue);
+	bool r = inventory->SetProperty(handle, nItemID, pchPropertyName, flValue);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -12580,7 +12580,7 @@ static int ISteamInventory_SubmitUpdateProperties(lua_State* L) {
 	SteamInventoryResult_t pResultHandle; /*out_param*/
 	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = inventory->SubmitUpdateProperties(handle,&pResultHandle);
+	bool r = inventory->SubmitUpdateProperties(handle, &pResultHandle);
 	push_bool(L, r);
 	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
 	

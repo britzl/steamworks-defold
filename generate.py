@@ -127,8 +127,9 @@ def parse_methods(methods):
             else:
                 method["paramcount"] = 0
 
-            method["paramnames"] = ",".join(method["paramnames"])
-            method["paramnames_in"] = ",".join(method["paramnames_in"])
+            method["paramnames"] = ", ".join(method["paramnames"])
+            method["paramnames_in"] = ", ".join(method["paramnames_in"])
+            method["hasparams"] = method.get("params") is not None
             method["hasreturntype"] = method.get("returntype") != "void"
             returntype = method.get("returntype")
             if returntype is not None:

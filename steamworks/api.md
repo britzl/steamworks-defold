@@ -1,5 +1,8 @@
 # Steamworks API
 
+* [Call results](#callresults)
+* [Callback](#callbacks)
+* [Enums](#enums)
 * [Functions](#functions)
   * [steamworks.user_get_h_steam_user](#user_get_h_steam_user)
   * [steamworks.user_logged_on](#user_logged_on)
@@ -321,14 +324,12 @@
   * [steamworks.inventory_set_property_int](#inventory_set_property_int)
   * [steamworks.inventory_set_property_float](#inventory_set_property_float)
   * [steamworks.inventory_submit_update_properties](#inventory_submit_update_properties)
-* [Call results](#callresults)
-* [Callback](#callbacks)
-* [Enums](#enums)
 
 ## <a name="functions"></a>Functions
 The extension exports the following functions:
 
 ### <a name="user_get_h_steam_user"></a>steamworks.user_get_h_steam_user() - [ISteamUser#GetHSteamUser](https://partner.steamgames.com/doc/api/ISteamUser#GetHSteamUser)
+
 
 **RETURN**
 * `r` (HSteamUser)
@@ -336,27 +337,42 @@ The extension exports the following functions:
 
 ### <a name="user_logged_on"></a>steamworks.user_logged_on() - [ISteamUser#BLoggedOn](https://partner.steamgames.com/doc/api/ISteamUser#BLoggedOn)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_get_steam_id"></a>steamworks.user_get_steam_id() - [ISteamUser#GetSteamID](https://partner.steamgames.com/doc/api/ISteamUser#GetSteamID)
 
+
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### <a name="user_terminate_game_connection"></a>steamworks.user_terminate_game_connection(unIPServer,usPortServer) - [ISteamUser#TerminateGameConnection](https://partner.steamgames.com/doc/api/ISteamUser#TerminateGameConnection)
+### <a name="user_terminate_game_connection"></a>steamworks.user_terminate_game_connection(unIPServer, usPortServer) - [ISteamUser#TerminateGameConnection](https://partner.steamgames.com/doc/api/ISteamUser#TerminateGameConnection)
+
+**PARAMS**
+* `usPortServer` (uint16)
+* `unIPServer` (uint32)
 
 
-### <a name="user_get_auth_session_ticket"></a>steamworks.user_get_auth_session_ticket(pTicket,cbMaxTicket) - [ISteamUser#GetAuthSessionTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetAuthSessionTicket)
+### <a name="user_get_auth_session_ticket"></a>steamworks.user_get_auth_session_ticket(pTicket, cbMaxTicket) - [ISteamUser#GetAuthSessionTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetAuthSessionTicket)
+
+**PARAMS**
+* `cbMaxTicket` (int)
+* `pTicket` (buffer)
 
 **RETURN**
 * `r` (HAuthTicket)
 * `pcbTicket` (uint32)
 
 
-### <a name="user_begin_auth_session"></a>steamworks.user_begin_auth_session(pAuthTicket,cbAuthTicket,steamID) - [ISteamUser#BeginAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession)
+### <a name="user_begin_auth_session"></a>steamworks.user_begin_auth_session(pAuthTicket, cbAuthTicket, steamID) - [ISteamUser#BeginAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession)
+
+**PARAMS**
+* `steamID` (class_CSteamID)
+* `cbAuthTicket` (int)
+* `pAuthTicket` (const_void_ptr)
 
 **RETURN**
 * `r` (EBeginAuthSessionResult)
@@ -364,11 +380,21 @@ The extension exports the following functions:
 
 ### <a name="user_end_auth_session"></a>steamworks.user_end_auth_session(steamID) - [ISteamUser#EndAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#EndAuthSession)
 
+**PARAMS**
+* `steamID` (class_CSteamID)
+
 
 ### <a name="user_cancel_auth_ticket"></a>steamworks.user_cancel_auth_ticket(hAuthTicket) - [ISteamUser#CancelAuthTicket](https://partner.steamgames.com/doc/api/ISteamUser#CancelAuthTicket)
 
+**PARAMS**
+* `hAuthTicket` (HAuthTicket)
 
-### <a name="user_user_has_license_for_app"></a>steamworks.user_user_has_license_for_app(steamID,appID) - [ISteamUser#UserHasLicenseForApp](https://partner.steamgames.com/doc/api/ISteamUser#UserHasLicenseForApp)
+
+### <a name="user_user_has_license_for_app"></a>steamworks.user_user_has_license_for_app(steamID, appID) - [ISteamUser#UserHasLicenseForApp](https://partner.steamgames.com/doc/api/ISteamUser#UserHasLicenseForApp)
+
+**PARAMS**
+* `appID` (AppId_t)
+* `steamID` (class_CSteamID)
 
 **RETURN**
 * `r` (EUserHasLicenseForAppResult)
@@ -376,26 +402,44 @@ The extension exports the following functions:
 
 ### <a name="user_is_behind_nat"></a>steamworks.user_is_behind_nat() - [ISteamUser#BIsBehindNAT](https://partner.steamgames.com/doc/api/ISteamUser#BIsBehindNAT)
 
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="user_advertise_game"></a>steamworks.user_advertise_game(steamIDGameServer,unIPServer,usPortServer) - [ISteamUser#AdvertiseGame](https://partner.steamgames.com/doc/api/ISteamUser#AdvertiseGame)
+### <a name="user_advertise_game"></a>steamworks.user_advertise_game(steamIDGameServer, unIPServer, usPortServer) - [ISteamUser#AdvertiseGame](https://partner.steamgames.com/doc/api/ISteamUser#AdvertiseGame)
+
+**PARAMS**
+* `usPortServer` (uint16)
+* `unIPServer` (uint32)
+* `steamIDGameServer` (class_CSteamID)
 
 
-### <a name="user_request_encrypted_app_ticket"></a>steamworks.user_request_encrypted_app_ticket(pDataToInclude,cbDataToInclude) - [ISteamUser#RequestEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket)
+### <a name="user_request_encrypted_app_ticket"></a>steamworks.user_request_encrypted_app_ticket(pDataToInclude, cbDataToInclude) - [ISteamUser#RequestEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket)
+
+**PARAMS**
+* `cbDataToInclude` (int)
+* `pDataToInclude` (buffer)
 
 **CALLBACK**
 * `EncryptedAppTicketResponse_t`
 
-### <a name="user_get_encrypted_app_ticket"></a>steamworks.user_get_encrypted_app_ticket(pTicket,cbMaxTicket) - [ISteamUser#GetEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetEncryptedAppTicket)
+### <a name="user_get_encrypted_app_ticket"></a>steamworks.user_get_encrypted_app_ticket(pTicket, cbMaxTicket) - [ISteamUser#GetEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#GetEncryptedAppTicket)
+
+**PARAMS**
+* `cbMaxTicket` (int)
+* `pTicket` (buffer)
 
 **RETURN**
 * `r` (bool)
 * `pcbTicket` (uint32)
 
 
-### <a name="user_get_game_badge_level"></a>steamworks.user_get_game_badge_level(nSeries,bFoil) - [ISteamUser#GetGameBadgeLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetGameBadgeLevel)
+### <a name="user_get_game_badge_level"></a>steamworks.user_get_game_badge_level(nSeries, bFoil) - [ISteamUser#GetGameBadgeLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetGameBadgeLevel)
+
+**PARAMS**
+* `bFoil` (bool)
+* `nSeries` (int)
 
 **RETURN**
 * `r` (int)
@@ -403,16 +447,21 @@ The extension exports the following functions:
 
 ### <a name="user_get_player_steam_level"></a>steamworks.user_get_player_steam_level() - [ISteamUser#GetPlayerSteamLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetPlayerSteamLevel)
 
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="user_request_store_auth_url"></a>steamworks.user_request_store_auth_url(pchRedirectURL) - [ISteamUser#RequestStoreAuthURL](https://partner.steamgames.com/doc/api/ISteamUser#RequestStoreAuthURL)
 
+**PARAMS**
+* `pchRedirectURL` (const_char_ptr)
+
 **CALLBACK**
 * `StoreAuthURLResponse_t`
 
 ### <a name="user_is_phone_verified"></a>steamworks.user_is_phone_verified() - [ISteamUser#BIsPhoneVerified](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneVerified)
+
 
 **RETURN**
 * `r` (bool)
@@ -420,11 +469,13 @@ The extension exports the following functions:
 
 ### <a name="user_is_two_factor_enabled"></a>steamworks.user_is_two_factor_enabled() - [ISteamUser#BIsTwoFactorEnabled](https://partner.steamgames.com/doc/api/ISteamUser#BIsTwoFactorEnabled)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_is_phone_identifying"></a>steamworks.user_is_phone_identifying() - [ISteamUser#BIsPhoneIdentifying](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneIdentifying)
+
 
 **RETURN**
 * `r` (bool)
@@ -432,11 +483,13 @@ The extension exports the following functions:
 
 ### <a name="user_is_phone_requiring_verification"></a>steamworks.user_is_phone_requiring_verification() - [ISteamUser#BIsPhoneRequiringVerification](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneRequiringVerification)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="friends_get_persona_name"></a>steamworks.friends_get_persona_name() - [ISteamFriends#GetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaName)
+
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -444,10 +497,14 @@ The extension exports the following functions:
 
 ### <a name="friends_set_persona_name"></a>steamworks.friends_set_persona_name(pchPersonaName) - [ISteamFriends#SetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#SetPersonaName)
 
+**PARAMS**
+* `pchPersonaName` (const_char_ptr)
+
 **CALLBACK**
 * `SetPersonaNameResponse_t`
 
 ### <a name="friends_get_persona_state"></a>steamworks.friends_get_persona_state() - [ISteamFriends#GetPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaState)
+
 
 **RETURN**
 * `r` (EPersonaState)
@@ -455,11 +512,18 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friend_count"></a>steamworks.friends_get_friend_count(iFriendFlags) - [ISteamFriends#GetFriendCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCount)
 
+**PARAMS**
+* `iFriendFlags` (int)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="friends_get_friend_by_index"></a>steamworks.friends_get_friend_by_index(iFriend,iFriendFlags) - [ISteamFriends#GetFriendByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendByIndex)
+### <a name="friends_get_friend_by_index"></a>steamworks.friends_get_friend_by_index(iFriend, iFriendFlags) - [ISteamFriends#GetFriendByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendByIndex)
+
+**PARAMS**
+* `iFriendFlags` (int)
+* `iFriend` (int)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -467,11 +531,17 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friend_relationship"></a>steamworks.friends_get_friend_relationship(steamIDFriend) - [ISteamFriends#GetFriendRelationship](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRelationship)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+
 **RETURN**
 * `r` (EFriendRelationship)
 
 
 ### <a name="friends_get_friend_persona_state"></a>steamworks.friends_get_friend_persona_state(steamIDFriend) - [ISteamFriends#GetFriendPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaState)
+
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (EPersonaState)
@@ -479,17 +549,28 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friend_persona_name"></a>steamworks.friends_get_friend_persona_name(steamIDFriend) - [ISteamFriends#GetFriendPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaName)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="friends_get_friend_game_played"></a>steamworks.friends_get_friend_game_played(steamIDFriend) - [ISteamFriends#GetFriendGamePlayed](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendGamePlayed)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+* `pFriendGameInfo` ()
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="friends_get_friend_persona_name_history"></a>steamworks.friends_get_friend_persona_name_history(steamIDFriend,iPersonaName) - [ISteamFriends#GetFriendPersonaNameHistory](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaNameHistory)
+### <a name="friends_get_friend_persona_name_history"></a>steamworks.friends_get_friend_persona_name_history(steamIDFriend, iPersonaName) - [ISteamFriends#GetFriendPersonaNameHistory](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaNameHistory)
+
+**PARAMS**
+* `iPersonaName` (int)
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -497,11 +578,17 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friend_steam_level"></a>steamworks.friends_get_friend_steam_level(steamIDFriend) - [ISteamFriends#GetFriendSteamLevel](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendSteamLevel)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="friends_get_player_nickname"></a>steamworks.friends_get_player_nickname(steamIDPlayer) - [ISteamFriends#GetPlayerNickname](https://partner.steamgames.com/doc/api/ISteamFriends#GetPlayerNickname)
+
+**PARAMS**
+* `steamIDPlayer` (class_CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -509,11 +596,15 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friends_group_count"></a>steamworks.friends_get_friends_group_count() - [ISteamFriends#GetFriendsGroupCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupCount)
 
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="friends_get_friends_group_id_by_index"></a>steamworks.friends_get_friends_group_id_by_index(iFG) - [ISteamFriends#GetFriendsGroupIDByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupIDByIndex)
+
+**PARAMS**
+* `iFG` (int)
 
 **RETURN**
 * `r` (FriendsGroupID_t)
@@ -521,11 +612,17 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friends_group_name"></a>steamworks.friends_get_friends_group_name(friendsGroupID) - [ISteamFriends#GetFriendsGroupName](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupName)
 
+**PARAMS**
+* `friendsGroupID` (FriendsGroupID_t)
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="friends_get_friends_group_members_count"></a>steamworks.friends_get_friends_group_members_count(friendsGroupID) - [ISteamFriends#GetFriendsGroupMembersCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersCount)
+
+**PARAMS**
+* `friendsGroupID` (FriendsGroupID_t)
 
 **RETURN**
 * `r` (int)
@@ -533,8 +630,15 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friends_group_members_list"></a>steamworks.friends_get_friends_group_members_list(friendsGroupID) - [ISteamFriends#GetFriendsGroupMembersList](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersList)
 
+**PARAMS**
+* `friendsGroupID` (FriendsGroupID_t)
 
-### <a name="friends_has_friend"></a>steamworks.friends_has_friend(steamIDFriend,iFriendFlags) - [ISteamFriends#HasFriend](https://partner.steamgames.com/doc/api/ISteamFriends#HasFriend)
+
+### <a name="friends_has_friend"></a>steamworks.friends_has_friend(steamIDFriend, iFriendFlags) - [ISteamFriends#HasFriend](https://partner.steamgames.com/doc/api/ISteamFriends#HasFriend)
+
+**PARAMS**
+* `iFriendFlags` (int)
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -542,11 +646,15 @@ The extension exports the following functions:
 
 ### <a name="friends_get_clan_count"></a>steamworks.friends_get_clan_count() - [ISteamFriends#GetClanCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanCount)
 
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="friends_get_clan_by_index"></a>steamworks.friends_get_clan_by_index(iClan) - [ISteamFriends#GetClanByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanByIndex)
+
+**PARAMS**
+* `iClan` (int)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -554,17 +662,26 @@ The extension exports the following functions:
 
 ### <a name="friends_get_clan_name"></a>steamworks.friends_get_clan_name(steamIDClan) - [ISteamFriends#GetClanName](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanName)
 
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="friends_get_clan_tag"></a>steamworks.friends_get_clan_tag(steamIDClan) - [ISteamFriends#GetClanTag](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanTag)
 
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="friends_get_clan_activity_counts"></a>steamworks.friends_get_clan_activity_counts(steamIDClan) - [ISteamFriends#GetClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanActivityCounts)
+
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -573,39 +690,67 @@ The extension exports the following functions:
 * `pnOnline` (int)
 
 
-### <a name="friends_download_clan_activity_counts"></a>steamworks.friends_download_clan_activity_counts(psteamIDClans,cClansToRequest) - [ISteamFriends#DownloadClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#DownloadClanActivityCounts)
+### <a name="friends_download_clan_activity_counts"></a>steamworks.friends_download_clan_activity_counts(psteamIDClans, cClansToRequest) - [ISteamFriends#DownloadClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#DownloadClanActivityCounts)
+
+**PARAMS**
+* `cClansToRequest` (int)
+* `psteamIDClans` (table)
 
 **CALLBACK**
 * `DownloadClanActivityCountsResult_t`
 
 ### <a name="friends_get_friend_count_from_source"></a>steamworks.friends_get_friend_count_from_source(steamIDSource) - [ISteamFriends#GetFriendCountFromSource](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCountFromSource)
 
+**PARAMS**
+* `steamIDSource` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="friends_get_friend_from_source_by_index"></a>steamworks.friends_get_friend_from_source_by_index(steamIDSource,iFriend) - [ISteamFriends#GetFriendFromSourceByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendFromSourceByIndex)
+### <a name="friends_get_friend_from_source_by_index"></a>steamworks.friends_get_friend_from_source_by_index(steamIDSource, iFriend) - [ISteamFriends#GetFriendFromSourceByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendFromSourceByIndex)
+
+**PARAMS**
+* `iFriend` (int)
+* `steamIDSource` (class_CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### <a name="friends_is_user_in_source"></a>steamworks.friends_is_user_in_source(steamIDUser,steamIDSource) - [ISteamFriends#IsUserInSource](https://partner.steamgames.com/doc/api/ISteamFriends#IsUserInSource)
+### <a name="friends_is_user_in_source"></a>steamworks.friends_is_user_in_source(steamIDUser, steamIDSource) - [ISteamFriends#IsUserInSource](https://partner.steamgames.com/doc/api/ISteamFriends#IsUserInSource)
+
+**PARAMS**
+* `steamIDSource` (class_CSteamID)
+* `steamIDUser` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="friends_set_in_game_voice_speaking"></a>steamworks.friends_set_in_game_voice_speaking(steamIDUser,bSpeaking) - [ISteamFriends#SetInGameVoiceSpeaking](https://partner.steamgames.com/doc/api/ISteamFriends#SetInGameVoiceSpeaking)
+### <a name="friends_set_in_game_voice_speaking"></a>steamworks.friends_set_in_game_voice_speaking(steamIDUser, bSpeaking) - [ISteamFriends#SetInGameVoiceSpeaking](https://partner.steamgames.com/doc/api/ISteamFriends#SetInGameVoiceSpeaking)
+
+**PARAMS**
+* `bSpeaking` (bool)
+* `steamIDUser` (class_CSteamID)
 
 
 ### <a name="friends_set_played_with"></a>steamworks.friends_set_played_with(steamIDUserPlayedWith) - [ISteamFriends#SetPlayedWith](https://partner.steamgames.com/doc/api/ISteamFriends#SetPlayedWith)
 
+**PARAMS**
+* `steamIDUserPlayedWith` (class_CSteamID)
+
 
 ### <a name="friends_activate_game_overlay_invite_dialog"></a>steamworks.friends_activate_game_overlay_invite_dialog(steamIDLobby) - [ISteamFriends#ActivateGameOverlayInviteDialog](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayInviteDialog)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 
 ### <a name="friends_get_small_friend_avatar"></a>steamworks.friends_get_small_friend_avatar(steamIDFriend) - [ISteamFriends#GetSmallFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetSmallFriendAvatar)
+
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -613,17 +758,27 @@ The extension exports the following functions:
 
 ### <a name="friends_get_medium_friend_avatar"></a>steamworks.friends_get_medium_friend_avatar(steamIDFriend) - [ISteamFriends#GetMediumFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetMediumFriendAvatar)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="friends_get_large_friend_avatar"></a>steamworks.friends_get_large_friend_avatar(steamIDFriend) - [ISteamFriends#GetLargeFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetLargeFriendAvatar)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="friends_request_user_information"></a>steamworks.friends_request_user_information(steamIDUser,bRequireNameOnly) - [ISteamFriends#RequestUserInformation](https://partner.steamgames.com/doc/api/ISteamFriends#RequestUserInformation)
+### <a name="friends_request_user_information"></a>steamworks.friends_request_user_information(steamIDUser, bRequireNameOnly) - [ISteamFriends#RequestUserInformation](https://partner.steamgames.com/doc/api/ISteamFriends#RequestUserInformation)
+
+**PARAMS**
+* `bRequireNameOnly` (bool)
+* `steamIDUser` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -631,10 +786,16 @@ The extension exports the following functions:
 
 ### <a name="friends_request_clan_officer_list"></a>steamworks.friends_request_clan_officer_list(steamIDClan) - [ISteamFriends#RequestClanOfficerList](https://partner.steamgames.com/doc/api/ISteamFriends#RequestClanOfficerList)
 
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
+
 **CALLBACK**
 * `ClanOfficerListResponse_t`
 
 ### <a name="friends_get_clan_owner"></a>steamworks.friends_get_clan_owner(steamIDClan) - [ISteamFriends#GetClanOwner](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOwner)
+
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -642,11 +803,18 @@ The extension exports the following functions:
 
 ### <a name="friends_get_clan_officer_count"></a>steamworks.friends_get_clan_officer_count(steamIDClan) - [ISteamFriends#GetClanOfficerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerCount)
 
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="friends_get_clan_officer_by_index"></a>steamworks.friends_get_clan_officer_by_index(steamIDClan,iOfficer) - [ISteamFriends#GetClanOfficerByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerByIndex)
+### <a name="friends_get_clan_officer_by_index"></a>steamworks.friends_get_clan_officer_by_index(steamIDClan, iOfficer) - [ISteamFriends#GetClanOfficerByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerByIndex)
+
+**PARAMS**
+* `iOfficer` (int)
+* `steamIDClan` (class_CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -654,11 +822,16 @@ The extension exports the following functions:
 
 ### <a name="friends_get_user_restrictions"></a>steamworks.friends_get_user_restrictions() - [ISteamFriends#GetUserRestrictions](https://partner.steamgames.com/doc/api/ISteamFriends#GetUserRestrictions)
 
+
 **RETURN**
 * `r` (uint32)
 
 
-### <a name="friends_set_rich_presence"></a>steamworks.friends_set_rich_presence(pchKey,pchValue) - [ISteamFriends#SetRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence)
+### <a name="friends_set_rich_presence"></a>steamworks.friends_set_rich_presence(pchKey, pchValue) - [ISteamFriends#SetRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence)
+
+**PARAMS**
+* `pchValue` (const_char_ptr)
+* `pchKey` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -667,7 +840,12 @@ The extension exports the following functions:
 ### <a name="friends_clear_rich_presence"></a>steamworks.friends_clear_rich_presence() - [ISteamFriends#ClearRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#ClearRichPresence)
 
 
-### <a name="friends_get_friend_rich_presence"></a>steamworks.friends_get_friend_rich_presence(steamIDFriend,pchKey) - [ISteamFriends#GetFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresence)
+
+### <a name="friends_get_friend_rich_presence"></a>steamworks.friends_get_friend_rich_presence(steamIDFriend, pchKey) - [ISteamFriends#GetFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresence)
+
+**PARAMS**
+* `pchKey` (const_char_ptr)
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -675,11 +853,18 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friend_rich_presence_key_count"></a>steamworks.friends_get_friend_rich_presence_key_count(steamIDFriend) - [ISteamFriends#GetFriendRichPresenceKeyCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyCount)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="friends_get_friend_rich_presence_key_by_index"></a>steamworks.friends_get_friend_rich_presence_key_by_index(steamIDFriend,iKey) - [ISteamFriends#GetFriendRichPresenceKeyByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyByIndex)
+### <a name="friends_get_friend_rich_presence_key_by_index"></a>steamworks.friends_get_friend_rich_presence_key_by_index(steamIDFriend, iKey) - [ISteamFriends#GetFriendRichPresenceKeyByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyByIndex)
+
+**PARAMS**
+* `iKey` (int)
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -687,8 +872,15 @@ The extension exports the following functions:
 
 ### <a name="friends_request_friend_rich_presence"></a>steamworks.friends_request_friend_rich_presence(steamIDFriend) - [ISteamFriends#RequestFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#RequestFriendRichPresence)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
 
-### <a name="friends_invite_user_to_game"></a>steamworks.friends_invite_user_to_game(steamIDFriend,pchConnectString) - [ISteamFriends#InviteUserToGame](https://partner.steamgames.com/doc/api/ISteamFriends#InviteUserToGame)
+
+### <a name="friends_invite_user_to_game"></a>steamworks.friends_invite_user_to_game(steamIDFriend, pchConnectString) - [ISteamFriends#InviteUserToGame](https://partner.steamgames.com/doc/api/ISteamFriends#InviteUserToGame)
+
+**PARAMS**
+* `pchConnectString` (const_char_ptr)
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -696,11 +888,15 @@ The extension exports the following functions:
 
 ### <a name="friends_get_coplay_friend_count"></a>steamworks.friends_get_coplay_friend_count() - [ISteamFriends#GetCoplayFriendCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriendCount)
 
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="friends_get_coplay_friend"></a>steamworks.friends_get_coplay_friend(iCoplayFriend) - [ISteamFriends#GetCoplayFriend](https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriend)
+
+**PARAMS**
+* `iCoplayFriend` (int)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -708,11 +904,17 @@ The extension exports the following functions:
 
 ### <a name="friends_get_friend_coplay_time"></a>steamworks.friends_get_friend_coplay_time(steamIDFriend) - [ISteamFriends#GetFriendCoplayTime](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayTime)
 
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="friends_get_friend_coplay_game"></a>steamworks.friends_get_friend_coplay_game(steamIDFriend) - [ISteamFriends#GetFriendCoplayGame](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayGame)
+
+**PARAMS**
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (AppId_t)
@@ -720,10 +922,16 @@ The extension exports the following functions:
 
 ### <a name="friends_join_clan_chat_room"></a>steamworks.friends_join_clan_chat_room(steamIDClan) - [ISteamFriends#JoinClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#JoinClanChatRoom)
 
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
+
 **CALLBACK**
 * `JoinClanChatRoomCompletionResult_t`
 
 ### <a name="friends_leave_clan_chat_room"></a>steamworks.friends_leave_clan_chat_room(steamIDClan) - [ISteamFriends#LeaveClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#LeaveClanChatRoom)
+
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -731,30 +939,52 @@ The extension exports the following functions:
 
 ### <a name="friends_get_clan_chat_member_count"></a>steamworks.friends_get_clan_chat_member_count(steamIDClan) - [ISteamFriends#GetClanChatMemberCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMemberCount)
 
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="friends_get_chat_member_by_index"></a>steamworks.friends_get_chat_member_by_index(steamIDClan,iUser) - [ISteamFriends#GetChatMemberByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetChatMemberByIndex)
+### <a name="friends_get_chat_member_by_index"></a>steamworks.friends_get_chat_member_by_index(steamIDClan, iUser) - [ISteamFriends#GetChatMemberByIndex](https://partner.steamgames.com/doc/api/ISteamFriends#GetChatMemberByIndex)
+
+**PARAMS**
+* `iUser` (int)
+* `steamIDClan` (class_CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### <a name="friends_send_clan_chat_message"></a>steamworks.friends_send_clan_chat_message(steamIDClanChat,pchText) - [ISteamFriends#SendClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#SendClanChatMessage)
+### <a name="friends_send_clan_chat_message"></a>steamworks.friends_send_clan_chat_message(steamIDClanChat, pchText) - [ISteamFriends#SendClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#SendClanChatMessage)
+
+**PARAMS**
+* `pchText` (const_char_ptr)
+* `steamIDClanChat` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="friends_get_clan_chat_message"></a>steamworks.friends_get_clan_chat_message(steamIDClanChat,iMessage,prgchText,cchTextMax) - [ISteamFriends#GetClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMessage)
+### <a name="friends_get_clan_chat_message"></a>steamworks.friends_get_clan_chat_message(steamIDClanChat, iMessage, prgchText, cchTextMax) - [ISteamFriends#GetClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMessage)
+
+**PARAMS**
+* `cchTextMax` (int)
+* `prgchText` (buffer)
+* `iMessage` (int)
+* `steamIDClanChat` (class_CSteamID)
+* `psteamidChatter` ()
 
 **RETURN**
 * `r` (int)
 * `peChatEntryType` (EChatEntryType)
 
 
-### <a name="friends_is_clan_chat_admin"></a>steamworks.friends_is_clan_chat_admin(steamIDClanChat,steamIDUser) - [ISteamFriends#IsClanChatAdmin](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatAdmin)
+### <a name="friends_is_clan_chat_admin"></a>steamworks.friends_is_clan_chat_admin(steamIDClanChat, steamIDUser) - [ISteamFriends#IsClanChatAdmin](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatAdmin)
+
+**PARAMS**
+* `steamIDUser` (class_CSteamID)
+* `steamIDClanChat` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -762,11 +992,17 @@ The extension exports the following functions:
 
 ### <a name="friends_is_clan_chat_window_open_in_steam"></a>steamworks.friends_is_clan_chat_window_open_in_steam(steamIDClanChat) - [ISteamFriends#IsClanChatWindowOpenInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatWindowOpenInSteam)
 
+**PARAMS**
+* `steamIDClanChat` (class_CSteamID)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="friends_open_clan_chat_window_in_steam"></a>steamworks.friends_open_clan_chat_window_in_steam(steamIDClanChat) - [ISteamFriends#OpenClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#OpenClanChatWindowInSteam)
+
+**PARAMS**
+* `steamIDClanChat` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -774,23 +1010,39 @@ The extension exports the following functions:
 
 ### <a name="friends_close_clan_chat_window_in_steam"></a>steamworks.friends_close_clan_chat_window_in_steam(steamIDClanChat) - [ISteamFriends#CloseClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#CloseClanChatWindowInSteam)
 
+**PARAMS**
+* `steamIDClanChat` (class_CSteamID)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="friends_set_listen_for_friends_messages"></a>steamworks.friends_set_listen_for_friends_messages(bInterceptEnabled) - [ISteamFriends#SetListenForFriendsMessages](https://partner.steamgames.com/doc/api/ISteamFriends#SetListenForFriendsMessages)
 
-**RETURN**
-* `r` (bool)
-
-
-### <a name="friends_reply_to_friend_message"></a>steamworks.friends_reply_to_friend_message(steamIDFriend,pchMsgToSend) - [ISteamFriends#ReplyToFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#ReplyToFriendMessage)
+**PARAMS**
+* `bInterceptEnabled` (bool)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="friends_get_friend_message"></a>steamworks.friends_get_friend_message(steamIDFriend,iMessageID,pvData,cubData) - [ISteamFriends#GetFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendMessage)
+### <a name="friends_reply_to_friend_message"></a>steamworks.friends_reply_to_friend_message(steamIDFriend, pchMsgToSend) - [ISteamFriends#ReplyToFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#ReplyToFriendMessage)
+
+**PARAMS**
+* `pchMsgToSend` (const_char_ptr)
+* `steamIDFriend` (class_CSteamID)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="friends_get_friend_message"></a>steamworks.friends_get_friend_message(steamIDFriend, iMessageID, pvData, cubData) - [ISteamFriends#GetFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendMessage)
+
+**PARAMS**
+* `cubData` (int)
+* `pvData` (buffer)
+* `iMessageID` (int)
+* `steamIDFriend` (class_CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -799,20 +1051,32 @@ The extension exports the following functions:
 
 ### <a name="friends_get_follower_count"></a>steamworks.friends_get_follower_count(steamID) - [ISteamFriends#GetFollowerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFollowerCount)
 
+**PARAMS**
+* `steamID` (class_CSteamID)
+
 **CALLBACK**
 * `FriendsGetFollowerCount_t`
 
 ### <a name="friends_is_following"></a>steamworks.friends_is_following(steamID) - [ISteamFriends#IsFollowing](https://partner.steamgames.com/doc/api/ISteamFriends#IsFollowing)
+
+**PARAMS**
+* `steamID` (class_CSteamID)
 
 **CALLBACK**
 * `FriendsIsFollowing_t`
 
 ### <a name="friends_enumerate_following_list"></a>steamworks.friends_enumerate_following_list(unStartIndex) - [ISteamFriends#EnumerateFollowingList](https://partner.steamgames.com/doc/api/ISteamFriends#EnumerateFollowingList)
 
+**PARAMS**
+* `unStartIndex` (uint32)
+
 **CALLBACK**
 * `FriendsEnumerateFollowingList_t`
 
 ### <a name="friends_is_clan_public"></a>steamworks.friends_is_clan_public(steamIDClan) - [ISteamFriends#IsClanPublic](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanPublic)
+
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -820,11 +1084,15 @@ The extension exports the following functions:
 
 ### <a name="friends_is_clan_official_game_group"></a>steamworks.friends_is_clan_official_game_group(steamIDClan) - [ISteamFriends#IsClanOfficialGameGroup](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanOfficialGameGroup)
 
+**PARAMS**
+* `steamIDClan` (class_CSteamID)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="utils_get_seconds_since_app_active"></a>steamworks.utils_get_seconds_since_app_active() - [ISteamUtils#GetSecondsSinceAppActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceAppActive)
+
 
 **RETURN**
 * `r` (uint32)
@@ -832,11 +1100,13 @@ The extension exports the following functions:
 
 ### <a name="utils_get_seconds_since_computer_active"></a>steamworks.utils_get_seconds_since_computer_active() - [ISteamUtils#GetSecondsSinceComputerActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceComputerActive)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="utils_get_connected_universe"></a>steamworks.utils_get_connected_universe() - [ISteamUtils#GetConnectedUniverse](https://partner.steamgames.com/doc/api/ISteamUtils#GetConnectedUniverse)
+
 
 **RETURN**
 * `r` (EUniverse)
@@ -844,11 +1114,13 @@ The extension exports the following functions:
 
 ### <a name="utils_get_server_real_time"></a>steamworks.utils_get_server_real_time() - [ISteamUtils#GetServerRealTime](https://partner.steamgames.com/doc/api/ISteamUtils#GetServerRealTime)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="utils_get_ip_country"></a>steamworks.utils_get_ip_country() - [ISteamUtils#GetIPCountry](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCountry)
+
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -856,19 +1128,29 @@ The extension exports the following functions:
 
 ### <a name="utils_get_image_size"></a>steamworks.utils_get_image_size(iImage) - [ISteamUtils#GetImageSize](https://partner.steamgames.com/doc/api/ISteamUtils#GetImageSize)
 
+**PARAMS**
+* `iImage` (int)
+
 **RETURN**
 * `r` (bool)
 * `pnHeight` (uint32)
 * `pnWidth` (uint32)
 
 
-### <a name="utils_get_image_rgba"></a>steamworks.utils_get_image_rgba(iImage,pubDest,nDestBufferSize) - [ISteamUtils#GetImageRGBA](https://partner.steamgames.com/doc/api/ISteamUtils#GetImageRGBA)
+### <a name="utils_get_image_rgba"></a>steamworks.utils_get_image_rgba(iImage, pubDest, nDestBufferSize) - [ISteamUtils#GetImageRGBA](https://partner.steamgames.com/doc/api/ISteamUtils#GetImageRGBA)
+
+**PARAMS**
+* `nDestBufferSize` (int)
+* `pubDest` (buffer)
+* `iImage` (int)
 
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="utils_get_cserip_port"></a>steamworks.utils_get_cserip_port() - [ISteamUtils#GetCSERIPPort](https://partner.steamgames.com/doc/api/ISteamUtils#GetCSERIPPort)
+
+**PARAMS**
 
 **RETURN**
 * `r` (bool)
@@ -878,17 +1160,22 @@ The extension exports the following functions:
 
 ### <a name="utils_get_current_battery_power"></a>steamworks.utils_get_current_battery_power() - [ISteamUtils#GetCurrentBatteryPower](https://partner.steamgames.com/doc/api/ISteamUtils#GetCurrentBatteryPower)
 
+
 **RETURN**
 * `r` (uint8)
 
 
 ### <a name="utils_get_app_id"></a>steamworks.utils_get_app_id() - [ISteamUtils#GetAppID](https://partner.steamgames.com/doc/api/ISteamUtils#GetAppID)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="utils_is_api_call_completed"></a>steamworks.utils_is_api_call_completed(hSteamAPICall) - [ISteamUtils#IsAPICallCompleted](https://partner.steamgames.com/doc/api/ISteamUtils#IsAPICallCompleted)
+
+**PARAMS**
+* `hSteamAPICall` (SteamAPICall_t)
 
 **RETURN**
 * `r` (bool)
@@ -897,11 +1184,20 @@ The extension exports the following functions:
 
 ### <a name="utils_get_api_call_failure_reason"></a>steamworks.utils_get_api_call_failure_reason(hSteamAPICall) - [ISteamUtils#GetAPICallFailureReason](https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallFailureReason)
 
+**PARAMS**
+* `hSteamAPICall` (SteamAPICall_t)
+
 **RETURN**
 * `r` (ESteamAPICallFailure)
 
 
-### <a name="utils_get_api_call_result"></a>steamworks.utils_get_api_call_result(hSteamAPICall,pCallback,cubCallback,iCallbackExpected) - [ISteamUtils#GetAPICallResult](https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallResult)
+### <a name="utils_get_api_call_result"></a>steamworks.utils_get_api_call_result(hSteamAPICall, pCallback, cubCallback, iCallbackExpected) - [ISteamUtils#GetAPICallResult](https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallResult)
+
+**PARAMS**
+* `iCallbackExpected` (int)
+* `cubCallback` (int)
+* `pCallback` (buffer)
+* `hSteamAPICall` (SteamAPICall_t)
 
 **RETURN**
 * `r` (bool)
@@ -910,11 +1206,13 @@ The extension exports the following functions:
 
 ### <a name="utils_get_ipc_call_count"></a>steamworks.utils_get_ipc_call_count() - [ISteamUtils#GetIPCCallCount](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCCallCount)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="utils_overlay_needs_present"></a>steamworks.utils_overlay_needs_present() - [ISteamUtils#BOverlayNeedsPresent](https://partner.steamgames.com/doc/api/ISteamUtils#BOverlayNeedsPresent)
+
 
 **RETURN**
 * `r` (bool)
@@ -922,10 +1220,20 @@ The extension exports the following functions:
 
 ### <a name="utils_check_file_signature"></a>steamworks.utils_check_file_signature(szFileName) - [ISteamUtils#CheckFileSignature](https://partner.steamgames.com/doc/api/ISteamUtils#CheckFileSignature)
 
+**PARAMS**
+* `szFileName` (const_char_ptr)
+
 **CALLBACK**
 * `CheckFileSignature_t`
 
-### <a name="utils_show_gamepad_text_input"></a>steamworks.utils_show_gamepad_text_input(eInputMode,eLineInputMode,pchDescription,unCharMax,pchExistingText) - [ISteamUtils#ShowGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#ShowGamepadTextInput)
+### <a name="utils_show_gamepad_text_input"></a>steamworks.utils_show_gamepad_text_input(eInputMode, eLineInputMode, pchDescription, unCharMax, pchExistingText) - [ISteamUtils#ShowGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#ShowGamepadTextInput)
+
+**PARAMS**
+* `pchExistingText` (const_char_ptr)
+* `unCharMax` (uint32)
+* `pchDescription` (const_char_ptr)
+* `eLineInputMode` (EGamepadTextInputLineMode)
+* `eInputMode` (EGamepadTextInputMode)
 
 **RETURN**
 * `r` (bool)
@@ -933,11 +1241,16 @@ The extension exports the following functions:
 
 ### <a name="utils_get_entered_gamepad_text_length"></a>steamworks.utils_get_entered_gamepad_text_length() - [ISteamUtils#GetEnteredGamepadTextLength](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextLength)
 
+
 **RETURN**
 * `r` (uint32)
 
 
-### <a name="utils_get_entered_gamepad_text_input"></a>steamworks.utils_get_entered_gamepad_text_input(pchText,cchText) - [ISteamUtils#GetEnteredGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextInput)
+### <a name="utils_get_entered_gamepad_text_input"></a>steamworks.utils_get_entered_gamepad_text_input(pchText, cchText) - [ISteamUtils#GetEnteredGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextInput)
+
+**PARAMS**
+* `cchText` (uint32)
+* `pchText` (buffer)
 
 **RETURN**
 * `r` (bool)
@@ -945,20 +1258,27 @@ The extension exports the following functions:
 
 ### <a name="utils_get_steam_ui_language"></a>steamworks.utils_get_steam_ui_language() - [ISteamUtils#GetSteamUILanguage](https://partner.steamgames.com/doc/api/ISteamUtils#GetSteamUILanguage)
 
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="utils_is_steam_running_in_vr"></a>steamworks.utils_is_steam_running_in_vr() - [ISteamUtils#IsSteamRunningInVR](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamRunningInVR)
 
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="utils_set_overlay_notification_inset"></a>steamworks.utils_set_overlay_notification_inset(nHorizontalInset,nVerticalInset) - [ISteamUtils#SetOverlayNotificationInset](https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationInset)
+### <a name="utils_set_overlay_notification_inset"></a>steamworks.utils_set_overlay_notification_inset(nHorizontalInset, nVerticalInset) - [ISteamUtils#SetOverlayNotificationInset](https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationInset)
+
+**PARAMS**
+* `nVerticalInset` (int)
+* `nHorizontalInset` (int)
 
 
 ### <a name="utils_is_steam_in_big_picture_mode"></a>steamworks.utils_is_steam_in_big_picture_mode() - [ISteamUtils#IsSteamInBigPictureMode](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamInBigPictureMode)
+
 
 **RETURN**
 * `r` (bool)
@@ -967,7 +1287,9 @@ The extension exports the following functions:
 ### <a name="utils_start_vr_dashboard"></a>steamworks.utils_start_vr_dashboard() - [ISteamUtils#StartVRDashboard](https://partner.steamgames.com/doc/api/ISteamUtils#StartVRDashboard)
 
 
+
 ### <a name="utils_is_vr_headset_streaming_enabled"></a>steamworks.utils_is_vr_headset_streaming_enabled() - [ISteamUtils#IsVRHeadsetStreamingEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#IsVRHeadsetStreamingEnabled)
+
 
 **RETURN**
 * `r` (bool)
@@ -975,14 +1297,21 @@ The extension exports the following functions:
 
 ### <a name="utils_set_vr_headset_streaming_enabled"></a>steamworks.utils_set_vr_headset_streaming_enabled(bEnabled) - [ISteamUtils#SetVRHeadsetStreamingEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#SetVRHeadsetStreamingEnabled)
 
+**PARAMS**
+* `bEnabled` (bool)
+
 
 ### <a name="matchmaking_get_favorite_game_count"></a>steamworks.matchmaking_get_favorite_game_count() - [ISteamMatchmaking#GetFavoriteGameCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGameCount)
+
 
 **RETURN**
 * `r` (int)
 
 
 ### <a name="matchmaking_get_favorite_game"></a>steamworks.matchmaking_get_favorite_game(iGame) - [ISteamMatchmaking#GetFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGame)
+
+**PARAMS**
+* `iGame` (int)
 
 **RETURN**
 * `r` (bool)
@@ -994,13 +1323,28 @@ The extension exports the following functions:
 * `pnAppID` (AppId_t)
 
 
-### <a name="matchmaking_add_favorite_game"></a>steamworks.matchmaking_add_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags,rTime32LastPlayedOnServer) - [ISteamMatchmaking#AddFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddFavoriteGame)
+### <a name="matchmaking_add_favorite_game"></a>steamworks.matchmaking_add_favorite_game(nAppID, nIP, nConnPort, nQueryPort, unFlags, rTime32LastPlayedOnServer) - [ISteamMatchmaking#AddFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddFavoriteGame)
+
+**PARAMS**
+* `rTime32LastPlayedOnServer` (uint32)
+* `unFlags` (uint32)
+* `nQueryPort` (uint16)
+* `nConnPort` (uint16)
+* `nIP` (uint32)
+* `nAppID` (AppId_t)
 
 **RETURN**
 * `r` (int)
 
 
-### <a name="matchmaking_remove_favorite_game"></a>steamworks.matchmaking_remove_favorite_game(nAppID,nIP,nConnPort,nQueryPort,unFlags) - [ISteamMatchmaking#RemoveFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RemoveFavoriteGame)
+### <a name="matchmaking_remove_favorite_game"></a>steamworks.matchmaking_remove_favorite_game(nAppID, nIP, nConnPort, nQueryPort, unFlags) - [ISteamMatchmaking#RemoveFavoriteGame](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RemoveFavoriteGame)
+
+**PARAMS**
+* `unFlags` (uint32)
+* `nQueryPort` (uint16)
+* `nConnPort` (uint16)
+* `nIP` (uint32)
+* `nAppID` (AppId_t)
 
 **RETURN**
 * `r` (bool)
@@ -1008,50 +1352,94 @@ The extension exports the following functions:
 
 ### <a name="matchmaking_request_lobby_list"></a>steamworks.matchmaking_request_lobby_list() - [ISteamMatchmaking#RequestLobbyList](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyList)
 
+
 **CALLBACK**
 * `LobbyMatchList_t`
 
-### <a name="matchmaking_add_request_lobby_list_string_filter"></a>steamworks.matchmaking_add_request_lobby_list_string_filter(pchKeyToMatch,pchValueToMatch,eComparisonType) - [ISteamMatchmaking#AddRequestLobbyListStringFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListStringFilter)
+### <a name="matchmaking_add_request_lobby_list_string_filter"></a>steamworks.matchmaking_add_request_lobby_list_string_filter(pchKeyToMatch, pchValueToMatch, eComparisonType) - [ISteamMatchmaking#AddRequestLobbyListStringFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListStringFilter)
+
+**PARAMS**
+* `eComparisonType` (ELobbyComparison)
+* `pchValueToMatch` (const_char_ptr)
+* `pchKeyToMatch` (const_char_ptr)
 
 
-### <a name="matchmaking_add_request_lobby_list_numerical_filter"></a>steamworks.matchmaking_add_request_lobby_list_numerical_filter(pchKeyToMatch,nValueToMatch,eComparisonType) - [ISteamMatchmaking#AddRequestLobbyListNumericalFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNumericalFilter)
+### <a name="matchmaking_add_request_lobby_list_numerical_filter"></a>steamworks.matchmaking_add_request_lobby_list_numerical_filter(pchKeyToMatch, nValueToMatch, eComparisonType) - [ISteamMatchmaking#AddRequestLobbyListNumericalFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNumericalFilter)
+
+**PARAMS**
+* `eComparisonType` (ELobbyComparison)
+* `nValueToMatch` (int)
+* `pchKeyToMatch` (const_char_ptr)
 
 
-### <a name="matchmaking_add_request_lobby_list_near_value_filter"></a>steamworks.matchmaking_add_request_lobby_list_near_value_filter(pchKeyToMatch,nValueToBeCloseTo) - [ISteamMatchmaking#AddRequestLobbyListNearValueFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNearValueFilter)
+### <a name="matchmaking_add_request_lobby_list_near_value_filter"></a>steamworks.matchmaking_add_request_lobby_list_near_value_filter(pchKeyToMatch, nValueToBeCloseTo) - [ISteamMatchmaking#AddRequestLobbyListNearValueFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNearValueFilter)
+
+**PARAMS**
+* `nValueToBeCloseTo` (int)
+* `pchKeyToMatch` (const_char_ptr)
 
 
 ### <a name="matchmaking_add_request_lobby_list_filter_slots_available"></a>steamworks.matchmaking_add_request_lobby_list_filter_slots_available(nSlotsAvailable) - [ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable)
 
+**PARAMS**
+* `nSlotsAvailable` (int)
+
 
 ### <a name="matchmaking_add_request_lobby_list_distance_filter"></a>steamworks.matchmaking_add_request_lobby_list_distance_filter(eLobbyDistanceFilter) - [ISteamMatchmaking#AddRequestLobbyListDistanceFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListDistanceFilter)
+
+**PARAMS**
+* `eLobbyDistanceFilter` (ELobbyDistanceFilter)
 
 
 ### <a name="matchmaking_add_request_lobby_list_result_count_filter"></a>steamworks.matchmaking_add_request_lobby_list_result_count_filter(cMaxResults) - [ISteamMatchmaking#AddRequestLobbyListResultCountFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListResultCountFilter)
 
+**PARAMS**
+* `cMaxResults` (int)
+
 
 ### <a name="matchmaking_add_request_lobby_list_compatible_members_filter"></a>steamworks.matchmaking_add_request_lobby_list_compatible_members_filter(steamIDLobby) - [ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 
 ### <a name="matchmaking_get_lobby_by_index"></a>steamworks.matchmaking_get_lobby_by_index(iLobby) - [ISteamMatchmaking#GetLobbyByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyByIndex)
+
+**PARAMS**
+* `iLobby` (int)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### <a name="matchmaking_create_lobby"></a>steamworks.matchmaking_create_lobby(eLobbyType,cMaxMembers) - [ISteamMatchmaking#CreateLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby)
+### <a name="matchmaking_create_lobby"></a>steamworks.matchmaking_create_lobby(eLobbyType, cMaxMembers) - [ISteamMatchmaking#CreateLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby)
+
+**PARAMS**
+* `cMaxMembers` (int)
+* `eLobbyType` (ELobbyType)
 
 **CALLBACK**
 * `LobbyCreated_t`
 
 ### <a name="matchmaking_join_lobby"></a>steamworks.matchmaking_join_lobby(steamIDLobby) - [ISteamMatchmaking#JoinLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#JoinLobby)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 **CALLBACK**
 * `LobbyEnter_t`
 
 ### <a name="matchmaking_leave_lobby"></a>steamworks.matchmaking_leave_lobby(steamIDLobby) - [ISteamMatchmaking#LeaveLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#LeaveLobby)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
 
-### <a name="matchmaking_invite_user_to_lobby"></a>steamworks.matchmaking_invite_user_to_lobby(steamIDLobby,steamIDInvitee) - [ISteamMatchmaking#InviteUserToLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#InviteUserToLobby)
+
+### <a name="matchmaking_invite_user_to_lobby"></a>steamworks.matchmaking_invite_user_to_lobby(steamIDLobby, steamIDInvitee) - [ISteamMatchmaking#InviteUserToLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#InviteUserToLobby)
+
+**PARAMS**
+* `steamIDInvitee` (class_CSteamID)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1059,23 +1447,39 @@ The extension exports the following functions:
 
 ### <a name="matchmaking_get_num_lobby_members"></a>steamworks.matchmaking_get_num_lobby_members(steamIDLobby) - [ISteamMatchmaking#GetNumLobbyMembers](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetNumLobbyMembers)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="matchmaking_get_lobby_member_by_index"></a>steamworks.matchmaking_get_lobby_member_by_index(steamIDLobby,iMember) - [ISteamMatchmaking#GetLobbyMemberByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberByIndex)
+### <a name="matchmaking_get_lobby_member_by_index"></a>steamworks.matchmaking_get_lobby_member_by_index(steamIDLobby, iMember) - [ISteamMatchmaking#GetLobbyMemberByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberByIndex)
+
+**PARAMS**
+* `iMember` (int)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### <a name="matchmaking_get_lobby_data"></a>steamworks.matchmaking_get_lobby_data(steamIDLobby,pchKey) - [ISteamMatchmaking#GetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyData)
+### <a name="matchmaking_get_lobby_data"></a>steamworks.matchmaking_get_lobby_data(steamIDLobby, pchKey) - [ISteamMatchmaking#GetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyData)
+
+**PARAMS**
+* `pchKey` (const_char_ptr)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### <a name="matchmaking_set_lobby_data"></a>steamworks.matchmaking_set_lobby_data(steamIDLobby,pchKey,pchValue) - [ISteamMatchmaking#SetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyData)
+### <a name="matchmaking_set_lobby_data"></a>steamworks.matchmaking_set_lobby_data(steamIDLobby, pchKey, pchValue) - [ISteamMatchmaking#SetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyData)
+
+**PARAMS**
+* `pchValue` (const_char_ptr)
+* `pchKey` (const_char_ptr)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1083,38 +1487,75 @@ The extension exports the following functions:
 
 ### <a name="matchmaking_get_lobby_data_count"></a>steamworks.matchmaking_get_lobby_data_count(steamIDLobby) - [ISteamMatchmaking#GetLobbyDataCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataCount)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="matchmaking_get_lobby_data_by_index"></a>steamworks.matchmaking_get_lobby_data_by_index(steamIDLobby,iLobbyData,pchKey,cchKeyBufferSize,pchValue,cchValueBufferSize) - [ISteamMatchmaking#GetLobbyDataByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataByIndex)
+### <a name="matchmaking_get_lobby_data_by_index"></a>steamworks.matchmaking_get_lobby_data_by_index(steamIDLobby, iLobbyData, pchKey, cchKeyBufferSize, pchValue, cchValueBufferSize) - [ISteamMatchmaking#GetLobbyDataByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataByIndex)
+
+**PARAMS**
+* `cchValueBufferSize` (int)
+* `pchValue` (buffer)
+* `cchKeyBufferSize` (int)
+* `pchKey` (buffer)
+* `iLobbyData` (int)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="matchmaking_delete_lobby_data"></a>steamworks.matchmaking_delete_lobby_data(steamIDLobby,pchKey) - [ISteamMatchmaking#DeleteLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#DeleteLobbyData)
+### <a name="matchmaking_delete_lobby_data"></a>steamworks.matchmaking_delete_lobby_data(steamIDLobby, pchKey) - [ISteamMatchmaking#DeleteLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#DeleteLobbyData)
+
+**PARAMS**
+* `pchKey` (const_char_ptr)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="matchmaking_get_lobby_member_data"></a>steamworks.matchmaking_get_lobby_member_data(steamIDLobby,steamIDUser,pchKey) - [ISteamMatchmaking#GetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData)
+### <a name="matchmaking_get_lobby_member_data"></a>steamworks.matchmaking_get_lobby_member_data(steamIDLobby, steamIDUser, pchKey) - [ISteamMatchmaking#GetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData)
+
+**PARAMS**
+* `pchKey` (const_char_ptr)
+* `steamIDUser` (class_CSteamID)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### <a name="matchmaking_set_lobby_member_data"></a>steamworks.matchmaking_set_lobby_member_data(steamIDLobby,pchKey,pchValue) - [ISteamMatchmaking#SetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberData)
+### <a name="matchmaking_set_lobby_member_data"></a>steamworks.matchmaking_set_lobby_member_data(steamIDLobby, pchKey, pchValue) - [ISteamMatchmaking#SetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberData)
+
+**PARAMS**
+* `pchValue` (const_char_ptr)
+* `pchKey` (const_char_ptr)
+* `steamIDLobby` (class_CSteamID)
 
 
-### <a name="matchmaking_send_lobby_chat_msg"></a>steamworks.matchmaking_send_lobby_chat_msg(steamIDLobby,pvMsgBody,cubMsgBody) - [ISteamMatchmaking#SendLobbyChatMsg](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg)
+### <a name="matchmaking_send_lobby_chat_msg"></a>steamworks.matchmaking_send_lobby_chat_msg(steamIDLobby, pvMsgBody, cubMsgBody) - [ISteamMatchmaking#SendLobbyChatMsg](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg)
+
+**PARAMS**
+* `cubMsgBody` (int)
+* `pvMsgBody` (const_void_ptr)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="matchmaking_get_lobby_chat_entry"></a>steamworks.matchmaking_get_lobby_chat_entry(steamIDLobby,iChatID,pvData,cubData) - [ISteamMatchmaking#GetLobbyChatEntry](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry)
+### <a name="matchmaking_get_lobby_chat_entry"></a>steamworks.matchmaking_get_lobby_chat_entry(steamIDLobby, iChatID, pvData, cubData) - [ISteamMatchmaking#GetLobbyChatEntry](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry)
+
+**PARAMS**
+* `cubData` (int)
+* `pvData` (buffer)
+* `iChatID` (int)
+* `steamIDLobby` (class_CSteamID)
+* `pSteamIDUser` ()
 
 **RETURN**
 * `r` (int)
@@ -1123,14 +1564,27 @@ The extension exports the following functions:
 
 ### <a name="matchmaking_request_lobby_data"></a>steamworks.matchmaking_request_lobby_data(steamIDLobby) - [ISteamMatchmaking#RequestLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyData)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="matchmaking_set_lobby_game_server"></a>steamworks.matchmaking_set_lobby_game_server(steamIDLobby,unGameServerIP,unGameServerPort,steamIDGameServer) - [ISteamMatchmaking#SetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer)
+### <a name="matchmaking_set_lobby_game_server"></a>steamworks.matchmaking_set_lobby_game_server(steamIDLobby, unGameServerIP, unGameServerPort, steamIDGameServer) - [ISteamMatchmaking#SetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer)
+
+**PARAMS**
+* `steamIDGameServer` (class_CSteamID)
+* `unGameServerPort` (uint16)
+* `unGameServerIP` (uint32)
+* `steamIDLobby` (class_CSteamID)
 
 
 ### <a name="matchmaking_get_lobby_game_server"></a>steamworks.matchmaking_get_lobby_game_server(steamIDLobby) - [ISteamMatchmaking#GetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyGameServer)
+
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+* `psteamIDGameServer` ()
 
 **RETURN**
 * `r` (bool)
@@ -1138,7 +1592,11 @@ The extension exports the following functions:
 * `punGameServerIP` (uint32)
 
 
-### <a name="matchmaking_set_lobby_member_limit"></a>steamworks.matchmaking_set_lobby_member_limit(steamIDLobby,cMaxMembers) - [ISteamMatchmaking#SetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberLimit)
+### <a name="matchmaking_set_lobby_member_limit"></a>steamworks.matchmaking_set_lobby_member_limit(steamIDLobby, cMaxMembers) - [ISteamMatchmaking#SetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberLimit)
+
+**PARAMS**
+* `cMaxMembers` (int)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1146,17 +1604,28 @@ The extension exports the following functions:
 
 ### <a name="matchmaking_get_lobby_member_limit"></a>steamworks.matchmaking_get_lobby_member_limit(steamIDLobby) - [ISteamMatchmaking#GetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberLimit)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="matchmaking_set_lobby_type"></a>steamworks.matchmaking_set_lobby_type(steamIDLobby,eLobbyType) - [ISteamMatchmaking#SetLobbyType](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyType)
+### <a name="matchmaking_set_lobby_type"></a>steamworks.matchmaking_set_lobby_type(steamIDLobby, eLobbyType) - [ISteamMatchmaking#SetLobbyType](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyType)
+
+**PARAMS**
+* `eLobbyType` (ELobbyType)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="matchmaking_set_lobby_joinable"></a>steamworks.matchmaking_set_lobby_joinable(steamIDLobby,bLobbyJoinable) - [ISteamMatchmaking#SetLobbyJoinable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyJoinable)
+### <a name="matchmaking_set_lobby_joinable"></a>steamworks.matchmaking_set_lobby_joinable(steamIDLobby, bLobbyJoinable) - [ISteamMatchmaking#SetLobbyJoinable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyJoinable)
+
+**PARAMS**
+* `bLobbyJoinable` (bool)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1164,45 +1633,81 @@ The extension exports the following functions:
 
 ### <a name="matchmaking_get_lobby_owner"></a>steamworks.matchmaking_get_lobby_owner(steamIDLobby) - [ISteamMatchmaking#GetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyOwner)
 
+**PARAMS**
+* `steamIDLobby` (class_CSteamID)
+
 **RETURN**
 * `r` (class_CSteamID)
 
 
-### <a name="matchmaking_set_lobby_owner"></a>steamworks.matchmaking_set_lobby_owner(steamIDLobby,steamIDNewOwner) - [ISteamMatchmaking#SetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyOwner)
+### <a name="matchmaking_set_lobby_owner"></a>steamworks.matchmaking_set_lobby_owner(steamIDLobby, steamIDNewOwner) - [ISteamMatchmaking#SetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyOwner)
+
+**PARAMS**
+* `steamIDNewOwner` (class_CSteamID)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="matchmaking_set_linked_lobby"></a>steamworks.matchmaking_set_linked_lobby(steamIDLobby,steamIDLobbyDependent) - [ISteamMatchmaking#SetLinkedLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLinkedLobby)
+### <a name="matchmaking_set_linked_lobby"></a>steamworks.matchmaking_set_linked_lobby(steamIDLobby, steamIDLobbyDependent) - [ISteamMatchmaking#SetLinkedLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLinkedLobby)
+
+**PARAMS**
+* `steamIDLobbyDependent` (class_CSteamID)
+* `steamIDLobby` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="remote_storage_file_write"></a>steamworks.remote_storage_file_write(pchFile,pvData,cubData) - [ISteamRemoteStorage#FileWrite](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWrite)
+### <a name="remote_storage_file_write"></a>steamworks.remote_storage_file_write(pchFile, pvData, cubData) - [ISteamRemoteStorage#FileWrite](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWrite)
+
+**PARAMS**
+* `cubData` (int32)
+* `pvData` (const_void_ptr)
+* `pchFile` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="remote_storage_file_read"></a>steamworks.remote_storage_file_read(pchFile,pvData,cubDataToRead) - [ISteamRemoteStorage#FileRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileRead)
+### <a name="remote_storage_file_read"></a>steamworks.remote_storage_file_read(pchFile, pvData, cubDataToRead) - [ISteamRemoteStorage#FileRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileRead)
+
+**PARAMS**
+* `cubDataToRead` (int32)
+* `pvData` (buffer)
+* `pchFile` (const_char_ptr)
 
 **RETURN**
 * `r` (int32)
 
 
-### <a name="remote_storage_file_write_async"></a>steamworks.remote_storage_file_write_async(pchFile,pvData,cubData) - [ISteamRemoteStorage#FileWriteAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteAsync)
+### <a name="remote_storage_file_write_async"></a>steamworks.remote_storage_file_write_async(pchFile, pvData, cubData) - [ISteamRemoteStorage#FileWriteAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteAsync)
+
+**PARAMS**
+* `cubData` (uint32)
+* `pvData` (const_void_ptr)
+* `pchFile` (const_char_ptr)
 
 **CALLBACK**
 * `RemoteStorageFileWriteAsyncComplete_t`
 
-### <a name="remote_storage_file_read_async"></a>steamworks.remote_storage_file_read_async(pchFile,nOffset,cubToRead) - [ISteamRemoteStorage#FileReadAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsync)
+### <a name="remote_storage_file_read_async"></a>steamworks.remote_storage_file_read_async(pchFile, nOffset, cubToRead) - [ISteamRemoteStorage#FileReadAsync](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsync)
+
+**PARAMS**
+* `cubToRead` (uint32)
+* `nOffset` (uint32)
+* `pchFile` (const_char_ptr)
 
 **CALLBACK**
 * `RemoteStorageFileReadAsyncComplete_t`
 
-### <a name="remote_storage_file_read_async_complete"></a>steamworks.remote_storage_file_read_async_complete(hReadCall,pvBuffer,cubToRead) - [ISteamRemoteStorage#FileReadAsyncComplete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsyncComplete)
+### <a name="remote_storage_file_read_async_complete"></a>steamworks.remote_storage_file_read_async_complete(hReadCall, pvBuffer, cubToRead) - [ISteamRemoteStorage#FileReadAsyncComplete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsyncComplete)
+
+**PARAMS**
+* `cubToRead` (uint32)
+* `pvBuffer` (buffer)
+* `hReadCall` (SteamAPICall_t)
 
 **RETURN**
 * `r` (bool)
@@ -1210,11 +1715,17 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_file_forget"></a>steamworks.remote_storage_file_forget(pchFile) - [ISteamRemoteStorage#FileForget](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileForget)
 
+**PARAMS**
+* `pchFile` (const_char_ptr)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="remote_storage_file_delete"></a>steamworks.remote_storage_file_delete(pchFile) - [ISteamRemoteStorage#FileDelete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileDelete)
+
+**PARAMS**
+* `pchFile` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1222,10 +1733,17 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_file_share"></a>steamworks.remote_storage_file_share(pchFile) - [ISteamRemoteStorage#FileShare](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileShare)
 
+**PARAMS**
+* `pchFile` (const_char_ptr)
+
 **CALLBACK**
 * `RemoteStorageFileShareResult_t`
 
-### <a name="remote_storage_set_sync_platforms"></a>steamworks.remote_storage_set_sync_platforms(pchFile,eRemoteStoragePlatform) - [ISteamRemoteStorage#SetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetSyncPlatforms)
+### <a name="remote_storage_set_sync_platforms"></a>steamworks.remote_storage_set_sync_platforms(pchFile, eRemoteStoragePlatform) - [ISteamRemoteStorage#SetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetSyncPlatforms)
+
+**PARAMS**
+* `eRemoteStoragePlatform` (ERemoteStoragePlatform)
+* `pchFile` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1233,11 +1751,19 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_file_write_stream_open"></a>steamworks.remote_storage_file_write_stream_open(pchFile) - [ISteamRemoteStorage#FileWriteStreamOpen](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamOpen)
 
+**PARAMS**
+* `pchFile` (const_char_ptr)
+
 **RETURN**
 * `r` (UGCFileWriteStreamHandle_t)
 
 
-### <a name="remote_storage_file_write_stream_write_chunk"></a>steamworks.remote_storage_file_write_stream_write_chunk(writeHandle,pvData,cubData) - [ISteamRemoteStorage#FileWriteStreamWriteChunk](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamWriteChunk)
+### <a name="remote_storage_file_write_stream_write_chunk"></a>steamworks.remote_storage_file_write_stream_write_chunk(writeHandle, pvData, cubData) - [ISteamRemoteStorage#FileWriteStreamWriteChunk](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamWriteChunk)
+
+**PARAMS**
+* `cubData` (int32)
+* `pvData` (const_void_ptr)
+* `writeHandle` (UGCFileWriteStreamHandle_t)
 
 **RETURN**
 * `r` (bool)
@@ -1245,11 +1771,17 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_file_write_stream_close"></a>steamworks.remote_storage_file_write_stream_close(writeHandle) - [ISteamRemoteStorage#FileWriteStreamClose](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamClose)
 
+**PARAMS**
+* `writeHandle` (UGCFileWriteStreamHandle_t)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="remote_storage_file_write_stream_cancel"></a>steamworks.remote_storage_file_write_stream_cancel(writeHandle) - [ISteamRemoteStorage#FileWriteStreamCancel](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamCancel)
+
+**PARAMS**
+* `writeHandle` (UGCFileWriteStreamHandle_t)
 
 **RETURN**
 * `r` (bool)
@@ -1257,11 +1789,17 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_file_exists"></a>steamworks.remote_storage_file_exists(pchFile) - [ISteamRemoteStorage#FileExists](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileExists)
 
+**PARAMS**
+* `pchFile` (const_char_ptr)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="remote_storage_file_persisted"></a>steamworks.remote_storage_file_persisted(pchFile) - [ISteamRemoteStorage#FilePersisted](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FilePersisted)
+
+**PARAMS**
+* `pchFile` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1269,11 +1807,17 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_get_file_size"></a>steamworks.remote_storage_get_file_size(pchFile) - [ISteamRemoteStorage#GetFileSize](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileSize)
 
+**PARAMS**
+* `pchFile` (const_char_ptr)
+
 **RETURN**
 * `r` (int32)
 
 
 ### <a name="remote_storage_get_file_timestamp"></a>steamworks.remote_storage_get_file_timestamp(pchFile) - [ISteamRemoteStorage#GetFileTimestamp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileTimestamp)
+
+**PARAMS**
+* `pchFile` (const_char_ptr)
 
 **RETURN**
 * `r` (int64)
@@ -1281,11 +1825,15 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_get_sync_platforms"></a>steamworks.remote_storage_get_sync_platforms(pchFile) - [ISteamRemoteStorage#GetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetSyncPlatforms)
 
+**PARAMS**
+* `pchFile` (const_char_ptr)
+
 **RETURN**
 * `r` (ERemoteStoragePlatform)
 
 
 ### <a name="remote_storage_get_file_count"></a>steamworks.remote_storage_get_file_count() - [ISteamRemoteStorage#GetFileCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileCount)
+
 
 **RETURN**
 * `r` (int32)
@@ -1293,12 +1841,17 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_get_file_name_and_size"></a>steamworks.remote_storage_get_file_name_and_size(iFile) - [ISteamRemoteStorage#GetFileNameAndSize](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileNameAndSize)
 
+**PARAMS**
+* `iFile` (int)
+
 **RETURN**
 * `r` (const_char_ptr)
 * `pnFileSizeInBytes` (int32)
 
 
 ### <a name="remote_storage_get_quota"></a>steamworks.remote_storage_get_quota() - [ISteamRemoteStorage#GetQuota](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetQuota)
+
+**PARAMS**
 
 **RETURN**
 * `r` (bool)
@@ -1308,11 +1861,13 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_is_cloud_enabled_for_account"></a>steamworks.remote_storage_is_cloud_enabled_for_account() - [ISteamRemoteStorage#IsCloudEnabledForAccount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForAccount)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="remote_storage_is_cloud_enabled_for_app"></a>steamworks.remote_storage_is_cloud_enabled_for_app() - [ISteamRemoteStorage#IsCloudEnabledForApp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForApp)
+
 
 **RETURN**
 * `r` (bool)
@@ -1320,13 +1875,23 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_set_cloud_enabled_for_app"></a>steamworks.remote_storage_set_cloud_enabled_for_app(bEnabled) - [ISteamRemoteStorage#SetCloudEnabledForApp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetCloudEnabledForApp)
 
+**PARAMS**
+* `bEnabled` (bool)
 
-### <a name="remote_storage_ugc_download"></a>steamworks.remote_storage_ugc_download(hContent,unPriority) - [ISteamRemoteStorage#UGCDownload](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload)
+
+### <a name="remote_storage_ugc_download"></a>steamworks.remote_storage_ugc_download(hContent, unPriority) - [ISteamRemoteStorage#UGCDownload](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload)
+
+**PARAMS**
+* `unPriority` (uint32)
+* `hContent` (UGCHandle_t)
 
 **CALLBACK**
 * `RemoteStorageDownloadUGCResult_t`
 
 ### <a name="remote_storage_get_ugc_download_progress"></a>steamworks.remote_storage_get_ugc_download_progress(hContent) - [ISteamRemoteStorage#GetUGCDownloadProgress](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDownloadProgress)
+
+**PARAMS**
+* `hContent` (UGCHandle_t)
 
 **RETURN**
 * `r` (bool)
@@ -1336,6 +1901,10 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_get_ugc_details"></a>steamworks.remote_storage_get_ugc_details(hContent) - [ISteamRemoteStorage#GetUGCDetails](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDetails)
 
+**PARAMS**
+* `hContent` (UGCHandle_t)
+* `pSteamIDOwner` ()
+
 **RETURN**
 * `r` (bool)
 * `pnFileSizeInBytes` (int32)
@@ -1343,7 +1912,14 @@ The extension exports the following functions:
 * `ppchName` (string)
 
 
-### <a name="remote_storage_ugc_read"></a>steamworks.remote_storage_ugc_read(hContent,pvData,cubDataToRead,cOffset,eAction) - [ISteamRemoteStorage#UGCRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCRead)
+### <a name="remote_storage_ugc_read"></a>steamworks.remote_storage_ugc_read(hContent, pvData, cubDataToRead, cOffset, eAction) - [ISteamRemoteStorage#UGCRead](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCRead)
+
+**PARAMS**
+* `eAction` (EUGCReadAction)
+* `cOffset` (uint32)
+* `cubDataToRead` (int32)
+* `pvData` (buffer)
+* `hContent` (UGCHandle_t)
 
 **RETURN**
 * `r` (int32)
@@ -1351,28 +1927,41 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_get_cached_ugc_count"></a>steamworks.remote_storage_get_cached_ugc_count() - [ISteamRemoteStorage#GetCachedUGCCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCCount)
 
+
 **RETURN**
 * `r` (int32)
 
 
 ### <a name="remote_storage_get_cached_ugc_handle"></a>steamworks.remote_storage_get_cached_ugc_handle(iCachedContent) - [ISteamRemoteStorage#GetCachedUGCHandle](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCHandle)
 
+**PARAMS**
+* `iCachedContent` (int32)
+
 **RETURN**
 * `r` (UGCHandle_t)
 
 
-### <a name="remote_storage_ugc_download_to_location"></a>steamworks.remote_storage_ugc_download_to_location(hContent,pchLocation,unPriority) - [ISteamRemoteStorage#UGCDownloadToLocation](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation)
+### <a name="remote_storage_ugc_download_to_location"></a>steamworks.remote_storage_ugc_download_to_location(hContent, pchLocation, unPriority) - [ISteamRemoteStorage#UGCDownloadToLocation](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation)
+
+**PARAMS**
+* `unPriority` (uint32)
+* `pchLocation` (const_char_ptr)
+* `hContent` (UGCHandle_t)
 
 **CALLBACK**
 * `RemoteStorageDownloadUGCResult_t`
 
 ### <a name="user_stats_request_current_stats"></a>steamworks.user_stats_request_current_stats() - [ISteamUserStats#RequestCurrentStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestCurrentStats)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_stats_get_stat_int"></a>steamworks.user_stats_get_stat_int(pchName) - [ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
+
+**PARAMS**
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1381,30 +1970,49 @@ The extension exports the following functions:
 
 ### <a name="user_stats_get_stat_float"></a>steamworks.user_stats_get_stat_float(pchName) - [ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
 
+**PARAMS**
+* `pchName` (const_char_ptr)
+
 **RETURN**
 * `r` (bool)
 * `pData` (float)
 
 
-### <a name="user_stats_set_stat_int"></a>steamworks.user_stats_set_stat_int(pchName,nData) - [ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
+### <a name="user_stats_set_stat_int"></a>steamworks.user_stats_set_stat_int(pchName, nData) - [ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
+
+**PARAMS**
+* `nData` (int32)
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="user_stats_set_stat_float"></a>steamworks.user_stats_set_stat_float(pchName,fData) - [ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
+### <a name="user_stats_set_stat_float"></a>steamworks.user_stats_set_stat_float(pchName, fData) - [ISteamUserStats#SetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat)
+
+**PARAMS**
+* `fData` (float)
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="user_stats_update_avg_rate_stat"></a>steamworks.user_stats_update_avg_rate_stat(pchName,flCountThisSession,dSessionLength) - [ISteamUserStats#UpdateAvgRateStat](https://partner.steamgames.com/doc/api/ISteamUserStats#UpdateAvgRateStat)
+### <a name="user_stats_update_avg_rate_stat"></a>steamworks.user_stats_update_avg_rate_stat(pchName, flCountThisSession, dSessionLength) - [ISteamUserStats#UpdateAvgRateStat](https://partner.steamgames.com/doc/api/ISteamUserStats#UpdateAvgRateStat)
+
+**PARAMS**
+* `dSessionLength` (double)
+* `flCountThisSession` (float)
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_stats_get_achievement"></a>steamworks.user_stats_get_achievement(pchName) - [ISteamUserStats#GetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievement)
+
+**PARAMS**
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1413,17 +2021,26 @@ The extension exports the following functions:
 
 ### <a name="user_stats_set_achievement"></a>steamworks.user_stats_set_achievement(pchName) - [ISteamUserStats#SetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#SetAchievement)
 
+**PARAMS**
+* `pchName` (const_char_ptr)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_stats_clear_achievement"></a>steamworks.user_stats_clear_achievement(pchName) - [ISteamUserStats#ClearAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#ClearAchievement)
 
+**PARAMS**
+* `pchName` (const_char_ptr)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_stats_get_achievement_and_unlock_time"></a>steamworks.user_stats_get_achievement_and_unlock_time(pchName) - [ISteamUserStats#GetAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAndUnlockTime)
+
+**PARAMS**
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1433,23 +2050,36 @@ The extension exports the following functions:
 
 ### <a name="user_stats_store_stats"></a>steamworks.user_stats_store_stats() - [ISteamUserStats#StoreStats](https://partner.steamgames.com/doc/api/ISteamUserStats#StoreStats)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_stats_get_achievement_icon"></a>steamworks.user_stats_get_achievement_icon(pchName) - [ISteamUserStats#GetAchievementIcon](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementIcon)
 
+**PARAMS**
+* `pchName` (const_char_ptr)
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="user_stats_get_achievement_display_attribute"></a>steamworks.user_stats_get_achievement_display_attribute(pchName,pchKey) - [ISteamUserStats#GetAchievementDisplayAttribute](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementDisplayAttribute)
+### <a name="user_stats_get_achievement_display_attribute"></a>steamworks.user_stats_get_achievement_display_attribute(pchName, pchKey) - [ISteamUserStats#GetAchievementDisplayAttribute](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementDisplayAttribute)
+
+**PARAMS**
+* `pchKey` (const_char_ptr)
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (const_char_ptr)
 
 
-### <a name="user_stats_indicate_achievement_progress"></a>steamworks.user_stats_indicate_achievement_progress(pchName,nCurProgress,nMaxProgress) - [ISteamUserStats#IndicateAchievementProgress](https://partner.steamgames.com/doc/api/ISteamUserStats#IndicateAchievementProgress)
+### <a name="user_stats_indicate_achievement_progress"></a>steamworks.user_stats_indicate_achievement_progress(pchName, nCurProgress, nMaxProgress) - [ISteamUserStats#IndicateAchievementProgress](https://partner.steamgames.com/doc/api/ISteamUserStats#IndicateAchievementProgress)
+
+**PARAMS**
+* `nMaxProgress` (uint32)
+* `nCurProgress` (uint32)
+* `pchName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1457,11 +2087,15 @@ The extension exports the following functions:
 
 ### <a name="user_stats_get_num_achievements"></a>steamworks.user_stats_get_num_achievements() - [ISteamUserStats#GetNumAchievements](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumAchievements)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="user_stats_get_achievement_name"></a>steamworks.user_stats_get_achievement_name(iAchievement) - [ISteamUserStats#GetAchievementName](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementName)
+
+**PARAMS**
+* `iAchievement` (uint32)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -1469,31 +2103,50 @@ The extension exports the following functions:
 
 ### <a name="user_stats_request_user_stats"></a>steamworks.user_stats_request_user_stats(steamIDUser) - [ISteamUserStats#RequestUserStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats)
 
+**PARAMS**
+* `steamIDUser` (class_CSteamID)
+
 **CALLBACK**
 * `UserStatsReceived_t`
 
-### <a name="user_stats_get_user_stat_int"></a>steamworks.user_stats_get_user_stat_int(steamIDUser,pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
+### <a name="user_stats_get_user_stat_int"></a>steamworks.user_stats_get_user_stat_int(steamIDUser, pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
+
+**PARAMS**
+* `pchName` (const_char_ptr)
+* `steamIDUser` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 * `pData` (int32)
 
 
-### <a name="user_stats_get_user_stat_float"></a>steamworks.user_stats_get_user_stat_float(steamIDUser,pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
+### <a name="user_stats_get_user_stat_float"></a>steamworks.user_stats_get_user_stat_float(steamIDUser, pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
+
+**PARAMS**
+* `pchName` (const_char_ptr)
+* `steamIDUser` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 * `pData` (float)
 
 
-### <a name="user_stats_get_user_achievement"></a>steamworks.user_stats_get_user_achievement(steamIDUser,pchName) - [ISteamUserStats#GetUserAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement)
+### <a name="user_stats_get_user_achievement"></a>steamworks.user_stats_get_user_achievement(steamIDUser, pchName) - [ISteamUserStats#GetUserAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement)
+
+**PARAMS**
+* `pchName` (const_char_ptr)
+* `steamIDUser` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 * `pbAchieved` (bool)
 
 
-### <a name="user_stats_get_user_achievement_and_unlock_time"></a>steamworks.user_stats_get_user_achievement_and_unlock_time(steamIDUser,pchName) - [ISteamUserStats#GetUserAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime)
+### <a name="user_stats_get_user_achievement_and_unlock_time"></a>steamworks.user_stats_get_user_achievement_and_unlock_time(steamIDUser, pchName) - [ISteamUserStats#GetUserAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime)
+
+**PARAMS**
+* `pchName` (const_char_ptr)
+* `steamIDUser` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1503,21 +2156,35 @@ The extension exports the following functions:
 
 ### <a name="user_stats_reset_all_stats"></a>steamworks.user_stats_reset_all_stats(bAchievementsToo) - [ISteamUserStats#ResetAllStats](https://partner.steamgames.com/doc/api/ISteamUserStats#ResetAllStats)
 
+**PARAMS**
+* `bAchievementsToo` (bool)
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="user_stats_find_or_create_leaderboard"></a>steamworks.user_stats_find_or_create_leaderboard(pchLeaderboardName,eLeaderboardSortMethod,eLeaderboardDisplayType) - [ISteamUserStats#FindOrCreateLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindOrCreateLeaderboard)
+### <a name="user_stats_find_or_create_leaderboard"></a>steamworks.user_stats_find_or_create_leaderboard(pchLeaderboardName, eLeaderboardSortMethod, eLeaderboardDisplayType) - [ISteamUserStats#FindOrCreateLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindOrCreateLeaderboard)
+
+**PARAMS**
+* `eLeaderboardDisplayType` (ELeaderboardDisplayType)
+* `eLeaderboardSortMethod` (ELeaderboardSortMethod)
+* `pchLeaderboardName` (const_char_ptr)
 
 **CALLBACK**
 * `LeaderboardFindResult_t`
 
 ### <a name="user_stats_find_leaderboard"></a>steamworks.user_stats_find_leaderboard(pchLeaderboardName) - [ISteamUserStats#FindLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindLeaderboard)
 
+**PARAMS**
+* `pchLeaderboardName` (const_char_ptr)
+
 **CALLBACK**
 * `LeaderboardFindResult_t`
 
 ### <a name="user_stats_get_leaderboard_name"></a>steamworks.user_stats_get_leaderboard_name(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardName](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardName)
+
+**PARAMS**
+* `hSteamLeaderboard` (SteamLeaderboard_t)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -1525,11 +2192,17 @@ The extension exports the following functions:
 
 ### <a name="user_stats_get_leaderboard_entry_count"></a>steamworks.user_stats_get_leaderboard_entry_count(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardEntryCount](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardEntryCount)
 
+**PARAMS**
+* `hSteamLeaderboard` (SteamLeaderboard_t)
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="user_stats_get_leaderboard_sort_method"></a>steamworks.user_stats_get_leaderboard_sort_method(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardSortMethod](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardSortMethod)
+
+**PARAMS**
+* `hSteamLeaderboard` (SteamLeaderboard_t)
 
 **RETURN**
 * `r` (ELeaderboardSortMethod)
@@ -1537,21 +2210,40 @@ The extension exports the following functions:
 
 ### <a name="user_stats_get_leaderboard_display_type"></a>steamworks.user_stats_get_leaderboard_display_type(hSteamLeaderboard) - [ISteamUserStats#GetLeaderboardDisplayType](https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardDisplayType)
 
+**PARAMS**
+* `hSteamLeaderboard` (SteamLeaderboard_t)
+
 **RETURN**
 * `r` (ELeaderboardDisplayType)
 
 
-### <a name="user_stats_download_leaderboard_entries"></a>steamworks.user_stats_download_leaderboard_entries(hSteamLeaderboard,eLeaderboardDataRequest,nRangeStart,nRangeEnd) - [ISteamUserStats#DownloadLeaderboardEntries](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries)
+### <a name="user_stats_download_leaderboard_entries"></a>steamworks.user_stats_download_leaderboard_entries(hSteamLeaderboard, eLeaderboardDataRequest, nRangeStart, nRangeEnd) - [ISteamUserStats#DownloadLeaderboardEntries](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries)
+
+**PARAMS**
+* `nRangeEnd` (int)
+* `nRangeStart` (int)
+* `eLeaderboardDataRequest` (ELeaderboardDataRequest)
+* `hSteamLeaderboard` (SteamLeaderboard_t)
 
 **CALLBACK**
 * `LeaderboardScoresDownloaded_t`
 
-### <a name="user_stats_download_leaderboard_entries_for_users"></a>steamworks.user_stats_download_leaderboard_entries_for_users(hSteamLeaderboard,prgUsers,cUsers) - [ISteamUserStats#DownloadLeaderboardEntriesForUsers](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers)
+### <a name="user_stats_download_leaderboard_entries_for_users"></a>steamworks.user_stats_download_leaderboard_entries_for_users(hSteamLeaderboard, prgUsers, cUsers) - [ISteamUserStats#DownloadLeaderboardEntriesForUsers](https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers)
+
+**PARAMS**
+* `cUsers` (int)
+* `prgUsers` (table)
+* `hSteamLeaderboard` (SteamLeaderboard_t)
 
 **CALLBACK**
 * `LeaderboardScoresDownloaded_t`
 
-### <a name="user_stats_get_downloaded_leaderboard_entry"></a>steamworks.user_stats_get_downloaded_leaderboard_entry(hSteamLeaderboardEntries,index,cDetailsMax) - [ISteamUserStats#GetDownloadedLeaderboardEntry](https://partner.steamgames.com/doc/api/ISteamUserStats#GetDownloadedLeaderboardEntry)
+### <a name="user_stats_get_downloaded_leaderboard_entry"></a>steamworks.user_stats_get_downloaded_leaderboard_entry(hSteamLeaderboardEntries, index, cDetailsMax) - [ISteamUserStats#GetDownloadedLeaderboardEntry](https://partner.steamgames.com/doc/api/ISteamUserStats#GetDownloadedLeaderboardEntry)
+
+**PARAMS**
+* `cDetailsMax` (int)
+* `index` (int)
+* `hSteamLeaderboardEntries` (SteamLeaderboardEntries_t)
 
 **RETURN**
 * `r` (bool)
@@ -1559,27 +2251,44 @@ The extension exports the following functions:
 * `pDetails` (table) cDetailsMax
 
 
-### <a name="user_stats_upload_leaderboard_score"></a>steamworks.user_stats_upload_leaderboard_score(hSteamLeaderboard,eLeaderboardUploadScoreMethod,nScore,pScoreDetails,cScoreDetailsCount) - [ISteamUserStats#UploadLeaderboardScore](https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore)
+### <a name="user_stats_upload_leaderboard_score"></a>steamworks.user_stats_upload_leaderboard_score(hSteamLeaderboard, eLeaderboardUploadScoreMethod, nScore, pScoreDetails, cScoreDetailsCount) - [ISteamUserStats#UploadLeaderboardScore](https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore)
+
+**PARAMS**
+* `cScoreDetailsCount` (int)
+* `pScoreDetails` (table)
+* `nScore` (int32)
+* `eLeaderboardUploadScoreMethod` (ELeaderboardUploadScoreMethod)
+* `hSteamLeaderboard` (SteamLeaderboard_t)
 
 **CALLBACK**
 * `LeaderboardScoreUploaded_t`
 
-### <a name="user_stats_attach_leaderboard_ugc"></a>steamworks.user_stats_attach_leaderboard_ugc(hSteamLeaderboard,hUGC) - [ISteamUserStats#AttachLeaderboardUGC](https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC)
+### <a name="user_stats_attach_leaderboard_ugc"></a>steamworks.user_stats_attach_leaderboard_ugc(hSteamLeaderboard, hUGC) - [ISteamUserStats#AttachLeaderboardUGC](https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC)
+
+**PARAMS**
+* `hUGC` (UGCHandle_t)
+* `hSteamLeaderboard` (SteamLeaderboard_t)
 
 **CALLBACK**
 * `LeaderboardUGCSet_t`
 
 ### <a name="user_stats_get_number_of_current_players"></a>steamworks.user_stats_get_number_of_current_players() - [ISteamUserStats#GetNumberOfCurrentPlayers](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers)
 
+
 **CALLBACK**
 * `NumberOfCurrentPlayers_t`
 
 ### <a name="user_stats_request_global_achievement_percentages"></a>steamworks.user_stats_request_global_achievement_percentages() - [ISteamUserStats#RequestGlobalAchievementPercentages](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages)
 
+
 **CALLBACK**
 * `GlobalAchievementPercentagesReady_t`
 
-### <a name="user_stats_get_most_achieved_achievement_info"></a>steamworks.user_stats_get_most_achieved_achievement_info(pchName,unNameBufLen) - [ISteamUserStats#GetMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetMostAchievedAchievementInfo)
+### <a name="user_stats_get_most_achieved_achievement_info"></a>steamworks.user_stats_get_most_achieved_achievement_info(pchName, unNameBufLen) - [ISteamUserStats#GetMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetMostAchievedAchievementInfo)
+
+**PARAMS**
+* `unNameBufLen` (uint32)
+* `pchName` (buffer)
 
 **RETURN**
 * `r` (int)
@@ -1587,7 +2296,12 @@ The extension exports the following functions:
 * `pflPercent` (float)
 
 
-### <a name="user_stats_get_next_most_achieved_achievement_info"></a>steamworks.user_stats_get_next_most_achieved_achievement_info(iIteratorPrevious,pchName,unNameBufLen) - [ISteamUserStats#GetNextMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNextMostAchievedAchievementInfo)
+### <a name="user_stats_get_next_most_achieved_achievement_info"></a>steamworks.user_stats_get_next_most_achieved_achievement_info(iIteratorPrevious, pchName, unNameBufLen) - [ISteamUserStats#GetNextMostAchievedAchievementInfo](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNextMostAchievedAchievementInfo)
+
+**PARAMS**
+* `unNameBufLen` (uint32)
+* `pchName` (buffer)
+* `iIteratorPrevious` (int)
 
 **RETURN**
 * `r` (int)
@@ -1597,6 +2311,9 @@ The extension exports the following functions:
 
 ### <a name="user_stats_get_achievement_achieved_percent"></a>steamworks.user_stats_get_achievement_achieved_percent(pchName) - [ISteamUserStats#GetAchievementAchievedPercent](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAchievedPercent)
 
+**PARAMS**
+* `pchName` (const_char_ptr)
+
 **RETURN**
 * `r` (bool)
 * `pflPercent` (float)
@@ -1604,10 +2321,16 @@ The extension exports the following functions:
 
 ### <a name="user_stats_request_global_stats"></a>steamworks.user_stats_request_global_stats(nHistoryDays) - [ISteamUserStats#RequestGlobalStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalStats)
 
+**PARAMS**
+* `nHistoryDays` (int)
+
 **CALLBACK**
 * `GlobalStatsReceived_t`
 
 ### <a name="user_stats_get_global_stat_int"></a>steamworks.user_stats_get_global_stat_int(pchStatName) - [ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
+
+**PARAMS**
+* `pchStatName` (const_char_ptr)
 
 **RETURN**
 * `r` (bool)
@@ -1616,18 +2339,31 @@ The extension exports the following functions:
 
 ### <a name="user_stats_get_global_stat_float"></a>steamworks.user_stats_get_global_stat_float(pchStatName) - [ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
 
+**PARAMS**
+* `pchStatName` (const_char_ptr)
+
 **RETURN**
 * `r` (bool)
 * `pData` (double)
 
 
-### <a name="user_stats_get_global_stat_int_history"></a>steamworks.user_stats_get_global_stat_int_history(pchStatName,pData,cubData) - [ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
+### <a name="user_stats_get_global_stat_int_history"></a>steamworks.user_stats_get_global_stat_int_history(pchStatName, pData, cubData) - [ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
+
+**PARAMS**
+* `cubData` (uint32)
+* `pData` (table)
+* `pchStatName` (const_char_ptr)
 
 **RETURN**
 * `r` (int32)
 
 
-### <a name="user_stats_get_global_stat_float_history"></a>steamworks.user_stats_get_global_stat_float_history(pchStatName,pData,cubData) - [ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
+### <a name="user_stats_get_global_stat_float_history"></a>steamworks.user_stats_get_global_stat_float_history(pchStatName, pData, cubData) - [ISteamUserStats#GetGlobalStatHistory](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory)
+
+**PARAMS**
+* `cubData` (uint32)
+* `pData` (table)
+* `pchStatName` (const_char_ptr)
 
 **RETURN**
 * `r` (int32)
@@ -1635,11 +2371,13 @@ The extension exports the following functions:
 
 ### <a name="apps_is_subscribed"></a>steamworks.apps_is_subscribed() - [ISteamApps#BIsSubscribed](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribed)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_is_low_violence"></a>steamworks.apps_is_low_violence() - [ISteamApps#BIsLowViolence](https://partner.steamgames.com/doc/api/ISteamApps#BIsLowViolence)
+
 
 **RETURN**
 * `r` (bool)
@@ -1647,11 +2385,13 @@ The extension exports the following functions:
 
 ### <a name="apps_is_cybercafe"></a>steamworks.apps_is_cybercafe() - [ISteamApps#BIsCybercafe](https://partner.steamgames.com/doc/api/ISteamApps#BIsCybercafe)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_is_vac_banned"></a>steamworks.apps_is_vac_banned() - [ISteamApps#BIsVACBanned](https://partner.steamgames.com/doc/api/ISteamApps#BIsVACBanned)
+
 
 **RETURN**
 * `r` (bool)
@@ -1659,11 +2399,13 @@ The extension exports the following functions:
 
 ### <a name="apps_get_current_game_language"></a>steamworks.apps_get_current_game_language() - [ISteamApps#GetCurrentGameLanguage](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentGameLanguage)
 
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="apps_get_available_game_languages"></a>steamworks.apps_get_available_game_languages() - [ISteamApps#GetAvailableGameLanguages](https://partner.steamgames.com/doc/api/ISteamApps#GetAvailableGameLanguages)
+
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -1671,11 +2413,17 @@ The extension exports the following functions:
 
 ### <a name="apps_is_subscribed_app"></a>steamworks.apps_is_subscribed_app(appID) - [ISteamApps#BIsSubscribedApp](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedApp)
 
+**PARAMS**
+* `appID` (AppId_t)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_is_dlc_installed"></a>steamworks.apps_is_dlc_installed(appID) - [ISteamApps#BIsDlcInstalled](https://partner.steamgames.com/doc/api/ISteamApps#BIsDlcInstalled)
+
+**PARAMS**
+* `appID` (AppId_t)
 
 **RETURN**
 * `r` (bool)
@@ -1683,11 +2431,15 @@ The extension exports the following functions:
 
 ### <a name="apps_get_earliest_purchase_unix_time"></a>steamworks.apps_get_earliest_purchase_unix_time(nAppID) - [ISteamApps#GetEarliestPurchaseUnixTime](https://partner.steamgames.com/doc/api/ISteamApps#GetEarliestPurchaseUnixTime)
 
+**PARAMS**
+* `nAppID` (AppId_t)
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="apps_is_subscribed_from_free_weekend"></a>steamworks.apps_is_subscribed_from_free_weekend() - [ISteamApps#BIsSubscribedFromFreeWeekend](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFreeWeekend)
+
 
 **RETURN**
 * `r` (bool)
@@ -1695,11 +2447,17 @@ The extension exports the following functions:
 
 ### <a name="apps_get_dlc_count"></a>steamworks.apps_get_dlc_count() - [ISteamApps#GetDLCCount](https://partner.steamgames.com/doc/api/ISteamApps#GetDLCCount)
 
+
 **RETURN**
 * `r` (int)
 
 
-### <a name="apps_get_dlc_data_by_index"></a>steamworks.apps_get_dlc_data_by_index(iDLC,pchName,cchNameBufferSize) - [ISteamApps#BGetDLCDataByIndex](https://partner.steamgames.com/doc/api/ISteamApps#BGetDLCDataByIndex)
+### <a name="apps_get_dlc_data_by_index"></a>steamworks.apps_get_dlc_data_by_index(iDLC, pchName, cchNameBufferSize) - [ISteamApps#BGetDLCDataByIndex](https://partner.steamgames.com/doc/api/ISteamApps#BGetDLCDataByIndex)
+
+**PARAMS**
+* `cchNameBufferSize` (int)
+* `pchName` (buffer)
+* `iDLC` (int)
 
 **RETURN**
 * `r` (bool)
@@ -1709,14 +2467,27 @@ The extension exports the following functions:
 
 ### <a name="apps_install_dlc"></a>steamworks.apps_install_dlc(nAppID) - [ISteamApps#InstallDLC](https://partner.steamgames.com/doc/api/ISteamApps#InstallDLC)
 
+**PARAMS**
+* `nAppID` (AppId_t)
+
 
 ### <a name="apps_uninstall_dlc"></a>steamworks.apps_uninstall_dlc(nAppID) - [ISteamApps#UninstallDLC](https://partner.steamgames.com/doc/api/ISteamApps#UninstallDLC)
+
+**PARAMS**
+* `nAppID` (AppId_t)
 
 
 ### <a name="apps_request_app_proof_of_purchase_key"></a>steamworks.apps_request_app_proof_of_purchase_key(nAppID) - [ISteamApps#RequestAppProofOfPurchaseKey](https://partner.steamgames.com/doc/api/ISteamApps#RequestAppProofOfPurchaseKey)
 
+**PARAMS**
+* `nAppID` (AppId_t)
 
-### <a name="apps_get_current_beta_name"></a>steamworks.apps_get_current_beta_name(pchName,cchNameBufferSize) - [ISteamApps#GetCurrentBetaName](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentBetaName)
+
+### <a name="apps_get_current_beta_name"></a>steamworks.apps_get_current_beta_name(pchName, cchNameBufferSize) - [ISteamApps#GetCurrentBetaName](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentBetaName)
+
+**PARAMS**
+* `cchNameBufferSize` (int)
+* `pchName` (buffer)
 
 **RETURN**
 * `r` (bool)
@@ -1724,18 +2495,30 @@ The extension exports the following functions:
 
 ### <a name="apps_mark_content_corrupt"></a>steamworks.apps_mark_content_corrupt(bMissingFilesOnly) - [ISteamApps#MarkContentCorrupt](https://partner.steamgames.com/doc/api/ISteamApps#MarkContentCorrupt)
 
+**PARAMS**
+* `bMissingFilesOnly` (bool)
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="apps_get_installed_depots"></a>steamworks.apps_get_installed_depots(appID,cMaxDepots) - [ISteamApps#GetInstalledDepots](https://partner.steamgames.com/doc/api/ISteamApps#GetInstalledDepots)
+### <a name="apps_get_installed_depots"></a>steamworks.apps_get_installed_depots(appID, cMaxDepots) - [ISteamApps#GetInstalledDepots](https://partner.steamgames.com/doc/api/ISteamApps#GetInstalledDepots)
+
+**PARAMS**
+* `cMaxDepots` (uint32)
+* `appID` (AppId_t)
 
 **RETURN**
 * `r` (uint32)
 * `pvecDepots` (DepotId_t)
 
 
-### <a name="apps_get_app_install_dir"></a>steamworks.apps_get_app_install_dir(appID,pchFolder,cchFolderBufferSize) - [ISteamApps#GetAppInstallDir](https://partner.steamgames.com/doc/api/ISteamApps#GetAppInstallDir)
+### <a name="apps_get_app_install_dir"></a>steamworks.apps_get_app_install_dir(appID, pchFolder, cchFolderBufferSize) - [ISteamApps#GetAppInstallDir](https://partner.steamgames.com/doc/api/ISteamApps#GetAppInstallDir)
+
+**PARAMS**
+* `cchFolderBufferSize` (uint32)
+* `pchFolder` (buffer)
+* `appID` (AppId_t)
 
 **RETURN**
 * `r` (uint32)
@@ -1743,11 +2526,15 @@ The extension exports the following functions:
 
 ### <a name="apps_is_app_installed"></a>steamworks.apps_is_app_installed(appID) - [ISteamApps#BIsAppInstalled](https://partner.steamgames.com/doc/api/ISteamApps#BIsAppInstalled)
 
+**PARAMS**
+* `appID` (AppId_t)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_get_app_owner"></a>steamworks.apps_get_app_owner() - [ISteamApps#GetAppOwner](https://partner.steamgames.com/doc/api/ISteamApps#GetAppOwner)
+
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -1755,11 +2542,17 @@ The extension exports the following functions:
 
 ### <a name="apps_get_launch_query_param"></a>steamworks.apps_get_launch_query_param(pchKey) - [ISteamApps#GetLaunchQueryParam](https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchQueryParam)
 
+**PARAMS**
+* `pchKey` (const_char_ptr)
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="apps_get_dlc_download_progress"></a>steamworks.apps_get_dlc_download_progress(nAppID) - [ISteamApps#GetDlcDownloadProgress](https://partner.steamgames.com/doc/api/ISteamApps#GetDlcDownloadProgress)
+
+**PARAMS**
+* `nAppID` (AppId_t)
 
 **RETURN**
 * `r` (bool)
@@ -1769,6 +2562,7 @@ The extension exports the following functions:
 
 ### <a name="apps_get_app_build_id"></a>steamworks.apps_get_app_build_id() - [ISteamApps#GetAppBuildId](https://partner.steamgames.com/doc/api/ISteamApps#GetAppBuildId)
 
+
 **RETURN**
 * `r` (int)
 
@@ -1776,12 +2570,23 @@ The extension exports the following functions:
 ### <a name="apps_request_all_proof_of_purchase_keys"></a>steamworks.apps_request_all_proof_of_purchase_keys() - [ISteamApps#RequestAllProofOfPurchaseKeys](https://partner.steamgames.com/doc/api/ISteamApps#RequestAllProofOfPurchaseKeys)
 
 
+
 ### <a name="apps_get_file_details"></a>steamworks.apps_get_file_details(pszFileName) - [ISteamApps#GetFileDetails](https://partner.steamgames.com/doc/api/ISteamApps#GetFileDetails)
+
+**PARAMS**
+* `pszFileName` (const_char_ptr)
 
 **CALLBACK**
 * `FileDetailsResult_t`
 
-### <a name="networking_send_p2p_packet"></a>steamworks.networking_send_p2p_packet(steamIDRemote,pubData,cubData,eP2PSendType,nChannel) - [ISteamNetworking#SendP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket)
+### <a name="networking_send_p2p_packet"></a>steamworks.networking_send_p2p_packet(steamIDRemote, pubData, cubData, eP2PSendType, nChannel) - [ISteamNetworking#SendP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket)
+
+**PARAMS**
+* `nChannel` (int)
+* `eP2PSendType` (EP2PSend)
+* `cubData` (uint32)
+* `pubData` (const_void_ptr)
+* `steamIDRemote` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1789,12 +2594,20 @@ The extension exports the following functions:
 
 ### <a name="networking_is_p2p_packet_available"></a>steamworks.networking_is_p2p_packet_available(nChannel) - [ISteamNetworking#IsP2PPacketAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable)
 
+**PARAMS**
+* `nChannel` (int)
+
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
 
 
-### <a name="networking_read_p2p_packet"></a>steamworks.networking_read_p2p_packet(pubDest,cubDest,nChannel) - [ISteamNetworking#ReadP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket)
+### <a name="networking_read_p2p_packet"></a>steamworks.networking_read_p2p_packet(pubDest, cubDest, nChannel) - [ISteamNetworking#ReadP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket)
+
+**PARAMS**
+* `nChannel` (int)
+* `cubDest` (uint32)
+* `pubDest` (buffer)
 
 **RETURN**
 * `r` (bool)
@@ -1804,23 +2617,36 @@ The extension exports the following functions:
 
 ### <a name="networking_accept_p2p_session_with_user"></a>steamworks.networking_accept_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#AcceptP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser)
 
+**PARAMS**
+* `steamIDRemote` (class_CSteamID)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="networking_close_p2p_session_with_user"></a>steamworks.networking_close_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#CloseP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser)
 
+**PARAMS**
+* `steamIDRemote` (class_CSteamID)
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="networking_close_p2p_channel_with_user"></a>steamworks.networking_close_p2p_channel_with_user(steamIDRemote,nChannel) - [ISteamNetworking#CloseP2PChannelWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser)
+### <a name="networking_close_p2p_channel_with_user"></a>steamworks.networking_close_p2p_channel_with_user(steamIDRemote, nChannel) - [ISteamNetworking#CloseP2PChannelWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser)
+
+**PARAMS**
+* `nChannel` (int)
+* `steamIDRemote` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="networking_get_p2p_session_state"></a>steamworks.networking_get_p2p_session_state(steamIDRemote) - [ISteamNetworking#GetP2PSessionState](https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState)
+
+**PARAMS**
+* `steamIDRemote` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1829,41 +2655,75 @@ The extension exports the following functions:
 
 ### <a name="networking_allow_p2p_packet_relay"></a>steamworks.networking_allow_p2p_packet_relay(bAllow) - [ISteamNetworking#AllowP2PPacketRelay](https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay)
 
+**PARAMS**
+* `bAllow` (bool)
+
 **RETURN**
 * `r` (bool)
 
 
-### <a name="networking_create_listen_socket"></a>steamworks.networking_create_listen_socket(nVirtualP2PPort,nIP,nPort,bAllowUseOfPacketRelay) - [ISteamNetworking#CreateListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket)
+### <a name="networking_create_listen_socket"></a>steamworks.networking_create_listen_socket(nVirtualP2PPort, nIP, nPort, bAllowUseOfPacketRelay) - [ISteamNetworking#CreateListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket)
+
+**PARAMS**
+* `bAllowUseOfPacketRelay` (bool)
+* `nPort` (uint16)
+* `nIP` (uint32)
+* `nVirtualP2PPort` (int)
 
 **RETURN**
 * `r` (SNetListenSocket_t)
 
 
-### <a name="networking_create_p2p_connection_socket"></a>steamworks.networking_create_p2p_connection_socket(steamIDTarget,nVirtualPort,nTimeoutSec,bAllowUseOfPacketRelay) - [ISteamNetworking#CreateP2PConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket)
+### <a name="networking_create_p2p_connection_socket"></a>steamworks.networking_create_p2p_connection_socket(steamIDTarget, nVirtualPort, nTimeoutSec, bAllowUseOfPacketRelay) - [ISteamNetworking#CreateP2PConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket)
+
+**PARAMS**
+* `bAllowUseOfPacketRelay` (bool)
+* `nTimeoutSec` (int)
+* `nVirtualPort` (int)
+* `steamIDTarget` (class_CSteamID)
 
 **RETURN**
 * `r` (SNetSocket_t)
 
 
-### <a name="networking_create_connection_socket"></a>steamworks.networking_create_connection_socket(nIP,nPort,nTimeoutSec) - [ISteamNetworking#CreateConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket)
+### <a name="networking_create_connection_socket"></a>steamworks.networking_create_connection_socket(nIP, nPort, nTimeoutSec) - [ISteamNetworking#CreateConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket)
+
+**PARAMS**
+* `nTimeoutSec` (int)
+* `nPort` (uint16)
+* `nIP` (uint32)
 
 **RETURN**
 * `r` (SNetSocket_t)
 
 
-### <a name="networking_destroy_socket"></a>steamworks.networking_destroy_socket(hSocket,bNotifyRemoteEnd) - [ISteamNetworking#DestroySocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket)
+### <a name="networking_destroy_socket"></a>steamworks.networking_destroy_socket(hSocket, bNotifyRemoteEnd) - [ISteamNetworking#DestroySocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket)
+
+**PARAMS**
+* `bNotifyRemoteEnd` (bool)
+* `hSocket` (SNetSocket_t)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="networking_destroy_listen_socket"></a>steamworks.networking_destroy_listen_socket(hSocket,bNotifyRemoteEnd) - [ISteamNetworking#DestroyListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket)
+### <a name="networking_destroy_listen_socket"></a>steamworks.networking_destroy_listen_socket(hSocket, bNotifyRemoteEnd) - [ISteamNetworking#DestroyListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket)
+
+**PARAMS**
+* `bNotifyRemoteEnd` (bool)
+* `hSocket` (SNetListenSocket_t)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="networking_send_data_on_socket"></a>steamworks.networking_send_data_on_socket(hSocket,pubData,cubData,bReliable) - [ISteamNetworking#SendDataOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket)
+### <a name="networking_send_data_on_socket"></a>steamworks.networking_send_data_on_socket(hSocket, pubData, cubData, bReliable) - [ISteamNetworking#SendDataOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket)
+
+**PARAMS**
+* `bReliable` (bool)
+* `cubData` (uint32)
+* `pubData` (buffer)
+* `hSocket` (SNetSocket_t)
 
 **RETURN**
 * `r` (bool)
@@ -1871,12 +2731,20 @@ The extension exports the following functions:
 
 ### <a name="networking_is_data_available_on_socket"></a>steamworks.networking_is_data_available_on_socket(hSocket) - [ISteamNetworking#IsDataAvailableOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket)
 
+**PARAMS**
+* `hSocket` (SNetSocket_t)
+
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
 
 
-### <a name="networking_retrieve_data_from_socket"></a>steamworks.networking_retrieve_data_from_socket(hSocket,pubDest,cubDest) - [ISteamNetworking#RetrieveDataFromSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket)
+### <a name="networking_retrieve_data_from_socket"></a>steamworks.networking_retrieve_data_from_socket(hSocket, pubDest, cubDest) - [ISteamNetworking#RetrieveDataFromSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket)
+
+**PARAMS**
+* `cubDest` (uint32)
+* `pubDest` (buffer)
+* `hSocket` (SNetSocket_t)
 
 **RETURN**
 * `r` (bool)
@@ -1885,13 +2753,21 @@ The extension exports the following functions:
 
 ### <a name="networking_is_data_available"></a>steamworks.networking_is_data_available(hListenSocket) - [ISteamNetworking#IsDataAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable)
 
+**PARAMS**
+* `hListenSocket` (SNetListenSocket_t)
+
 **RETURN**
 * `r` (bool)
 * `phSocket` (SNetSocket_t)
 * `pcubMsgSize` (uint32)
 
 
-### <a name="networking_retrieve_data"></a>steamworks.networking_retrieve_data(hListenSocket,pubDest,cubDest) - [ISteamNetworking#RetrieveData](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData)
+### <a name="networking_retrieve_data"></a>steamworks.networking_retrieve_data(hListenSocket, pubDest, cubDest) - [ISteamNetworking#RetrieveData](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData)
+
+**PARAMS**
+* `cubDest` (uint32)
+* `pubDest` (buffer)
+* `hListenSocket` (SNetListenSocket_t)
 
 **RETURN**
 * `r` (bool)
@@ -1900,6 +2776,9 @@ The extension exports the following functions:
 
 
 ### <a name="networking_get_socket_info"></a>steamworks.networking_get_socket_info(hSocket) - [ISteamNetworking#GetSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo)
+
+**PARAMS**
+* `hSocket` (SNetSocket_t)
 
 **RETURN**
 * `r` (bool)
@@ -1911,6 +2790,9 @@ The extension exports the following functions:
 
 ### <a name="networking_get_listen_socket_info"></a>steamworks.networking_get_listen_socket_info(hListenSocket) - [ISteamNetworking#GetListenSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo)
 
+**PARAMS**
+* `hListenSocket` (SNetListenSocket_t)
+
 **RETURN**
 * `r` (bool)
 * `pnPort` (uint16)
@@ -1919,11 +2801,17 @@ The extension exports the following functions:
 
 ### <a name="networking_get_socket_connection_type"></a>steamworks.networking_get_socket_connection_type(hSocket) - [ISteamNetworking#GetSocketConnectionType](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType)
 
+**PARAMS**
+* `hSocket` (SNetSocket_t)
+
 **RETURN**
 * `r` (ESNetSocketConnectionType)
 
 
 ### <a name="networking_get_max_packet_size"></a>steamworks.networking_get_max_packet_size(hSocket) - [ISteamNetworking#GetMaxPacketSize](https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize)
+
+**PARAMS**
+* `hSocket` (SNetSocket_t)
 
 **RETURN**
 * `r` (int)
@@ -1931,17 +2819,20 @@ The extension exports the following functions:
 
 ### <a name="music_is_enabled"></a>steamworks.music_is_enabled() - [ISteamMusic#BIsEnabled](https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="music_is_playing"></a>steamworks.music_is_playing() - [ISteamMusic#BIsPlaying](https://partner.steamgames.com/doc/api/ISteamMusic#BIsPlaying)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="music_get_playback_status"></a>steamworks.music_get_playback_status() - [ISteamMusic#GetPlaybackStatus](https://partner.steamgames.com/doc/api/ISteamMusic#GetPlaybackStatus)
+
 
 **RETURN**
 * `r` (AudioPlayback_Status)
@@ -1950,19 +2841,27 @@ The extension exports the following functions:
 ### <a name="music_play"></a>steamworks.music_play() - [ISteamMusic#Play](https://partner.steamgames.com/doc/api/ISteamMusic#Play)
 
 
+
 ### <a name="music_pause"></a>steamworks.music_pause() - [ISteamMusic#Pause](https://partner.steamgames.com/doc/api/ISteamMusic#Pause)
+
 
 
 ### <a name="music_play_previous"></a>steamworks.music_play_previous() - [ISteamMusic#PlayPrevious](https://partner.steamgames.com/doc/api/ISteamMusic#PlayPrevious)
 
 
+
 ### <a name="music_play_next"></a>steamworks.music_play_next() - [ISteamMusic#PlayNext](https://partner.steamgames.com/doc/api/ISteamMusic#PlayNext)
+
 
 
 ### <a name="music_set_volume"></a>steamworks.music_set_volume(flVolume) - [ISteamMusic#SetVolume](https://partner.steamgames.com/doc/api/ISteamMusic#SetVolume)
 
+**PARAMS**
+* `flVolume` (float)
+
 
 ### <a name="music_get_volume"></a>steamworks.music_get_volume() - [ISteamMusic#GetVolume](https://partner.steamgames.com/doc/api/ISteamMusic#GetVolume)
+
 
 **RETURN**
 * `r` (float)
@@ -1970,11 +2869,17 @@ The extension exports the following functions:
 
 ### <a name="inventory_get_result_status"></a>steamworks.inventory_get_result_status(resultHandle) - [ISteamInventory#GetResultStatus](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultStatus)
 
+**PARAMS**
+* `resultHandle` (SteamInventoryResult_t)
+
 **RETURN**
 * `r` (EResult)
 
 
 ### <a name="inventory_get_result_items"></a>steamworks.inventory_get_result_items(resultHandle) - [ISteamInventory#GetResultItems](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItems)
+
+**PARAMS**
+* `resultHandle` (SteamInventoryResult_t)
 
 **RETURN**
 * `r` (bool)
@@ -1982,7 +2887,13 @@ The extension exports the following functions:
 * `pOutItemsArray` (table) punOutItemsArraySize
 
 
-### <a name="inventory_get_result_item_property"></a>steamworks.inventory_get_result_item_property(resultHandle,unItemIndex,pchPropertyName,pchValueBuffer) - [ISteamInventory#GetResultItemProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty)
+### <a name="inventory_get_result_item_property"></a>steamworks.inventory_get_result_item_property(resultHandle, unItemIndex, pchPropertyName, pchValueBuffer) - [ISteamInventory#GetResultItemProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty)
+
+**PARAMS**
+* `pchValueBuffer` (buffer)
+* `pchPropertyName` (const_char_ptr)
+* `unItemIndex` (uint32)
+* `resultHandle` (SteamInventoryResult_t)
 
 **RETURN**
 * `r` (bool)
@@ -1991,11 +2902,18 @@ The extension exports the following functions:
 
 ### <a name="inventory_get_result_timestamp"></a>steamworks.inventory_get_result_timestamp(resultHandle) - [ISteamInventory#GetResultTimestamp](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultTimestamp)
 
+**PARAMS**
+* `resultHandle` (SteamInventoryResult_t)
+
 **RETURN**
 * `r` (uint32)
 
 
-### <a name="inventory_check_result_steam_id"></a>steamworks.inventory_check_result_steam_id(resultHandle,steamIDExpected) - [ISteamInventory#CheckResultSteamID](https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID)
+### <a name="inventory_check_result_steam_id"></a>steamworks.inventory_check_result_steam_id(resultHandle, steamIDExpected) - [ISteamInventory#CheckResultSteamID](https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID)
+
+**PARAMS**
+* `steamIDExpected` (class_CSteamID)
+* `resultHandle` (SteamInventoryResult_t)
 
 **RETURN**
 * `r` (bool)
@@ -2003,36 +2921,59 @@ The extension exports the following functions:
 
 ### <a name="inventory_destroy_result"></a>steamworks.inventory_destroy_result(resultHandle) - [ISteamInventory#DestroyResult](https://partner.steamgames.com/doc/api/ISteamInventory#DestroyResult)
 
+**PARAMS**
+* `resultHandle` (SteamInventoryResult_t)
+
 
 ### <a name="inventory_get_all_items"></a>steamworks.inventory_get_all_items() - [ISteamInventory#GetAllItems](https://partner.steamgames.com/doc/api/ISteamInventory#GetAllItems)
 
-**RETURN**
-* `r` (bool)
-* `pResultHandle` (SteamInventoryResult_t)
-
-
-### <a name="inventory_get_items_by_id"></a>steamworks.inventory_get_items_by_id(pInstanceIDs,unCountInstanceIDs) - [ISteamInventory#GetItemsByID](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsByID)
+**PARAMS**
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### <a name="inventory_serialize_result"></a>steamworks.inventory_serialize_result(resultHandle,pOutBuffer) - [ISteamInventory#SerializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult)
+### <a name="inventory_get_items_by_id"></a>steamworks.inventory_get_items_by_id(pInstanceIDs, unCountInstanceIDs) - [ISteamInventory#GetItemsByID](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsByID)
+
+**PARAMS**
+* `unCountInstanceIDs` (uint32)
+* `pInstanceIDs` (table)
+
+**RETURN**
+* `r` (bool)
+* `pResultHandle` (SteamInventoryResult_t)
+
+
+### <a name="inventory_serialize_result"></a>steamworks.inventory_serialize_result(resultHandle, pOutBuffer) - [ISteamInventory#SerializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult)
+
+**PARAMS**
+* `pOutBuffer` (buffer)
+* `resultHandle` (SteamInventoryResult_t)
 
 **RETURN**
 * `r` (bool)
 * `punOutBufferSize` (uint32)
 
 
-### <a name="inventory_deserialize_result"></a>steamworks.inventory_deserialize_result(pBuffer,unBufferSize,bRESERVED_MUST_BE_FALSE) - [ISteamInventory#DeserializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#DeserializeResult)
+### <a name="inventory_deserialize_result"></a>steamworks.inventory_deserialize_result(pBuffer, unBufferSize, bRESERVED_MUST_BE_FALSE) - [ISteamInventory#DeserializeResult](https://partner.steamgames.com/doc/api/ISteamInventory#DeserializeResult)
+
+**PARAMS**
+* `bRESERVED_MUST_BE_FALSE` (bool)
+* `unBufferSize` (uint32)
+* `pBuffer` (const_void_ptr)
 
 **RETURN**
 * `r` (bool)
 * `pOutResultHandle` (SteamInventoryResult_t)
 
 
-### <a name="inventory_generate_items"></a>steamworks.inventory_generate_items(pArrayItemDefs,punArrayQuantity,unArrayLength) - [ISteamInventory#GenerateItems](https://partner.steamgames.com/doc/api/ISteamInventory#GenerateItems)
+### <a name="inventory_generate_items"></a>steamworks.inventory_generate_items(pArrayItemDefs, punArrayQuantity, unArrayLength) - [ISteamInventory#GenerateItems](https://partner.steamgames.com/doc/api/ISteamInventory#GenerateItems)
+
+**PARAMS**
+* `unArrayLength` (uint32)
+* `punArrayQuantity` (table)
+* `pArrayItemDefs` (table)
 
 **RETURN**
 * `r` (bool)
@@ -2041,6 +2982,8 @@ The extension exports the following functions:
 
 ### <a name="inventory_grant_promo_items"></a>steamworks.inventory_grant_promo_items() - [ISteamInventory#GrantPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#GrantPromoItems)
 
+**PARAMS**
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -2048,33 +2991,57 @@ The extension exports the following functions:
 
 ### <a name="inventory_add_promo_item"></a>steamworks.inventory_add_promo_item(itemDef) - [ISteamInventory#AddPromoItem](https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItem)
 
-**RETURN**
-* `r` (bool)
-* `pResultHandle` (SteamInventoryResult_t)
-
-
-### <a name="inventory_add_promo_items"></a>steamworks.inventory_add_promo_items(pArrayItemDefs,unArrayLength) - [ISteamInventory#AddPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItems)
+**PARAMS**
+* `itemDef` (SteamItemDef_t)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### <a name="inventory_consume_item"></a>steamworks.inventory_consume_item(itemConsume,unQuantity) - [ISteamInventory#ConsumeItem](https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem)
+### <a name="inventory_add_promo_items"></a>steamworks.inventory_add_promo_items(pArrayItemDefs, unArrayLength) - [ISteamInventory#AddPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItems)
+
+**PARAMS**
+* `unArrayLength` (uint32)
+* `pArrayItemDefs` (table)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### <a name="inventory_exchange_items"></a>steamworks.inventory_exchange_items(pArrayGenerate,punArrayGenerateQuantity,unArrayGenerateLength,pArrayDestroy,punArrayDestroyQuantity,unArrayDestroyLength) - [ISteamInventory#ExchangeItems](https://partner.steamgames.com/doc/api/ISteamInventory#ExchangeItems)
+### <a name="inventory_consume_item"></a>steamworks.inventory_consume_item(itemConsume, unQuantity) - [ISteamInventory#ConsumeItem](https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem)
+
+**PARAMS**
+* `unQuantity` (uint32)
+* `itemConsume` (SteamItemInstanceID_t)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### <a name="inventory_transfer_item_quantity"></a>steamworks.inventory_transfer_item_quantity(itemIdSource,unQuantity,itemIdDest) - [ISteamInventory#TransferItemQuantity](https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity)
+### <a name="inventory_exchange_items"></a>steamworks.inventory_exchange_items(pArrayGenerate, punArrayGenerateQuantity, unArrayGenerateLength, pArrayDestroy, punArrayDestroyQuantity, unArrayDestroyLength) - [ISteamInventory#ExchangeItems](https://partner.steamgames.com/doc/api/ISteamInventory#ExchangeItems)
+
+**PARAMS**
+* `unArrayDestroyLength` (uint32)
+* `punArrayDestroyQuantity` (table)
+* `pArrayDestroy` (table)
+* `unArrayGenerateLength` (uint32)
+* `punArrayGenerateQuantity` (table)
+* `pArrayGenerate` (table)
+
+**RETURN**
+* `r` (bool)
+* `pResultHandle` (SteamInventoryResult_t)
+
+
+### <a name="inventory_transfer_item_quantity"></a>steamworks.inventory_transfer_item_quantity(itemIdSource, unQuantity, itemIdDest) - [ISteamInventory#TransferItemQuantity](https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity)
+
+**PARAMS**
+* `itemIdDest` (SteamItemInstanceID_t)
+* `unQuantity` (uint32)
+* `itemIdSource` (SteamItemInstanceID_t)
 
 **RETURN**
 * `r` (bool)
@@ -2084,14 +3051,27 @@ The extension exports the following functions:
 ### <a name="inventory_send_item_drop_heartbeat"></a>steamworks.inventory_send_item_drop_heartbeat() - [ISteamInventory#SendItemDropHeartbeat](https://partner.steamgames.com/doc/api/ISteamInventory#SendItemDropHeartbeat)
 
 
+
 ### <a name="inventory_trigger_item_drop"></a>steamworks.inventory_trigger_item_drop(dropListDefinition) - [ISteamInventory#TriggerItemDrop](https://partner.steamgames.com/doc/api/ISteamInventory#TriggerItemDrop)
+
+**PARAMS**
+* `dropListDefinition` (SteamItemDef_t)
 
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
-### <a name="inventory_trade_items"></a>steamworks.inventory_trade_items(steamIDTradePartner,pArrayGive,pArrayGiveQuantity,nArrayGiveLength,pArrayGet,pArrayGetQuantity,nArrayGetLength) - [ISteamInventory#TradeItems](https://partner.steamgames.com/doc/api/ISteamInventory#TradeItems)
+### <a name="inventory_trade_items"></a>steamworks.inventory_trade_items(steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength) - [ISteamInventory#TradeItems](https://partner.steamgames.com/doc/api/ISteamInventory#TradeItems)
+
+**PARAMS**
+* `nArrayGetLength` (uint32)
+* `pArrayGetQuantity` (table)
+* `pArrayGet` (table)
+* `nArrayGiveLength` (uint32)
+* `pArrayGiveQuantity` (table)
+* `pArrayGive` (table)
+* `steamIDTradePartner` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2100,11 +3080,14 @@ The extension exports the following functions:
 
 ### <a name="inventory_load_item_definitions"></a>steamworks.inventory_load_item_definitions() - [ISteamInventory#LoadItemDefinitions](https://partner.steamgames.com/doc/api/ISteamInventory#LoadItemDefinitions)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="inventory_get_item_definition_i_ds"></a>steamworks.inventory_get_item_definition_i_ds() - [ISteamInventory#GetItemDefinitionIDs](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionIDs)
+
+**PARAMS**
 
 **RETURN**
 * `r` (bool)
@@ -2112,7 +3095,12 @@ The extension exports the following functions:
 * `pItemDefIDs` (table) punItemDefIDsArraySize
 
 
-### <a name="inventory_get_item_definition_property"></a>steamworks.inventory_get_item_definition_property(iDefinition,pchPropertyName,pchValueBuffer) - [ISteamInventory#GetItemDefinitionProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionProperty)
+### <a name="inventory_get_item_definition_property"></a>steamworks.inventory_get_item_definition_property(iDefinition, pchPropertyName, pchValueBuffer) - [ISteamInventory#GetItemDefinitionProperty](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionProperty)
+
+**PARAMS**
+* `pchValueBuffer` (buffer)
+* `pchPropertyName` (const_char_ptr)
+* `iDefinition` (SteamItemDef_t)
 
 **RETURN**
 * `r` (bool)
@@ -2121,10 +3109,16 @@ The extension exports the following functions:
 
 ### <a name="inventory_request_eligible_promo_item_definitions_i_ds"></a>steamworks.inventory_request_eligible_promo_item_definitions_i_ds(steamID) - [ISteamInventory#RequestEligiblePromoItemDefinitionsIDs](https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs)
 
+**PARAMS**
+* `steamID` (class_CSteamID)
+
 **CALLBACK**
 * `SteamInventoryEligiblePromoItemDefIDs_t`
 
 ### <a name="inventory_get_eligible_promo_item_definition_i_ds"></a>steamworks.inventory_get_eligible_promo_item_definition_i_ds(steamID) - [ISteamInventory#GetEligiblePromoItemDefinitionIDs](https://partner.steamgames.com/doc/api/ISteamInventory#GetEligiblePromoItemDefinitionIDs)
+
+**PARAMS**
+* `steamID` (class_CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2132,23 +3126,33 @@ The extension exports the following functions:
 * `pItemDefIDs` (table) punItemDefIDsArraySize
 
 
-### <a name="inventory_start_purchase"></a>steamworks.inventory_start_purchase(pArrayItemDefs,punArrayQuantity,unArrayLength) - [ISteamInventory#StartPurchase](https://partner.steamgames.com/doc/api/ISteamInventory#StartPurchase)
+### <a name="inventory_start_purchase"></a>steamworks.inventory_start_purchase(pArrayItemDefs, punArrayQuantity, unArrayLength) - [ISteamInventory#StartPurchase](https://partner.steamgames.com/doc/api/ISteamInventory#StartPurchase)
+
+**PARAMS**
+* `unArrayLength` (uint32)
+* `punArrayQuantity` (table)
+* `pArrayItemDefs` (table)
 
 **CALLBACK**
 * `SteamInventoryStartPurchaseResult_t`
 
 ### <a name="inventory_request_prices"></a>steamworks.inventory_request_prices() - [ISteamInventory#RequestPrices](https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices)
 
+
 **CALLBACK**
 * `SteamInventoryRequestPricesResult_t`
 
 ### <a name="inventory_get_num_items_with_prices"></a>steamworks.inventory_get_num_items_with_prices() - [ISteamInventory#GetNumItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetNumItemsWithPrices)
+
 
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="inventory_get_items_with_prices"></a>steamworks.inventory_get_items_with_prices(unArrayLength) - [ISteamInventory#GetItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices)
+
+**PARAMS**
+* `unArrayLength` (uint32)
 
 **RETURN**
 * `r` (bool)
@@ -2158,6 +3162,9 @@ The extension exports the following functions:
 
 ### <a name="inventory_get_item_price"></a>steamworks.inventory_get_item_price(iDefinition) - [ISteamInventory#GetItemPrice](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemPrice)
 
+**PARAMS**
+* `iDefinition` (SteamItemDef_t)
+
 **RETURN**
 * `r` (bool)
 * `pPrice` (uint64)
@@ -2165,41 +3172,74 @@ The extension exports the following functions:
 
 ### <a name="inventory_start_update_properties"></a>steamworks.inventory_start_update_properties() - [ISteamInventory#StartUpdateProperties](https://partner.steamgames.com/doc/api/ISteamInventory#StartUpdateProperties)
 
+
 **RETURN**
 * `r` (SteamInventoryUpdateHandle_t)
 
 
-### <a name="inventory_remove_property"></a>steamworks.inventory_remove_property(handle,nItemID,pchPropertyName) - [ISteamInventory#RemoveProperty](https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty)
+### <a name="inventory_remove_property"></a>steamworks.inventory_remove_property(handle, nItemID, pchPropertyName) - [ISteamInventory#RemoveProperty](https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty)
+
+**PARAMS**
+* `pchPropertyName` (const_char_ptr)
+* `nItemID` (SteamItemInstanceID_t)
+* `handle` (SteamInventoryUpdateHandle_t)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="inventory_set_property_string"></a>steamworks.inventory_set_property_string(handle,nItemID,pchPropertyName,pchPropertyValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_string"></a>steamworks.inventory_set_property_string(handle, nItemID, pchPropertyName, pchPropertyValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+
+**PARAMS**
+* `pchPropertyValue` (const_char_ptr)
+* `pchPropertyName` (const_char_ptr)
+* `nItemID` (SteamItemInstanceID_t)
+* `handle` (SteamInventoryUpdateHandle_t)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="inventory_set_property_bool"></a>steamworks.inventory_set_property_bool(handle,nItemID,pchPropertyName,bValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_bool"></a>steamworks.inventory_set_property_bool(handle, nItemID, pchPropertyName, bValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+
+**PARAMS**
+* `bValue` (bool)
+* `pchPropertyName` (const_char_ptr)
+* `nItemID` (SteamItemInstanceID_t)
+* `handle` (SteamInventoryUpdateHandle_t)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="inventory_set_property_int"></a>steamworks.inventory_set_property_int(handle,nItemID,pchPropertyName,nValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_int"></a>steamworks.inventory_set_property_int(handle, nItemID, pchPropertyName, nValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+
+**PARAMS**
+* `nValue` (int64)
+* `pchPropertyName` (const_char_ptr)
+* `nItemID` (SteamItemInstanceID_t)
+* `handle` (SteamInventoryUpdateHandle_t)
 
 **RETURN**
 * `r` (bool)
 
 
-### <a name="inventory_set_property_float"></a>steamworks.inventory_set_property_float(handle,nItemID,pchPropertyName,flValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+### <a name="inventory_set_property_float"></a>steamworks.inventory_set_property_float(handle, nItemID, pchPropertyName, flValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
+
+**PARAMS**
+* `flValue` (float)
+* `pchPropertyName` (const_char_ptr)
+* `nItemID` (SteamItemInstanceID_t)
+* `handle` (SteamInventoryUpdateHandle_t)
 
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="inventory_submit_update_properties"></a>steamworks.inventory_submit_update_properties(handle) - [ISteamInventory#SubmitUpdateProperties](https://partner.steamgames.com/doc/api/ISteamInventory#SubmitUpdateProperties)
+
+**PARAMS**
+* `handle` (SteamInventoryUpdateHandle_t)
 
 **RETURN**
 * `r` (bool)
