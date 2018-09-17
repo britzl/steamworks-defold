@@ -74,5 +74,8 @@ Function names are converted to snake case using the following convention:
 ### Generating the API
 The API is generated from the `steam_api.json` which is part of the Steamworks SDK. The generator is written in Python using a Mustache template, `generate.py` and `extension.mtl` respectively. Some minor alterations have been made to the `steam_api.json` definition file.
 
+### API Overview
+Refer to the [API Overview](steamworks/api.md) for a list of all generated functions, constants and callbacks.
+
 ## Example app
 Refer to the `examples` folder for an Defold application that showcases the use of many parts of the API. Build the example app from Defold and run it from the command line using one of `run_osx.sh`, `run_x86_64-linux.sh` and `run_x86_64-win32.bat`.
