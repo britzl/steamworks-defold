@@ -234,19 +234,23 @@ def parse_callbacks(methods):
 
 
 def generate():
+    j = json.load(open("steamworks/include/steam_api.json"))
+    j["methods"] = parse_methods(j["methods"])
+    j["typedefs"] = parse_typedefs(j["typedefs"])
+    j["structs"] = parse_structs(j["structs"], j["methods"])
+    j["enums"] = parse_enums(j["enums"])
+    j["callbacks"] = parse_callbacks(j["methods"])
+
     with open("extension.mtl", 'r') as f:
         extension_mtl = f.read()
-
-        j = json.load(open("steamworks/include/steam_api.json"))
-
-        j["methods"] = parse_methods(j["methods"])
-        j["typedefs"] = parse_typedefs(j["typedefs"])
-        j["structs"] = parse_structs(j["structs"], j["methods"])
-        j["enums"] = parse_enums(j["enums"])
-        j["callbacks"] = parse_callbacks(j["methods"])
-
         result = pystache.render(extension_mtl, j)
         with codecs.open("steamworks/src/extension.cpp", 'wb' "utf-8") as f:
+            f.write(HTMLParser.HTMLParser().unescape(result))
+
+    with open("api.mtl", 'r') as f:
+        docs_mtl = f.read()
+        result = pystache.render(docs_mtl, j)
+        with codecs.open("steamworks/api.md", 'wb' "utf-8") as f:
             f.write(HTMLParser.HTMLParser().unescape(result))
 
 

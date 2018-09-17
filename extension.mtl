@@ -1,14 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY
 // Copyright 2016 Bjorn Ritzl
 
-/**
-
-{{#methods}}
-{{classname_lower}}_{{methodname_lower}}({{paramnames_in}}) -> {{classname}}_{{methodname}}()
-{{/methods}}
-
-*/
-
 #include <dmsdk/sdk.h>
 #include <assert.h>
 #include <stdlib.h>

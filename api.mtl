@@ -1,0 +1,33 @@
+# Functions
+The extension exports the following functions:
+
+{{#methods}}
+* steamworks.{{classname_lower}}_{{methodname_lower}}({{paramnames_in}}) ([{{classname}}#{{methodname}}](https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}}))
+{{/methods}}
+
+# Call results and callbacks
+The extension will pass all call results and callbacks to the listener function:
+
+    steamworks.set_listener(function(self, e, t)
+        print(e)
+    end)
+
+## Call results
+{{#structs}}{{#callresult}}* {{struct}} (callresult)
+{{/callresult}}{{/structs}}
+
+## Callbacks
+{{#callbacks}}
+* {{callback}} (callback)
+{{/callbacks}}
+
+# Enums
+The extension exports the following enums:
+
+{{#enums}}
+## {{enumname}}
+{{#values}}
+steamworks.{{name}} {{value}}
+{{/values}}
+
+{{/enums}}
