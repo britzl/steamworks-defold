@@ -370,9 +370,9 @@ The extension exports the following functions:
 ### <a name="user_begin_auth_session"></a>steamworks.user_begin_auth_session(pAuthTicket, cbAuthTicket, steamID) - [ISteamUser#BeginAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession)
 
 **PARAMS**
-* `steamID` (class_CSteamID)
+* `steamID` (class CSteamID)
 * `cbAuthTicket` (int)
-* `pAuthTicket` (const_void_ptr)
+* `pAuthTicket` (const void *)
 
 **RETURN**
 * `r` (EBeginAuthSessionResult)
@@ -381,7 +381,7 @@ The extension exports the following functions:
 ### <a name="user_end_auth_session"></a>steamworks.user_end_auth_session(steamID) - [ISteamUser#EndAuthSession](https://partner.steamgames.com/doc/api/ISteamUser#EndAuthSession)
 
 **PARAMS**
-* `steamID` (class_CSteamID)
+* `steamID` (class CSteamID)
 
 
 ### <a name="user_cancel_auth_ticket"></a>steamworks.user_cancel_auth_ticket(hAuthTicket) - [ISteamUser#CancelAuthTicket](https://partner.steamgames.com/doc/api/ISteamUser#CancelAuthTicket)
@@ -394,7 +394,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `appID` (AppId_t)
-* `steamID` (class_CSteamID)
+* `steamID` (class CSteamID)
 
 **RETURN**
 * `r` (EUserHasLicenseForAppResult)
@@ -412,7 +412,7 @@ The extension exports the following functions:
 **PARAMS**
 * `usPortServer` (uint16)
 * `unIPServer` (uint32)
-* `steamIDGameServer` (class_CSteamID)
+* `steamIDGameServer` (class CSteamID)
 
 
 ### <a name="user_request_encrypted_app_ticket"></a>steamworks.user_request_encrypted_app_ticket(pDataToInclude, cbDataToInclude) - [ISteamUser#RequestEncryptedAppTicket](https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket)
@@ -455,7 +455,7 @@ The extension exports the following functions:
 ### <a name="user_request_store_auth_url"></a>steamworks.user_request_store_auth_url(pchRedirectURL) - [ISteamUser#RequestStoreAuthURL](https://partner.steamgames.com/doc/api/ISteamUser#RequestStoreAuthURL)
 
 **PARAMS**
-* `pchRedirectURL` (const_char_ptr)
+* `pchRedirectURL` (const char *)
 
 **CALLBACK**
 * `StoreAuthURLResponse_t`
@@ -498,7 +498,7 @@ The extension exports the following functions:
 ### <a name="friends_set_persona_name"></a>steamworks.friends_set_persona_name(pchPersonaName) - [ISteamFriends#SetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#SetPersonaName)
 
 **PARAMS**
-* `pchPersonaName` (const_char_ptr)
+* `pchPersonaName` (const char *)
 
 **CALLBACK**
 * `SetPersonaNameResponse_t`
@@ -532,7 +532,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_relationship"></a>steamworks.friends_get_friend_relationship(steamIDFriend) - [ISteamFriends#GetFriendRelationship](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRelationship)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (EFriendRelationship)
@@ -541,7 +541,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_persona_state"></a>steamworks.friends_get_friend_persona_state(steamIDFriend) - [ISteamFriends#GetFriendPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaState)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (EPersonaState)
@@ -550,7 +550,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_persona_name"></a>steamworks.friends_get_friend_persona_name(steamIDFriend) - [ISteamFriends#GetFriendPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaName)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -559,8 +559,8 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_game_played"></a>steamworks.friends_get_friend_game_played(steamIDFriend) - [ISteamFriends#GetFriendGamePlayed](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendGamePlayed)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
-* `pFriendGameInfo` ()
+* `steamIDFriend` (class CSteamID)
+* `pFriendGameInfo` (struct FriendGameInfo_t)
 
 **RETURN**
 * `r` (bool)
@@ -570,7 +570,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iPersonaName` (int)
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -579,7 +579,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_steam_level"></a>steamworks.friends_get_friend_steam_level(steamIDFriend) - [ISteamFriends#GetFriendSteamLevel](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendSteamLevel)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -588,7 +588,7 @@ The extension exports the following functions:
 ### <a name="friends_get_player_nickname"></a>steamworks.friends_get_player_nickname(steamIDPlayer) - [ISteamFriends#GetPlayerNickname](https://partner.steamgames.com/doc/api/ISteamFriends#GetPlayerNickname)
 
 **PARAMS**
-* `steamIDPlayer` (class_CSteamID)
+* `steamIDPlayer` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -638,7 +638,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iFriendFlags` (int)
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -663,7 +663,7 @@ The extension exports the following functions:
 ### <a name="friends_get_clan_name"></a>steamworks.friends_get_clan_name(steamIDClan) - [ISteamFriends#GetClanName](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanName)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -672,7 +672,7 @@ The extension exports the following functions:
 ### <a name="friends_get_clan_tag"></a>steamworks.friends_get_clan_tag(steamIDClan) - [ISteamFriends#GetClanTag](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanTag)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -681,7 +681,7 @@ The extension exports the following functions:
 ### <a name="friends_get_clan_activity_counts"></a>steamworks.friends_get_clan_activity_counts(steamIDClan) - [ISteamFriends#GetClanActivityCounts](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanActivityCounts)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -702,7 +702,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_count_from_source"></a>steamworks.friends_get_friend_count_from_source(steamIDSource) - [ISteamFriends#GetFriendCountFromSource](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCountFromSource)
 
 **PARAMS**
-* `steamIDSource` (class_CSteamID)
+* `steamIDSource` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -712,7 +712,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iFriend` (int)
-* `steamIDSource` (class_CSteamID)
+* `steamIDSource` (class CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -721,8 +721,8 @@ The extension exports the following functions:
 ### <a name="friends_is_user_in_source"></a>steamworks.friends_is_user_in_source(steamIDUser, steamIDSource) - [ISteamFriends#IsUserInSource](https://partner.steamgames.com/doc/api/ISteamFriends#IsUserInSource)
 
 **PARAMS**
-* `steamIDSource` (class_CSteamID)
-* `steamIDUser` (class_CSteamID)
+* `steamIDSource` (class CSteamID)
+* `steamIDUser` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -732,25 +732,25 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bSpeaking` (bool)
-* `steamIDUser` (class_CSteamID)
+* `steamIDUser` (class CSteamID)
 
 
 ### <a name="friends_set_played_with"></a>steamworks.friends_set_played_with(steamIDUserPlayedWith) - [ISteamFriends#SetPlayedWith](https://partner.steamgames.com/doc/api/ISteamFriends#SetPlayedWith)
 
 **PARAMS**
-* `steamIDUserPlayedWith` (class_CSteamID)
+* `steamIDUserPlayedWith` (class CSteamID)
 
 
 ### <a name="friends_activate_game_overlay_invite_dialog"></a>steamworks.friends_activate_game_overlay_invite_dialog(steamIDLobby) - [ISteamFriends#ActivateGameOverlayInviteDialog](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayInviteDialog)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 
 ### <a name="friends_get_small_friend_avatar"></a>steamworks.friends_get_small_friend_avatar(steamIDFriend) - [ISteamFriends#GetSmallFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetSmallFriendAvatar)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -759,7 +759,7 @@ The extension exports the following functions:
 ### <a name="friends_get_medium_friend_avatar"></a>steamworks.friends_get_medium_friend_avatar(steamIDFriend) - [ISteamFriends#GetMediumFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetMediumFriendAvatar)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -768,7 +768,7 @@ The extension exports the following functions:
 ### <a name="friends_get_large_friend_avatar"></a>steamworks.friends_get_large_friend_avatar(steamIDFriend) - [ISteamFriends#GetLargeFriendAvatar](https://partner.steamgames.com/doc/api/ISteamFriends#GetLargeFriendAvatar)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -778,7 +778,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bRequireNameOnly` (bool)
-* `steamIDUser` (class_CSteamID)
+* `steamIDUser` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -787,7 +787,7 @@ The extension exports the following functions:
 ### <a name="friends_request_clan_officer_list"></a>steamworks.friends_request_clan_officer_list(steamIDClan) - [ISteamFriends#RequestClanOfficerList](https://partner.steamgames.com/doc/api/ISteamFriends#RequestClanOfficerList)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **CALLBACK**
 * `ClanOfficerListResponse_t`
@@ -795,7 +795,7 @@ The extension exports the following functions:
 ### <a name="friends_get_clan_owner"></a>steamworks.friends_get_clan_owner(steamIDClan) - [ISteamFriends#GetClanOwner](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOwner)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -804,7 +804,7 @@ The extension exports the following functions:
 ### <a name="friends_get_clan_officer_count"></a>steamworks.friends_get_clan_officer_count(steamIDClan) - [ISteamFriends#GetClanOfficerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerCount)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -814,7 +814,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iOfficer` (int)
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -830,8 +830,8 @@ The extension exports the following functions:
 ### <a name="friends_set_rich_presence"></a>steamworks.friends_set_rich_presence(pchKey, pchValue) - [ISteamFriends#SetRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence)
 
 **PARAMS**
-* `pchValue` (const_char_ptr)
-* `pchKey` (const_char_ptr)
+* `pchValue` (const char *)
+* `pchKey` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -844,8 +844,8 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_rich_presence"></a>steamworks.friends_get_friend_rich_presence(steamIDFriend, pchKey) - [ISteamFriends#GetFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresence)
 
 **PARAMS**
-* `pchKey` (const_char_ptr)
-* `steamIDFriend` (class_CSteamID)
+* `pchKey` (const char *)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -854,7 +854,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_rich_presence_key_count"></a>steamworks.friends_get_friend_rich_presence_key_count(steamIDFriend) - [ISteamFriends#GetFriendRichPresenceKeyCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyCount)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -864,7 +864,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iKey` (int)
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -873,14 +873,14 @@ The extension exports the following functions:
 ### <a name="friends_request_friend_rich_presence"></a>steamworks.friends_request_friend_rich_presence(steamIDFriend) - [ISteamFriends#RequestFriendRichPresence](https://partner.steamgames.com/doc/api/ISteamFriends#RequestFriendRichPresence)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 
 ### <a name="friends_invite_user_to_game"></a>steamworks.friends_invite_user_to_game(steamIDFriend, pchConnectString) - [ISteamFriends#InviteUserToGame](https://partner.steamgames.com/doc/api/ISteamFriends#InviteUserToGame)
 
 **PARAMS**
-* `pchConnectString` (const_char_ptr)
-* `steamIDFriend` (class_CSteamID)
+* `pchConnectString` (const char *)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -905,7 +905,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_coplay_time"></a>steamworks.friends_get_friend_coplay_time(steamIDFriend) - [ISteamFriends#GetFriendCoplayTime](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayTime)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -914,7 +914,7 @@ The extension exports the following functions:
 ### <a name="friends_get_friend_coplay_game"></a>steamworks.friends_get_friend_coplay_game(steamIDFriend) - [ISteamFriends#GetFriendCoplayGame](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayGame)
 
 **PARAMS**
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (AppId_t)
@@ -923,7 +923,7 @@ The extension exports the following functions:
 ### <a name="friends_join_clan_chat_room"></a>steamworks.friends_join_clan_chat_room(steamIDClan) - [ISteamFriends#JoinClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#JoinClanChatRoom)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **CALLBACK**
 * `JoinClanChatRoomCompletionResult_t`
@@ -931,7 +931,7 @@ The extension exports the following functions:
 ### <a name="friends_leave_clan_chat_room"></a>steamworks.friends_leave_clan_chat_room(steamIDClan) - [ISteamFriends#LeaveClanChatRoom](https://partner.steamgames.com/doc/api/ISteamFriends#LeaveClanChatRoom)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -940,7 +940,7 @@ The extension exports the following functions:
 ### <a name="friends_get_clan_chat_member_count"></a>steamworks.friends_get_clan_chat_member_count(steamIDClan) - [ISteamFriends#GetClanChatMemberCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMemberCount)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -950,7 +950,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iUser` (int)
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -959,8 +959,8 @@ The extension exports the following functions:
 ### <a name="friends_send_clan_chat_message"></a>steamworks.friends_send_clan_chat_message(steamIDClanChat, pchText) - [ISteamFriends#SendClanChatMessage](https://partner.steamgames.com/doc/api/ISteamFriends#SendClanChatMessage)
 
 **PARAMS**
-* `pchText` (const_char_ptr)
-* `steamIDClanChat` (class_CSteamID)
+* `pchText` (const char *)
+* `steamIDClanChat` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -972,8 +972,8 @@ The extension exports the following functions:
 * `cchTextMax` (int)
 * `prgchText` (buffer)
 * `iMessage` (int)
-* `steamIDClanChat` (class_CSteamID)
-* `psteamidChatter` ()
+* `steamIDClanChat` (class CSteamID)
+* `psteamidChatter` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -983,8 +983,8 @@ The extension exports the following functions:
 ### <a name="friends_is_clan_chat_admin"></a>steamworks.friends_is_clan_chat_admin(steamIDClanChat, steamIDUser) - [ISteamFriends#IsClanChatAdmin](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatAdmin)
 
 **PARAMS**
-* `steamIDUser` (class_CSteamID)
-* `steamIDClanChat` (class_CSteamID)
+* `steamIDUser` (class CSteamID)
+* `steamIDClanChat` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -993,7 +993,7 @@ The extension exports the following functions:
 ### <a name="friends_is_clan_chat_window_open_in_steam"></a>steamworks.friends_is_clan_chat_window_open_in_steam(steamIDClanChat) - [ISteamFriends#IsClanChatWindowOpenInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatWindowOpenInSteam)
 
 **PARAMS**
-* `steamIDClanChat` (class_CSteamID)
+* `steamIDClanChat` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1002,7 +1002,7 @@ The extension exports the following functions:
 ### <a name="friends_open_clan_chat_window_in_steam"></a>steamworks.friends_open_clan_chat_window_in_steam(steamIDClanChat) - [ISteamFriends#OpenClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#OpenClanChatWindowInSteam)
 
 **PARAMS**
-* `steamIDClanChat` (class_CSteamID)
+* `steamIDClanChat` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1011,7 +1011,7 @@ The extension exports the following functions:
 ### <a name="friends_close_clan_chat_window_in_steam"></a>steamworks.friends_close_clan_chat_window_in_steam(steamIDClanChat) - [ISteamFriends#CloseClanChatWindowInSteam](https://partner.steamgames.com/doc/api/ISteamFriends#CloseClanChatWindowInSteam)
 
 **PARAMS**
-* `steamIDClanChat` (class_CSteamID)
+* `steamIDClanChat` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1029,8 +1029,8 @@ The extension exports the following functions:
 ### <a name="friends_reply_to_friend_message"></a>steamworks.friends_reply_to_friend_message(steamIDFriend, pchMsgToSend) - [ISteamFriends#ReplyToFriendMessage](https://partner.steamgames.com/doc/api/ISteamFriends#ReplyToFriendMessage)
 
 **PARAMS**
-* `pchMsgToSend` (const_char_ptr)
-* `steamIDFriend` (class_CSteamID)
+* `pchMsgToSend` (const char *)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1042,7 +1042,7 @@ The extension exports the following functions:
 * `cubData` (int)
 * `pvData` (buffer)
 * `iMessageID` (int)
-* `steamIDFriend` (class_CSteamID)
+* `steamIDFriend` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -1052,7 +1052,7 @@ The extension exports the following functions:
 ### <a name="friends_get_follower_count"></a>steamworks.friends_get_follower_count(steamID) - [ISteamFriends#GetFollowerCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFollowerCount)
 
 **PARAMS**
-* `steamID` (class_CSteamID)
+* `steamID` (class CSteamID)
 
 **CALLBACK**
 * `FriendsGetFollowerCount_t`
@@ -1060,7 +1060,7 @@ The extension exports the following functions:
 ### <a name="friends_is_following"></a>steamworks.friends_is_following(steamID) - [ISteamFriends#IsFollowing](https://partner.steamgames.com/doc/api/ISteamFriends#IsFollowing)
 
 **PARAMS**
-* `steamID` (class_CSteamID)
+* `steamID` (class CSteamID)
 
 **CALLBACK**
 * `FriendsIsFollowing_t`
@@ -1076,7 +1076,7 @@ The extension exports the following functions:
 ### <a name="friends_is_clan_public"></a>steamworks.friends_is_clan_public(steamIDClan) - [ISteamFriends#IsClanPublic](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanPublic)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1085,7 +1085,7 @@ The extension exports the following functions:
 ### <a name="friends_is_clan_official_game_group"></a>steamworks.friends_is_clan_official_game_group(steamIDClan) - [ISteamFriends#IsClanOfficialGameGroup](https://partner.steamgames.com/doc/api/ISteamFriends#IsClanOfficialGameGroup)
 
 **PARAMS**
-* `steamIDClan` (class_CSteamID)
+* `steamIDClan` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1221,7 +1221,7 @@ The extension exports the following functions:
 ### <a name="utils_check_file_signature"></a>steamworks.utils_check_file_signature(szFileName) - [ISteamUtils#CheckFileSignature](https://partner.steamgames.com/doc/api/ISteamUtils#CheckFileSignature)
 
 **PARAMS**
-* `szFileName` (const_char_ptr)
+* `szFileName` (const char *)
 
 **CALLBACK**
 * `CheckFileSignature_t`
@@ -1229,9 +1229,9 @@ The extension exports the following functions:
 ### <a name="utils_show_gamepad_text_input"></a>steamworks.utils_show_gamepad_text_input(eInputMode, eLineInputMode, pchDescription, unCharMax, pchExistingText) - [ISteamUtils#ShowGamepadTextInput](https://partner.steamgames.com/doc/api/ISteamUtils#ShowGamepadTextInput)
 
 **PARAMS**
-* `pchExistingText` (const_char_ptr)
+* `pchExistingText` (const char *)
 * `unCharMax` (uint32)
-* `pchDescription` (const_char_ptr)
+* `pchDescription` (const char *)
 * `eLineInputMode` (EGamepadTextInputLineMode)
 * `eInputMode` (EGamepadTextInputMode)
 
@@ -1360,8 +1360,8 @@ The extension exports the following functions:
 
 **PARAMS**
 * `eComparisonType` (ELobbyComparison)
-* `pchValueToMatch` (const_char_ptr)
-* `pchKeyToMatch` (const_char_ptr)
+* `pchValueToMatch` (const char *)
+* `pchKeyToMatch` (const char *)
 
 
 ### <a name="matchmaking_add_request_lobby_list_numerical_filter"></a>steamworks.matchmaking_add_request_lobby_list_numerical_filter(pchKeyToMatch, nValueToMatch, eComparisonType) - [ISteamMatchmaking#AddRequestLobbyListNumericalFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNumericalFilter)
@@ -1369,14 +1369,14 @@ The extension exports the following functions:
 **PARAMS**
 * `eComparisonType` (ELobbyComparison)
 * `nValueToMatch` (int)
-* `pchKeyToMatch` (const_char_ptr)
+* `pchKeyToMatch` (const char *)
 
 
 ### <a name="matchmaking_add_request_lobby_list_near_value_filter"></a>steamworks.matchmaking_add_request_lobby_list_near_value_filter(pchKeyToMatch, nValueToBeCloseTo) - [ISteamMatchmaking#AddRequestLobbyListNearValueFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNearValueFilter)
 
 **PARAMS**
 * `nValueToBeCloseTo` (int)
-* `pchKeyToMatch` (const_char_ptr)
+* `pchKeyToMatch` (const char *)
 
 
 ### <a name="matchmaking_add_request_lobby_list_filter_slots_available"></a>steamworks.matchmaking_add_request_lobby_list_filter_slots_available(nSlotsAvailable) - [ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable)
@@ -1400,7 +1400,7 @@ The extension exports the following functions:
 ### <a name="matchmaking_add_request_lobby_list_compatible_members_filter"></a>steamworks.matchmaking_add_request_lobby_list_compatible_members_filter(steamIDLobby) - [ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter](https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 
 ### <a name="matchmaking_get_lobby_by_index"></a>steamworks.matchmaking_get_lobby_by_index(iLobby) - [ISteamMatchmaking#GetLobbyByIndex](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyByIndex)
@@ -1424,7 +1424,7 @@ The extension exports the following functions:
 ### <a name="matchmaking_join_lobby"></a>steamworks.matchmaking_join_lobby(steamIDLobby) - [ISteamMatchmaking#JoinLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#JoinLobby)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **CALLBACK**
 * `LobbyEnter_t`
@@ -1432,14 +1432,14 @@ The extension exports the following functions:
 ### <a name="matchmaking_leave_lobby"></a>steamworks.matchmaking_leave_lobby(steamIDLobby) - [ISteamMatchmaking#LeaveLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#LeaveLobby)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 
 ### <a name="matchmaking_invite_user_to_lobby"></a>steamworks.matchmaking_invite_user_to_lobby(steamIDLobby, steamIDInvitee) - [ISteamMatchmaking#InviteUserToLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#InviteUserToLobby)
 
 **PARAMS**
-* `steamIDInvitee` (class_CSteamID)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDInvitee` (class CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1448,7 +1448,7 @@ The extension exports the following functions:
 ### <a name="matchmaking_get_num_lobby_members"></a>steamworks.matchmaking_get_num_lobby_members(steamIDLobby) - [ISteamMatchmaking#GetNumLobbyMembers](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetNumLobbyMembers)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -1458,7 +1458,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iMember` (int)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -1467,8 +1467,8 @@ The extension exports the following functions:
 ### <a name="matchmaking_get_lobby_data"></a>steamworks.matchmaking_get_lobby_data(steamIDLobby, pchKey) - [ISteamMatchmaking#GetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyData)
 
 **PARAMS**
-* `pchKey` (const_char_ptr)
-* `steamIDLobby` (class_CSteamID)
+* `pchKey` (const char *)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -1477,9 +1477,9 @@ The extension exports the following functions:
 ### <a name="matchmaking_set_lobby_data"></a>steamworks.matchmaking_set_lobby_data(steamIDLobby, pchKey, pchValue) - [ISteamMatchmaking#SetLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyData)
 
 **PARAMS**
-* `pchValue` (const_char_ptr)
-* `pchKey` (const_char_ptr)
-* `steamIDLobby` (class_CSteamID)
+* `pchValue` (const char *)
+* `pchKey` (const char *)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1488,7 +1488,7 @@ The extension exports the following functions:
 ### <a name="matchmaking_get_lobby_data_count"></a>steamworks.matchmaking_get_lobby_data_count(steamIDLobby) - [ISteamMatchmaking#GetLobbyDataCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataCount)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -1502,7 +1502,7 @@ The extension exports the following functions:
 * `cchKeyBufferSize` (int)
 * `pchKey` (buffer)
 * `iLobbyData` (int)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1511,8 +1511,8 @@ The extension exports the following functions:
 ### <a name="matchmaking_delete_lobby_data"></a>steamworks.matchmaking_delete_lobby_data(steamIDLobby, pchKey) - [ISteamMatchmaking#DeleteLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#DeleteLobbyData)
 
 **PARAMS**
-* `pchKey` (const_char_ptr)
-* `steamIDLobby` (class_CSteamID)
+* `pchKey` (const char *)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1521,9 +1521,9 @@ The extension exports the following functions:
 ### <a name="matchmaking_get_lobby_member_data"></a>steamworks.matchmaking_get_lobby_member_data(steamIDLobby, steamIDUser, pchKey) - [ISteamMatchmaking#GetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData)
 
 **PARAMS**
-* `pchKey` (const_char_ptr)
-* `steamIDUser` (class_CSteamID)
-* `steamIDLobby` (class_CSteamID)
+* `pchKey` (const char *)
+* `steamIDUser` (class CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -1532,17 +1532,17 @@ The extension exports the following functions:
 ### <a name="matchmaking_set_lobby_member_data"></a>steamworks.matchmaking_set_lobby_member_data(steamIDLobby, pchKey, pchValue) - [ISteamMatchmaking#SetLobbyMemberData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberData)
 
 **PARAMS**
-* `pchValue` (const_char_ptr)
-* `pchKey` (const_char_ptr)
-* `steamIDLobby` (class_CSteamID)
+* `pchValue` (const char *)
+* `pchKey` (const char *)
+* `steamIDLobby` (class CSteamID)
 
 
 ### <a name="matchmaking_send_lobby_chat_msg"></a>steamworks.matchmaking_send_lobby_chat_msg(steamIDLobby, pvMsgBody, cubMsgBody) - [ISteamMatchmaking#SendLobbyChatMsg](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg)
 
 **PARAMS**
 * `cubMsgBody` (int)
-* `pvMsgBody` (const_void_ptr)
-* `steamIDLobby` (class_CSteamID)
+* `pvMsgBody` (const void *)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1554,8 +1554,8 @@ The extension exports the following functions:
 * `cubData` (int)
 * `pvData` (buffer)
 * `iChatID` (int)
-* `steamIDLobby` (class_CSteamID)
-* `pSteamIDUser` ()
+* `steamIDLobby` (class CSteamID)
+* `pSteamIDUser` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -1565,7 +1565,7 @@ The extension exports the following functions:
 ### <a name="matchmaking_request_lobby_data"></a>steamworks.matchmaking_request_lobby_data(steamIDLobby) - [ISteamMatchmaking#RequestLobbyData](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyData)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1574,17 +1574,17 @@ The extension exports the following functions:
 ### <a name="matchmaking_set_lobby_game_server"></a>steamworks.matchmaking_set_lobby_game_server(steamIDLobby, unGameServerIP, unGameServerPort, steamIDGameServer) - [ISteamMatchmaking#SetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer)
 
 **PARAMS**
-* `steamIDGameServer` (class_CSteamID)
+* `steamIDGameServer` (class CSteamID)
 * `unGameServerPort` (uint16)
 * `unGameServerIP` (uint32)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 
 ### <a name="matchmaking_get_lobby_game_server"></a>steamworks.matchmaking_get_lobby_game_server(steamIDLobby) - [ISteamMatchmaking#GetLobbyGameServer](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyGameServer)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
-* `psteamIDGameServer` ()
+* `steamIDLobby` (class CSteamID)
+* `psteamIDGameServer` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1596,7 +1596,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `cMaxMembers` (int)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1605,7 +1605,7 @@ The extension exports the following functions:
 ### <a name="matchmaking_get_lobby_member_limit"></a>steamworks.matchmaking_get_lobby_member_limit(steamIDLobby) - [ISteamMatchmaking#GetLobbyMemberLimit](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberLimit)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (int)
@@ -1615,7 +1615,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `eLobbyType` (ELobbyType)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1625,7 +1625,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bLobbyJoinable` (bool)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1634,7 +1634,7 @@ The extension exports the following functions:
 ### <a name="matchmaking_get_lobby_owner"></a>steamworks.matchmaking_get_lobby_owner(steamIDLobby) - [ISteamMatchmaking#GetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyOwner)
 
 **PARAMS**
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -1643,8 +1643,8 @@ The extension exports the following functions:
 ### <a name="matchmaking_set_lobby_owner"></a>steamworks.matchmaking_set_lobby_owner(steamIDLobby, steamIDNewOwner) - [ISteamMatchmaking#SetLobbyOwner](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyOwner)
 
 **PARAMS**
-* `steamIDNewOwner` (class_CSteamID)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDNewOwner` (class CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1653,8 +1653,8 @@ The extension exports the following functions:
 ### <a name="matchmaking_set_linked_lobby"></a>steamworks.matchmaking_set_linked_lobby(steamIDLobby, steamIDLobbyDependent) - [ISteamMatchmaking#SetLinkedLobby](https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLinkedLobby)
 
 **PARAMS**
-* `steamIDLobbyDependent` (class_CSteamID)
-* `steamIDLobby` (class_CSteamID)
+* `steamIDLobbyDependent` (class CSteamID)
+* `steamIDLobby` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1664,8 +1664,8 @@ The extension exports the following functions:
 
 **PARAMS**
 * `cubData` (int32)
-* `pvData` (const_void_ptr)
-* `pchFile` (const_char_ptr)
+* `pvData` (const void *)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1676,7 +1676,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cubDataToRead` (int32)
 * `pvData` (buffer)
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (int32)
@@ -1686,8 +1686,8 @@ The extension exports the following functions:
 
 **PARAMS**
 * `cubData` (uint32)
-* `pvData` (const_void_ptr)
-* `pchFile` (const_char_ptr)
+* `pvData` (const void *)
+* `pchFile` (const char *)
 
 **CALLBACK**
 * `RemoteStorageFileWriteAsyncComplete_t`
@@ -1697,7 +1697,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cubToRead` (uint32)
 * `nOffset` (uint32)
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **CALLBACK**
 * `RemoteStorageFileReadAsyncComplete_t`
@@ -1716,7 +1716,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_file_forget"></a>steamworks.remote_storage_file_forget(pchFile) - [ISteamRemoteStorage#FileForget](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileForget)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1725,7 +1725,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_file_delete"></a>steamworks.remote_storage_file_delete(pchFile) - [ISteamRemoteStorage#FileDelete](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileDelete)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1734,7 +1734,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_file_share"></a>steamworks.remote_storage_file_share(pchFile) - [ISteamRemoteStorage#FileShare](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileShare)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **CALLBACK**
 * `RemoteStorageFileShareResult_t`
@@ -1743,7 +1743,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `eRemoteStoragePlatform` (ERemoteStoragePlatform)
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1752,7 +1752,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_file_write_stream_open"></a>steamworks.remote_storage_file_write_stream_open(pchFile) - [ISteamRemoteStorage#FileWriteStreamOpen](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamOpen)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (UGCFileWriteStreamHandle_t)
@@ -1762,7 +1762,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `cubData` (int32)
-* `pvData` (const_void_ptr)
+* `pvData` (const void *)
 * `writeHandle` (UGCFileWriteStreamHandle_t)
 
 **RETURN**
@@ -1790,7 +1790,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_file_exists"></a>steamworks.remote_storage_file_exists(pchFile) - [ISteamRemoteStorage#FileExists](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileExists)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1799,7 +1799,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_file_persisted"></a>steamworks.remote_storage_file_persisted(pchFile) - [ISteamRemoteStorage#FilePersisted](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FilePersisted)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1808,7 +1808,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_get_file_size"></a>steamworks.remote_storage_get_file_size(pchFile) - [ISteamRemoteStorage#GetFileSize](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileSize)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (int32)
@@ -1817,7 +1817,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_get_file_timestamp"></a>steamworks.remote_storage_get_file_timestamp(pchFile) - [ISteamRemoteStorage#GetFileTimestamp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileTimestamp)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (int64)
@@ -1826,7 +1826,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_get_sync_platforms"></a>steamworks.remote_storage_get_sync_platforms(pchFile) - [ISteamRemoteStorage#GetSyncPlatforms](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetSyncPlatforms)
 
 **PARAMS**
-* `pchFile` (const_char_ptr)
+* `pchFile` (const char *)
 
 **RETURN**
 * `r` (ERemoteStoragePlatform)
@@ -1903,7 +1903,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hContent` (UGCHandle_t)
-* `pSteamIDOwner` ()
+* `pSteamIDOwner` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -1945,7 +1945,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `unPriority` (uint32)
-* `pchLocation` (const_char_ptr)
+* `pchLocation` (const char *)
 * `hContent` (UGCHandle_t)
 
 **CALLBACK**
@@ -1961,7 +1961,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_stat_int"></a>steamworks.user_stats_get_stat_int(pchName) - [ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1971,7 +1971,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_stat_float"></a>steamworks.user_stats_get_stat_float(pchName) - [ISteamUserStats#GetStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1982,7 +1982,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nData` (int32)
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -1992,7 +1992,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `fData` (float)
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2003,7 +2003,7 @@ The extension exports the following functions:
 **PARAMS**
 * `dSessionLength` (double)
 * `flCountThisSession` (float)
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2012,7 +2012,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_achievement"></a>steamworks.user_stats_get_achievement(pchName) - [ISteamUserStats#GetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievement)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2022,7 +2022,7 @@ The extension exports the following functions:
 ### <a name="user_stats_set_achievement"></a>steamworks.user_stats_set_achievement(pchName) - [ISteamUserStats#SetAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#SetAchievement)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2031,7 +2031,7 @@ The extension exports the following functions:
 ### <a name="user_stats_clear_achievement"></a>steamworks.user_stats_clear_achievement(pchName) - [ISteamUserStats#ClearAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#ClearAchievement)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2040,7 +2040,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_achievement_and_unlock_time"></a>steamworks.user_stats_get_achievement_and_unlock_time(pchName) - [ISteamUserStats#GetAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAndUnlockTime)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2058,7 +2058,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_achievement_icon"></a>steamworks.user_stats_get_achievement_icon(pchName) - [ISteamUserStats#GetAchievementIcon](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementIcon)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (int)
@@ -2067,8 +2067,8 @@ The extension exports the following functions:
 ### <a name="user_stats_get_achievement_display_attribute"></a>steamworks.user_stats_get_achievement_display_attribute(pchName, pchKey) - [ISteamUserStats#GetAchievementDisplayAttribute](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementDisplayAttribute)
 
 **PARAMS**
-* `pchKey` (const_char_ptr)
-* `pchName` (const_char_ptr)
+* `pchKey` (const char *)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -2079,7 +2079,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nMaxProgress` (uint32)
 * `nCurProgress` (uint32)
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2104,7 +2104,7 @@ The extension exports the following functions:
 ### <a name="user_stats_request_user_stats"></a>steamworks.user_stats_request_user_stats(steamIDUser) - [ISteamUserStats#RequestUserStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats)
 
 **PARAMS**
-* `steamIDUser` (class_CSteamID)
+* `steamIDUser` (class CSteamID)
 
 **CALLBACK**
 * `UserStatsReceived_t`
@@ -2112,8 +2112,8 @@ The extension exports the following functions:
 ### <a name="user_stats_get_user_stat_int"></a>steamworks.user_stats_get_user_stat_int(steamIDUser, pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
-* `steamIDUser` (class_CSteamID)
+* `pchName` (const char *)
+* `steamIDUser` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2123,8 +2123,8 @@ The extension exports the following functions:
 ### <a name="user_stats_get_user_stat_float"></a>steamworks.user_stats_get_user_stat_float(steamIDUser, pchName) - [ISteamUserStats#GetUserStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
-* `steamIDUser` (class_CSteamID)
+* `pchName` (const char *)
+* `steamIDUser` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2134,8 +2134,8 @@ The extension exports the following functions:
 ### <a name="user_stats_get_user_achievement"></a>steamworks.user_stats_get_user_achievement(steamIDUser, pchName) - [ISteamUserStats#GetUserAchievement](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
-* `steamIDUser` (class_CSteamID)
+* `pchName` (const char *)
+* `steamIDUser` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2145,8 +2145,8 @@ The extension exports the following functions:
 ### <a name="user_stats_get_user_achievement_and_unlock_time"></a>steamworks.user_stats_get_user_achievement_and_unlock_time(steamIDUser, pchName) - [ISteamUserStats#GetUserAchievementAndUnlockTime](https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
-* `steamIDUser` (class_CSteamID)
+* `pchName` (const char *)
+* `steamIDUser` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2168,7 +2168,7 @@ The extension exports the following functions:
 **PARAMS**
 * `eLeaderboardDisplayType` (ELeaderboardDisplayType)
 * `eLeaderboardSortMethod` (ELeaderboardSortMethod)
-* `pchLeaderboardName` (const_char_ptr)
+* `pchLeaderboardName` (const char *)
 
 **CALLBACK**
 * `LeaderboardFindResult_t`
@@ -2176,7 +2176,7 @@ The extension exports the following functions:
 ### <a name="user_stats_find_leaderboard"></a>steamworks.user_stats_find_leaderboard(pchLeaderboardName) - [ISteamUserStats#FindLeaderboard](https://partner.steamgames.com/doc/api/ISteamUserStats#FindLeaderboard)
 
 **PARAMS**
-* `pchLeaderboardName` (const_char_ptr)
+* `pchLeaderboardName` (const char *)
 
 **CALLBACK**
 * `LeaderboardFindResult_t`
@@ -2247,7 +2247,7 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` (bool)
-* `pLeaderboardEntry` (LeaderboardEntry_t)
+* `pLeaderboardEntry` (struct LeaderboardEntry_t)
 * `pDetails` (table) cDetailsMax
 
 
@@ -2312,7 +2312,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_achievement_achieved_percent"></a>steamworks.user_stats_get_achievement_achieved_percent(pchName) - [ISteamUserStats#GetAchievementAchievedPercent](https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAchievedPercent)
 
 **PARAMS**
-* `pchName` (const_char_ptr)
+* `pchName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2330,7 +2330,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_global_stat_int"></a>steamworks.user_stats_get_global_stat_int(pchStatName) - [ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
 
 **PARAMS**
-* `pchStatName` (const_char_ptr)
+* `pchStatName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2340,7 +2340,7 @@ The extension exports the following functions:
 ### <a name="user_stats_get_global_stat_float"></a>steamworks.user_stats_get_global_stat_float(pchStatName) - [ISteamUserStats#GetGlobalStat](https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat)
 
 **PARAMS**
-* `pchStatName` (const_char_ptr)
+* `pchStatName` (const char *)
 
 **RETURN**
 * `r` (bool)
@@ -2352,7 +2352,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cubData` (uint32)
 * `pData` (table)
-* `pchStatName` (const_char_ptr)
+* `pchStatName` (const char *)
 
 **RETURN**
 * `r` (int32)
@@ -2363,7 +2363,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cubData` (uint32)
 * `pData` (table)
-* `pchStatName` (const_char_ptr)
+* `pchStatName` (const char *)
 
 **RETURN**
 * `r` (int32)
@@ -2543,7 +2543,7 @@ The extension exports the following functions:
 ### <a name="apps_get_launch_query_param"></a>steamworks.apps_get_launch_query_param(pchKey) - [ISteamApps#GetLaunchQueryParam](https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchQueryParam)
 
 **PARAMS**
-* `pchKey` (const_char_ptr)
+* `pchKey` (const char *)
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -2574,7 +2574,7 @@ The extension exports the following functions:
 ### <a name="apps_get_file_details"></a>steamworks.apps_get_file_details(pszFileName) - [ISteamApps#GetFileDetails](https://partner.steamgames.com/doc/api/ISteamApps#GetFileDetails)
 
 **PARAMS**
-* `pszFileName` (const_char_ptr)
+* `pszFileName` (const char *)
 
 **CALLBACK**
 * `FileDetailsResult_t`
@@ -2585,8 +2585,8 @@ The extension exports the following functions:
 * `nChannel` (int)
 * `eP2PSendType` (EP2PSend)
 * `cubData` (uint32)
-* `pubData` (const_void_ptr)
-* `steamIDRemote` (class_CSteamID)
+* `pubData` (const void *)
+* `steamIDRemote` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2611,14 +2611,14 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` (bool)
-* `psteamIDRemote` (class_CSteamID)
+* `psteamIDRemote` (CSteamID)
 * `pcubMsgSize` (uint32)
 
 
 ### <a name="networking_accept_p2p_session_with_user"></a>steamworks.networking_accept_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#AcceptP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser)
 
 **PARAMS**
-* `steamIDRemote` (class_CSteamID)
+* `steamIDRemote` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2627,7 +2627,7 @@ The extension exports the following functions:
 ### <a name="networking_close_p2p_session_with_user"></a>steamworks.networking_close_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#CloseP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser)
 
 **PARAMS**
-* `steamIDRemote` (class_CSteamID)
+* `steamIDRemote` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2637,7 +2637,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nChannel` (int)
-* `steamIDRemote` (class_CSteamID)
+* `steamIDRemote` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -2646,11 +2646,11 @@ The extension exports the following functions:
 ### <a name="networking_get_p2p_session_state"></a>steamworks.networking_get_p2p_session_state(steamIDRemote) - [ISteamNetworking#GetP2PSessionState](https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState)
 
 **PARAMS**
-* `steamIDRemote` (class_CSteamID)
+* `steamIDRemote` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
-* `pConnectionState` (P2PSessionState_t)
+* `pConnectionState` (struct P2PSessionState_t)
 
 
 ### <a name="networking_allow_p2p_packet_relay"></a>steamworks.networking_allow_p2p_packet_relay(bAllow) - [ISteamNetworking#AllowP2PPacketRelay](https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay)
@@ -2680,7 +2680,7 @@ The extension exports the following functions:
 * `bAllowUseOfPacketRelay` (bool)
 * `nTimeoutSec` (int)
 * `nVirtualPort` (int)
-* `steamIDTarget` (class_CSteamID)
+* `steamIDTarget` (class CSteamID)
 
 **RETURN**
 * `r` (SNetSocket_t)
@@ -2785,7 +2785,7 @@ The extension exports the following functions:
 * `punPortRemote` (uint16)
 * `punIPRemote` (uint32)
 * `peSocketStatus` (int)
-* `pSteamIDRemote` (class_CSteamID)
+* `pSteamIDRemote` (CSteamID)
 
 
 ### <a name="networking_get_listen_socket_info"></a>steamworks.networking_get_listen_socket_info(hListenSocket) - [ISteamNetworking#GetListenSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo)
@@ -2891,7 +2891,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchValueBuffer` (buffer)
-* `pchPropertyName` (const_char_ptr)
+* `pchPropertyName` (const char *)
 * `unItemIndex` (uint32)
 * `resultHandle` (SteamInventoryResult_t)
 
@@ -2912,7 +2912,7 @@ The extension exports the following functions:
 ### <a name="inventory_check_result_steam_id"></a>steamworks.inventory_check_result_steam_id(resultHandle, steamIDExpected) - [ISteamInventory#CheckResultSteamID](https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID)
 
 **PARAMS**
-* `steamIDExpected` (class_CSteamID)
+* `steamIDExpected` (class CSteamID)
 * `resultHandle` (SteamInventoryResult_t)
 
 **RETURN**
@@ -2961,7 +2961,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bRESERVED_MUST_BE_FALSE` (bool)
 * `unBufferSize` (uint32)
-* `pBuffer` (const_void_ptr)
+* `pBuffer` (const void *)
 
 **RETURN**
 * `r` (bool)
@@ -3071,7 +3071,7 @@ The extension exports the following functions:
 * `nArrayGiveLength` (uint32)
 * `pArrayGiveQuantity` (table)
 * `pArrayGive` (table)
-* `steamIDTradePartner` (class_CSteamID)
+* `steamIDTradePartner` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -3099,7 +3099,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchValueBuffer` (buffer)
-* `pchPropertyName` (const_char_ptr)
+* `pchPropertyName` (const char *)
 * `iDefinition` (SteamItemDef_t)
 
 **RETURN**
@@ -3110,7 +3110,7 @@ The extension exports the following functions:
 ### <a name="inventory_request_eligible_promo_item_definitions_i_ds"></a>steamworks.inventory_request_eligible_promo_item_definitions_i_ds(steamID) - [ISteamInventory#RequestEligiblePromoItemDefinitionsIDs](https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs)
 
 **PARAMS**
-* `steamID` (class_CSteamID)
+* `steamID` (class CSteamID)
 
 **CALLBACK**
 * `SteamInventoryEligiblePromoItemDefIDs_t`
@@ -3118,7 +3118,7 @@ The extension exports the following functions:
 ### <a name="inventory_get_eligible_promo_item_definition_i_ds"></a>steamworks.inventory_get_eligible_promo_item_definition_i_ds(steamID) - [ISteamInventory#GetEligiblePromoItemDefinitionIDs](https://partner.steamgames.com/doc/api/ISteamInventory#GetEligiblePromoItemDefinitionIDs)
 
 **PARAMS**
-* `steamID` (class_CSteamID)
+* `steamID` (class CSteamID)
 
 **RETURN**
 * `r` (bool)
@@ -3180,7 +3180,7 @@ The extension exports the following functions:
 ### <a name="inventory_remove_property"></a>steamworks.inventory_remove_property(handle, nItemID, pchPropertyName) - [ISteamInventory#RemoveProperty](https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty)
 
 **PARAMS**
-* `pchPropertyName` (const_char_ptr)
+* `pchPropertyName` (const char *)
 * `nItemID` (SteamItemInstanceID_t)
 * `handle` (SteamInventoryUpdateHandle_t)
 
@@ -3191,8 +3191,8 @@ The extension exports the following functions:
 ### <a name="inventory_set_property_string"></a>steamworks.inventory_set_property_string(handle, nItemID, pchPropertyName, pchPropertyValue) - [ISteamInventory#SetProperty](https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty)
 
 **PARAMS**
-* `pchPropertyValue` (const_char_ptr)
-* `pchPropertyName` (const_char_ptr)
+* `pchPropertyValue` (const char *)
+* `pchPropertyName` (const char *)
 * `nItemID` (SteamItemInstanceID_t)
 * `handle` (SteamInventoryUpdateHandle_t)
 
@@ -3204,7 +3204,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bValue` (bool)
-* `pchPropertyName` (const_char_ptr)
+* `pchPropertyName` (const char *)
 * `nItemID` (SteamItemInstanceID_t)
 * `handle` (SteamInventoryUpdateHandle_t)
 
@@ -3216,7 +3216,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nValue` (int64)
-* `pchPropertyName` (const_char_ptr)
+* `pchPropertyName` (const char *)
 * `nItemID` (SteamItemInstanceID_t)
 * `handle` (SteamInventoryUpdateHandle_t)
 
@@ -3228,7 +3228,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `flValue` (float)
-* `pchPropertyName` (const_char_ptr)
+* `pchPropertyName` (const char *)
 * `nItemID` (SteamItemInstanceID_t)
 * `handle` (SteamInventoryUpdateHandle_t)
 
