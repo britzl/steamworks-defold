@@ -1,31 +1,62 @@
-# Functions
+# Steamworks API
+
+* [Functions](#functions)
+* [Call results](#callresults)
+* [Callback](#callbacks)
+* [Enums](#enums)
+
+## <a name="functions"></a>Functions
 The extension exports the following functions:
 
 {{#methods}}
-* steamworks.{{classname_lower}}_{{methodname_lower}}({{paramnames_in}}) ([{{classname}}#{{methodname}}](https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}}))
+### steamworks.{{classname_lower}}_{{methodname_lower}}({{paramnames_in}})
+[{{classname}}#{{methodname}}](https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}})
+
+{{#hasreturntype}}
+{{#steamapicall}}
+**CALLBACK**
+* `{{callresult}}`
+{{/steamapicall}}
+{{^steamapicall}}
+**RETURN**
+* `r` ({{returntypestring}})
+{{#params}}{{#out_param}}* `{{paramname}}` ({{paramtypestring}})
+{{/out_param}}{{#out_string}}* `{{paramname}}` (string)
+{{/out_string}}{{#out_array_count}}* `{{paramname}}` (table) {{out_array_count}}
+{{/out_array_count}}{{/params}}
+{{/steamapicall}}
+{{/hasreturntype}}
+
 {{/methods}}
 
-# Call results and callbacks
-The extension will pass all call results and callbacks to the listener function:
+## <a name="callresults">Call results
+The extension will pass all call results to the listener function:
 
     steamworks.set_listener(function(self, e, t)
         print(e)
+        pprint(t)
     end)
 
-## Call results
 {{#structs}}{{#callresult}}* {{struct}} (callresult)
 {{/callresult}}{{/structs}}
 
-## Callbacks
+## <a name="callbacks">Callbacks
+The extension will pass all callbacks to the listener function:
+
+    steamworks.set_listener(function(self, e, t)
+        print(e)
+        pprint(t)
+    end)
+
 {{#callbacks}}
 * {{callback}} (callback)
 {{/callbacks}}
 
-# Enums
+## <a name="enums">Enums
 The extension exports the following enums:
 
 {{#enums}}
-## {{enumname}}
+### {{enumname}}
 {{#values}}
 * steamworks.{{name}} {{value}}
 {{/values}}
