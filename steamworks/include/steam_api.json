@@ -4813,7 +4813,7 @@
 {	"paramname": "hSteamLeaderboardEntries" ,"paramtype": "SteamLeaderboardEntries_t"},
 {	"paramname": "index" ,"paramtype": "int"},
 {	"paramname": "pLeaderboardEntry" ,"paramtype": "struct LeaderboardEntry_t *"},
-{	"paramname": "pDetails" ,"paramtype": "int32 *", "out_array": "cDetailsMax"},
+{	"paramname": "pDetails" ,"paramtype": "int32 *", "out_array_count": "cDetailsMax"},
 {	"paramname": "cDetailsMax" ,"paramtype": "int"}
 	 ]
 }
@@ -7503,8 +7503,8 @@
 	"methodname": "GetItemsWithPrices",
 	"returntype": "bool",
 	"params": [
-{	"paramname": "pArrayItemDefs" ,"out_array_count": "pArrayItemDefs" ,"desc": "Items with prices" ,"paramtype": "SteamItemDef_t *"},
-{	"paramname": "pPrices" ,"out_array_count": "pPrices" ,"desc": "List of prices for the given item defs" ,"paramtype": "uint64 *"},
+{	"paramname": "pArrayItemDefs" ,"out_array_count": "unArrayLength" ,"desc": "Items with prices" ,"paramtype": "SteamItemDef_t *"},
+{	"paramname": "pPrices" ,"out_array_count": "unArrayLength" ,"desc": "List of prices for the given item defs" ,"paramtype": "uint64 *"},
 {	"paramname": "unArrayLength" ,"paramtype": "uint32"}
 	 ]
 }
@@ -7534,7 +7534,7 @@
 }
 ,{
 	"classname": "ISteamInventory",
-	"methodname": "SetProperty",
+	"methodname": "SetProperty", "methodalias": "SetPropertyString",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "handle" ,"paramtype": "SteamInventoryUpdateHandle_t"},
@@ -7545,7 +7545,7 @@
 }
 ,{
 	"classname": "ISteamInventory",
-	"methodname": "SetProperty",
+	"methodname": "SetProperty", "methodalias": "SetPropertyBool",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "handle" ,"paramtype": "SteamInventoryUpdateHandle_t"},
@@ -7556,7 +7556,7 @@
 }
 ,{
 	"classname": "ISteamInventory",
-	"methodname": "SetProperty",
+	"methodname": "SetProperty", "methodalias": "SetPropertyInt",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "handle" ,"paramtype": "SteamInventoryUpdateHandle_t"},
@@ -7567,7 +7567,7 @@
 }
 ,{
 	"classname": "ISteamInventory",
-	"methodname": "SetProperty",
+	"methodname": "SetProperty", "methodalias": "SetPropertyFloat",
 	"returntype": "bool",
 	"params": [
 {	"paramname": "handle" ,"paramtype": "SteamInventoryUpdateHandle_t"},

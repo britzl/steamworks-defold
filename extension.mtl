@@ -40,6 +40,7 @@ static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
 static ISteamRemoteStorage *remote_storage;
+static ISteamInventory *inventory;
 
 
 
@@ -116,6 +117,14 @@ static void push_int64(lua_State* L, int64 n) {
 	snprintf(buf, sizeof(buf), "%ld", n);
 	lua_pushstring(L, buf);
 }
+static void push_int64_array(lua_State* L, int64 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_int64(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 {{#typedefs.int64}}
 static void push_{{typedef}}(lua_State* L, {{typedef}} n) {
 	push_int64(L, n);
@@ -134,6 +143,14 @@ static void push_uint64(lua_State* L, uint64 n) {
 	snprintf(buf, sizeof(buf), "%llu", n);
 	lua_pushstring(L, buf);
 }
+static void push_uint64_array(lua_State* L, uint64 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_uint64(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 {{#typedefs.uint64}}
 static void push_{{typedef}}(lua_State* L, {{typedef}} n) {
 	push_uint64(L, n);
@@ -145,6 +162,7 @@ static void push_{{typedef}}_array(lua_State* L, {{typedef}} arr[], unsigned int
 		push_{{typedef}}(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 {{/typedefs.uint64}}
 
@@ -514,6 +532,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "{{struct}}");
 			push_{{struct}}(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -577,11 +596,10 @@ static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^metho
 	{{paramtype}} {{paramname}}[{{out_array_call_counter}}];
 {{/out_array_call}}{{#out_array_call_param}}	{{paramtype}} {{paramname}}; /*out_array_call_param*/
 {{/out_array_call_param}}{{#out_array_param}}	{{paramtype}} {{paramname}}; /*out_array_param*/
-{{/out_array_param}}{{#out_array}}	{{paramtype}} {{paramname}}[{{out_array}}]; /*out_array*/
-{{/out_array}}{{#out_param}}	{{paramtype}} {{paramname}}; /*out_param*/
+{{/out_array_param}}{{#out_array_count}}	{{paramtype}} {{paramname}}[{{out_array_count}}]; /*out_array_count*/
+{{/out_array_count}}{{#out_param}}	{{paramtype}} {{paramname}}; /*out_param*/
 {{/out_param}}{{#array_count_param}}	{{paramtype}} {{paramname}}; /*array_count_param*/
 {{/array_count_param}}{{#array_count}}	luaL_checktype(L, {{paramindex}}, LUA_TTABLE); /*array_count*/
-	int n = luaL_getn(L, {{paramindex}});
 	{{paramtype}} {{paramname}}[{{array_count}}];
 	for(int i=1; i<={{array_count}}; i++) {
 		lua_rawgeti(L, {{paramindex}}, i);
@@ -606,7 +624,8 @@ static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^metho
 	push_{{returntypestring}}(L, r);
 	{{#params}}{{#out_param}}push_{{paramtypestring}}(L, {{paramname}}); /*out_param*/
 	{{/out_param}}{{#out_string}}push_{{paramtypestring}}(L, *{{paramname}}); /*out_string*/
-	{{/out_string}}{{#out_array}}push_{{paramtypestring}}_array(L, {{paramname}}, {{out_array}});  /*out_array*/{{/out_array}}{{/params}}
+	{{/out_string}}{{#out_array_count}}push_{{paramtypestring}}_array(L, {{paramname}}, {{out_array_count}});  /*out_array_count*/
+	{{/out_array_count}}{{/params}}
 	assert(top + 1 + {{paramcount_out}} == lua_gettop(L));
 	return 1 + {{paramcount_out}};
 	{{/steamapicall}}
@@ -640,6 +659,7 @@ static int Init(lua_State* L) {
 	}
 	apps = SteamApps();
 	friends = SteamFriends();
+	inventory = SteamInventory();
 	matchmaking = SteamMatchmaking();
 	music = SteamMusic();
 	networking = SteamNetworking();

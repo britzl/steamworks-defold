@@ -286,6 +286,43 @@ music_play_previous() -> ISteamMusic_PlayPrevious()
 music_play_next() -> ISteamMusic_PlayNext()
 music_set_volume(flVolume) -> ISteamMusic_SetVolume()
 music_get_volume() -> ISteamMusic_GetVolume()
+inventory_get_result_status(resultHandle) -> ISteamInventory_GetResultStatus()
+inventory_get_result_items(resultHandle) -> ISteamInventory_GetResultItems()
+inventory_get_result_item_property(resultHandle,unItemIndex,pchPropertyName,pchValueBuffer) -> ISteamInventory_GetResultItemProperty()
+inventory_get_result_timestamp(resultHandle) -> ISteamInventory_GetResultTimestamp()
+inventory_check_result_steam_id(resultHandle,steamIDExpected) -> ISteamInventory_CheckResultSteamID()
+inventory_destroy_result(resultHandle) -> ISteamInventory_DestroyResult()
+inventory_get_all_items() -> ISteamInventory_GetAllItems()
+inventory_get_items_by_id(pInstanceIDs,unCountInstanceIDs) -> ISteamInventory_GetItemsByID()
+inventory_serialize_result(resultHandle,pOutBuffer) -> ISteamInventory_SerializeResult()
+inventory_deserialize_result(pBuffer,unBufferSize,bRESERVED_MUST_BE_FALSE) -> ISteamInventory_DeserializeResult()
+inventory_generate_items(pArrayItemDefs,punArrayQuantity,unArrayLength) -> ISteamInventory_GenerateItems()
+inventory_grant_promo_items() -> ISteamInventory_GrantPromoItems()
+inventory_add_promo_item(itemDef) -> ISteamInventory_AddPromoItem()
+inventory_add_promo_items(pArrayItemDefs,unArrayLength) -> ISteamInventory_AddPromoItems()
+inventory_consume_item(itemConsume,unQuantity) -> ISteamInventory_ConsumeItem()
+inventory_exchange_items(pArrayGenerate,punArrayGenerateQuantity,unArrayGenerateLength,pArrayDestroy,punArrayDestroyQuantity,unArrayDestroyLength) -> ISteamInventory_ExchangeItems()
+inventory_transfer_item_quantity(itemIdSource,unQuantity,itemIdDest) -> ISteamInventory_TransferItemQuantity()
+inventory_send_item_drop_heartbeat() -> ISteamInventory_SendItemDropHeartbeat()
+inventory_trigger_item_drop(dropListDefinition) -> ISteamInventory_TriggerItemDrop()
+inventory_trade_items(steamIDTradePartner,pArrayGive,pArrayGiveQuantity,nArrayGiveLength,pArrayGet,pArrayGetQuantity,nArrayGetLength) -> ISteamInventory_TradeItems()
+inventory_load_item_definitions() -> ISteamInventory_LoadItemDefinitions()
+inventory_get_item_definition_i_ds() -> ISteamInventory_GetItemDefinitionIDs()
+inventory_get_item_definition_property(iDefinition,pchPropertyName,pchValueBuffer) -> ISteamInventory_GetItemDefinitionProperty()
+inventory_request_eligible_promo_item_definitions_i_ds(steamID) -> ISteamInventory_RequestEligiblePromoItemDefinitionsIDs()
+inventory_get_eligible_promo_item_definition_i_ds(steamID) -> ISteamInventory_GetEligiblePromoItemDefinitionIDs()
+inventory_start_purchase(pArrayItemDefs,punArrayQuantity,unArrayLength) -> ISteamInventory_StartPurchase()
+inventory_request_prices() -> ISteamInventory_RequestPrices()
+inventory_get_num_items_with_prices() -> ISteamInventory_GetNumItemsWithPrices()
+inventory_get_items_with_prices(unArrayLength) -> ISteamInventory_GetItemsWithPrices()
+inventory_get_item_price(iDefinition) -> ISteamInventory_GetItemPrice()
+inventory_start_update_properties() -> ISteamInventory_StartUpdateProperties()
+inventory_remove_property(handle,nItemID,pchPropertyName) -> ISteamInventory_RemoveProperty()
+inventory_set_property_string(handle,nItemID,pchPropertyName,pchPropertyValue) -> ISteamInventory_SetProperty()
+inventory_set_property_bool(handle,nItemID,pchPropertyName,bValue) -> ISteamInventory_SetProperty()
+inventory_set_property_int(handle,nItemID,pchPropertyName,nValue) -> ISteamInventory_SetProperty()
+inventory_set_property_float(handle,nItemID,pchPropertyName,flValue) -> ISteamInventory_SetProperty()
+inventory_submit_update_properties(handle) -> ISteamInventory_SubmitUpdateProperties()
 
 */
 
@@ -320,6 +357,7 @@ static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
 static ISteamRemoteStorage *remote_storage;
+static ISteamInventory *inventory;
 
 
 
@@ -373,12 +411,6 @@ static void push_const_char_ptr(lua_State* L, const char * s) {
 }
 static void push_char_ptr(lua_State* L, char * s) {
 	lua_pushstring(L, s);
-}
-static void push_void_ptr(lua_State* L, void * s) {
-	lua_pushstring(L, (char*)s);
-}
-static void push_uint8_ptr(lua_State* L, uint8 * s) {
-	lua_pushstring(L, (char*)s);
 }
 static void push_uint8(lua_State* L, unsigned char n) {
 	lua_pushinteger(L, n);
@@ -697,6 +729,14 @@ static void push_int64(lua_State* L, int64 n) {
 	snprintf(buf, sizeof(buf), "%ld", n);
 	lua_pushstring(L, buf);
 }
+static void push_int64_array(lua_State* L, int64 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_int64(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_lint64(lua_State* L, lint64 n) {
 	push_int64(L, n);
 }
@@ -713,6 +753,14 @@ static void push_uint64(lua_State* L, uint64 n) {
 	snprintf(buf, sizeof(buf), "%llu", n);
 	lua_pushstring(L, buf);
 }
+static void push_uint64_array(lua_State* L, uint64 arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_uint64(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_ulint64(lua_State* L, ulint64 n) {
 	push_uint64(L, n);
 }
@@ -723,6 +771,7 @@ static void push_ulint64_array(lua_State* L, ulint64 arr[], unsigned int size) {
 		push_ulint64(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_GID_t(lua_State* L, GID_t n) {
 	push_uint64(L, n);
@@ -734,6 +783,7 @@ static void push_GID_t_array(lua_State* L, GID_t arr[], unsigned int size) {
 		push_GID_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_JobID_t(lua_State* L, JobID_t n) {
 	push_uint64(L, n);
@@ -745,6 +795,7 @@ static void push_JobID_t_array(lua_State* L, JobID_t arr[], unsigned int size) {
 		push_JobID_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_AssetClassId_t(lua_State* L, AssetClassId_t n) {
 	push_uint64(L, n);
@@ -756,6 +807,7 @@ static void push_AssetClassId_t_array(lua_State* L, AssetClassId_t arr[], unsign
 		push_AssetClassId_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_SteamAPICall_t(lua_State* L, SteamAPICall_t n) {
 	push_uint64(L, n);
@@ -767,6 +819,7 @@ static void push_SteamAPICall_t_array(lua_State* L, SteamAPICall_t arr[], unsign
 		push_SteamAPICall_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_ManifestId_t(lua_State* L, ManifestId_t n) {
 	push_uint64(L, n);
@@ -778,6 +831,7 @@ static void push_ManifestId_t_array(lua_State* L, ManifestId_t arr[], unsigned i
 		push_ManifestId_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_SiteId_t(lua_State* L, SiteId_t n) {
 	push_uint64(L, n);
@@ -789,6 +843,7 @@ static void push_SiteId_t_array(lua_State* L, SiteId_t arr[], unsigned int size)
 		push_SiteId_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_UGCHandle_t(lua_State* L, UGCHandle_t n) {
 	push_uint64(L, n);
@@ -800,6 +855,7 @@ static void push_UGCHandle_t_array(lua_State* L, UGCHandle_t arr[], unsigned int
 		push_UGCHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_PublishedFileUpdateHandle_t(lua_State* L, PublishedFileUpdateHandle_t n) {
 	push_uint64(L, n);
@@ -811,6 +867,7 @@ static void push_PublishedFileUpdateHandle_t_array(lua_State* L, PublishedFileUp
 		push_PublishedFileUpdateHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_PublishedFileId_t(lua_State* L, PublishedFileId_t n) {
 	push_uint64(L, n);
@@ -822,6 +879,7 @@ static void push_PublishedFileId_t_array(lua_State* L, PublishedFileId_t arr[], 
 		push_PublishedFileId_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_UGCFileWriteStreamHandle_t(lua_State* L, UGCFileWriteStreamHandle_t n) {
 	push_uint64(L, n);
@@ -833,6 +891,7 @@ static void push_UGCFileWriteStreamHandle_t_array(lua_State* L, UGCFileWriteStre
 		push_UGCFileWriteStreamHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_SteamLeaderboard_t(lua_State* L, SteamLeaderboard_t n) {
 	push_uint64(L, n);
@@ -844,6 +903,7 @@ static void push_SteamLeaderboard_t_array(lua_State* L, SteamLeaderboard_t arr[]
 		push_SteamLeaderboard_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_SteamLeaderboardEntries_t(lua_State* L, SteamLeaderboardEntries_t n) {
 	push_uint64(L, n);
@@ -855,6 +915,7 @@ static void push_SteamLeaderboardEntries_t_array(lua_State* L, SteamLeaderboardE
 		push_SteamLeaderboardEntries_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_ControllerHandle_t(lua_State* L, ControllerHandle_t n) {
 	push_uint64(L, n);
@@ -866,6 +927,7 @@ static void push_ControllerHandle_t_array(lua_State* L, ControllerHandle_t arr[]
 		push_ControllerHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_ControllerActionSetHandle_t(lua_State* L, ControllerActionSetHandle_t n) {
 	push_uint64(L, n);
@@ -877,6 +939,7 @@ static void push_ControllerActionSetHandle_t_array(lua_State* L, ControllerActio
 		push_ControllerActionSetHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_ControllerDigitalActionHandle_t(lua_State* L, ControllerDigitalActionHandle_t n) {
 	push_uint64(L, n);
@@ -888,6 +951,7 @@ static void push_ControllerDigitalActionHandle_t_array(lua_State* L, ControllerD
 		push_ControllerDigitalActionHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_ControllerAnalogActionHandle_t(lua_State* L, ControllerAnalogActionHandle_t n) {
 	push_uint64(L, n);
@@ -899,6 +963,7 @@ static void push_ControllerAnalogActionHandle_t_array(lua_State* L, ControllerAn
 		push_ControllerAnalogActionHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_UGCQueryHandle_t(lua_State* L, UGCQueryHandle_t n) {
 	push_uint64(L, n);
@@ -910,6 +975,7 @@ static void push_UGCQueryHandle_t_array(lua_State* L, UGCQueryHandle_t arr[], un
 		push_UGCQueryHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_UGCUpdateHandle_t(lua_State* L, UGCUpdateHandle_t n) {
 	push_uint64(L, n);
@@ -921,6 +987,7 @@ static void push_UGCUpdateHandle_t_array(lua_State* L, UGCUpdateHandle_t arr[], 
 		push_UGCUpdateHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_SteamItemInstanceID_t(lua_State* L, SteamItemInstanceID_t n) {
 	push_uint64(L, n);
@@ -932,6 +999,7 @@ static void push_SteamItemInstanceID_t_array(lua_State* L, SteamItemInstanceID_t
 		push_SteamItemInstanceID_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 static void push_SteamInventoryUpdateHandle_t(lua_State* L, SteamInventoryUpdateHandle_t n) {
 	push_uint64(L, n);
@@ -943,6 +1011,7 @@ static void push_SteamInventoryUpdateHandle_t_array(lua_State* L, SteamInventory
 		push_SteamInventoryUpdateHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
+
 }
 
 /*****************************
@@ -8134,6 +8203,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "EncryptedAppTicketResponse_t");
 			push_EncryptedAppTicketResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8157,6 +8227,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "StoreAuthURLResponse_t");
 			push_StoreAuthURLResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8180,6 +8251,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "ClanOfficerListResponse_t");
 			push_ClanOfficerListResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8203,6 +8275,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "DownloadClanActivityCountsResult_t");
 			push_DownloadClanActivityCountsResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8226,6 +8299,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "JoinClanChatRoomCompletionResult_t");
 			push_JoinClanChatRoomCompletionResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8249,6 +8323,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "FriendsGetFollowerCount_t");
 			push_FriendsGetFollowerCount_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8272,6 +8347,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "FriendsIsFollowing_t");
 			push_FriendsIsFollowing_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8295,6 +8371,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "FriendsEnumerateFollowingList_t");
 			push_FriendsEnumerateFollowingList_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8318,6 +8395,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "SetPersonaNameResponse_t");
 			push_SetPersonaNameResponse_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8341,6 +8419,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "CheckFileSignature_t");
 			push_CheckFileSignature_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8364,6 +8443,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "LobbyEnter_t");
 			push_LobbyEnter_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8387,6 +8467,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "LobbyMatchList_t");
 			push_LobbyMatchList_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8410,6 +8491,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "LobbyCreated_t");
 			push_LobbyCreated_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8433,6 +8515,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "RemoteStorageFileShareResult_t");
 			push_RemoteStorageFileShareResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8456,6 +8539,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "RemoteStorageDownloadUGCResult_t");
 			push_RemoteStorageDownloadUGCResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8479,6 +8563,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "RemoteStorageFileWriteAsyncComplete_t");
 			push_RemoteStorageFileWriteAsyncComplete_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8502,6 +8587,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "RemoteStorageFileReadAsyncComplete_t");
 			push_RemoteStorageFileReadAsyncComplete_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8525,6 +8611,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "UserStatsReceived_t");
 			push_UserStatsReceived_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8548,6 +8635,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "LeaderboardFindResult_t");
 			push_LeaderboardFindResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8571,6 +8659,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "LeaderboardScoresDownloaded_t");
 			push_LeaderboardScoresDownloaded_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8594,6 +8683,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "LeaderboardScoreUploaded_t");
 			push_LeaderboardScoreUploaded_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8617,6 +8707,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "NumberOfCurrentPlayers_t");
 			push_NumberOfCurrentPlayers_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8640,6 +8731,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "GlobalAchievementPercentagesReady_t");
 			push_GlobalAchievementPercentagesReady_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8663,6 +8755,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "LeaderboardUGCSet_t");
 			push_LeaderboardUGCSet_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8686,6 +8779,7 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "GlobalStatsReceived_t");
 			push_GlobalStatsReceived_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
@@ -8709,11 +8803,84 @@ class SteamCallbackWrapper {
 			}
 			int top = lua_gettop(L);
 			lua_pushlistener(L, steamworksListener);
+
 			lua_pushstring(L, "FileDetailsResult_t");
 			push_FileDetailsResult_t(L, *pResult);
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
 				dmLogInfo("SteamCallbackWrapper::OnFileDetailsResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SteamInventoryEligiblePromoItemDefIDs_t> m_CallResultSteamInventoryEligiblePromoItemDefIDs_t;
+		void TrackSteamAPICallSteamInventoryEligiblePromoItemDefIDs_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSteamInventoryEligiblePromoItemDefIDs_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSteamInventoryEligiblePromoItemDefIDs_t);
+		}
+		void OnSteamInventoryEligiblePromoItemDefIDs_t(SteamInventoryEligiblePromoItemDefIDs_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSteamInventoryEligiblePromoItemDefIDs_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "SteamInventoryEligiblePromoItemDefIDs_t");
+			push_SteamInventoryEligiblePromoItemDefIDs_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnSteamInventoryEligiblePromoItemDefIDs_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SteamInventoryStartPurchaseResult_t> m_CallResultSteamInventoryStartPurchaseResult_t;
+		void TrackSteamAPICallSteamInventoryStartPurchaseResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSteamInventoryStartPurchaseResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSteamInventoryStartPurchaseResult_t);
+		}
+		void OnSteamInventoryStartPurchaseResult_t(SteamInventoryStartPurchaseResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSteamInventoryStartPurchaseResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "SteamInventoryStartPurchaseResult_t");
+			push_SteamInventoryStartPurchaseResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnSteamInventoryStartPurchaseResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SteamInventoryRequestPricesResult_t> m_CallResultSteamInventoryRequestPricesResult_t;
+		void TrackSteamAPICallSteamInventoryRequestPricesResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSteamInventoryRequestPricesResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSteamInventoryRequestPricesResult_t);
+		}
+		void OnSteamInventoryRequestPricesResult_t(SteamInventoryRequestPricesResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSteamInventoryRequestPricesResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "SteamInventoryRequestPricesResult_t");
+			push_SteamInventoryRequestPricesResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnSteamInventoryRequestPricesResult_t error: %s\n", lua_tostring(L, -1));
 				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
@@ -9284,7 +9451,6 @@ static int ISteamFriends_DownloadClanActivityCounts(lua_State* L) {
 	int top = lua_gettop(L);
 	int cClansToRequest = check_int(L, 2); /*normal*/
 	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
-	int n = luaL_getn(L, 1);
 	CSteamID psteamIDClans[cClansToRequest];
 	for(int i=1; i<=cClansToRequest; i++) {
 		lua_rawgeti(L, 1, i);
@@ -11281,7 +11447,6 @@ static int ISteamUserStats_DownloadLeaderboardEntriesForUsers(lua_State* L) {
 	int top = lua_gettop(L);
 	int cUsers = check_int(L, 3); /*normal*/
 	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
-	int n = luaL_getn(L, 2);
 	CSteamID prgUsers[cUsers];
 	for(int i=1; i<=cUsers; i++) {
 		lua_rawgeti(L, 2, i);
@@ -11302,12 +11467,13 @@ static int ISteamUserStats_GetDownloadedLeaderboardEntry(lua_State* L) {
 	struct LeaderboardEntry_t pLeaderboardEntry; /*out_param*/
 	int index = check_int(L, 2); /*normal*/
 	SteamLeaderboardEntries_t hSteamLeaderboardEntries = check_SteamLeaderboardEntries_t(L, 1); /*normal*/
-	int32 pDetails[cDetailsMax]; /*out_array*/
+	int32 pDetails[cDetailsMax]; /*out_array_count*/
 
 	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries,index,&pLeaderboardEntry,pDetails,cDetailsMax);
 	push_bool(L, r);
 	push_LeaderboardEntry_t(L, pLeaderboardEntry); /*out_param*/
-	push_int32_array(L, pDetails, cDetailsMax);  /*out_array*/
+	push_int32_array(L, pDetails, cDetailsMax);  /*out_array_count*/
+	
 	assert(top + 1 + 2 == lua_gettop(L));
 	return 1 + 2;
 }
@@ -11316,7 +11482,6 @@ static int ISteamUserStats_UploadLeaderboardScore(lua_State* L) {
 	int top = lua_gettop(L);
 	int cScoreDetailsCount = check_int(L, 5); /*normal*/
 	luaL_checktype(L, 4, LUA_TTABLE); /*array_count*/
-	int n = luaL_getn(L, 4);
 	int32 pScoreDetails[cScoreDetailsCount];
 	for(int i=1; i<=cScoreDetailsCount; i++) {
 		lua_rawgeti(L, 4, i);
@@ -11454,7 +11619,6 @@ static int ISteamUserStats_GetGlobalStatIntHistory(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 cubData = check_uint32(L, 3); /*normal*/
 	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
-	int n = luaL_getn(L, 2);
 	int64 pData[cubData];
 	for(int i=1; i<=cubData; i++) {
 		lua_rawgeti(L, 2, i);
@@ -11474,7 +11638,6 @@ static int ISteamUserStats_GetGlobalStatFloatHistory(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 cubData = check_uint32(L, 3); /*normal*/
 	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
-	int n = luaL_getn(L, 2);
 	double pData[cubData];
 	for(int i=1; i<=cubData; i++) {
 		lua_rawgeti(L, 2, i);
@@ -12172,6 +12335,584 @@ static int ISteamMusic_GetVolume(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamInventory_GetResultStatus(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
+
+	EResult r = inventory->GetResultStatus(resultHandle);
+	push_EResult(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_GetResultItems(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punOutItemsArraySize; /*out_param*/
+	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
+	struct SteamItemDetails_t pOutItemsArray[punOutItemsArraySize]; /*out_array_count*/
+
+	bool r = inventory->GetResultItems(resultHandle,pOutItemsArray,&punOutItemsArraySize);
+	push_bool(L, r);
+	push_uint32(L, punOutItemsArraySize); /*out_param*/
+	push_SteamItemDetails_t_array(L, pOutItemsArray, punOutItemsArraySize);  /*out_array_count*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamInventory_GetResultItemProperty(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punValueBufferSizeOut; /*out_param*/
+	dmScript::LuaHBuffer * pchValueBuffer_buffer = check_buffer(L, 4); /*buffer_param*/
+	char * pchValueBuffer = 0x0;
+	uint32_t pchValueBuffer_buffersize = 0;
+	dmBuffer::Result pchValueBuffer_buffer_result = dmBuffer::GetBytes(pchValueBuffer_buffer->m_Buffer, (void**)&pchValueBuffer, &pchValueBuffer_buffersize);
+	const char * pchPropertyName = check_const_char_ptr(L, 3); /*normal*/
+	uint32 unItemIndex = check_uint32(L, 2); /*normal*/
+	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
+
+	bool r = inventory->GetResultItemProperty(resultHandle,unItemIndex,pchPropertyName,pchValueBuffer,&punValueBufferSizeOut);
+	push_bool(L, r);
+	push_uint32(L, punValueBufferSizeOut); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_GetResultTimestamp(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
+
+	uint32 r = inventory->GetResultTimestamp(resultHandle);
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_CheckResultSteamID(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamIDExpected = check_class_CSteamID(L, 2); /*normal*/
+	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
+
+	bool r = inventory->CheckResultSteamID(resultHandle,steamIDExpected);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_DestroyResult(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
+
+	inventory->DestroyResult(resultHandle);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamInventory_GetAllItems(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->GetAllItems(&pResultHandle);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_GetItemsByID(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unCountInstanceIDs = check_uint32(L, 2); /*normal*/
+	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	SteamItemInstanceID_t pInstanceIDs[unCountInstanceIDs];
+	for(int i=1; i<=unCountInstanceIDs; i++) {
+		lua_rawgeti(L, 1, i);
+		pInstanceIDs[i] = check_SteamItemInstanceID_t(L, 1 + 1);
+		lua_pop(L, 1);
+	}
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->GetItemsByID(&pResultHandle,pInstanceIDs,unCountInstanceIDs);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_SerializeResult(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punOutBufferSize; /*out_param*/
+	dmScript::LuaHBuffer * pOutBuffer_buffer = check_buffer(L, 2); /*buffer_param*/
+	void * pOutBuffer = 0x0;
+	uint32_t pOutBuffer_buffersize = 0;
+	dmBuffer::Result pOutBuffer_buffer_result = dmBuffer::GetBytes(pOutBuffer_buffer->m_Buffer, (void**)&pOutBuffer, &pOutBuffer_buffersize);
+	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
+
+	bool r = inventory->SerializeResult(resultHandle,pOutBuffer,&punOutBufferSize);
+	push_bool(L, r);
+	push_uint32(L, punOutBufferSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_DeserializeResult(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bRESERVED_MUST_BE_FALSE = check_bool(L, 3); /*normal*/
+	uint32 unBufferSize = check_uint32(L, 2); /*normal*/
+	const void * pBuffer = check_const_void_ptr(L, 1); /*normal*/
+	SteamInventoryResult_t pOutResultHandle; /*out_param*/
+
+	bool r = inventory->DeserializeResult(&pOutResultHandle,pBuffer,unBufferSize,bRESERVED_MUST_BE_FALSE);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pOutResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_GenerateItems(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unArrayLength = check_uint32(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	uint32 punArrayQuantity[unArrayLength];
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 2, i);
+		punArrayQuantity[i] = check_uint32(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	SteamItemDef_t pArrayItemDefs[unArrayLength];
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 1, i);
+		pArrayItemDefs[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_pop(L, 1);
+	}
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->GenerateItems(&pResultHandle,pArrayItemDefs,punArrayQuantity,unArrayLength);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_GrantPromoItems(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->GrantPromoItems(&pResultHandle);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_AddPromoItem(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamItemDef_t itemDef = check_SteamItemDef_t(L, 1); /*normal*/
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->AddPromoItem(&pResultHandle,itemDef);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_AddPromoItems(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unArrayLength = check_uint32(L, 2); /*normal*/
+	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	SteamItemDef_t pArrayItemDefs[unArrayLength];
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 1, i);
+		pArrayItemDefs[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_pop(L, 1);
+	}
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->AddPromoItems(&pResultHandle,pArrayItemDefs,unArrayLength);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_ConsumeItem(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unQuantity = check_uint32(L, 2); /*normal*/
+	SteamItemInstanceID_t itemConsume = check_SteamItemInstanceID_t(L, 1); /*normal*/
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->ConsumeItem(&pResultHandle,itemConsume,unQuantity);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_ExchangeItems(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unArrayDestroyLength = check_uint32(L, 6); /*normal*/
+	luaL_checktype(L, 5, LUA_TTABLE); /*array_count*/
+	uint32 punArrayDestroyQuantity[unArrayDestroyLength];
+	for(int i=1; i<=unArrayDestroyLength; i++) {
+		lua_rawgeti(L, 5, i);
+		punArrayDestroyQuantity[i] = check_uint32(L, 5 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 4, LUA_TTABLE); /*array_count*/
+	SteamItemInstanceID_t pArrayDestroy[unArrayDestroyLength];
+	for(int i=1; i<=unArrayDestroyLength; i++) {
+		lua_rawgeti(L, 4, i);
+		pArrayDestroy[i] = check_SteamItemInstanceID_t(L, 4 + 1);
+		lua_pop(L, 1);
+	}
+	uint32 unArrayGenerateLength = check_uint32(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	uint32 punArrayGenerateQuantity[unArrayGenerateLength];
+	for(int i=1; i<=unArrayGenerateLength; i++) {
+		lua_rawgeti(L, 2, i);
+		punArrayGenerateQuantity[i] = check_uint32(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	SteamItemDef_t pArrayGenerate[unArrayGenerateLength];
+	for(int i=1; i<=unArrayGenerateLength; i++) {
+		lua_rawgeti(L, 1, i);
+		pArrayGenerate[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_pop(L, 1);
+	}
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->ExchangeItems(&pResultHandle,pArrayGenerate,punArrayGenerateQuantity,unArrayGenerateLength,pArrayDestroy,punArrayDestroyQuantity,unArrayDestroyLength);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_TransferItemQuantity(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamItemInstanceID_t itemIdDest = check_SteamItemInstanceID_t(L, 3); /*normal*/
+	uint32 unQuantity = check_uint32(L, 2); /*normal*/
+	SteamItemInstanceID_t itemIdSource = check_SteamItemInstanceID_t(L, 1); /*normal*/
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->TransferItemQuantity(&pResultHandle,itemIdSource,unQuantity,itemIdDest);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_SendItemDropHeartbeat(lua_State* L) {
+	int top = lua_gettop(L);
+
+	inventory->SendItemDropHeartbeat();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamInventory_TriggerItemDrop(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamItemDef_t dropListDefinition = check_SteamItemDef_t(L, 1); /*normal*/
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->TriggerItemDrop(&pResultHandle,dropListDefinition);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_TradeItems(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 nArrayGetLength = check_uint32(L, 7); /*normal*/
+	luaL_checktype(L, 6, LUA_TTABLE); /*array_count*/
+	uint32 pArrayGetQuantity[nArrayGetLength];
+	for(int i=1; i<=nArrayGetLength; i++) {
+		lua_rawgeti(L, 6, i);
+		pArrayGetQuantity[i] = check_uint32(L, 6 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 5, LUA_TTABLE); /*array_count*/
+	SteamItemInstanceID_t pArrayGet[nArrayGetLength];
+	for(int i=1; i<=nArrayGetLength; i++) {
+		lua_rawgeti(L, 5, i);
+		pArrayGet[i] = check_SteamItemInstanceID_t(L, 5 + 1);
+		lua_pop(L, 1);
+	}
+	uint32 nArrayGiveLength = check_uint32(L, 4); /*normal*/
+	luaL_checktype(L, 3, LUA_TTABLE); /*array_count*/
+	uint32 pArrayGiveQuantity[nArrayGiveLength];
+	for(int i=1; i<=nArrayGiveLength; i++) {
+		lua_rawgeti(L, 3, i);
+		pArrayGiveQuantity[i] = check_uint32(L, 3 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	SteamItemInstanceID_t pArrayGive[nArrayGiveLength];
+	for(int i=1; i<=nArrayGiveLength; i++) {
+		lua_rawgeti(L, 2, i);
+		pArrayGive[i] = check_SteamItemInstanceID_t(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	class CSteamID steamIDTradePartner = check_class_CSteamID(L, 1); /*normal*/
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+
+	bool r = inventory->TradeItems(&pResultHandle,steamIDTradePartner,pArrayGive,pArrayGiveQuantity,nArrayGiveLength,pArrayGet,pArrayGetQuantity,nArrayGetLength);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_LoadItemDefinitions(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = inventory->LoadItemDefinitions();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_GetItemDefinitionIDs(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punItemDefIDsArraySize; /*out_param*/
+	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize]; /*out_array_count*/
+
+	bool r = inventory->GetItemDefinitionIDs(pItemDefIDs,&punItemDefIDsArraySize);
+	push_bool(L, r);
+	push_uint32(L, punItemDefIDsArraySize); /*out_param*/
+	push_SteamItemDef_t_array(L, pItemDefIDs, punItemDefIDsArraySize);  /*out_array_count*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamInventory_GetItemDefinitionProperty(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punValueBufferSizeOut; /*out_param*/
+	dmScript::LuaHBuffer * pchValueBuffer_buffer = check_buffer(L, 3); /*buffer_param*/
+	char * pchValueBuffer = 0x0;
+	uint32_t pchValueBuffer_buffersize = 0;
+	dmBuffer::Result pchValueBuffer_buffer_result = dmBuffer::GetBytes(pchValueBuffer_buffer->m_Buffer, (void**)&pchValueBuffer, &pchValueBuffer_buffersize);
+	const char * pchPropertyName = check_const_char_ptr(L, 2); /*normal*/
+	SteamItemDef_t iDefinition = check_SteamItemDef_t(L, 1); /*normal*/
+
+	bool r = inventory->GetItemDefinitionProperty(iDefinition,pchPropertyName,pchValueBuffer,&punValueBufferSizeOut);
+	push_bool(L, r);
+	push_uint32(L, punValueBufferSizeOut); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_RequestEligiblePromoItemDefinitionsIDs(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+
+	SteamAPICall_t r = inventory->RequestEligiblePromoItemDefinitionsIDs(steamID);
+	steamCallbackWrapper->TrackSteamAPICallSteamInventoryEligiblePromoItemDefIDs_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamInventory_GetEligiblePromoItemDefinitionIDs(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punItemDefIDsArraySize; /*out_param*/
+	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize]; /*out_array_count*/
+
+	bool r = inventory->GetEligiblePromoItemDefinitionIDs(steamID,pItemDefIDs,&punItemDefIDsArraySize);
+	push_bool(L, r);
+	push_uint32(L, punItemDefIDsArraySize); /*out_param*/
+	push_SteamItemDef_t_array(L, pItemDefIDs, punItemDefIDsArraySize);  /*out_array_count*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamInventory_StartPurchase(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unArrayLength = check_uint32(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	uint32 punArrayQuantity[unArrayLength];
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 2, i);
+		punArrayQuantity[i] = check_uint32(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	SteamItemDef_t pArrayItemDefs[unArrayLength];
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 1, i);
+		pArrayItemDefs[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_pop(L, 1);
+	}
+
+	SteamAPICall_t r = inventory->StartPurchase(pArrayItemDefs,punArrayQuantity,unArrayLength);
+	steamCallbackWrapper->TrackSteamAPICallSteamInventoryStartPurchaseResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamInventory_RequestPrices(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = inventory->RequestPrices();
+	steamCallbackWrapper->TrackSteamAPICallSteamInventoryRequestPricesResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamInventory_GetNumItemsWithPrices(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = inventory->GetNumItemsWithPrices();
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_GetItemsWithPrices(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unArrayLength = check_uint32(L, 1); /*normal*/
+	SteamItemDef_t pArrayItemDefs[unArrayLength]; /*out_array_count*/
+	uint64 pPrices[unArrayLength]; /*out_array_count*/
+
+	bool r = inventory->GetItemsWithPrices(pArrayItemDefs,pPrices,unArrayLength);
+	push_bool(L, r);
+	push_SteamItemDef_t_array(L, pArrayItemDefs, unArrayLength);  /*out_array_count*/
+	push_uint64_array(L, pPrices, unArrayLength);  /*out_array_count*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamInventory_GetItemPrice(lua_State* L) {
+	int top = lua_gettop(L);
+	uint64 pPrice; /*out_param*/
+	SteamItemDef_t iDefinition = check_SteamItemDef_t(L, 1); /*normal*/
+
+	bool r = inventory->GetItemPrice(iDefinition,&pPrice);
+	push_bool(L, r);
+	push_uint64(L, pPrice); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamInventory_StartUpdateProperties(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamInventoryUpdateHandle_t r = inventory->StartUpdateProperties();
+	push_SteamInventoryUpdateHandle_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_RemoveProperty(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchPropertyName = check_const_char_ptr(L, 3); /*normal*/
+	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
+	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = inventory->RemoveProperty(handle,nItemID,pchPropertyName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_SetPropertyString(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchPropertyValue = check_const_char_ptr(L, 4); /*normal*/
+	const char * pchPropertyName = check_const_char_ptr(L, 3); /*normal*/
+	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
+	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,pchPropertyValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_SetPropertyBool(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 4); /*normal*/
+	const char * pchPropertyName = check_const_char_ptr(L, 3); /*normal*/
+	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
+	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_SetPropertyInt(lua_State* L) {
+	int top = lua_gettop(L);
+	int64 nValue = check_int64(L, 4); /*normal*/
+	const char * pchPropertyName = check_const_char_ptr(L, 3); /*normal*/
+	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
+	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,nValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_SetPropertyFloat(lua_State* L) {
+	int top = lua_gettop(L);
+	float flValue = check_float(L, 4); /*normal*/
+	const char * pchPropertyName = check_const_char_ptr(L, 3); /*normal*/
+	SteamItemInstanceID_t nItemID = check_SteamItemInstanceID_t(L, 2); /*normal*/
+	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = inventory->SetProperty(handle,nItemID,pchPropertyName,flValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamInventory_SubmitUpdateProperties(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = inventory->SubmitUpdateProperties(handle,&pResultHandle);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
 
 
 
@@ -12193,6 +12934,7 @@ static int Init(lua_State* L) {
 	}
 	apps = SteamApps();
 	friends = SteamFriends();
+	inventory = SteamInventory();
 	matchmaking = SteamMatchmaking();
 	music = SteamMusic();
 	networking = SteamNetworking();
@@ -12511,6 +13253,43 @@ static const luaL_reg Module_methods[] = {
 	{ "music_play_next", ISteamMusic_PlayNext },
 	{ "music_set_volume", ISteamMusic_SetVolume },
 	{ "music_get_volume", ISteamMusic_GetVolume },
+	{ "inventory_get_result_status", ISteamInventory_GetResultStatus },
+	{ "inventory_get_result_items", ISteamInventory_GetResultItems },
+	{ "inventory_get_result_item_property", ISteamInventory_GetResultItemProperty },
+	{ "inventory_get_result_timestamp", ISteamInventory_GetResultTimestamp },
+	{ "inventory_check_result_steam_id", ISteamInventory_CheckResultSteamID },
+	{ "inventory_destroy_result", ISteamInventory_DestroyResult },
+	{ "inventory_get_all_items", ISteamInventory_GetAllItems },
+	{ "inventory_get_items_by_id", ISteamInventory_GetItemsByID },
+	{ "inventory_serialize_result", ISteamInventory_SerializeResult },
+	{ "inventory_deserialize_result", ISteamInventory_DeserializeResult },
+	{ "inventory_generate_items", ISteamInventory_GenerateItems },
+	{ "inventory_grant_promo_items", ISteamInventory_GrantPromoItems },
+	{ "inventory_add_promo_item", ISteamInventory_AddPromoItem },
+	{ "inventory_add_promo_items", ISteamInventory_AddPromoItems },
+	{ "inventory_consume_item", ISteamInventory_ConsumeItem },
+	{ "inventory_exchange_items", ISteamInventory_ExchangeItems },
+	{ "inventory_transfer_item_quantity", ISteamInventory_TransferItemQuantity },
+	{ "inventory_send_item_drop_heartbeat", ISteamInventory_SendItemDropHeartbeat },
+	{ "inventory_trigger_item_drop", ISteamInventory_TriggerItemDrop },
+	{ "inventory_trade_items", ISteamInventory_TradeItems },
+	{ "inventory_load_item_definitions", ISteamInventory_LoadItemDefinitions },
+	{ "inventory_get_item_definition_i_ds", ISteamInventory_GetItemDefinitionIDs },
+	{ "inventory_get_item_definition_property", ISteamInventory_GetItemDefinitionProperty },
+	{ "inventory_request_eligible_promo_item_definitions_i_ds", ISteamInventory_RequestEligiblePromoItemDefinitionsIDs },
+	{ "inventory_get_eligible_promo_item_definition_i_ds", ISteamInventory_GetEligiblePromoItemDefinitionIDs },
+	{ "inventory_start_purchase", ISteamInventory_StartPurchase },
+	{ "inventory_request_prices", ISteamInventory_RequestPrices },
+	{ "inventory_get_num_items_with_prices", ISteamInventory_GetNumItemsWithPrices },
+	{ "inventory_get_items_with_prices", ISteamInventory_GetItemsWithPrices },
+	{ "inventory_get_item_price", ISteamInventory_GetItemPrice },
+	{ "inventory_start_update_properties", ISteamInventory_StartUpdateProperties },
+	{ "inventory_remove_property", ISteamInventory_RemoveProperty },
+	{ "inventory_set_property_string", ISteamInventory_SetPropertyString },
+	{ "inventory_set_property_bool", ISteamInventory_SetPropertyBool },
+	{ "inventory_set_property_int", ISteamInventory_SetPropertyInt },
+	{ "inventory_set_property_float", ISteamInventory_SetPropertyFloat },
+	{ "inventory_submit_update_properties", ISteamInventory_SubmitUpdateProperties },
 	{ 0, 0 }
 };
 
