@@ -76,7 +76,7 @@ static void push_unsigned_int_array(lua_State* L, unsigned int arr[], unsigned i
 	}
 }
 static void push_bool(lua_State* L, bool b) {
-    lua_pushboolean(L, b);
+	lua_pushboolean(L, b);
 }
 static void push_char_array(lua_State* L, char ca[], unsigned int size) {
 	lua_pushstring(L, ca);
@@ -401,7 +401,7 @@ static void push_SteamInventoryResult_t_array(lua_State* L, int32 arr[], unsigne
 ******************************/
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
-	snprintf(buf, sizeof(buf), "%ld", n);
+	snprintf(buf, sizeof(buf), "%lld", n);
 	lua_pushstring(L, buf);
 }
 static void push_int64_array(lua_State* L, int64 arr[], unsigned int size) {

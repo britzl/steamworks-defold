@@ -76,7 +76,7 @@ static void push_unsigned_int_array(lua_State* L, unsigned int arr[], unsigned i
 	}
 }
 static void push_bool(lua_State* L, bool b) {
-    lua_pushboolean(L, b);
+	lua_pushboolean(L, b);
 }
 static void push_char_array(lua_State* L, char ca[], unsigned int size) {
 	lua_pushstring(L, ca);
