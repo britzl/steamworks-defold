@@ -2,10 +2,12 @@
 // Copyright 2016 Bjorn Ritzl
 
 #include <dmsdk/sdk.h>
+
+#ifdef DM_PLATFORM_OSX || DM_PLATFORM_WIN32 || DM_PLATFORM_LINUX
+
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "steam_api.h"
 #include "steam_gameserver.h"
 #include "luautils.h"
@@ -17,6 +19,7 @@
 #define DLIB_LOG_DOMAIN "steamworks"
 #include <dmsdk/dlib/log.h>
 #endif
+
 
 
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT 0
@@ -732,3 +735,5 @@ dmExtension::Result FinalizeSteamworks(dmExtension::Params* params) {
 }
 
 DM_DECLARE_EXTENSION(steamworks, LIB_NAME, AppInitializeSteamworks, AppFinalizeSteamworks, InitializeSteamworks, 0, 0, FinalizeSteamworks)
+
+#endif

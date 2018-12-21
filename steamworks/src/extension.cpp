@@ -2,10 +2,12 @@
 // Copyright 2016 Bjorn Ritzl
 
 #include <dmsdk/sdk.h>
+
+#ifdef DM_PLATFORM_OSX || DM_PLATFORM_WIN32 || DM_PLATFORM_LINUX
+
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-
 #include "steam_api.h"
 #include "steam_gameserver.h"
 #include "luautils.h"
@@ -17,6 +19,7 @@
 #define DLIB_LOG_DOMAIN "steamworks"
 #include <dmsdk/dlib/log.h>
 #endif
+
 
 
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT 0
@@ -401,7 +404,7 @@ static void push_SteamInventoryResult_t_array(lua_State* L, int32 arr[], unsigne
 ******************************/
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
-	snprintf(buf, sizeof(buf), "%lld", n);
+	snprintf(buf, sizeof(buf), "%ld", n);
 	lua_pushstring(L, buf);
 }
 static void push_int64_array(lua_State* L, int64 arr[], unsigned int size) {
@@ -13948,3 +13951,5 @@ dmExtension::Result FinalizeSteamworks(dmExtension::Params* params) {
 }
 
 DM_DECLARE_EXTENSION(steamworks, LIB_NAME, AppInitializeSteamworks, AppFinalizeSteamworks, InitializeSteamworks, 0, 0, FinalizeSteamworks)
+
+#endif

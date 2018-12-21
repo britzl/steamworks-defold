@@ -1,7 +1,12 @@
 local monarch = require "monarch.monarch"
 
 function init(self)
-	msg.post("#", "show_menu")
+	if steamworks then
+		msg.post("#", "show_menu")
+		msg.post("#notavailable", "disable")
+	else
+		msg.post("#notavailable", "enable")
+	end
 end
 
 function on_message(self, message_id, message, sender)
