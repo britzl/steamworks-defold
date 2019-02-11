@@ -1,5 +1,6 @@
-copy steamworks/bundle/x86_64-win32/steam_api.dll build/default
-copy build/x86_64-win32/dmengine.exe build/default
-copy steam_appid.txt build/default
-cd build/default
+copy %~dp0\steamworks\bundle\x86_64-win32\steam_api64.dll %~dp0\build\default
+copy %~dp0\build\x86_64-win32\dmengine.exe %~dp0\build\default
+copy %~dp0\steam_appid.txt %~dp0\build\default
+cd %~dp0\build\default
 dmengine.exe
+pause
