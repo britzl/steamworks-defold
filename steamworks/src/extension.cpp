@@ -12597,10 +12597,10 @@ static int ISteamInventory_SubmitUpdateProperties(lua_State* L) {
 extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDebugText )
 {
 	if (nSeverity == 0) {
-		dmLogInfo(pchDebugText);
+		dmLogInfo("%s", pchDebugText);
 	}
 	else {
-		dmLogWarning(pchDebugText);
+		dmLogWarning("%s", pchDebugText);
 	}
 }
 
