@@ -1,17 +1,16 @@
 // GENERATED CODE - DO NOT MODIFY
 // Copyright 2016 Bjorn Ritzl
 
-#include <dmsdk/sdk.h>
-
 #define LIB_NAME "Steamworks"
 #define MODULE_NAME "steamworks"
 
 #ifndef DLIB_LOG_DOMAIN
 #define DLIB_LOG_DOMAIN "steamworks"
-#include <dmsdk/dlib/log.h>
 #endif
 
-#ifdef DM_PLATFORM_OSX || DM_PLATFORM_WIN32 || DM_PLATFORM_LINUX
+#include <dmsdk/sdk.h>
+
+#if defined(DM_PLATFORM_OSX) || defined(DM_PLATFORM_WINDOWS) || defined(DM_PLATFORM_WIN32) || defined(DM_PLATFORM_LINUX)
 
 #include <assert.h>
 #include <stdlib.h>
