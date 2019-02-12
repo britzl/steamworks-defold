@@ -404,7 +404,7 @@ static void push_SteamInventoryResult_t_array(lua_State* L, int32 arr[], unsigne
 ******************************/
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
-	snprintf(buf, sizeof(buf), "%ld", n);
+	snprintf(buf, sizeof(buf), "%lld", n);
 	lua_pushstring(L, buf);
 }
 static void push_int64_array(lua_State* L, int64 arr[], unsigned int size) {
