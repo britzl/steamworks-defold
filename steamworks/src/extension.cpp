@@ -3,6 +3,14 @@
 
 #include <dmsdk/sdk.h>
 
+#define LIB_NAME "Steamworks"
+#define MODULE_NAME "steamworks"
+
+#ifndef DLIB_LOG_DOMAIN
+#define DLIB_LOG_DOMAIN "steamworks"
+#include <dmsdk/dlib/log.h>
+#endif
+
 #ifdef DM_PLATFORM_OSX || DM_PLATFORM_WIN32 || DM_PLATFORM_LINUX
 
 #include <assert.h>
@@ -11,14 +19,6 @@
 #include "steam_api.h"
 #include "steam_gameserver.h"
 #include "luautils.h"
-
-#define LIB_NAME "Steamworks"
-#define MODULE_NAME "steamworks"
-
-#ifndef DLIB_LOG_DOMAIN
-#define DLIB_LOG_DOMAIN "steamworks"
-#include <dmsdk/dlib/log.h>
-#endif
 
 
 
@@ -13950,6 +13950,29 @@ dmExtension::Result FinalizeSteamworks(dmExtension::Params* params) {
 	return dmExtension::RESULT_OK;
 }
 
-DM_DECLARE_EXTENSION(steamworks, LIB_NAME, AppInitializeSteamworks, AppFinalizeSteamworks, InitializeSteamworks, 0, 0, FinalizeSteamworks)
+#else
+
+static dmExtension::Result AppInitializeSteamworks(dmExtension::AppParams* params)
+{
+    dmLogWarning("Registered %s (null) Extension", MODULE_NAME);
+    return dmExtension::RESULT_OK;
+}
+
+static dmExtension::Result InitializeSteamworks(dmExtension::Params* params)
+{
+    return dmExtension::RESULT_OK;
+}
+
+static dmExtension::Result AppFinalizeSteamworks(dmExtension::AppParams* params)
+{
+    return dmExtension::RESULT_OK;
+}
+
+static dmExtension::Result FinalizeSteamworks(dmExtension::Params* params)
+{
+    return dmExtension::RESULT_OK;
+}
 
 #endif
+
+DM_DECLARE_EXTENSION(steamworks, LIB_NAME, AppInitializeSteamworks, AppFinalizeSteamworks, InitializeSteamworks, 0, 0, FinalizeSteamworks)
