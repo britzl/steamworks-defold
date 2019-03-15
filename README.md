@@ -1,3 +1,5 @@
+![](https://img.shields.io/badge/steamworks-1.42-brightgreen.svg)
+
 # steamworks-defold
 [Steamworks](https://partner.steamgames.com/home) support for Defold using the Defold extension system
 
