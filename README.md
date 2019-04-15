@@ -71,7 +71,7 @@ NOTE: Please [create a ticket](https://github.com/britzl/steamworks-defold/issue
 Function names are converted to snake case using the following convention:
 
 	SteamMatchmaking()->GetLobbyDataByIndex() -> steamworks.matchmaking_get_lobby_data_by_index()
-	SteamNetworking()->IsP2PPacketAvailable() -> steamworks.networking_is_p2networking_is_p2p_packet_available()
+	SteamNetworking()->IsP2PPacketAvailable() -> steamworks.networking_is_p2p_packet_available()
 
 ### Generating the API
 The API is generated from the `steam_api.json` which is part of the Steamworks SDK. The generator is written in Python using a Mustache template, `generate.py` and `extension.mtl` respectively. Some minor alterations have been made to the `steam_api.json` definition file.
