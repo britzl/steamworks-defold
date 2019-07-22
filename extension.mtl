@@ -35,6 +35,7 @@ static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
 static ISteamRemoteStorage *remote_storage;
 static ISteamInventory *inventory;
+static ISteamUGC *ugc;
 
 
 
@@ -266,6 +267,15 @@ static void push_gameserveritem_t(lua_State* L, gameserveritem_t s) {
 	push_CSteamID(L, s.m_steamID);
 	lua_settable(L, -3);
 }
+static void push_SteamParamStringArray_t(lua_State* L, SteamParamStringArray_t s) {
+	lua_newtable(L);
+	const char *pStrings = *s.m_ppStrings;
+	for(int i=1; i<=s.m_nNumStrings; i++) {
+		lua_pushnumber(L, i);
+		lua_pushstring(L, &pStrings[i]);
+		lua_settable(L, -3);
+	}
+}
 {{#structs}}
 static void push_{{name}}(lua_State* L, {{name}} s) {
 	lua_newtable(L);
@@ -477,6 +487,23 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
+static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	const int table_size = lua_objlen(L, index);
+	const char *pStrings[table_size];
+
+	SteamParamStringArray_t s;
+	s.m_nNumStrings = table_size;
+	s.m_ppStrings = pStrings;
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		pStrings[i] = luaL_checkstring(L, -1);
+	}
+	return &s;
+}
 {{#structs}}
 static {{struct}} check_{{name}}(lua_State* L, int index) {
 	if(!lua_istable(L, index)) {
@@ -662,6 +689,7 @@ static int Init(lua_State* L) {
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
+	ugc = SteamUGC();
 	return 0;
 }
 
