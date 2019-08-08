@@ -51,6 +51,7 @@ The extension exposes most of the Steamworks functionality through an auto-gener
   * [ISteamUser](https://partner.steamgames.com/doc/api/ISteamUser)
   * [ISteamUserStats](https://partner.steamgames.com/doc/api/ISteamUserStats)
   * [ISteamUtils](https://partner.steamgames.com/doc/api/ISteamUtils)
+  * [ISteamUGC](https://partner.steamgames.com/doc/api/ISteamUGC)
 * Unsupported APIs
   * [ISteamController](https://partner.steamgames.com/doc/api/ISteamController)
   * [ISteamGameCoordinator](https://partner.steamgames.com/doc/api/ISteamGameCoordinator) (deprecated)
@@ -61,7 +62,6 @@ The extension exposes most of the Steamworks functionality through an auto-gener
   * [ISteamMatchmakingServers](https://partner.steamgames.com/doc/api/ISteamMatchmakingServers)
   * [ISteamMusicRemote](https://partner.steamgames.com/doc/api/ISteamMusicRemote)
   * [ISteamScreenshots](https://partner.steamgames.com/doc/api/ISteamScreenshots)
-  * [ISteamUGC](https://partner.steamgames.com/doc/api/ISteamUGC)
   * [ISteamUnifiedMessages](https://partner.steamgames.com/doc/api/ISteamUnifiedMessages)
   * [ISteamVideo](https://partner.steamgames.com/doc/api/ISteamVideo)
 
