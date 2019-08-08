@@ -287,6 +287,80 @@
   * [steamworks.music_play_next](#music_play_next)
   * [steamworks.music_set_volume](#music_set_volume)
   * [steamworks.music_get_volume](#music_get_volume)
+  * [steamworks.ugc_create_query_user_ugc_request](#ugc_create_query_user_ugc_request)
+  * [steamworks.ugc_create_query_all_ugc_request](#ugc_create_query_all_ugc_request)
+  * [steamworks.ugc_create_query_ugc_details_request](#ugc_create_query_ugc_details_request)
+  * [steamworks.ugc_send_query_ugc_request](#ugc_send_query_ugc_request)
+  * [steamworks.ugc_get_query_ugc_result](#ugc_get_query_ugc_result)
+  * [steamworks.ugc_get_query_ugc_preview_url](#ugc_get_query_ugc_preview_url)
+  * [steamworks.ugc_get_query_ugc_metadata](#ugc_get_query_ugc_metadata)
+  * [steamworks.ugc_get_query_ugc_children](#ugc_get_query_ugc_children)
+  * [steamworks.ugc_get_query_ugc_statistic](#ugc_get_query_ugc_statistic)
+  * [steamworks.ugc_get_query_ugc_num_additional_previews](#ugc_get_query_ugc_num_additional_previews)
+  * [steamworks.ugc_get_query_ugc_additional_preview](#ugc_get_query_ugc_additional_preview)
+  * [steamworks.ugc_get_query_ugc_num_key_value_tags](#ugc_get_query_ugc_num_key_value_tags)
+  * [steamworks.ugc_get_query_ugc_key_value_tag](#ugc_get_query_ugc_key_value_tag)
+  * [steamworks.ugc_release_query_ugc_request](#ugc_release_query_ugc_request)
+  * [steamworks.ugc_add_required_tag](#ugc_add_required_tag)
+  * [steamworks.ugc_add_excluded_tag](#ugc_add_excluded_tag)
+  * [steamworks.ugc_set_return_only_i_ds](#ugc_set_return_only_i_ds)
+  * [steamworks.ugc_set_return_key_value_tags](#ugc_set_return_key_value_tags)
+  * [steamworks.ugc_set_return_long_description](#ugc_set_return_long_description)
+  * [steamworks.ugc_set_return_metadata](#ugc_set_return_metadata)
+  * [steamworks.ugc_set_return_children](#ugc_set_return_children)
+  * [steamworks.ugc_set_return_additional_previews](#ugc_set_return_additional_previews)
+  * [steamworks.ugc_set_return_total_only](#ugc_set_return_total_only)
+  * [steamworks.ugc_set_return_playtime_stats](#ugc_set_return_playtime_stats)
+  * [steamworks.ugc_set_language](#ugc_set_language)
+  * [steamworks.ugc_set_allow_cached_response](#ugc_set_allow_cached_response)
+  * [steamworks.ugc_set_cloud_file_name_filter](#ugc_set_cloud_file_name_filter)
+  * [steamworks.ugc_set_match_any_tag](#ugc_set_match_any_tag)
+  * [steamworks.ugc_set_search_text](#ugc_set_search_text)
+  * [steamworks.ugc_set_ranked_by_trend_days](#ugc_set_ranked_by_trend_days)
+  * [steamworks.ugc_add_required_key_value_tag](#ugc_add_required_key_value_tag)
+  * [steamworks.ugc_request_ugc_details](#ugc_request_ugc_details)
+  * [steamworks.ugc_create_item](#ugc_create_item)
+  * [steamworks.ugc_start_item_update](#ugc_start_item_update)
+  * [steamworks.ugc_set_item_title](#ugc_set_item_title)
+  * [steamworks.ugc_set_item_description](#ugc_set_item_description)
+  * [steamworks.ugc_set_item_update_language](#ugc_set_item_update_language)
+  * [steamworks.ugc_set_item_metadata](#ugc_set_item_metadata)
+  * [steamworks.ugc_set_item_visibility](#ugc_set_item_visibility)
+  * [steamworks.ugc_set_item_tags](#ugc_set_item_tags)
+  * [steamworks.ugc_set_item_content](#ugc_set_item_content)
+  * [steamworks.ugc_set_item_preview](#ugc_set_item_preview)
+  * [steamworks.ugc_remove_item_key_value_tags](#ugc_remove_item_key_value_tags)
+  * [steamworks.ugc_add_item_key_value_tag](#ugc_add_item_key_value_tag)
+  * [steamworks.ugc_add_item_preview_file](#ugc_add_item_preview_file)
+  * [steamworks.ugc_add_item_preview_video](#ugc_add_item_preview_video)
+  * [steamworks.ugc_update_item_preview_file](#ugc_update_item_preview_file)
+  * [steamworks.ugc_update_item_preview_video](#ugc_update_item_preview_video)
+  * [steamworks.ugc_remove_item_preview](#ugc_remove_item_preview)
+  * [steamworks.ugc_submit_item_update](#ugc_submit_item_update)
+  * [steamworks.ugc_get_item_update_progress](#ugc_get_item_update_progress)
+  * [steamworks.ugc_set_user_item_vote](#ugc_set_user_item_vote)
+  * [steamworks.ugc_get_user_item_vote](#ugc_get_user_item_vote)
+  * [steamworks.ugc_add_item_to_favorites](#ugc_add_item_to_favorites)
+  * [steamworks.ugc_remove_item_from_favorites](#ugc_remove_item_from_favorites)
+  * [steamworks.ugc_subscribe_item](#ugc_subscribe_item)
+  * [steamworks.ugc_unsubscribe_item](#ugc_unsubscribe_item)
+  * [steamworks.ugc_get_num_subscribed_items](#ugc_get_num_subscribed_items)
+  * [steamworks.ugc_get_subscribed_items](#ugc_get_subscribed_items)
+  * [steamworks.ugc_get_item_state](#ugc_get_item_state)
+  * [steamworks.ugc_get_item_install_info](#ugc_get_item_install_info)
+  * [steamworks.ugc_get_item_download_info](#ugc_get_item_download_info)
+  * [steamworks.ugc_download_item](#ugc_download_item)
+  * [steamworks.ugc_init_workshop_for_game_server](#ugc_init_workshop_for_game_server)
+  * [steamworks.ugc_suspend_downloads](#ugc_suspend_downloads)
+  * [steamworks.ugc_start_playtime_tracking](#ugc_start_playtime_tracking)
+  * [steamworks.ugc_stop_playtime_tracking](#ugc_stop_playtime_tracking)
+  * [steamworks.ugc_stop_playtime_tracking_for_all_items](#ugc_stop_playtime_tracking_for_all_items)
+  * [steamworks.ugc_add_dependency](#ugc_add_dependency)
+  * [steamworks.ugc_remove_dependency](#ugc_remove_dependency)
+  * [steamworks.ugc_add_app_dependency](#ugc_add_app_dependency)
+  * [steamworks.ugc_remove_app_dependency](#ugc_remove_app_dependency)
+  * [steamworks.ugc_get_app_dependencies](#ugc_get_app_dependencies)
+  * [steamworks.ugc_delete_item](#ugc_delete_item)
   * [steamworks.inventory_get_result_status](#inventory_get_result_status)
   * [steamworks.inventory_get_result_items](#inventory_get_result_items)
   * [steamworks.inventory_get_result_item_property](#inventory_get_result_item_property)
@@ -2867,6 +2941,745 @@ The extension exports the following functions:
 * `r` (float)
 
 
+### <a name="ugc_create_query_user_ugc_request"></a>steamworks.ugc_create_query_user_ugc_request(unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage) - [ISteamUGC#CreateQueryUserUGCRequest](https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUserUGCRequest)
+
+**PARAMS**
+* `unPage` (uint32)
+* `nConsumerAppID` (AppId_t)
+* `nCreatorAppID` (AppId_t)
+* `eSortOrder` (EUserUGCListSortOrder)
+* `eMatchingUGCType` (EUGCMatchingUGCType)
+* `eListType` (EUserUGCList)
+* `unAccountID` (AccountID_t)
+
+**RETURN**
+* `r` (UGCQueryHandle_t)
+
+
+### <a name="ugc_create_query_all_ugc_request"></a>steamworks.ugc_create_query_all_ugc_request(eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage) - [ISteamUGC#CreateQueryAllUGCRequest](https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryAllUGCRequest)
+
+**PARAMS**
+* `unPage` (uint32)
+* `nConsumerAppID` (AppId_t)
+* `nCreatorAppID` (AppId_t)
+* `eMatchingeMatchingUGCTypeFileType` (EUGCMatchingUGCType)
+* `eQueryType` (EUGCQuery)
+
+**RETURN**
+* `r` (UGCQueryHandle_t)
+
+
+### <a name="ugc_create_query_ugc_details_request"></a>steamworks.ugc_create_query_ugc_details_request(unNumPublishedFileIDs) - [ISteamUGC#CreateQueryUGCDetailsRequest](https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUGCDetailsRequest)
+
+**PARAMS**
+* `unNumPublishedFileIDs` (uint32)
+
+**RETURN**
+* `r` (UGCQueryHandle_t)
+* `pvecPublishedFileID` (PublishedFileId_t)
+
+
+### <a name="ugc_send_query_ugc_request"></a>steamworks.ugc_send_query_ugc_request(handle) - [ISteamUGC#SendQueryUGCRequest](https://partner.steamgames.com/doc/api/ISteamUGC#SendQueryUGCRequest)
+
+**PARAMS**
+* `handle` (UGCQueryHandle_t)
+
+**CALLBACK**
+* `SteamUGCQueryCompleted_t`
+
+### <a name="ugc_get_query_ugc_result"></a>steamworks.ugc_get_query_ugc_result(handle, index) - [ISteamUGC#GetQueryUGCResult](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCResult)
+
+**PARAMS**
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+* `pDetails` (struct SteamUGCDetails_t)
+
+
+### <a name="ugc_get_query_ugc_preview_url"></a>steamworks.ugc_get_query_ugc_preview_url(handle, index, pchURL, cchURLSize) - [ISteamUGC#GetQueryUGCPreviewURL](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCPreviewURL)
+
+**PARAMS**
+* `cchURLSize` (uint32)
+* `pchURL` (buffer)
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_get_query_ugc_metadata"></a>steamworks.ugc_get_query_ugc_metadata(handle, index, pchMetadata, cchMetadatasize) - [ISteamUGC#GetQueryUGCMetadata](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCMetadata)
+
+**PARAMS**
+* `cchMetadatasize` (uint32)
+* `pchMetadata` (buffer)
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_get_query_ugc_children"></a>steamworks.ugc_get_query_ugc_children(handle, index, cMaxEntries) - [ISteamUGC#GetQueryUGCChildren](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCChildren)
+
+**PARAMS**
+* `cMaxEntries` (uint32)
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+* `pvecPublishedFileID` (PublishedFileId_t)
+
+
+### <a name="ugc_get_query_ugc_statistic"></a>steamworks.ugc_get_query_ugc_statistic(handle, index, eStatType) - [ISteamUGC#GetQueryUGCStatistic](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCStatistic)
+
+**PARAMS**
+* `eStatType` (EItemStatistic)
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+* `pStatValue` (uint64)
+
+
+### <a name="ugc_get_query_ugc_num_additional_previews"></a>steamworks.ugc_get_query_ugc_num_additional_previews(handle, index) - [ISteamUGC#GetQueryUGCNumAdditionalPreviews](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumAdditionalPreviews)
+
+**PARAMS**
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (uint32)
+
+
+### <a name="ugc_get_query_ugc_additional_preview"></a>steamworks.ugc_get_query_ugc_additional_preview(handle, index, previewIndex, pchURLOrVideoID, cchURLSize, pchOriginalFileName, cchOriginalFileNameSize) - [ISteamUGC#GetQueryUGCAdditionalPreview](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCAdditionalPreview)
+
+**PARAMS**
+* `cchOriginalFileNameSize` (uint32)
+* `pchOriginalFileName` (buffer)
+* `cchURLSize` (uint32)
+* `pchURLOrVideoID` (buffer)
+* `previewIndex` (uint32)
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+* `pPreviewType` (EItemPreviewType)
+
+
+### <a name="ugc_get_query_ugc_num_key_value_tags"></a>steamworks.ugc_get_query_ugc_num_key_value_tags(handle, index) - [ISteamUGC#GetQueryUGCNumKeyValueTags](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumKeyValueTags)
+
+**PARAMS**
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (uint32)
+
+
+### <a name="ugc_get_query_ugc_key_value_tag"></a>steamworks.ugc_get_query_ugc_key_value_tag(handle, index, keyValueTagIndex, pchKey, cchKeySize, pchValue, cchValueSize) - [ISteamUGC#GetQueryUGCKeyValueTag](https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCKeyValueTag)
+
+**PARAMS**
+* `cchValueSize` (uint32)
+* `pchValue` (buffer)
+* `cchKeySize` (uint32)
+* `pchKey` (buffer)
+* `keyValueTagIndex` (uint32)
+* `index` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_release_query_ugc_request"></a>steamworks.ugc_release_query_ugc_request(handle) - [ISteamUGC#ReleaseQueryUGCRequest](https://partner.steamgames.com/doc/api/ISteamUGC#ReleaseQueryUGCRequest)
+
+**PARAMS**
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_add_required_tag"></a>steamworks.ugc_add_required_tag(handle, pTagName) - [ISteamUGC#AddRequiredTag](https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredTag)
+
+**PARAMS**
+* `pTagName` (const char *)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_add_excluded_tag"></a>steamworks.ugc_add_excluded_tag(handle, pTagName) - [ISteamUGC#AddExcludedTag](https://partner.steamgames.com/doc/api/ISteamUGC#AddExcludedTag)
+
+**PARAMS**
+* `pTagName` (const char *)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_only_i_ds"></a>steamworks.ugc_set_return_only_i_ds(handle, bReturnOnlyIDs) - [ISteamUGC#SetReturnOnlyIDs](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnOnlyIDs)
+
+**PARAMS**
+* `bReturnOnlyIDs` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_key_value_tags"></a>steamworks.ugc_set_return_key_value_tags(handle, bReturnKeyValueTags) - [ISteamUGC#SetReturnKeyValueTags](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnKeyValueTags)
+
+**PARAMS**
+* `bReturnKeyValueTags` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_long_description"></a>steamworks.ugc_set_return_long_description(handle, bReturnLongDescription) - [ISteamUGC#SetReturnLongDescription](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnLongDescription)
+
+**PARAMS**
+* `bReturnLongDescription` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_metadata"></a>steamworks.ugc_set_return_metadata(handle, bReturnMetadata) - [ISteamUGC#SetReturnMetadata](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnMetadata)
+
+**PARAMS**
+* `bReturnMetadata` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_children"></a>steamworks.ugc_set_return_children(handle, bReturnChildren) - [ISteamUGC#SetReturnChildren](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnChildren)
+
+**PARAMS**
+* `bReturnChildren` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_additional_previews"></a>steamworks.ugc_set_return_additional_previews(handle, bReturnAdditionalPreviews) - [ISteamUGC#SetReturnAdditionalPreviews](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnAdditionalPreviews)
+
+**PARAMS**
+* `bReturnAdditionalPreviews` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_total_only"></a>steamworks.ugc_set_return_total_only(handle, bReturnTotalOnly) - [ISteamUGC#SetReturnTotalOnly](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnTotalOnly)
+
+**PARAMS**
+* `bReturnTotalOnly` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_return_playtime_stats"></a>steamworks.ugc_set_return_playtime_stats(handle, unDays) - [ISteamUGC#SetReturnPlaytimeStats](https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnPlaytimeStats)
+
+**PARAMS**
+* `unDays` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_language"></a>steamworks.ugc_set_language(handle, pchLanguage) - [ISteamUGC#SetLanguage](https://partner.steamgames.com/doc/api/ISteamUGC#SetLanguage)
+
+**PARAMS**
+* `pchLanguage` (const char *)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_allow_cached_response"></a>steamworks.ugc_set_allow_cached_response(handle, unMaxAgeSeconds) - [ISteamUGC#SetAllowCachedResponse](https://partner.steamgames.com/doc/api/ISteamUGC#SetAllowCachedResponse)
+
+**PARAMS**
+* `unMaxAgeSeconds` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_cloud_file_name_filter"></a>steamworks.ugc_set_cloud_file_name_filter(handle, pMatchCloudFileName) - [ISteamUGC#SetCloudFileNameFilter](https://partner.steamgames.com/doc/api/ISteamUGC#SetCloudFileNameFilter)
+
+**PARAMS**
+* `pMatchCloudFileName` (const char *)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_match_any_tag"></a>steamworks.ugc_set_match_any_tag(handle, bMatchAnyTag) - [ISteamUGC#SetMatchAnyTag](https://partner.steamgames.com/doc/api/ISteamUGC#SetMatchAnyTag)
+
+**PARAMS**
+* `bMatchAnyTag` (bool)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_search_text"></a>steamworks.ugc_set_search_text(handle, pSearchText) - [ISteamUGC#SetSearchText](https://partner.steamgames.com/doc/api/ISteamUGC#SetSearchText)
+
+**PARAMS**
+* `pSearchText` (const char *)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_ranked_by_trend_days"></a>steamworks.ugc_set_ranked_by_trend_days(handle, unDays) - [ISteamUGC#SetRankedByTrendDays](https://partner.steamgames.com/doc/api/ISteamUGC#SetRankedByTrendDays)
+
+**PARAMS**
+* `unDays` (uint32)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_add_required_key_value_tag"></a>steamworks.ugc_add_required_key_value_tag(handle, pKey, pValue) - [ISteamUGC#AddRequiredKeyValueTag](https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredKeyValueTag)
+
+**PARAMS**
+* `pValue` (const char *)
+* `pKey` (const char *)
+* `handle` (UGCQueryHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_request_ugc_details"></a>steamworks.ugc_request_ugc_details(nPublishedFileID, unMaxAgeSeconds) - [ISteamUGC#RequestUGCDetails](https://partner.steamgames.com/doc/api/ISteamUGC#RequestUGCDetails)
+
+**PARAMS**
+* `unMaxAgeSeconds` (uint32)
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `SteamUGCRequestUGCDetailsResult_t`
+
+### <a name="ugc_create_item"></a>steamworks.ugc_create_item(nConsumerAppId, eFileType) - [ISteamUGC#CreateItem](https://partner.steamgames.com/doc/api/ISteamUGC#CreateItem)
+
+**PARAMS**
+* `eFileType` (EWorkshopFileType)
+* `nConsumerAppId` (AppId_t)
+
+**CALLBACK**
+* `CreateItemResult_t`
+
+### <a name="ugc_start_item_update"></a>steamworks.ugc_start_item_update(nConsumerAppId, nPublishedFileID) - [ISteamUGC#StartItemUpdate](https://partner.steamgames.com/doc/api/ISteamUGC#StartItemUpdate)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+* `nConsumerAppId` (AppId_t)
+
+**RETURN**
+* `r` (UGCUpdateHandle_t)
+
+
+### <a name="ugc_set_item_title"></a>steamworks.ugc_set_item_title(handle, pchTitle) - [ISteamUGC#SetItemTitle](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemTitle)
+
+**PARAMS**
+* `pchTitle` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_item_description"></a>steamworks.ugc_set_item_description(handle, pchDescription) - [ISteamUGC#SetItemDescription](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemDescription)
+
+**PARAMS**
+* `pchDescription` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_item_update_language"></a>steamworks.ugc_set_item_update_language(handle, pchLanguage) - [ISteamUGC#SetItemUpdateLanguage](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemUpdateLanguage)
+
+**PARAMS**
+* `pchLanguage` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_item_metadata"></a>steamworks.ugc_set_item_metadata(handle, pchMetaData) - [ISteamUGC#SetItemMetadata](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemMetadata)
+
+**PARAMS**
+* `pchMetaData` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_item_visibility"></a>steamworks.ugc_set_item_visibility(handle, eVisibility) - [ISteamUGC#SetItemVisibility](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemVisibility)
+
+**PARAMS**
+* `eVisibility` (ERemoteStoragePublishedFileVisibility)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_item_tags"></a>steamworks.ugc_set_item_tags(updateHandle, pTags) - [ISteamUGC#SetItemTags](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemTags)
+
+**PARAMS**
+* `pTags` (const struct SteamParamStringArray_t *)
+* `updateHandle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_item_content"></a>steamworks.ugc_set_item_content(handle, pszContentFolder) - [ISteamUGC#SetItemContent](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemContent)
+
+**PARAMS**
+* `pszContentFolder` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_set_item_preview"></a>steamworks.ugc_set_item_preview(handle, pszPreviewFile) - [ISteamUGC#SetItemPreview](https://partner.steamgames.com/doc/api/ISteamUGC#SetItemPreview)
+
+**PARAMS**
+* `pszPreviewFile` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_remove_item_key_value_tags"></a>steamworks.ugc_remove_item_key_value_tags(handle, pchKey) - [ISteamUGC#RemoveItemKeyValueTags](https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemKeyValueTags)
+
+**PARAMS**
+* `pchKey` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_add_item_key_value_tag"></a>steamworks.ugc_add_item_key_value_tag(handle, pchKey, pchValue) - [ISteamUGC#AddItemKeyValueTag](https://partner.steamgames.com/doc/api/ISteamUGC#AddItemKeyValueTag)
+
+**PARAMS**
+* `pchValue` (const char *)
+* `pchKey` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_add_item_preview_file"></a>steamworks.ugc_add_item_preview_file(handle, pszPreviewFile, type) - [ISteamUGC#AddItemPreviewFile](https://partner.steamgames.com/doc/api/ISteamUGC#AddItemPreviewFile)
+
+**PARAMS**
+* `type` (EItemPreviewType)
+* `pszPreviewFile` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_add_item_preview_video"></a>steamworks.ugc_add_item_preview_video(handle, pszVideoID) - [ISteamUGC#AddItemPreviewVideo](https://partner.steamgames.com/doc/api/ISteamUGC#AddItemPreviewVideo)
+
+**PARAMS**
+* `pszVideoID` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_update_item_preview_file"></a>steamworks.ugc_update_item_preview_file(handle, index, pszPreviewFile) - [ISteamUGC#UpdateItemPreviewFile](https://partner.steamgames.com/doc/api/ISteamUGC#UpdateItemPreviewFile)
+
+**PARAMS**
+* `pszPreviewFile` (const char *)
+* `index` (uint32)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_update_item_preview_video"></a>steamworks.ugc_update_item_preview_video(handle, index, pszVideoID) - [ISteamUGC#UpdateItemPreviewVideo](https://partner.steamgames.com/doc/api/ISteamUGC#UpdateItemPreviewVideo)
+
+**PARAMS**
+* `pszVideoID` (const char *)
+* `index` (uint32)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_remove_item_preview"></a>steamworks.ugc_remove_item_preview(handle, index) - [ISteamUGC#RemoveItemPreview](https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemPreview)
+
+**PARAMS**
+* `index` (uint32)
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_submit_item_update"></a>steamworks.ugc_submit_item_update(handle, pchChangeNote) - [ISteamUGC#SubmitItemUpdate](https://partner.steamgames.com/doc/api/ISteamUGC#SubmitItemUpdate)
+
+**PARAMS**
+* `pchChangeNote` (const char *)
+* `handle` (UGCUpdateHandle_t)
+
+**CALLBACK**
+* `SubmitItemUpdateResult_t`
+
+### <a name="ugc_get_item_update_progress"></a>steamworks.ugc_get_item_update_progress(handle) - [ISteamUGC#GetItemUpdateProgress](https://partner.steamgames.com/doc/api/ISteamUGC#GetItemUpdateProgress)
+
+**PARAMS**
+* `handle` (UGCUpdateHandle_t)
+
+**RETURN**
+* `r` (EItemUpdateStatus)
+* `punBytesTotal` (uint64)
+* `punBytesProcessed` (uint64)
+
+
+### <a name="ugc_set_user_item_vote"></a>steamworks.ugc_set_user_item_vote(nPublishedFileID, bVoteUp) - [ISteamUGC#SetUserItemVote](https://partner.steamgames.com/doc/api/ISteamUGC#SetUserItemVote)
+
+**PARAMS**
+* `bVoteUp` (bool)
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `SetUserItemVoteResult_t`
+
+### <a name="ugc_get_user_item_vote"></a>steamworks.ugc_get_user_item_vote(nPublishedFileID) - [ISteamUGC#GetUserItemVote](https://partner.steamgames.com/doc/api/ISteamUGC#GetUserItemVote)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `GetUserItemVoteResult_t`
+
+### <a name="ugc_add_item_to_favorites"></a>steamworks.ugc_add_item_to_favorites(nAppId, nPublishedFileID) - [ISteamUGC#AddItemToFavorites](https://partner.steamgames.com/doc/api/ISteamUGC#AddItemToFavorites)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+* `nAppId` (AppId_t)
+
+**CALLBACK**
+* `UserFavoriteItemsListChanged_t`
+
+### <a name="ugc_remove_item_from_favorites"></a>steamworks.ugc_remove_item_from_favorites(nAppId, nPublishedFileID) - [ISteamUGC#RemoveItemFromFavorites](https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemFromFavorites)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+* `nAppId` (AppId_t)
+
+**CALLBACK**
+* `UserFavoriteItemsListChanged_t`
+
+### <a name="ugc_subscribe_item"></a>steamworks.ugc_subscribe_item(nPublishedFileID) - [ISteamUGC#SubscribeItem](https://partner.steamgames.com/doc/api/ISteamUGC#SubscribeItem)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `RemoteStorageSubscribePublishedFileResult_t`
+
+### <a name="ugc_unsubscribe_item"></a>steamworks.ugc_unsubscribe_item(nPublishedFileID) - [ISteamUGC#UnsubscribeItem](https://partner.steamgames.com/doc/api/ISteamUGC#UnsubscribeItem)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `RemoteStorageUnsubscribePublishedFileResult_t`
+
+### <a name="ugc_get_num_subscribed_items"></a>steamworks.ugc_get_num_subscribed_items() - [ISteamUGC#GetNumSubscribedItems](https://partner.steamgames.com/doc/api/ISteamUGC#GetNumSubscribedItems)
+
+
+**RETURN**
+* `r` (uint32)
+
+
+### <a name="ugc_get_subscribed_items"></a>steamworks.ugc_get_subscribed_items(cMaxEntries) - [ISteamUGC#GetSubscribedItems](https://partner.steamgames.com/doc/api/ISteamUGC#GetSubscribedItems)
+
+**PARAMS**
+* `cMaxEntries` (uint32)
+
+**RETURN**
+* `r` (uint32)
+* `pvecPublishedFileID` (PublishedFileId_t)
+
+
+### <a name="ugc_get_item_state"></a>steamworks.ugc_get_item_state(nPublishedFileID) - [ISteamUGC#GetItemState](https://partner.steamgames.com/doc/api/ISteamUGC#GetItemState)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+
+**RETURN**
+* `r` (uint32)
+
+
+### <a name="ugc_get_item_install_info"></a>steamworks.ugc_get_item_install_info(nPublishedFileID, pchFolder, cchFolderSize) - [ISteamUGC#GetItemInstallInfo](https://partner.steamgames.com/doc/api/ISteamUGC#GetItemInstallInfo)
+
+**PARAMS**
+* `cchFolderSize` (uint32)
+* `pchFolder` (buffer)
+* `nPublishedFileID` (PublishedFileId_t)
+
+**RETURN**
+* `r` (bool)
+* `punTimeStamp` (uint32)
+* `punSizeOnDisk` (uint64)
+
+
+### <a name="ugc_get_item_download_info"></a>steamworks.ugc_get_item_download_info(nPublishedFileID) - [ISteamUGC#GetItemDownloadInfo](https://partner.steamgames.com/doc/api/ISteamUGC#GetItemDownloadInfo)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+
+**RETURN**
+* `r` (bool)
+* `punBytesTotal` (uint64)
+* `punBytesDownloaded` (uint64)
+
+
+### <a name="ugc_download_item"></a>steamworks.ugc_download_item(nPublishedFileID, bHighPriority) - [ISteamUGC#DownloadItem](https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem)
+
+**PARAMS**
+* `bHighPriority` (bool)
+* `nPublishedFileID` (PublishedFileId_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_init_workshop_for_game_server"></a>steamworks.ugc_init_workshop_for_game_server(unWorkshopDepotID, pszFolder) - [ISteamUGC#BInitWorkshopForGameServer](https://partner.steamgames.com/doc/api/ISteamUGC#BInitWorkshopForGameServer)
+
+**PARAMS**
+* `pszFolder` (const char *)
+* `unWorkshopDepotID` (DepotId_t)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="ugc_suspend_downloads"></a>steamworks.ugc_suspend_downloads(bSuspend) - [ISteamUGC#SuspendDownloads](https://partner.steamgames.com/doc/api/ISteamUGC#SuspendDownloads)
+
+**PARAMS**
+* `bSuspend` (bool)
+
+
+### <a name="ugc_start_playtime_tracking"></a>steamworks.ugc_start_playtime_tracking(unNumPublishedFileIDs) - [ISteamUGC#StartPlaytimeTracking](https://partner.steamgames.com/doc/api/ISteamUGC#StartPlaytimeTracking)
+
+**PARAMS**
+* `unNumPublishedFileIDs` (uint32)
+
+**CALLBACK**
+* `StartPlaytimeTrackingResult_t`
+
+### <a name="ugc_stop_playtime_tracking"></a>steamworks.ugc_stop_playtime_tracking(unNumPublishedFileIDs) - [ISteamUGC#StopPlaytimeTracking](https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTracking)
+
+**PARAMS**
+* `unNumPublishedFileIDs` (uint32)
+
+**CALLBACK**
+* `StopPlaytimeTrackingResult_t`
+
+### <a name="ugc_stop_playtime_tracking_for_all_items"></a>steamworks.ugc_stop_playtime_tracking_for_all_items() - [ISteamUGC#StopPlaytimeTrackingForAllItems](https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTrackingForAllItems)
+
+
+**CALLBACK**
+* `StopPlaytimeTrackingResult_t`
+
+### <a name="ugc_add_dependency"></a>steamworks.ugc_add_dependency(nParentPublishedFileID, nChildPublishedFileID) - [ISteamUGC#AddDependency](https://partner.steamgames.com/doc/api/ISteamUGC#AddDependency)
+
+**PARAMS**
+* `nChildPublishedFileID` (PublishedFileId_t)
+* `nParentPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `AddUGCDependencyResult_t`
+
+### <a name="ugc_remove_dependency"></a>steamworks.ugc_remove_dependency(nParentPublishedFileID, nChildPublishedFileID) - [ISteamUGC#RemoveDependency](https://partner.steamgames.com/doc/api/ISteamUGC#RemoveDependency)
+
+**PARAMS**
+* `nChildPublishedFileID` (PublishedFileId_t)
+* `nParentPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `RemoveUGCDependencyResult_t`
+
+### <a name="ugc_add_app_dependency"></a>steamworks.ugc_add_app_dependency(nPublishedFileID, nAppID) - [ISteamUGC#AddAppDependency](https://partner.steamgames.com/doc/api/ISteamUGC#AddAppDependency)
+
+**PARAMS**
+* `nAppID` (AppId_t)
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `AddAppDependencyResult_t`
+
+### <a name="ugc_remove_app_dependency"></a>steamworks.ugc_remove_app_dependency(nPublishedFileID, nAppID) - [ISteamUGC#RemoveAppDependency](https://partner.steamgames.com/doc/api/ISteamUGC#RemoveAppDependency)
+
+**PARAMS**
+* `nAppID` (AppId_t)
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `RemoveAppDependencyResult_t`
+
+### <a name="ugc_get_app_dependencies"></a>steamworks.ugc_get_app_dependencies(nPublishedFileID) - [ISteamUGC#GetAppDependencies](https://partner.steamgames.com/doc/api/ISteamUGC#GetAppDependencies)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `GetAppDependenciesResult_t`
+
+### <a name="ugc_delete_item"></a>steamworks.ugc_delete_item(nPublishedFileID) - [ISteamUGC#DeleteItem](https://partner.steamgames.com/doc/api/ISteamUGC#DeleteItem)
+
+**PARAMS**
+* `nPublishedFileID` (PublishedFileId_t)
+
+**CALLBACK**
+* `DeleteItemResult_t`
+
 ### <a name="inventory_get_result_status"></a>steamworks.inventory_get_result_status(resultHandle) - [ISteamInventory#GetResultStatus](https://partner.steamgames.com/doc/api/ISteamInventory#GetResultStatus)
 
 **PARAMS**
@@ -3269,6 +4082,8 @@ The extension will pass all call results to the listener function:
 * LobbyMatchList_t (callresult)
 * LobbyCreated_t (callresult)
 * RemoteStorageFileShareResult_t (callresult)
+* RemoteStorageSubscribePublishedFileResult_t (callresult)
+* RemoteStorageUnsubscribePublishedFileResult_t (callresult)
 * RemoteStorageDownloadUGCResult_t (callresult)
 * RemoteStorageFileWriteAsyncComplete_t (callresult)
 * RemoteStorageFileReadAsyncComplete_t (callresult)
@@ -3281,6 +4096,21 @@ The extension will pass all call results to the listener function:
 * LeaderboardUGCSet_t (callresult)
 * GlobalStatsReceived_t (callresult)
 * FileDetailsResult_t (callresult)
+* SteamUGCQueryCompleted_t (callresult)
+* SteamUGCRequestUGCDetailsResult_t (callresult)
+* CreateItemResult_t (callresult)
+* SubmitItemUpdateResult_t (callresult)
+* UserFavoriteItemsListChanged_t (callresult)
+* SetUserItemVoteResult_t (callresult)
+* GetUserItemVoteResult_t (callresult)
+* StartPlaytimeTrackingResult_t (callresult)
+* StopPlaytimeTrackingResult_t (callresult)
+* AddUGCDependencyResult_t (callresult)
+* RemoveUGCDependencyResult_t (callresult)
+* AddAppDependencyResult_t (callresult)
+* RemoveAppDependencyResult_t (callresult)
+* GetAppDependenciesResult_t (callresult)
+* DeleteItemResult_t (callresult)
 * SteamInventoryEligiblePromoItemDefIDs_t (callresult)
 * SteamInventoryStartPurchaseResult_t (callresult)
 * SteamInventoryRequestPricesResult_t (callresult)

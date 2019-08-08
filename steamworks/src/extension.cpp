@@ -35,6 +35,7 @@ static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
 static ISteamRemoteStorage *remote_storage;
 static ISteamInventory *inventory;
+static ISteamUGC *ugc;
 
 
 
@@ -88,6 +89,9 @@ static void push_const_char_ptr(lua_State* L, const char * s) {
 }
 static void push_char_ptr(lua_State* L, char * s) {
 	lua_pushstring(L, s);
+}
+static void push_const_char_ptrptr(lua_State* L, const char ** s) {
+	lua_pushstring(L, *s);
 }
 static void push_uint8(lua_State* L, unsigned char n) {
 	lua_pushinteger(L, n);
@@ -995,6 +999,15 @@ static void push_gameserveritem_t(lua_State* L, gameserveritem_t s) {
 	lua_pushstring(L, "m_steamID");
 	push_CSteamID(L, s.m_steamID);
 	lua_settable(L, -3);
+}
+static void push_SteamParamStringArray_t(lua_State* L, SteamParamStringArray_t s) {
+	lua_newtable(L);
+	const char *pStrings = *s.m_ppStrings;
+	for(int i=1; i<=s.m_nNumStrings; i++) {
+		lua_pushnumber(L, i);
+		lua_pushstring(L, &pStrings[i]);
+		lua_settable(L, -3);
+	}
 }
 static void push_ValvePackingSentinel_t(lua_State* L, ValvePackingSentinel_t s) {
 	lua_newtable(L);
@@ -5244,6 +5257,23 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
+static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(lua_State* L, int index) {
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	const int table_size = lua_objlen(L, index);
+	const char *pStrings[table_size];
+
+	SteamParamStringArray_t s;
+	s.m_nNumStrings = table_size;
+	s.m_ppStrings = pStrings;
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		pStrings[i] = luaL_checkstring(L, -1);
+	}
+	return &s;
+}
 static ValvePackingSentinel_t check_ValvePackingSentinel_t(lua_State* L, int index) {
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
@@ -8203,6 +8233,54 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, RemoteStorageSubscribePublishedFileResult_t> m_CallResultRemoteStorageSubscribePublishedFileResult_t;
+		void TrackSteamAPICallRemoteStorageSubscribePublishedFileResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageSubscribePublishedFileResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageSubscribePublishedFileResult_t);
+		}
+		void OnRemoteStorageSubscribePublishedFileResult_t(RemoteStorageSubscribePublishedFileResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageSubscribePublishedFileResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageSubscribePublishedFileResult_t");
+			push_RemoteStorageSubscribePublishedFileResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageSubscribePublishedFileResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageUnsubscribePublishedFileResult_t> m_CallResultRemoteStorageUnsubscribePublishedFileResult_t;
+		void TrackSteamAPICallRemoteStorageUnsubscribePublishedFileResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageUnsubscribePublishedFileResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageUnsubscribePublishedFileResult_t);
+		}
+		void OnRemoteStorageUnsubscribePublishedFileResult_t(RemoteStorageUnsubscribePublishedFileResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageUnsubscribePublishedFileResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageUnsubscribePublishedFileResult_t");
+			push_RemoteStorageUnsubscribePublishedFileResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageUnsubscribePublishedFileResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, RemoteStorageDownloadUGCResult_t> m_CallResultRemoteStorageDownloadUGCResult_t;
 		void TrackSteamAPICallRemoteStorageDownloadUGCResult_t(SteamAPICall_t steamAPICall) {
 			m_CallResultRemoteStorageDownloadUGCResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageDownloadUGCResult_t);
@@ -8486,6 +8564,366 @@ class SteamCallbackWrapper {
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
 				dmLogInfo("SteamCallbackWrapper::OnFileDetailsResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SteamUGCQueryCompleted_t> m_CallResultSteamUGCQueryCompleted_t;
+		void TrackSteamAPICallSteamUGCQueryCompleted_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSteamUGCQueryCompleted_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSteamUGCQueryCompleted_t);
+		}
+		void OnSteamUGCQueryCompleted_t(SteamUGCQueryCompleted_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSteamUGCQueryCompleted_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "SteamUGCQueryCompleted_t");
+			push_SteamUGCQueryCompleted_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnSteamUGCQueryCompleted_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SteamUGCRequestUGCDetailsResult_t> m_CallResultSteamUGCRequestUGCDetailsResult_t;
+		void TrackSteamAPICallSteamUGCRequestUGCDetailsResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSteamUGCRequestUGCDetailsResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSteamUGCRequestUGCDetailsResult_t);
+		}
+		void OnSteamUGCRequestUGCDetailsResult_t(SteamUGCRequestUGCDetailsResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSteamUGCRequestUGCDetailsResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "SteamUGCRequestUGCDetailsResult_t");
+			push_SteamUGCRequestUGCDetailsResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnSteamUGCRequestUGCDetailsResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, CreateItemResult_t> m_CallResultCreateItemResult_t;
+		void TrackSteamAPICallCreateItemResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultCreateItemResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnCreateItemResult_t);
+		}
+		void OnCreateItemResult_t(CreateItemResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnCreateItemResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "CreateItemResult_t");
+			push_CreateItemResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnCreateItemResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SubmitItemUpdateResult_t> m_CallResultSubmitItemUpdateResult_t;
+		void TrackSteamAPICallSubmitItemUpdateResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSubmitItemUpdateResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSubmitItemUpdateResult_t);
+		}
+		void OnSubmitItemUpdateResult_t(SubmitItemUpdateResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSubmitItemUpdateResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "SubmitItemUpdateResult_t");
+			push_SubmitItemUpdateResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnSubmitItemUpdateResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, UserFavoriteItemsListChanged_t> m_CallResultUserFavoriteItemsListChanged_t;
+		void TrackSteamAPICallUserFavoriteItemsListChanged_t(SteamAPICall_t steamAPICall) {
+			m_CallResultUserFavoriteItemsListChanged_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnUserFavoriteItemsListChanged_t);
+		}
+		void OnUserFavoriteItemsListChanged_t(UserFavoriteItemsListChanged_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnUserFavoriteItemsListChanged_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "UserFavoriteItemsListChanged_t");
+			push_UserFavoriteItemsListChanged_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnUserFavoriteItemsListChanged_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, SetUserItemVoteResult_t> m_CallResultSetUserItemVoteResult_t;
+		void TrackSteamAPICallSetUserItemVoteResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultSetUserItemVoteResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSetUserItemVoteResult_t);
+		}
+		void OnSetUserItemVoteResult_t(SetUserItemVoteResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnSetUserItemVoteResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "SetUserItemVoteResult_t");
+			push_SetUserItemVoteResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnSetUserItemVoteResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, GetUserItemVoteResult_t> m_CallResultGetUserItemVoteResult_t;
+		void TrackSteamAPICallGetUserItemVoteResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultGetUserItemVoteResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnGetUserItemVoteResult_t);
+		}
+		void OnGetUserItemVoteResult_t(GetUserItemVoteResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnGetUserItemVoteResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "GetUserItemVoteResult_t");
+			push_GetUserItemVoteResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnGetUserItemVoteResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, StartPlaytimeTrackingResult_t> m_CallResultStartPlaytimeTrackingResult_t;
+		void TrackSteamAPICallStartPlaytimeTrackingResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultStartPlaytimeTrackingResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnStartPlaytimeTrackingResult_t);
+		}
+		void OnStartPlaytimeTrackingResult_t(StartPlaytimeTrackingResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnStartPlaytimeTrackingResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "StartPlaytimeTrackingResult_t");
+			push_StartPlaytimeTrackingResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnStartPlaytimeTrackingResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, StopPlaytimeTrackingResult_t> m_CallResultStopPlaytimeTrackingResult_t;
+		void TrackSteamAPICallStopPlaytimeTrackingResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultStopPlaytimeTrackingResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnStopPlaytimeTrackingResult_t);
+		}
+		void OnStopPlaytimeTrackingResult_t(StopPlaytimeTrackingResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnStopPlaytimeTrackingResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "StopPlaytimeTrackingResult_t");
+			push_StopPlaytimeTrackingResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnStopPlaytimeTrackingResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, AddUGCDependencyResult_t> m_CallResultAddUGCDependencyResult_t;
+		void TrackSteamAPICallAddUGCDependencyResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultAddUGCDependencyResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnAddUGCDependencyResult_t);
+		}
+		void OnAddUGCDependencyResult_t(AddUGCDependencyResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnAddUGCDependencyResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "AddUGCDependencyResult_t");
+			push_AddUGCDependencyResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnAddUGCDependencyResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoveUGCDependencyResult_t> m_CallResultRemoveUGCDependencyResult_t;
+		void TrackSteamAPICallRemoveUGCDependencyResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoveUGCDependencyResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoveUGCDependencyResult_t);
+		}
+		void OnRemoveUGCDependencyResult_t(RemoveUGCDependencyResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoveUGCDependencyResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoveUGCDependencyResult_t");
+			push_RemoveUGCDependencyResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoveUGCDependencyResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, AddAppDependencyResult_t> m_CallResultAddAppDependencyResult_t;
+		void TrackSteamAPICallAddAppDependencyResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultAddAppDependencyResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnAddAppDependencyResult_t);
+		}
+		void OnAddAppDependencyResult_t(AddAppDependencyResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnAddAppDependencyResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "AddAppDependencyResult_t");
+			push_AddAppDependencyResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnAddAppDependencyResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoveAppDependencyResult_t> m_CallResultRemoveAppDependencyResult_t;
+		void TrackSteamAPICallRemoveAppDependencyResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoveAppDependencyResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoveAppDependencyResult_t);
+		}
+		void OnRemoveAppDependencyResult_t(RemoveAppDependencyResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoveAppDependencyResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoveAppDependencyResult_t");
+			push_RemoveAppDependencyResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoveAppDependencyResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, GetAppDependenciesResult_t> m_CallResultGetAppDependenciesResult_t;
+		void TrackSteamAPICallGetAppDependenciesResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultGetAppDependenciesResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnGetAppDependenciesResult_t);
+		}
+		void OnGetAppDependenciesResult_t(GetAppDependenciesResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnGetAppDependenciesResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "GetAppDependenciesResult_t");
+			push_GetAppDependenciesResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnGetAppDependenciesResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, DeleteItemResult_t> m_CallResultDeleteItemResult_t;
+		void TrackSteamAPICallDeleteItemResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultDeleteItemResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnDeleteItemResult_t);
+		}
+		void OnDeleteItemResult_t(DeleteItemResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnDeleteItemResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "DeleteItemResult_t");
+			push_DeleteItemResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnDeleteItemResult_t error: %s\n", lua_tostring(L, -1));
 				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
@@ -12012,6 +12450,931 @@ static int ISteamMusic_GetVolume(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamUGC_CreateQueryUserUGCRequest(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unPage = check_uint32(L, 7); /*normal*/
+	AppId_t nConsumerAppID = check_AppId_t(L, 6); /*normal*/
+	AppId_t nCreatorAppID = check_AppId_t(L, 5); /*normal*/
+	EUserUGCListSortOrder eSortOrder = check_EUserUGCListSortOrder(L, 4); /*normal*/
+	EUGCMatchingUGCType eMatchingUGCType = check_EUGCMatchingUGCType(L, 3); /*normal*/
+	EUserUGCList eListType = check_EUserUGCList(L, 2); /*normal*/
+	AccountID_t unAccountID = check_AccountID_t(L, 1); /*normal*/
+
+	UGCQueryHandle_t r = ugc->CreateQueryUserUGCRequest(unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage);
+	push_UGCQueryHandle_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_CreateQueryAllUGCRequest(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unPage = check_uint32(L, 5); /*normal*/
+	AppId_t nConsumerAppID = check_AppId_t(L, 4); /*normal*/
+	AppId_t nCreatorAppID = check_AppId_t(L, 3); /*normal*/
+	EUGCMatchingUGCType eMatchingeMatchingUGCTypeFileType = check_EUGCMatchingUGCType(L, 2); /*normal*/
+	EUGCQuery eQueryType = check_EUGCQuery(L, 1); /*normal*/
+
+	UGCQueryHandle_t r = ugc->CreateQueryAllUGCRequest(eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage);
+	push_UGCQueryHandle_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_CreateQueryUGCDetailsRequest(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unNumPublishedFileIDs = check_uint32(L, 1); /*normal*/
+	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+
+	UGCQueryHandle_t r = ugc->CreateQueryUGCDetailsRequest(&pvecPublishedFileID, unNumPublishedFileIDs);
+	push_UGCQueryHandle_t(L, r);
+	push_PublishedFileId_t(L, pvecPublishedFileID); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUGC_SendQueryUGCRequest(lua_State* L) {
+	int top = lua_gettop(L);
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->SendQueryUGCRequest(handle);
+	steamCallbackWrapper->TrackSteamAPICallSteamUGCQueryCompleted_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_GetQueryUGCResult(lua_State* L) {
+	int top = lua_gettop(L);
+	struct SteamUGCDetails_t pDetails; /*out_param*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCResult(handle, index, &pDetails);
+	push_bool(L, r);
+	push_SteamUGCDetails_t(L, pDetails); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUGC_GetQueryUGCPreviewURL(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchURLSize = check_uint32(L, 4); /*normal*/
+	dmScript::LuaHBuffer * pchURL_buffer = check_buffer(L, 3); /*buffer_param*/
+	char * pchURL = 0x0;
+	uint32_t pchURL_buffersize = 0;
+	dmBuffer::Result pchURL_buffer_result = dmBuffer::GetBytes(pchURL_buffer->m_Buffer, (void**)&pchURL, &pchURL_buffersize);
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCPreviewURL(handle, index, pchURL, cchURLSize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetQueryUGCMetadata(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchMetadatasize = check_uint32(L, 4); /*normal*/
+	dmScript::LuaHBuffer * pchMetadata_buffer = check_buffer(L, 3); /*buffer_param*/
+	char * pchMetadata = 0x0;
+	uint32_t pchMetadata_buffersize = 0;
+	dmBuffer::Result pchMetadata_buffer_result = dmBuffer::GetBytes(pchMetadata_buffer->m_Buffer, (void**)&pchMetadata, &pchMetadata_buffersize);
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCMetadata(handle, index, pchMetadata, cchMetadatasize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetQueryUGCChildren(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cMaxEntries = check_uint32(L, 3); /*normal*/
+	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCChildren(handle, index, &pvecPublishedFileID, cMaxEntries);
+	push_bool(L, r);
+	push_PublishedFileId_t(L, pvecPublishedFileID); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUGC_GetQueryUGCStatistic(lua_State* L) {
+	int top = lua_gettop(L);
+	uint64 pStatValue; /*out_param*/
+	EItemStatistic eStatType = check_EItemStatistic(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCStatistic(handle, index, eStatType, &pStatValue);
+	push_bool(L, r);
+	push_uint64(L, pStatValue); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUGC_GetQueryUGCNumAdditionalPreviews(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	uint32 r = ugc->GetQueryUGCNumAdditionalPreviews(handle, index);
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetQueryUGCAdditionalPreview(lua_State* L) {
+	int top = lua_gettop(L);
+	EItemPreviewType pPreviewType; /*out_param*/
+	uint32 cchOriginalFileNameSize = check_uint32(L, 7); /*normal*/
+	dmScript::LuaHBuffer * pchOriginalFileName_buffer = check_buffer(L, 6); /*buffer_param*/
+	char * pchOriginalFileName = 0x0;
+	uint32_t pchOriginalFileName_buffersize = 0;
+	dmBuffer::Result pchOriginalFileName_buffer_result = dmBuffer::GetBytes(pchOriginalFileName_buffer->m_Buffer, (void**)&pchOriginalFileName, &pchOriginalFileName_buffersize);
+	uint32 cchURLSize = check_uint32(L, 5); /*normal*/
+	dmScript::LuaHBuffer * pchURLOrVideoID_buffer = check_buffer(L, 4); /*buffer_param*/
+	char * pchURLOrVideoID = 0x0;
+	uint32_t pchURLOrVideoID_buffersize = 0;
+	dmBuffer::Result pchURLOrVideoID_buffer_result = dmBuffer::GetBytes(pchURLOrVideoID_buffer->m_Buffer, (void**)&pchURLOrVideoID, &pchURLOrVideoID_buffersize);
+	uint32 previewIndex = check_uint32(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCAdditionalPreview(handle, index, previewIndex, pchURLOrVideoID, cchURLSize, pchOriginalFileName, cchOriginalFileNameSize, &pPreviewType);
+	push_bool(L, r);
+	push_EItemPreviewType(L, pPreviewType); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUGC_GetQueryUGCNumKeyValueTags(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	uint32 r = ugc->GetQueryUGCNumKeyValueTags(handle, index);
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetQueryUGCKeyValueTag(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchValueSize = check_uint32(L, 7); /*normal*/
+	dmScript::LuaHBuffer * pchValue_buffer = check_buffer(L, 6); /*buffer_param*/
+	char * pchValue = 0x0;
+	uint32_t pchValue_buffersize = 0;
+	dmBuffer::Result pchValue_buffer_result = dmBuffer::GetBytes(pchValue_buffer->m_Buffer, (void**)&pchValue, &pchValue_buffersize);
+	uint32 cchKeySize = check_uint32(L, 5); /*normal*/
+	dmScript::LuaHBuffer * pchKey_buffer = check_buffer(L, 4); /*buffer_param*/
+	char * pchKey = 0x0;
+	uint32_t pchKey_buffersize = 0;
+	dmBuffer::Result pchKey_buffer_result = dmBuffer::GetBytes(pchKey_buffer->m_Buffer, (void**)&pchKey, &pchKey_buffersize);
+	uint32 keyValueTagIndex = check_uint32(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCKeyValueTag(handle, index, keyValueTagIndex, pchKey, cchKeySize, pchValue, cchValueSize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_ReleaseQueryUGCRequest(lua_State* L) {
+	int top = lua_gettop(L);
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->ReleaseQueryUGCRequest(handle);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_AddRequiredTag(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pTagName = check_const_char_ptr(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->AddRequiredTag(handle, pTagName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_AddExcludedTag(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pTagName = check_const_char_ptr(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->AddExcludedTag(handle, pTagName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnOnlyIDs(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReturnOnlyIDs = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnOnlyIDs(handle, bReturnOnlyIDs);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnKeyValueTags(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReturnKeyValueTags = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnKeyValueTags(handle, bReturnKeyValueTags);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnLongDescription(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReturnLongDescription = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnLongDescription(handle, bReturnLongDescription);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnMetadata(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReturnMetadata = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnMetadata(handle, bReturnMetadata);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnChildren(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReturnChildren = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnChildren(handle, bReturnChildren);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnAdditionalPreviews(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReturnAdditionalPreviews = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnAdditionalPreviews(handle, bReturnAdditionalPreviews);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnTotalOnly(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReturnTotalOnly = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnTotalOnly(handle, bReturnTotalOnly);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetReturnPlaytimeStats(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unDays = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetReturnPlaytimeStats(handle, unDays);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetLanguage(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchLanguage = check_const_char_ptr(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetLanguage(handle, pchLanguage);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetAllowCachedResponse(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unMaxAgeSeconds = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetAllowCachedResponse(handle, unMaxAgeSeconds);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetCloudFileNameFilter(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pMatchCloudFileName = check_const_char_ptr(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetCloudFileNameFilter(handle, pMatchCloudFileName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetMatchAnyTag(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bMatchAnyTag = check_bool(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetMatchAnyTag(handle, bMatchAnyTag);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetSearchText(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pSearchText = check_const_char_ptr(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetSearchText(handle, pSearchText);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetRankedByTrendDays(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unDays = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetRankedByTrendDays(handle, unDays);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_AddRequiredKeyValueTag(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pValue = check_const_char_ptr(L, 3); /*normal*/
+	const char * pKey = check_const_char_ptr(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->AddRequiredKeyValueTag(handle, pKey, pValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_RequestUGCDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unMaxAgeSeconds = check_uint32(L, 2); /*normal*/
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->RequestUGCDetails(nPublishedFileID, unMaxAgeSeconds);
+	steamCallbackWrapper->TrackSteamAPICallSteamUGCRequestUGCDetailsResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_CreateItem(lua_State* L) {
+	int top = lua_gettop(L);
+	EWorkshopFileType eFileType = check_EWorkshopFileType(L, 2); /*normal*/
+	AppId_t nConsumerAppId = check_AppId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->CreateItem(nConsumerAppId, eFileType);
+	steamCallbackWrapper->TrackSteamAPICallCreateItemResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_StartItemUpdate(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 2); /*normal*/
+	AppId_t nConsumerAppId = check_AppId_t(L, 1); /*normal*/
+
+	UGCUpdateHandle_t r = ugc->StartItemUpdate(nConsumerAppId, nPublishedFileID);
+	push_UGCUpdateHandle_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemTitle(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchTitle = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemTitle(handle, pchTitle);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemDescription(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchDescription = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemDescription(handle, pchDescription);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemUpdateLanguage(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchLanguage = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemUpdateLanguage(handle, pchLanguage);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemMetadata(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchMetaData = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemMetadata(handle, pchMetaData);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemVisibility(lua_State* L) {
+	int top = lua_gettop(L);
+	ERemoteStoragePublishedFileVisibility eVisibility = check_ERemoteStoragePublishedFileVisibility(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemVisibility(handle, eVisibility);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemTags(lua_State* L) {
+	int top = lua_gettop(L);
+	const struct SteamParamStringArray_t * pTags = check_const_struct_SteamParamStringArray_t_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t updateHandle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemTags(updateHandle, pTags);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemContent(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pszContentFolder = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemContent(handle, pszContentFolder);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetItemPreview(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pszPreviewFile = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetItemPreview(handle, pszPreviewFile);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_RemoveItemKeyValueTags(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->RemoveItemKeyValueTags(handle, pchKey);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_AddItemKeyValueTag(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchValue = check_const_char_ptr(L, 3); /*normal*/
+	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->AddItemKeyValueTag(handle, pchKey, pchValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_AddItemPreviewFile(lua_State* L) {
+	int top = lua_gettop(L);
+	EItemPreviewType type = check_EItemPreviewType(L, 3); /*normal*/
+	const char * pszPreviewFile = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->AddItemPreviewFile(handle, pszPreviewFile, type);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_AddItemPreviewVideo(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pszVideoID = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->AddItemPreviewVideo(handle, pszVideoID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_UpdateItemPreviewFile(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pszPreviewFile = check_const_char_ptr(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->UpdateItemPreviewFile(handle, index, pszPreviewFile);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_UpdateItemPreviewVideo(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pszVideoID = check_const_char_ptr(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->UpdateItemPreviewVideo(handle, index, pszVideoID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_RemoveItemPreview(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->RemoveItemPreview(handle, index);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SubmitItemUpdate(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchChangeNote = check_const_char_ptr(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->SubmitItemUpdate(handle, pchChangeNote);
+	steamCallbackWrapper->TrackSteamAPICallSubmitItemUpdateResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_GetItemUpdateProgress(lua_State* L) {
+	int top = lua_gettop(L);
+	uint64 punBytesTotal; /*out_param*/
+	uint64 punBytesProcessed; /*out_param*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	EItemUpdateStatus r = ugc->GetItemUpdateProgress(handle, &punBytesProcessed, &punBytesTotal);
+	push_EItemUpdateStatus(L, r);
+	push_uint64(L, punBytesTotal); /*out_param*/
+	push_uint64(L, punBytesProcessed); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUGC_SetUserItemVote(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bVoteUp = check_bool(L, 2); /*normal*/
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->SetUserItemVote(nPublishedFileID, bVoteUp);
+	steamCallbackWrapper->TrackSteamAPICallSetUserItemVoteResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_GetUserItemVote(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->GetUserItemVote(nPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallGetUserItemVoteResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_AddItemToFavorites(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 2); /*normal*/
+	AppId_t nAppId = check_AppId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->AddItemToFavorites(nAppId, nPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallUserFavoriteItemsListChanged_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_RemoveItemFromFavorites(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 2); /*normal*/
+	AppId_t nAppId = check_AppId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->RemoveItemFromFavorites(nAppId, nPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallUserFavoriteItemsListChanged_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_SubscribeItem(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->SubscribeItem(nPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageSubscribePublishedFileResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_UnsubscribeItem(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->UnsubscribeItem(nPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageUnsubscribePublishedFileResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_GetNumSubscribedItems(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = ugc->GetNumSubscribedItems();
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetSubscribedItems(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cMaxEntries = check_uint32(L, 1); /*normal*/
+	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+
+	uint32 r = ugc->GetSubscribedItems(&pvecPublishedFileID, cMaxEntries);
+	push_uint32(L, r);
+	push_PublishedFileId_t(L, pvecPublishedFileID); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamUGC_GetItemState(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	uint32 r = ugc->GetItemState(nPublishedFileID);
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetItemInstallInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punTimeStamp; /*out_param*/
+	uint32 cchFolderSize = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pchFolder_buffer = check_buffer(L, 2); /*buffer_param*/
+	char * pchFolder = 0x0;
+	uint32_t pchFolder_buffersize = 0;
+	dmBuffer::Result pchFolder_buffer_result = dmBuffer::GetBytes(pchFolder_buffer->m_Buffer, (void**)&pchFolder, &pchFolder_buffersize);
+	uint64 punSizeOnDisk; /*out_param*/
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	bool r = ugc->GetItemInstallInfo(nPublishedFileID, &punSizeOnDisk, pchFolder, cchFolderSize, &punTimeStamp);
+	push_bool(L, r);
+	push_uint32(L, punTimeStamp); /*out_param*/
+	push_uint64(L, punSizeOnDisk); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUGC_GetItemDownloadInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	uint64 punBytesTotal; /*out_param*/
+	uint64 punBytesDownloaded; /*out_param*/
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	bool r = ugc->GetItemDownloadInfo(nPublishedFileID, &punBytesDownloaded, &punBytesTotal);
+	push_bool(L, r);
+	push_uint64(L, punBytesTotal); /*out_param*/
+	push_uint64(L, punBytesDownloaded); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUGC_DownloadItem(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bHighPriority = check_bool(L, 2); /*normal*/
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	bool r = ugc->DownloadItem(nPublishedFileID, bHighPriority);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_BInitWorkshopForGameServer(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pszFolder = check_const_char_ptr(L, 2); /*normal*/
+	DepotId_t unWorkshopDepotID = check_DepotId_t(L, 1); /*normal*/
+
+	bool r = ugc->BInitWorkshopForGameServer(unWorkshopDepotID, pszFolder);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SuspendDownloads(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bSuspend = check_bool(L, 1); /*normal*/
+
+	ugc->SuspendDownloads(bSuspend);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_StartPlaytimeTracking(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unNumPublishedFileIDs = check_uint32(L, 1); /*normal*/
+	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+
+	SteamAPICall_t r = ugc->StartPlaytimeTracking(&pvecPublishedFileID, unNumPublishedFileIDs);
+	steamCallbackWrapper->TrackSteamAPICallStartPlaytimeTrackingResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_StopPlaytimeTracking(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unNumPublishedFileIDs = check_uint32(L, 1); /*normal*/
+	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+
+	SteamAPICall_t r = ugc->StopPlaytimeTracking(&pvecPublishedFileID, unNumPublishedFileIDs);
+	steamCallbackWrapper->TrackSteamAPICallStopPlaytimeTrackingResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_StopPlaytimeTrackingForAllItems(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = ugc->StopPlaytimeTrackingForAllItems();
+	steamCallbackWrapper->TrackSteamAPICallStopPlaytimeTrackingResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_AddDependency(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nChildPublishedFileID = check_PublishedFileId_t(L, 2); /*normal*/
+	PublishedFileId_t nParentPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->AddDependency(nParentPublishedFileID, nChildPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallAddUGCDependencyResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_RemoveDependency(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nChildPublishedFileID = check_PublishedFileId_t(L, 2); /*normal*/
+	PublishedFileId_t nParentPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->RemoveDependency(nParentPublishedFileID, nChildPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallRemoveUGCDependencyResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_AddAppDependency(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t nAppID = check_AppId_t(L, 2); /*normal*/
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->AddAppDependency(nPublishedFileID, nAppID);
+	steamCallbackWrapper->TrackSteamAPICallAddAppDependencyResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_RemoveAppDependency(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t nAppID = check_AppId_t(L, 2); /*normal*/
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->RemoveAppDependency(nPublishedFileID, nAppID);
+	steamCallbackWrapper->TrackSteamAPICallRemoveAppDependencyResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_GetAppDependencies(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->GetAppDependencies(nPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallGetAppDependenciesResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUGC_DeleteItem(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = ugc->DeleteItem(nPublishedFileID);
+	steamCallbackWrapper->TrackSteamAPICallDeleteItemResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
 static int ISteamInventory_GetResultStatus(lua_State* L) {
 	int top = lua_gettop(L);
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
@@ -12620,6 +13983,7 @@ static int Init(lua_State* L) {
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
+	ugc = SteamUGC();
 	return 0;
 }
 
@@ -12930,6 +14294,80 @@ static const luaL_reg Module_methods[] = {
 	{ "music_play_next", ISteamMusic_PlayNext },
 	{ "music_set_volume", ISteamMusic_SetVolume },
 	{ "music_get_volume", ISteamMusic_GetVolume },
+	{ "ugc_create_query_user_ugc_request", ISteamUGC_CreateQueryUserUGCRequest },
+	{ "ugc_create_query_all_ugc_request", ISteamUGC_CreateQueryAllUGCRequest },
+	{ "ugc_create_query_ugc_details_request", ISteamUGC_CreateQueryUGCDetailsRequest },
+	{ "ugc_send_query_ugc_request", ISteamUGC_SendQueryUGCRequest },
+	{ "ugc_get_query_ugc_result", ISteamUGC_GetQueryUGCResult },
+	{ "ugc_get_query_ugc_preview_url", ISteamUGC_GetQueryUGCPreviewURL },
+	{ "ugc_get_query_ugc_metadata", ISteamUGC_GetQueryUGCMetadata },
+	{ "ugc_get_query_ugc_children", ISteamUGC_GetQueryUGCChildren },
+	{ "ugc_get_query_ugc_statistic", ISteamUGC_GetQueryUGCStatistic },
+	{ "ugc_get_query_ugc_num_additional_previews", ISteamUGC_GetQueryUGCNumAdditionalPreviews },
+	{ "ugc_get_query_ugc_additional_preview", ISteamUGC_GetQueryUGCAdditionalPreview },
+	{ "ugc_get_query_ugc_num_key_value_tags", ISteamUGC_GetQueryUGCNumKeyValueTags },
+	{ "ugc_get_query_ugc_key_value_tag", ISteamUGC_GetQueryUGCKeyValueTag },
+	{ "ugc_release_query_ugc_request", ISteamUGC_ReleaseQueryUGCRequest },
+	{ "ugc_add_required_tag", ISteamUGC_AddRequiredTag },
+	{ "ugc_add_excluded_tag", ISteamUGC_AddExcludedTag },
+	{ "ugc_set_return_only_i_ds", ISteamUGC_SetReturnOnlyIDs },
+	{ "ugc_set_return_key_value_tags", ISteamUGC_SetReturnKeyValueTags },
+	{ "ugc_set_return_long_description", ISteamUGC_SetReturnLongDescription },
+	{ "ugc_set_return_metadata", ISteamUGC_SetReturnMetadata },
+	{ "ugc_set_return_children", ISteamUGC_SetReturnChildren },
+	{ "ugc_set_return_additional_previews", ISteamUGC_SetReturnAdditionalPreviews },
+	{ "ugc_set_return_total_only", ISteamUGC_SetReturnTotalOnly },
+	{ "ugc_set_return_playtime_stats", ISteamUGC_SetReturnPlaytimeStats },
+	{ "ugc_set_language", ISteamUGC_SetLanguage },
+	{ "ugc_set_allow_cached_response", ISteamUGC_SetAllowCachedResponse },
+	{ "ugc_set_cloud_file_name_filter", ISteamUGC_SetCloudFileNameFilter },
+	{ "ugc_set_match_any_tag", ISteamUGC_SetMatchAnyTag },
+	{ "ugc_set_search_text", ISteamUGC_SetSearchText },
+	{ "ugc_set_ranked_by_trend_days", ISteamUGC_SetRankedByTrendDays },
+	{ "ugc_add_required_key_value_tag", ISteamUGC_AddRequiredKeyValueTag },
+	{ "ugc_request_ugc_details", ISteamUGC_RequestUGCDetails },
+	{ "ugc_create_item", ISteamUGC_CreateItem },
+	{ "ugc_start_item_update", ISteamUGC_StartItemUpdate },
+	{ "ugc_set_item_title", ISteamUGC_SetItemTitle },
+	{ "ugc_set_item_description", ISteamUGC_SetItemDescription },
+	{ "ugc_set_item_update_language", ISteamUGC_SetItemUpdateLanguage },
+	{ "ugc_set_item_metadata", ISteamUGC_SetItemMetadata },
+	{ "ugc_set_item_visibility", ISteamUGC_SetItemVisibility },
+	{ "ugc_set_item_tags", ISteamUGC_SetItemTags },
+	{ "ugc_set_item_content", ISteamUGC_SetItemContent },
+	{ "ugc_set_item_preview", ISteamUGC_SetItemPreview },
+	{ "ugc_remove_item_key_value_tags", ISteamUGC_RemoveItemKeyValueTags },
+	{ "ugc_add_item_key_value_tag", ISteamUGC_AddItemKeyValueTag },
+	{ "ugc_add_item_preview_file", ISteamUGC_AddItemPreviewFile },
+	{ "ugc_add_item_preview_video", ISteamUGC_AddItemPreviewVideo },
+	{ "ugc_update_item_preview_file", ISteamUGC_UpdateItemPreviewFile },
+	{ "ugc_update_item_preview_video", ISteamUGC_UpdateItemPreviewVideo },
+	{ "ugc_remove_item_preview", ISteamUGC_RemoveItemPreview },
+	{ "ugc_submit_item_update", ISteamUGC_SubmitItemUpdate },
+	{ "ugc_get_item_update_progress", ISteamUGC_GetItemUpdateProgress },
+	{ "ugc_set_user_item_vote", ISteamUGC_SetUserItemVote },
+	{ "ugc_get_user_item_vote", ISteamUGC_GetUserItemVote },
+	{ "ugc_add_item_to_favorites", ISteamUGC_AddItemToFavorites },
+	{ "ugc_remove_item_from_favorites", ISteamUGC_RemoveItemFromFavorites },
+	{ "ugc_subscribe_item", ISteamUGC_SubscribeItem },
+	{ "ugc_unsubscribe_item", ISteamUGC_UnsubscribeItem },
+	{ "ugc_get_num_subscribed_items", ISteamUGC_GetNumSubscribedItems },
+	{ "ugc_get_subscribed_items", ISteamUGC_GetSubscribedItems },
+	{ "ugc_get_item_state", ISteamUGC_GetItemState },
+	{ "ugc_get_item_install_info", ISteamUGC_GetItemInstallInfo },
+	{ "ugc_get_item_download_info", ISteamUGC_GetItemDownloadInfo },
+	{ "ugc_download_item", ISteamUGC_DownloadItem },
+	{ "ugc_init_workshop_for_game_server", ISteamUGC_BInitWorkshopForGameServer },
+	{ "ugc_suspend_downloads", ISteamUGC_SuspendDownloads },
+	{ "ugc_start_playtime_tracking", ISteamUGC_StartPlaytimeTracking },
+	{ "ugc_stop_playtime_tracking", ISteamUGC_StopPlaytimeTracking },
+	{ "ugc_stop_playtime_tracking_for_all_items", ISteamUGC_StopPlaytimeTrackingForAllItems },
+	{ "ugc_add_dependency", ISteamUGC_AddDependency },
+	{ "ugc_remove_dependency", ISteamUGC_RemoveDependency },
+	{ "ugc_add_app_dependency", ISteamUGC_AddAppDependency },
+	{ "ugc_remove_app_dependency", ISteamUGC_RemoveAppDependency },
+	{ "ugc_get_app_dependencies", ISteamUGC_GetAppDependencies },
+	{ "ugc_delete_item", ISteamUGC_DeleteItem },
 	{ "inventory_get_result_status", ISteamInventory_GetResultStatus },
 	{ "inventory_get_result_items", ISteamInventory_GetResultItems },
 	{ "inventory_get_result_item_property", ISteamInventory_GetResultItemProperty },
