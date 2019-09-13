@@ -19,7 +19,11 @@
 #include "steam_gameserver.h"
 #include "luautils.h"
 
-
+struct SteamBootstrap {
+	SteamBootstrap() {
+		SteamAPI_Init();
+	}
+} g_SteamBootstrap;
 
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT 0
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
@@ -673,6 +677,7 @@ extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDeb
 }
 
 static int Init(lua_State* L) {
+	DM_LUA_STACK_CHECK(L, 0);
 	dmLogInfo("Init");
 	SteamAPI_Init();
 	if (!SteamAPI_IsSteamRunning()) {
@@ -699,16 +704,14 @@ static int Update(lua_State* L) {
 }
 
 static int Final(lua_State* L) {
+	DM_LUA_STACK_CHECK(L, 0);
 	SteamAPI_Shutdown();
 	return 0;
 }
 
 static int SetListener(lua_State* L) {
-	int top = lua_gettop(L);
-
+	DM_LUA_STACK_CHECK(L, 0);
 	luaL_checklistener(L, 1, steamworksListener);
-
-	assert(top == lua_gettop(L));
 	return 0;
 }
 

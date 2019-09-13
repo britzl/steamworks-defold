@@ -19,7 +19,11 @@
 #include "steam_gameserver.h"
 #include "luautils.h"
 
-
+struct SteamBootstrap {
+	SteamBootstrap() {
+		SteamAPI_Init();
+	}
+} g_SteamBootstrap;
 
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_INT 0
 #define DM_STEAMWORKS_EXTENSION_STAT_TYPE_FLOAT 1
@@ -89,9 +93,6 @@ static void push_const_char_ptr(lua_State* L, const char * s) {
 }
 static void push_char_ptr(lua_State* L, char * s) {
 	lua_pushstring(L, s);
-}
-static void push_const_char_ptrptr(lua_State* L, const char ** s) {
-	lua_pushstring(L, *s);
 }
 static void push_uint8(lua_State* L, unsigned char n) {
 	lua_pushinteger(L, n);
@@ -9624,6 +9625,44 @@ static int ISteamFriends_SetInGameVoiceSpeaking(lua_State* L) {
 	return 0;
 }
 
+static int ISteamFriends_ActivateGameOverlay(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchDialog = check_const_char_ptr(L, 1); /*normal*/
+
+	friends->ActivateGameOverlay(pchDialog);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamFriends_ActivateGameOverlayToUser(lua_State* L) {
+	int top = lua_gettop(L);
+	class CSteamID steamID = check_class_CSteamID(L, 2); /*normal*/
+	const char * pchDialog = check_const_char_ptr(L, 1); /*normal*/
+
+	friends->ActivateGameOverlayToUser(pchDialog, steamID);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamFriends_ActivateGameOverlayToWebPage(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchURL = check_const_char_ptr(L, 1); /*normal*/
+
+	friends->ActivateGameOverlayToWebPage(pchURL);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamFriends_ActivateGameOverlayToStore(lua_State* L) {
+	int top = lua_gettop(L);
+	EOverlayToStoreFlag eFlag = check_EOverlayToStoreFlag(L, 2); /*normal*/
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	friends->ActivateGameOverlayToStore(nAppID, eFlag);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
 static int ISteamFriends_SetPlayedWith(lua_State* L) {
 	int top = lua_gettop(L);
 	class CSteamID steamIDUserPlayedWith = check_class_CSteamID(L, 1); /*normal*/
@@ -10190,6 +10229,15 @@ static int ISteamUtils_GetAppID(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamUtils_SetOverlayNotificationPosition(lua_State* L) {
+	int top = lua_gettop(L);
+	ENotificationPosition eNotificationPosition = check_ENotificationPosition(L, 1); /*normal*/
+
+	utils->SetOverlayNotificationPosition(eNotificationPosition);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
 static int ISteamUtils_IsAPICallCompleted(lua_State* L) {
 	int top = lua_gettop(L);
 	bool pbFailed; /*out_param*/
@@ -10238,6 +10286,16 @@ static int ISteamUtils_GetIPCCallCount(lua_State* L) {
 
 	uint32 r = utils->GetIPCCallCount();
 	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUtils_IsOverlayEnabled(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->IsOverlayEnabled();
+	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13967,6 +14025,7 @@ extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDeb
 }
 
 static int Init(lua_State* L) {
+	DM_LUA_STACK_CHECK(L, 0);
 	dmLogInfo("Init");
 	SteamAPI_Init();
 	if (!SteamAPI_IsSteamRunning()) {
@@ -13993,16 +14052,14 @@ static int Update(lua_State* L) {
 }
 
 static int Final(lua_State* L) {
+	DM_LUA_STACK_CHECK(L, 0);
 	SteamAPI_Shutdown();
 	return 0;
 }
 
 static int SetListener(lua_State* L) {
-	int top = lua_gettop(L);
-
+	DM_LUA_STACK_CHECK(L, 0);
 	luaL_checklistener(L, 1, steamworksListener);
-
-	assert(top == lua_gettop(L));
 	return 0;
 }
 
@@ -14059,6 +14116,10 @@ static const luaL_reg Module_methods[] = {
 	{ "friends_get_friend_from_source_by_index", ISteamFriends_GetFriendFromSourceByIndex },
 	{ "friends_is_user_in_source", ISteamFriends_IsUserInSource },
 	{ "friends_set_in_game_voice_speaking", ISteamFriends_SetInGameVoiceSpeaking },
+	{ "friends_activate_game_overlay", ISteamFriends_ActivateGameOverlay },
+	{ "friends_activate_game_overlay_to_user", ISteamFriends_ActivateGameOverlayToUser },
+	{ "friends_activate_game_overlay_to_web_page", ISteamFriends_ActivateGameOverlayToWebPage },
+	{ "friends_activate_game_overlay_to_store", ISteamFriends_ActivateGameOverlayToStore },
 	{ "friends_set_played_with", ISteamFriends_SetPlayedWith },
 	{ "friends_activate_game_overlay_invite_dialog", ISteamFriends_ActivateGameOverlayInviteDialog },
 	{ "friends_get_small_friend_avatar", ISteamFriends_GetSmallFriendAvatar },
@@ -14109,10 +14170,12 @@ static const luaL_reg Module_methods[] = {
 	{ "utils_get_cserip_port", ISteamUtils_GetCSERIPPort },
 	{ "utils_get_current_battery_power", ISteamUtils_GetCurrentBatteryPower },
 	{ "utils_get_app_id", ISteamUtils_GetAppID },
+	{ "utils_set_overlay_notification_position", ISteamUtils_SetOverlayNotificationPosition },
 	{ "utils_is_api_call_completed", ISteamUtils_IsAPICallCompleted },
 	{ "utils_get_api_call_failure_reason", ISteamUtils_GetAPICallFailureReason },
 	{ "utils_get_api_call_result", ISteamUtils_GetAPICallResult },
 	{ "utils_get_ipc_call_count", ISteamUtils_GetIPCCallCount },
+	{ "utils_is_overlay_enabled", ISteamUtils_IsOverlayEnabled },
 	{ "utils_overlay_needs_present", ISteamUtils_BOverlayNeedsPresent },
 	{ "utils_check_file_signature", ISteamUtils_CheckFileSignature },
 	{ "utils_show_gamepad_text_input", ISteamUtils_ShowGamepadTextInput },
