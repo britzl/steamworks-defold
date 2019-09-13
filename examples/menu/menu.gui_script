@@ -9,7 +9,13 @@ function init(self)
 		gui.set_text(gui.get_node("status"), error)
 		return
 	end
-	
+
+	local restart = steamworks.restart(steamworks.utils_get_app_id())
+	if restart then
+		sys.exit(0)
+		return
+	end
+
 	msg.post(".", "acquire_input_focus")
 end
 

@@ -698,6 +698,14 @@ static int Update(lua_State* L) {
 	return 0;
 }
 
+static int Restart(lua_State* L) {
+	DM_LUA_STACK_CHECK(L, 1);
+	uint32_t appid = check_uint32(L, 1);
+	int result = SteamAPI_RestartAppIfNecessary(appid);
+	lua_pushboolean(L, result);
+	return 1;
+}
+
 static int Final(lua_State* L) {
 	SteamAPI_Shutdown();
 	return 0;
@@ -714,6 +722,7 @@ static int SetListener(lua_State* L) {
 
 static const luaL_reg Module_methods[] = {
 	{ "init", Init },
+	{ "restart", Restart },
 	{ "update", Update },
 	{ "final", Final },
 	{ "set_listener", SetListener },
