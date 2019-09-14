@@ -36,7 +36,7 @@ The Steamworks API will not initialize if it does not know the App ID of your ga
 	end
 
 ## Using the SteamAPI
-The extension exposes most of the Steamworks functionality through an auto-generated API. Refer to the [API Overview](steamworks/api.md) for a list of all generated functions, constants and callbacks.
+The extension exposes most of the Steamworks functionality through an auto-generated API. Refer to the [API Overview](steamworks/api_ref.md) for a list of all generated functions, constants and callbacks.
 
 * Supported APIs
   * [ISteamApps](https://partner.steamgames.com/doc/api/ISteamApps)

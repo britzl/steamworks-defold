@@ -52,6 +52,10 @@
   * [steamworks.friends_get_friend_from_source_by_index](#friends_get_friend_from_source_by_index)
   * [steamworks.friends_is_user_in_source](#friends_is_user_in_source)
   * [steamworks.friends_set_in_game_voice_speaking](#friends_set_in_game_voice_speaking)
+  * [steamworks.friends_activate_game_overlay](#friends_activate_game_overlay)
+  * [steamworks.friends_activate_game_overlay_to_user](#friends_activate_game_overlay_to_user)
+  * [steamworks.friends_activate_game_overlay_to_web_page](#friends_activate_game_overlay_to_web_page)
+  * [steamworks.friends_activate_game_overlay_to_store](#friends_activate_game_overlay_to_store)
   * [steamworks.friends_set_played_with](#friends_set_played_with)
   * [steamworks.friends_activate_game_overlay_invite_dialog](#friends_activate_game_overlay_invite_dialog)
   * [steamworks.friends_get_small_friend_avatar](#friends_get_small_friend_avatar)
@@ -102,10 +106,12 @@
   * [steamworks.utils_get_cserip_port](#utils_get_cserip_port)
   * [steamworks.utils_get_current_battery_power](#utils_get_current_battery_power)
   * [steamworks.utils_get_app_id](#utils_get_app_id)
+  * [steamworks.utils_set_overlay_notification_position](#utils_set_overlay_notification_position)
   * [steamworks.utils_is_api_call_completed](#utils_is_api_call_completed)
   * [steamworks.utils_get_api_call_failure_reason](#utils_get_api_call_failure_reason)
   * [steamworks.utils_get_api_call_result](#utils_get_api_call_result)
   * [steamworks.utils_get_ipc_call_count](#utils_get_ipc_call_count)
+  * [steamworks.utils_is_overlay_enabled](#utils_is_overlay_enabled)
   * [steamworks.utils_overlay_needs_present](#utils_overlay_needs_present)
   * [steamworks.utils_check_file_signature](#utils_check_file_signature)
   * [steamworks.utils_show_gamepad_text_input](#utils_show_gamepad_text_input)
@@ -809,6 +815,32 @@ The extension exports the following functions:
 * `steamIDUser` (class CSteamID)
 
 
+### <a name="friends_activate_game_overlay"></a>steamworks.friends_activate_game_overlay(pchDialog) - [ISteamFriends#ActivateGameOverlay](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlay)
+
+**PARAMS**
+* `pchDialog` (const char *)
+
+
+### <a name="friends_activate_game_overlay_to_user"></a>steamworks.friends_activate_game_overlay_to_user(pchDialog, steamID) - [ISteamFriends#ActivateGameOverlayToUser](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayToUser)
+
+**PARAMS**
+* `steamID` (class CSteamID)
+* `pchDialog` (const char *)
+
+
+### <a name="friends_activate_game_overlay_to_web_page"></a>steamworks.friends_activate_game_overlay_to_web_page(pchURL) - [ISteamFriends#ActivateGameOverlayToWebPage](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayToWebPage)
+
+**PARAMS**
+* `pchURL` (const char *)
+
+
+### <a name="friends_activate_game_overlay_to_store"></a>steamworks.friends_activate_game_overlay_to_store(nAppID, eFlag) - [ISteamFriends#ActivateGameOverlayToStore](https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayToStore)
+
+**PARAMS**
+* `eFlag` (EOverlayToStoreFlag)
+* `nAppID` (AppId_t)
+
+
 ### <a name="friends_set_played_with"></a>steamworks.friends_set_played_with(steamIDUserPlayedWith) - [ISteamFriends#SetPlayedWith](https://partner.steamgames.com/doc/api/ISteamFriends#SetPlayedWith)
 
 **PARAMS**
@@ -1246,6 +1278,12 @@ The extension exports the following functions:
 * `r` (uint32)
 
 
+### <a name="utils_set_overlay_notification_position"></a>steamworks.utils_set_overlay_notification_position(eNotificationPosition) - [ISteamUtils#SetOverlayNotificationPosition](https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationPosition)
+
+**PARAMS**
+* `eNotificationPosition` (ENotificationPosition)
+
+
 ### <a name="utils_is_api_call_completed"></a>steamworks.utils_is_api_call_completed(hSteamAPICall) - [ISteamUtils#IsAPICallCompleted](https://partner.steamgames.com/doc/api/ISteamUtils#IsAPICallCompleted)
 
 **PARAMS**
@@ -1283,6 +1321,13 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` (uint32)
+
+
+### <a name="utils_is_overlay_enabled"></a>steamworks.utils_is_overlay_enabled() - [ISteamUtils#IsOverlayEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#IsOverlayEnabled)
+
+
+**RETURN**
+* `r` (bool)
 
 
 ### <a name="utils_overlay_needs_present"></a>steamworks.utils_overlay_needs_present() - [ISteamUtils#BOverlayNeedsPresent](https://partner.steamgames.com/doc/api/ISteamUtils#BOverlayNeedsPresent)

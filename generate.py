@@ -15,7 +15,7 @@ def to_snake_case(name):
 def parse_methods(methods):
     INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking", "ISteamApps", "ISteamMusic", "ISteamRemoteStorage", "ISteamInventory", "ISteamUGC"]
     DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection", "CommitPublishedFileUpdate", "CreatePublishedFileUpdateRequest", "DeletePublishedFile", "EnumeratePublishedFilesByUserAction", "EnumeratePublishedWorkshopFiles", "EnumerateUserPublishedFiles", "EnumerateUserSharedWorkshopFiles", "EnumerateUserSubscribedFiles", "FileFetch", "FilePersist", "GetFileListFromServer", "GetPublishedFileDetails", "GetPublishedItemVoteDetails", "GetUserPublishedItemVoteDetails", "PublishVideo", "PublishWorkshopFile", "ResetFileRequestState", "SetUserPublishedFileAction", "SubscribePublishedFile", "SynchronizeToClient", "SynchronizeToServer", "UnsubscribePublishedFile", "UpdatePublishedFileDescription", "UpdatePublishedFileFile", "UpdatePublishedFilePreviewFile", "UpdatePublishedFileSetChangeDescription", "UpdatePublishedFileTags", "UpdatePublishedFileTitle", "UpdatePublishedFileVisibility", "UpdateUserPublishedItemVote"]
-    SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook", "ActivateGameOverlay", "ActivateGameOverlayToUser", "ActivateGameOverlayToWebPage", "ActivateGameOverlayToStore", "SetOverlayNotificationPosition", "IsOverlayEnabled"]
+    SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook"]
     m = []
     for method in methods:
         classname = method.get("classname")
@@ -248,10 +248,16 @@ def generate():
         with codecs.open("steamworks/src/extension.cpp", 'wb' "utf-8") as f:
             f.write(HTMLParser.HTMLParser().unescape(result))
 
-    with open("api.mtl", 'r') as f:
+    with open("api_ref.mtl", 'r') as f:
         docs_mtl = f.read()
         result = pystache.render(docs_mtl, j)
-        with codecs.open("steamworks/api.md", 'wb' "utf-8") as f:
+        with codecs.open("steamworks/api_ref.md", 'wb' "utf-8") as f:
+            f.write(HTMLParser.HTMLParser().unescape(result))
+
+    with open("script_api.mtl", 'r') as f:
+        docs_mtl = f.read()
+        result = pystache.render(docs_mtl, j)
+        with codecs.open("steamworks/api/steamworks.script_api", 'wb' "utf-8") as f:
             f.write(HTMLParser.HTMLParser().unescape(result))
 
 
