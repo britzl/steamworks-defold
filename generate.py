@@ -248,10 +248,16 @@ def generate():
         with codecs.open("steamworks/src/extension.cpp", 'wb' "utf-8") as f:
             f.write(HTMLParser.HTMLParser().unescape(result))
 
-    with open("api.mtl", 'r') as f:
+    with open("api_ref.mtl", 'r') as f:
         docs_mtl = f.read()
         result = pystache.render(docs_mtl, j)
-        with codecs.open("steamworks/api.md", 'wb' "utf-8") as f:
+        with codecs.open("steamworks/api_ref.md", 'wb' "utf-8") as f:
+            f.write(HTMLParser.HTMLParser().unescape(result))
+
+    with open("script_api.mtl", 'r') as f:
+        docs_mtl = f.read()
+        result = pystache.render(docs_mtl, j)
+        with codecs.open("steamworks/api/steamworks.script_api", 'wb' "utf-8") as f:
             f.write(HTMLParser.HTMLParser().unescape(result))
 
 

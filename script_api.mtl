@@ -1,0 +1,60 @@
+- name: steamworks
+  type: table
+  desc: Functions and constants for interacting with the Steamworks SDK
+
+  members:
+
+{{#methods}}
+    - name: {{classname_lower}}_{{methodname_lower}}
+      type: function
+      desc: https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}}
+
+      {{#hasparams}}
+      parameters:
+      {{/hasparams}}
+      {{#params}}
+        {{#normal_param}}
+        - name: {{paramname}}
+          type: {{paramtype}}
+        {{/normal_param}}
+        {{#out_struct}}
+        - name: {{paramname}}
+          type: {{paramtype}}
+        {{/out_struct}}
+        {{#array_count_param}}
+        - name: {{paramname}}
+          type: number
+        {{/array_count_param}}
+        {{#array_count}}
+        - name: {{paramname}}
+          type: table
+        {{/array_count}}
+        {{#buffer_param}}
+        - name: {{paramname}}
+          type: buffer
+        {{/buffer_param}}
+      {{/params}}
+
+      {{#hasreturntype}}
+      {{^steamapicall}}
+      returns:
+      - name: r
+        type: {{returntypestring}}
+        desc:
+      {{/steamapicall}}
+      {{/hasreturntype}}
+{{/methods}}
+
+{{#callbacks}}
+    - name: {{callback}}
+      type: callback
+{{/callbacks}}
+
+
+{{#enums}}
+{{#values}}
+    - name: {{name}}
+      type: number
+      desc: {{value}}
+{{/values}}
+{{/enums}}
