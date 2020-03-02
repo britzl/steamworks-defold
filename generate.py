@@ -6,10 +6,28 @@ import json
 import codecs
 import HTMLParser
 
+INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
 
 def to_snake_case(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
     return re.sub('([a-z])([A-Z])', r'\1_\2', s1).lower()
+
+
+def paramtype_to_lua(type):
+    if "struct" in type and "*" in type:
+        return "table"
+    elif type.replace(" *", "").replace("const ", "") in INTEGERS:
+        return "number"
+    elif type.replace(" *", "").endswith("_t"):
+        return "number"
+    elif ("CSteamID" in type) or ("uint64" in type) or ("int64" in type):
+        return "string"
+    elif type.replace(" *", "") == "bool":
+        return "boolean"
+    elif type.replace(" *", "") == "float":
+        return "number"
+    else:
+        return type.replace(" *", "")
 
 
 def parse_methods(methods):
@@ -32,6 +50,8 @@ def parse_methods(methods):
             if method["methodname_lower"].startswith("b_"):
                 method["methodname_lower"] = method["methodname_lower"].replace("b_", "")
 
+            method["params_in"] = []
+            method["params_out"] = []
             method["paramnames"] = []
             method["paramnames_in"] = []
             method["paramcount_out"] = 0
@@ -56,9 +76,11 @@ def parse_methods(methods):
                     # An array that will be populated with data by the method
                     # The size of the array is specified by another parameter
                     elif param.get("out_array_count") is not None:
+                        param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
                         param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
+                        param["paramtypelua"] = paramtype_to_lua(paramtype)
                         p.append(param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
@@ -76,44 +98,52 @@ def parse_methods(methods):
                         method["paramnames"].append(paramname)
                     # An array of data with a length specified by another parameter
                     elif param.get("array_count") is not None:
+                        param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
+                        param["paramtypelua"] = paramtype_to_lua(paramtype)
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A "data blob" input parameter
                     elif "const char *" in paramtype or "const void *" in paramtype:
                         param["normal_param"] = True
+                        param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_")
+                        param["paramtypelua"] = "string"
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
                     # In this case we treat it as a Defold buffer
                     elif "char *" in paramtype or "void *" in paramtype or "uint8 *" in paramtype:
-                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["buffer_param"] = True
-                        # param["paramtype"] = paramtype.replace("void *", "dmScript::LuaHBuffer *")
-                        # param["paramtype"] = paramtype.replace("void *", "uint8 *")
+                        param["in_param"] = True
+                        param["paramindex"] = len(method["paramnames_in"]) + 1
+                        param["paramtypelua"] = "string"
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
                     elif "char *" in paramtype or "void *" in paramtype or "uint8 *" in paramtype:
-                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["out_param"] = True
+                        param["in_param"] = True
+                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypestring"] = paramtype.replace(" *", "_ptr")
+                        param["paramtypelua"] = "string"
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
                     # A parameter that the method writes a return value to
                     elif " *" in paramtype and "const" not in paramtype:
-                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["out_param"] = True
+                        param["in_param"] = True
+                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
                         param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
+                        param["paramtypelua"] = paramtype_to_lua(paramtype)
                         p.insert(0, param)
                         method["paramnames"].append("&" + paramname)
                         method["paramnames_in"].append(paramname)
@@ -125,11 +155,18 @@ def parse_methods(methods):
                         method["paramnames"].append(paramname)
                     else:
                         param["normal_param"] = True
+                        param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
+                        param["paramtypelua"] = paramtype_to_lua(paramtype)
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
+
+                    if param.get("in_param"):
+                        method["params_in"].append(param)
+                    if param.get("out_param"):
+                        method["params_out"].append(param)
                 method["params"] = p
             else:
                 method["paramcount"] = 0
@@ -164,7 +201,6 @@ def parse_enums(enums):
 
 def parse_typedefs(typedefs):
     DEPRECATED_TYPEDEFS = ["PublishedFileUpdateHandle_t"]
-    INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
     t = {}
     int = []
     int64 = []

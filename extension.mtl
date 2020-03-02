@@ -410,7 +410,7 @@ static int64 check_int64(lua_State* L, int index) {
 		const char * s = luaL_checkstring(L, index);
 		return strtoll(s, NULL, 10);
 	}
-	return 0;	
+	return 0;
 }
 static void check_uint64_array(lua_State* L, int index, uint64 * arr, unsigned int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
