@@ -21,6 +21,7 @@ def parse_methods(methods):
         classname = method.get("classname")
         methodname = method.get("methodname")
         methodalias = method.get("methodalias")
+        methodparams = method.get("params")
         if classname in INCLUDED_CLASSES and methodname not in DEPRECATED_METHODS and methodname not in SKIP_METHODS:
             method["classname_lower"] = to_snake_case(classname.replace("ISteam", "")).lower()
             if methodalias:
@@ -34,11 +35,11 @@ def parse_methods(methods):
             method["paramnames"] = []
             method["paramnames_in"] = []
             method["paramcount_out"] = 0
-            if method.get("params") is not None:
-                method["paramcount"] = len(method.get("params"))
+            if methodparams is not None:
+                method["paramcount"] = len(methodparams)
                 p = []
                 out_array_call_params = []
-                for param in method.get("params"):
+                for param in methodparams:
                     paramname = param.get("paramname")
                     paramtype = param.get("paramtype")
                     # A struct that will be populated with data by the method
@@ -55,10 +56,12 @@ def parse_methods(methods):
                     # An array that will be populated with data by the method
                     # The size of the array is specified by another parameter
                     elif param.get("out_array_count") is not None:
+                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
                         param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
                         p.append(param)
                         method["paramnames"].append(paramname)
+                        method["paramnames_in"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
                     # An array to be populated by the method
                     # The size of the array is retrieved through a separate function call
@@ -98,18 +101,22 @@ def parse_methods(methods):
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
                     elif "char *" in paramtype or "void *" in paramtype or "uint8 *" in paramtype:
+                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["out_param"] = True
                         param["paramtypestring"] = paramtype.replace(" *", "_ptr")
                         p.insert(0, param)
                         method["paramnames"].append(paramname)
+                        method["paramnames_in"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
                     # A parameter that the method writes a return value to
                     elif " *" in paramtype and "const" not in paramtype:
+                        param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["out_param"] = True
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
                         param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
                         p.insert(0, param)
                         method["paramnames"].append("&" + paramname)
+                        method["paramnames_in"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
                     # A parameter that an "out_array_call" will write to
                     elif paramname in out_array_call_params:
@@ -129,7 +136,7 @@ def parse_methods(methods):
 
             method["paramnames"] = ", ".join(method["paramnames"])
             method["paramnames_in"] = ", ".join(method["paramnames_in"])
-            method["hasparams"] = method.get("params") is not None
+            method["hasparams"] = methodparams is not None
             method["hasreturntype"] = method.get("returntype") != "void"
             returntype = method.get("returntype")
             if returntype is not None:
