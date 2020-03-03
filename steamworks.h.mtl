@@ -1,0 +1,105 @@
+// GENERATED CODE - DO NOT MODIFY
+// Copyright 2016 Bjorn Ritzl
+
+#ifndef STEAMWORKS_DEFOLD_H
+#define STEAMWORKS_DEFOLD_H
+
+#include <dmsdk/sdk.h>
+
+#if defined(DM_PLATFORM_OSX) || defined(DM_PLATFORM_WINDOWS) || defined(DM_PLATFORM_LINUX)
+
+#include <stdlib.h>
+#include <stdio.h>
+#include "steam_api.h"
+#include "steam_gameserver.h"
+
+static void push_double(lua_State* L, double n);
+static void push_float(lua_State* L, float n);
+static void push_float_array(lua_State* L, float arr[], unsigned int size);
+static void push_int(lua_State* L, int n);
+static void push_int_array(lua_State* L, int arr[], unsigned int size);
+static void push_unsigned_int(lua_State* L, unsigned int n);
+static void push_unsigned_int_array(lua_State* L, unsigned int arr[], unsigned int size);
+static void push_bool(lua_State* L, bool b);
+static void push_char_array(lua_State* L, char ca[], unsigned int size);
+static void push_const_char_ptr(lua_State* L, const char * s);
+static void push_char_ptr(lua_State* L, char * s);
+{{#typedefs.int}}static void push_{{typedef}}(lua_State* L, {{type}} n);
+static void push_{{typedef}}_array(lua_State* L, {{type}} arr[], unsigned int size);
+{{/typedefs.int}}
+
+static void push_int64(lua_State* L, int64 n);
+static void push_int64_array(lua_State* L, int64 arr[], unsigned int size);
+{{#typedefs.int64}}static void push_{{typedef}}(lua_State* L, {{typedef}} n);
+static void push_{{typedef}}_array(lua_State* L, {{typedef}} arr[], unsigned int size);
+{{/typedefs.int64}}static void push_uint64(lua_State* L, uint64 n);
+static void push_uint64_array(lua_State* L, uint64 arr[], unsigned int size);
+{{#typedefs.uint64}}static void push_{{typedef}}(lua_State* L, {{typedef}} n);
+static void push_{{typedef}}_array(lua_State* L, {{typedef}} arr[], unsigned int size);
+{{/typedefs.uint64}}
+
+{{#enums}}static void push_{{enumname}}(lua_State* L, {{enumname}} n);
+{{/enums}}
+
+static void push_CSteamID(lua_State* L, CSteamID steamId);
+static void push_class_CSteamID(lua_State* L, CSteamID steamId);
+static void push_CSteamID_array(lua_State* L, CSteamID steamId[], unsigned int size);
+
+static void push_CGameID(lua_State* L, CGameID gameId);
+
+static void push_servernetadr_t(lua_State* L, servernetadr_t s);
+static void push_gameserveritem_t(lua_State* L, gameserveritem_t s);
+static void push_SteamParamStringArray_t(lua_State* L, SteamParamStringArray_t s);
+{{#structs}}static void push_{{name}}(lua_State* L, {{name}} s);
+static void push_{{name}}_array(lua_State* L, {{name}} arr[], unsigned int size);
+{{/structs}}
+
+
+static lua_Number check_int(lua_State* L, int index);
+static lua_Number check_bool(lua_State* L, int index);
+static lua_Number check_float(lua_State* L, int index);
+static void check_float_array(lua_State* L, int index, float * arr, unsigned int size);
+static lua_Number check_double(lua_State* L, int index);
+{{#typedefs.int}}static {{typedef}} check_{{typedef}}(lua_State* L, int index);
+static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size);
+{{/typedefs.int}}
+
+static const char * check_const_char_ptr(lua_State* L, int index);
+static char * check_char_ptr(lua_State* L, int index);
+static const void * check_const_void_ptr(lua_State* L, int index);
+static void * check_void_ptr(lua_State* L, int index);
+static void check_char_array(lua_State* L, int index, char* dest, unsigned int size);
+static uint64 check_uint64(lua_State* L, int index);
+static int64 check_int64(lua_State* L, int index);
+static void check_uint64_array(lua_State* L, int index, uint64 * arr, unsigned int size);
+{{#typedefs.uint64}}
+static {{typedef}} check_{{typedef}}(lua_State* L, int index);
+static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size);
+{{/typedefs.uint64}}
+{{#typedefs.int64}}
+static {{typedef}} check_{{typedef}}(lua_State* L, int index);
+static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size);
+{{/typedefs.int64}}
+
+{{#enums}}static {{enumname}} check_{{enumname}}(lua_State* L, int index);
+{{/enums}}
+
+static dmScript::LuaHBuffer * check_buffer(lua_State* L, int index);
+static CSteamID check_CSteamID(lua_State* L, int index);
+static CSteamID check_class_CSteamID(lua_State* L, int index);
+static void check_CSteamID_array(lua_State* L, int index, CSteamID *ids, int size);
+static CGameID check_CGameID(lua_State* L, int index);
+static servernetadr_t check_servernetadr_t(lua_State* L, int index);
+static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_State* L, int index);
+
+{{#structs}}
+static {{struct}} check_{{name}}(lua_State* L, int index);
+static void check_{{name}}_array(lua_State* L, int index, {{struct}} *s, int size);
+{{/structs}}
+
+{{#methods}}static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^methodalias}}{{methodname}}{{/methodalias}}(lua_State* L);
+{{/methods}}
+
+#endif // platforms
+
+#endif // STEAMWORKS_DEFOLD_H

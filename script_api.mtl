@@ -8,33 +8,13 @@
     - name: {{classname_lower}}_{{methodname_lower}}
       type: function
       desc: https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}}
-
       {{#hasparams}}
       parameters:
       {{/hasparams}}
-      {{#params}}
-        {{#normal_param}}
-        - name: {{paramname}}
-          type: {{paramtype}}
-        {{/normal_param}}
-        {{#out_struct}}
-        - name: {{paramname}}
-          type: {{paramtype}}
-        {{/out_struct}}
-        {{#array_count_param}}
-        - name: {{paramname}}
-          type: number
-        {{/array_count_param}}
-        {{#array_count}}
-        - name: {{paramname}}
-          type: table
-        {{/array_count}}
-        {{#buffer_param}}
-        - name: {{paramname}}
-          type: buffer
-        {{/buffer_param}}
-      {{/params}}
-
+      {{#params_in}}
+      - name: {{paramname}}
+        type: {{paramtypelua}}
+      {{/params_in}}
       {{#hasreturntype}}
       {{^steamapicall}}
       returns:
@@ -43,6 +23,7 @@
         desc:
       {{/steamapicall}}
       {{/hasreturntype}}
+
 {{/methods}}
 
 {{#callbacks}}

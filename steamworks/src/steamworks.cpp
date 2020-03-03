@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "steamworks.h"
 #include "steam_api.h"
 #include "steam_gameserver.h"
 #include "luautils.h"
@@ -4080,15 +4081,30 @@ static void push_GSStatsUnloaded_t_array(lua_State* L, GSStatsUnloaded_t arr[], 
 * CHECK primitives
 ******************************/
 static lua_Number check_int(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return luaL_checknumber(L, index);
+	}
+	return 0;
 }
 static lua_Number check_bool(lua_State* L, int index) {
-	return lua_toboolean(L, index);
+	if(lua_isnumber(L, index)) {
+		return lua_toboolean(L, index);
+	}
+	return 0;
 }
 static lua_Number check_float(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return luaL_checknumber(L, index);
+	}
+	return 0;
 }
 static void check_float_array(lua_State* L, int index, float * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4106,9 +4122,18 @@ static lua_Number check_double(lua_State* L, int index) {
 	return luaL_checknumber(L, index);
 }
 static uint8 check_uint8(lua_State* L, int index) {
-	return (uint8)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (uint8)luaL_checknumber(L, index);
+	}
+	return (uint8)0;
 }
 static void check_uint8_array(lua_State* L, int index, uint8 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4123,9 +4148,18 @@ static void check_uint8_array(lua_State* L, int index, uint8 * arr, unsigned int
 	}
 }
 static int8 check_int8(lua_State* L, int index) {
-	return (int8)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (int8)luaL_checknumber(L, index);
+	}
+	return (int8)0;
 }
 static void check_int8_array(lua_State* L, int index, int8 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4140,9 +4174,18 @@ static void check_int8_array(lua_State* L, int index, int8 * arr, unsigned int s
 	}
 }
 static int16 check_int16(lua_State* L, int index) {
-	return (int16)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (int16)luaL_checknumber(L, index);
+	}
+	return (int16)0;
 }
 static void check_int16_array(lua_State* L, int index, int16 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4157,9 +4200,18 @@ static void check_int16_array(lua_State* L, int index, int16 * arr, unsigned int
 	}
 }
 static uint16 check_uint16(lua_State* L, int index) {
-	return (uint16)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (uint16)luaL_checknumber(L, index);
+	}
+	return (uint16)0;
 }
 static void check_uint16_array(lua_State* L, int index, uint16 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4174,9 +4226,18 @@ static void check_uint16_array(lua_State* L, int index, uint16 * arr, unsigned i
 	}
 }
 static int32 check_int32(lua_State* L, int index) {
-	return (int32)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (int32)luaL_checknumber(L, index);
+	}
+	return (int32)0;
 }
 static void check_int32_array(lua_State* L, int index, int32 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4191,9 +4252,18 @@ static void check_int32_array(lua_State* L, int index, int32 * arr, unsigned int
 	}
 }
 static uint32 check_uint32(lua_State* L, int index) {
-	return (uint32)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (uint32)luaL_checknumber(L, index);
+	}
+	return (uint32)0;
 }
 static void check_uint32_array(lua_State* L, int index, uint32 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4208,9 +4278,18 @@ static void check_uint32_array(lua_State* L, int index, uint32 * arr, unsigned i
 	}
 }
 static PackageId_t check_PackageId_t(lua_State* L, int index) {
-	return (PackageId_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (PackageId_t)luaL_checknumber(L, index);
+	}
+	return (PackageId_t)0;
 }
 static void check_PackageId_t_array(lua_State* L, int index, PackageId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4225,9 +4304,18 @@ static void check_PackageId_t_array(lua_State* L, int index, PackageId_t * arr, 
 	}
 }
 static BundleId_t check_BundleId_t(lua_State* L, int index) {
-	return (BundleId_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (BundleId_t)luaL_checknumber(L, index);
+	}
+	return (BundleId_t)0;
 }
 static void check_BundleId_t_array(lua_State* L, int index, BundleId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4242,9 +4330,18 @@ static void check_BundleId_t_array(lua_State* L, int index, BundleId_t * arr, un
 	}
 }
 static AppId_t check_AppId_t(lua_State* L, int index) {
-	return (AppId_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (AppId_t)luaL_checknumber(L, index);
+	}
+	return (AppId_t)0;
 }
 static void check_AppId_t_array(lua_State* L, int index, AppId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4259,9 +4356,18 @@ static void check_AppId_t_array(lua_State* L, int index, AppId_t * arr, unsigned
 	}
 }
 static PhysicalItemId_t check_PhysicalItemId_t(lua_State* L, int index) {
-	return (PhysicalItemId_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (PhysicalItemId_t)luaL_checknumber(L, index);
+	}
+	return (PhysicalItemId_t)0;
 }
 static void check_PhysicalItemId_t_array(lua_State* L, int index, PhysicalItemId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4276,9 +4382,18 @@ static void check_PhysicalItemId_t_array(lua_State* L, int index, PhysicalItemId
 	}
 }
 static DepotId_t check_DepotId_t(lua_State* L, int index) {
-	return (DepotId_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (DepotId_t)luaL_checknumber(L, index);
+	}
+	return (DepotId_t)0;
 }
 static void check_DepotId_t_array(lua_State* L, int index, DepotId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4293,9 +4408,18 @@ static void check_DepotId_t_array(lua_State* L, int index, DepotId_t * arr, unsi
 	}
 }
 static RTime32 check_RTime32(lua_State* L, int index) {
-	return (RTime32)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (RTime32)luaL_checknumber(L, index);
+	}
+	return (RTime32)0;
 }
 static void check_RTime32_array(lua_State* L, int index, RTime32 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4310,9 +4434,18 @@ static void check_RTime32_array(lua_State* L, int index, RTime32 * arr, unsigned
 	}
 }
 static CellID_t check_CellID_t(lua_State* L, int index) {
-	return (CellID_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (CellID_t)luaL_checknumber(L, index);
+	}
+	return (CellID_t)0;
 }
 static void check_CellID_t_array(lua_State* L, int index, CellID_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4327,9 +4460,18 @@ static void check_CellID_t_array(lua_State* L, int index, CellID_t * arr, unsign
 	}
 }
 static AccountID_t check_AccountID_t(lua_State* L, int index) {
-	return (AccountID_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (AccountID_t)luaL_checknumber(L, index);
+	}
+	return (AccountID_t)0;
 }
 static void check_AccountID_t_array(lua_State* L, int index, AccountID_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4344,9 +4486,18 @@ static void check_AccountID_t_array(lua_State* L, int index, AccountID_t * arr, 
 	}
 }
 static PartnerId_t check_PartnerId_t(lua_State* L, int index) {
-	return (PartnerId_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (PartnerId_t)luaL_checknumber(L, index);
+	}
+	return (PartnerId_t)0;
 }
 static void check_PartnerId_t_array(lua_State* L, int index, PartnerId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4361,9 +4512,18 @@ static void check_PartnerId_t_array(lua_State* L, int index, PartnerId_t * arr, 
 	}
 }
 static HAuthTicket check_HAuthTicket(lua_State* L, int index) {
-	return (HAuthTicket)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (HAuthTicket)luaL_checknumber(L, index);
+	}
+	return (HAuthTicket)0;
 }
 static void check_HAuthTicket_array(lua_State* L, int index, HAuthTicket * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4378,9 +4538,18 @@ static void check_HAuthTicket_array(lua_State* L, int index, HAuthTicket * arr, 
 	}
 }
 static HSteamPipe check_HSteamPipe(lua_State* L, int index) {
-	return (HSteamPipe)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (HSteamPipe)luaL_checknumber(L, index);
+	}
+	return (HSteamPipe)0;
 }
 static void check_HSteamPipe_array(lua_State* L, int index, HSteamPipe * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4395,9 +4564,18 @@ static void check_HSteamPipe_array(lua_State* L, int index, HSteamPipe * arr, un
 	}
 }
 static HSteamUser check_HSteamUser(lua_State* L, int index) {
-	return (HSteamUser)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (HSteamUser)luaL_checknumber(L, index);
+	}
+	return (HSteamUser)0;
 }
 static void check_HSteamUser_array(lua_State* L, int index, HSteamUser * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4412,9 +4590,18 @@ static void check_HSteamUser_array(lua_State* L, int index, HSteamUser * arr, un
 	}
 }
 static FriendsGroupID_t check_FriendsGroupID_t(lua_State* L, int index) {
-	return (FriendsGroupID_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (FriendsGroupID_t)luaL_checknumber(L, index);
+	}
+	return (FriendsGroupID_t)0;
 }
 static void check_FriendsGroupID_t_array(lua_State* L, int index, FriendsGroupID_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4429,9 +4616,18 @@ static void check_FriendsGroupID_t_array(lua_State* L, int index, FriendsGroupID
 	}
 }
 static HServerQuery check_HServerQuery(lua_State* L, int index) {
-	return (HServerQuery)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (HServerQuery)luaL_checknumber(L, index);
+	}
+	return (HServerQuery)0;
 }
 static void check_HServerQuery_array(lua_State* L, int index, HServerQuery * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4446,9 +4642,18 @@ static void check_HServerQuery_array(lua_State* L, int index, HServerQuery * arr
 	}
 }
 static SNetSocket_t check_SNetSocket_t(lua_State* L, int index) {
-	return (SNetSocket_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (SNetSocket_t)luaL_checknumber(L, index);
+	}
+	return (SNetSocket_t)0;
 }
 static void check_SNetSocket_t_array(lua_State* L, int index, SNetSocket_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4463,9 +4668,18 @@ static void check_SNetSocket_t_array(lua_State* L, int index, SNetSocket_t * arr
 	}
 }
 static SNetListenSocket_t check_SNetListenSocket_t(lua_State* L, int index) {
-	return (SNetListenSocket_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (SNetListenSocket_t)luaL_checknumber(L, index);
+	}
+	return (SNetListenSocket_t)0;
 }
 static void check_SNetListenSocket_t_array(lua_State* L, int index, SNetListenSocket_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4480,9 +4694,18 @@ static void check_SNetListenSocket_t_array(lua_State* L, int index, SNetListenSo
 	}
 }
 static ScreenshotHandle check_ScreenshotHandle(lua_State* L, int index) {
-	return (ScreenshotHandle)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (ScreenshotHandle)luaL_checknumber(L, index);
+	}
+	return (ScreenshotHandle)0;
 }
 static void check_ScreenshotHandle_array(lua_State* L, int index, ScreenshotHandle * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4497,9 +4720,18 @@ static void check_ScreenshotHandle_array(lua_State* L, int index, ScreenshotHand
 	}
 }
 static HTTPRequestHandle check_HTTPRequestHandle(lua_State* L, int index) {
-	return (HTTPRequestHandle)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (HTTPRequestHandle)luaL_checknumber(L, index);
+	}
+	return (HTTPRequestHandle)0;
 }
 static void check_HTTPRequestHandle_array(lua_State* L, int index, HTTPRequestHandle * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4514,9 +4746,18 @@ static void check_HTTPRequestHandle_array(lua_State* L, int index, HTTPRequestHa
 	}
 }
 static HTTPCookieContainerHandle check_HTTPCookieContainerHandle(lua_State* L, int index) {
-	return (HTTPCookieContainerHandle)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (HTTPCookieContainerHandle)luaL_checknumber(L, index);
+	}
+	return (HTTPCookieContainerHandle)0;
 }
 static void check_HTTPCookieContainerHandle_array(lua_State* L, int index, HTTPCookieContainerHandle * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4531,9 +4772,18 @@ static void check_HTTPCookieContainerHandle_array(lua_State* L, int index, HTTPC
 	}
 }
 static HHTMLBrowser check_HHTMLBrowser(lua_State* L, int index) {
-	return (HHTMLBrowser)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (HHTMLBrowser)luaL_checknumber(L, index);
+	}
+	return (HHTMLBrowser)0;
 }
 static void check_HHTMLBrowser_array(lua_State* L, int index, HHTMLBrowser * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4548,9 +4798,18 @@ static void check_HHTMLBrowser_array(lua_State* L, int index, HHTMLBrowser * arr
 	}
 }
 static SteamItemDef_t check_SteamItemDef_t(lua_State* L, int index) {
-	return (SteamItemDef_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (SteamItemDef_t)luaL_checknumber(L, index);
+	}
+	return (SteamItemDef_t)0;
 }
 static void check_SteamItemDef_t_array(lua_State* L, int index, SteamItemDef_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4565,9 +4824,18 @@ static void check_SteamItemDef_t_array(lua_State* L, int index, SteamItemDef_t *
 	}
 }
 static SteamInventoryResult_t check_SteamInventoryResult_t(lua_State* L, int index) {
-	return (SteamInventoryResult_t)luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return (SteamInventoryResult_t)luaL_checknumber(L, index);
+	}
+	return (SteamInventoryResult_t)0;
 }
 static void check_SteamInventoryResult_t_array(lua_State* L, int index, SteamInventoryResult_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4607,17 +4875,49 @@ static void check_char_array(lua_State* L, int index, char* dest, unsigned int s
 * CHECK (u)int64 (from string)
 ******************************/
 static uint64 check_uint64(lua_State* L, int index) {
-	const char * s = luaL_checkstring(L, index);
-	return strtoull(s, NULL, 10);
+	if(lua_isstring(L, index)) {
+		const char * s = luaL_checkstring(L, index);
+		return strtoull(s, NULL, 10);
+	}
+	return 0;
 }
 static int64 check_int64(lua_State* L, int index) {
-	const char * s = luaL_checkstring(L, index);
-	return strtoll(s, NULL, 10);
+	if(lua_isstring(L, index)) {
+		const char * s = luaL_checkstring(L, index);
+		return strtoll(s, NULL, 10);
+	}
+	return 0;
+}
+static void check_uint64_array(lua_State* L, int index, uint64 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_uint64(L, -1);
+	}
 }
 static ulint64 check_ulint64(lua_State* L, int index) {
 	return (ulint64)check_uint64(L, index);
 }
 static void check_ulint64_array(lua_State* L, int index, ulint64 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4635,6 +4935,12 @@ static GID_t check_GID_t(lua_State* L, int index) {
 	return (GID_t)check_uint64(L, index);
 }
 static void check_GID_t_array(lua_State* L, int index, GID_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4652,6 +4958,12 @@ static JobID_t check_JobID_t(lua_State* L, int index) {
 	return (JobID_t)check_uint64(L, index);
 }
 static void check_JobID_t_array(lua_State* L, int index, JobID_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4669,6 +4981,12 @@ static AssetClassId_t check_AssetClassId_t(lua_State* L, int index) {
 	return (AssetClassId_t)check_uint64(L, index);
 }
 static void check_AssetClassId_t_array(lua_State* L, int index, AssetClassId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4686,6 +5004,12 @@ static SteamAPICall_t check_SteamAPICall_t(lua_State* L, int index) {
 	return (SteamAPICall_t)check_uint64(L, index);
 }
 static void check_SteamAPICall_t_array(lua_State* L, int index, SteamAPICall_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4703,6 +5027,12 @@ static ManifestId_t check_ManifestId_t(lua_State* L, int index) {
 	return (ManifestId_t)check_uint64(L, index);
 }
 static void check_ManifestId_t_array(lua_State* L, int index, ManifestId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4720,6 +5050,12 @@ static SiteId_t check_SiteId_t(lua_State* L, int index) {
 	return (SiteId_t)check_uint64(L, index);
 }
 static void check_SiteId_t_array(lua_State* L, int index, SiteId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4737,6 +5073,12 @@ static UGCHandle_t check_UGCHandle_t(lua_State* L, int index) {
 	return (UGCHandle_t)check_uint64(L, index);
 }
 static void check_UGCHandle_t_array(lua_State* L, int index, UGCHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4754,6 +5096,12 @@ static PublishedFileUpdateHandle_t check_PublishedFileUpdateHandle_t(lua_State* 
 	return (PublishedFileUpdateHandle_t)check_uint64(L, index);
 }
 static void check_PublishedFileUpdateHandle_t_array(lua_State* L, int index, PublishedFileUpdateHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4771,6 +5119,12 @@ static PublishedFileId_t check_PublishedFileId_t(lua_State* L, int index) {
 	return (PublishedFileId_t)check_uint64(L, index);
 }
 static void check_PublishedFileId_t_array(lua_State* L, int index, PublishedFileId_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4788,6 +5142,12 @@ static UGCFileWriteStreamHandle_t check_UGCFileWriteStreamHandle_t(lua_State* L,
 	return (UGCFileWriteStreamHandle_t)check_uint64(L, index);
 }
 static void check_UGCFileWriteStreamHandle_t_array(lua_State* L, int index, UGCFileWriteStreamHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4805,6 +5165,12 @@ static SteamLeaderboard_t check_SteamLeaderboard_t(lua_State* L, int index) {
 	return (SteamLeaderboard_t)check_uint64(L, index);
 }
 static void check_SteamLeaderboard_t_array(lua_State* L, int index, SteamLeaderboard_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4822,6 +5188,12 @@ static SteamLeaderboardEntries_t check_SteamLeaderboardEntries_t(lua_State* L, i
 	return (SteamLeaderboardEntries_t)check_uint64(L, index);
 }
 static void check_SteamLeaderboardEntries_t_array(lua_State* L, int index, SteamLeaderboardEntries_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4839,6 +5211,12 @@ static ControllerHandle_t check_ControllerHandle_t(lua_State* L, int index) {
 	return (ControllerHandle_t)check_uint64(L, index);
 }
 static void check_ControllerHandle_t_array(lua_State* L, int index, ControllerHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4856,6 +5234,12 @@ static ControllerActionSetHandle_t check_ControllerActionSetHandle_t(lua_State* 
 	return (ControllerActionSetHandle_t)check_uint64(L, index);
 }
 static void check_ControllerActionSetHandle_t_array(lua_State* L, int index, ControllerActionSetHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4873,6 +5257,12 @@ static ControllerDigitalActionHandle_t check_ControllerDigitalActionHandle_t(lua
 	return (ControllerDigitalActionHandle_t)check_uint64(L, index);
 }
 static void check_ControllerDigitalActionHandle_t_array(lua_State* L, int index, ControllerDigitalActionHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4890,6 +5280,12 @@ static ControllerAnalogActionHandle_t check_ControllerAnalogActionHandle_t(lua_S
 	return (ControllerAnalogActionHandle_t)check_uint64(L, index);
 }
 static void check_ControllerAnalogActionHandle_t_array(lua_State* L, int index, ControllerAnalogActionHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4907,6 +5303,12 @@ static UGCQueryHandle_t check_UGCQueryHandle_t(lua_State* L, int index) {
 	return (UGCQueryHandle_t)check_uint64(L, index);
 }
 static void check_UGCQueryHandle_t_array(lua_State* L, int index, UGCQueryHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4924,6 +5326,12 @@ static UGCUpdateHandle_t check_UGCUpdateHandle_t(lua_State* L, int index) {
 	return (UGCUpdateHandle_t)check_uint64(L, index);
 }
 static void check_UGCUpdateHandle_t_array(lua_State* L, int index, UGCUpdateHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4941,6 +5349,12 @@ static SteamItemInstanceID_t check_SteamItemInstanceID_t(lua_State* L, int index
 	return (SteamItemInstanceID_t)check_uint64(L, index);
 }
 static void check_SteamItemInstanceID_t_array(lua_State* L, int index, SteamItemInstanceID_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4958,6 +5372,12 @@ static SteamInventoryUpdateHandle_t check_SteamInventoryUpdateHandle_t(lua_State
 	return (SteamInventoryUpdateHandle_t)check_uint64(L, index);
 }
 static void check_SteamInventoryUpdateHandle_t_array(lua_State* L, int index, SteamInventoryUpdateHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -4975,6 +5395,12 @@ static lint64 check_lint64(lua_State* L, int index) {
 	return (lint64)check_int64(L, index);
 }
 static void check_lint64_array(lua_State* L, int index, lint64 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -5216,6 +5642,12 @@ static CSteamID check_class_CSteamID(lua_State* L, int index) {
 	return check_CSteamID(L, index);
 }
 static void check_CSteamID_array(lua_State* L, int index, CSteamID *ids, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -5243,10 +5675,16 @@ static CGameID check_CGameID(lua_State* L, int index) {
 * CHECK structs
 ******************************/
 static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
+	servernetadr_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		s.SetConnectionPort(0);
+		s.SetQueryPort(0);
+		s.SetIP(0);
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	servernetadr_t s;
 	lua_pushstring(L, "m_usConnectionPort");
 	lua_gettable(L, index);
 	s.SetConnectionPort(check_uint16(L, -1));
@@ -5258,14 +5696,19 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
-static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(lua_State* L, int index) {
+static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_State* L, int index) {
+	SteamParamStringArray_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		s.m_nNumStrings = 0;
+		s.m_ppStrings = 0;
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
 	const int table_size = lua_objlen(L, index);
 	const char *pStrings[table_size];
 
-	SteamParamStringArray_t s;
 	s.m_nNumStrings = table_size;
 	s.m_ppStrings = pStrings;
 	for(int i=1; i<=table_size; i++) {
@@ -5273,13 +5716,16 @@ static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(l
 		lua_gettable(L, index);
 		pStrings[i] = luaL_checkstring(L, -1);
 	}
-	return &s;
+	return s;
 }
 static ValvePackingSentinel_t check_ValvePackingSentinel_t(lua_State* L, int index) {
+	ValvePackingSentinel_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	ValvePackingSentinel_t s;
 	lua_pushstring(L, "m_u32");
 	lua_gettable(L, index);
 	s.m_u32 = check_uint32(L, -1);
@@ -5295,11 +5741,34 @@ static ValvePackingSentinel_t check_ValvePackingSentinel_t(lua_State* L, int ind
 	return s;
 }
 
-static SteamServerConnectFailure_t check_SteamServerConnectFailure_t(lua_State* L, int index) {
+static void check_ValvePackingSentinel_t_array(lua_State* L, int index, ValvePackingSentinel_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ValvePackingSentinel_t(L, -1);
+	}
+}
+static SteamServerConnectFailure_t check_SteamServerConnectFailure_t(lua_State* L, int index) {
 	SteamServerConnectFailure_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -5309,22 +5778,68 @@ static SteamServerConnectFailure_t check_SteamServerConnectFailure_t(lua_State* 
 	return s;
 }
 
-static SteamServersDisconnected_t check_SteamServersDisconnected_t(lua_State* L, int index) {
+static void check_SteamServerConnectFailure_t_array(lua_State* L, int index, SteamServerConnectFailure_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamServerConnectFailure_t(L, -1);
+	}
+}
+static SteamServersDisconnected_t check_SteamServersDisconnected_t(lua_State* L, int index) {
 	SteamServersDisconnected_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
 	return s;
 }
 
-static ClientGameServerDeny_t check_ClientGameServerDeny_t(lua_State* L, int index) {
+static void check_SteamServersDisconnected_t_array(lua_State* L, int index, SteamServersDisconnected_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamServersDisconnected_t(L, -1);
+	}
+}
+static ClientGameServerDeny_t check_ClientGameServerDeny_t(lua_State* L, int index) {
 	ClientGameServerDeny_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_uAppID");
 	lua_gettable(L, index);
 	s.m_uAppID = check_uint32(L, -1);
@@ -5343,11 +5858,34 @@ static ClientGameServerDeny_t check_ClientGameServerDeny_t(lua_State* L, int ind
 	return s;
 }
 
-static ValidateAuthTicketResponse_t check_ValidateAuthTicketResponse_t(lua_State* L, int index) {
+static void check_ClientGameServerDeny_t_array(lua_State* L, int index, ClientGameServerDeny_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ClientGameServerDeny_t(L, -1);
+	}
+}
+static ValidateAuthTicketResponse_t check_ValidateAuthTicketResponse_t(lua_State* L, int index) {
 	ValidateAuthTicketResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_SteamID");
 	lua_gettable(L, index);
 	s.m_SteamID = check_CSteamID(L, -1);
@@ -5360,11 +5898,34 @@ static ValidateAuthTicketResponse_t check_ValidateAuthTicketResponse_t(lua_State
 	return s;
 }
 
-static MicroTxnAuthorizationResponse_t check_MicroTxnAuthorizationResponse_t(lua_State* L, int index) {
+static void check_ValidateAuthTicketResponse_t_array(lua_State* L, int index, ValidateAuthTicketResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ValidateAuthTicketResponse_t(L, -1);
+	}
+}
+static MicroTxnAuthorizationResponse_t check_MicroTxnAuthorizationResponse_t(lua_State* L, int index) {
 	MicroTxnAuthorizationResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_unAppID");
 	lua_gettable(L, index);
 	s.m_unAppID = check_uint32(L, -1);
@@ -5377,22 +5938,68 @@ static MicroTxnAuthorizationResponse_t check_MicroTxnAuthorizationResponse_t(lua
 	return s;
 }
 
-static EncryptedAppTicketResponse_t check_EncryptedAppTicketResponse_t(lua_State* L, int index) {
+static void check_MicroTxnAuthorizationResponse_t_array(lua_State* L, int index, MicroTxnAuthorizationResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MicroTxnAuthorizationResponse_t(L, -1);
+	}
+}
+static EncryptedAppTicketResponse_t check_EncryptedAppTicketResponse_t(lua_State* L, int index) {
 	EncryptedAppTicketResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
 	return s;
 }
 
-static GetAuthSessionTicketResponse_t check_GetAuthSessionTicketResponse_t(lua_State* L, int index) {
+static void check_EncryptedAppTicketResponse_t_array(lua_State* L, int index, EncryptedAppTicketResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_EncryptedAppTicketResponse_t(L, -1);
+	}
+}
+static GetAuthSessionTicketResponse_t check_GetAuthSessionTicketResponse_t(lua_State* L, int index) {
 	GetAuthSessionTicketResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hAuthTicket");
 	lua_gettable(L, index);
 	s.m_hAuthTicket = check_HAuthTicket(L, -1);
@@ -5402,33 +6009,102 @@ static GetAuthSessionTicketResponse_t check_GetAuthSessionTicketResponse_t(lua_S
 	return s;
 }
 
-static GameWebCallback_t check_GameWebCallback_t(lua_State* L, int index) {
+static void check_GetAuthSessionTicketResponse_t_array(lua_State* L, int index, GetAuthSessionTicketResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GetAuthSessionTicketResponse_t(L, -1);
+	}
+}
+static GameWebCallback_t check_GameWebCallback_t(lua_State* L, int index) {
 	GameWebCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_szURL");
 	lua_gettable(L, index);
 	check_char_array(L, -1, s.m_szURL, 256);
 	return s;
 }
 
-static StoreAuthURLResponse_t check_StoreAuthURLResponse_t(lua_State* L, int index) {
+static void check_GameWebCallback_t_array(lua_State* L, int index, GameWebCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameWebCallback_t(L, -1);
+	}
+}
+static StoreAuthURLResponse_t check_StoreAuthURLResponse_t(lua_State* L, int index) {
 	StoreAuthURLResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_szURL");
 	lua_gettable(L, index);
 	check_char_array(L, -1, s.m_szURL, 512);
 	return s;
 }
 
-static FriendGameInfo_t check_FriendGameInfo_t(lua_State* L, int index) {
+static void check_StoreAuthURLResponse_t_array(lua_State* L, int index, StoreAuthURLResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_StoreAuthURLResponse_t(L, -1);
+	}
+}
+static FriendGameInfo_t check_FriendGameInfo_t(lua_State* L, int index) {
 	FriendGameInfo_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_gameID");
 	lua_gettable(L, index);
 	s.m_gameID = check_CGameID(L, -1);
@@ -5447,11 +6123,34 @@ static FriendGameInfo_t check_FriendGameInfo_t(lua_State* L, int index) {
 	return s;
 }
 
-static FriendSessionStateInfo_t check_FriendSessionStateInfo_t(lua_State* L, int index) {
+static void check_FriendGameInfo_t_array(lua_State* L, int index, FriendGameInfo_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FriendGameInfo_t(L, -1);
+	}
+}
+static FriendSessionStateInfo_t check_FriendSessionStateInfo_t(lua_State* L, int index) {
 	FriendSessionStateInfo_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_uiOnlineSessionInstances");
 	lua_gettable(L, index);
 	s.m_uiOnlineSessionInstances = check_uint32(L, -1);
@@ -5461,11 +6160,34 @@ static FriendSessionStateInfo_t check_FriendSessionStateInfo_t(lua_State* L, int
 	return s;
 }
 
-static PersonaStateChange_t check_PersonaStateChange_t(lua_State* L, int index) {
+static void check_FriendSessionStateInfo_t_array(lua_State* L, int index, FriendSessionStateInfo_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FriendSessionStateInfo_t(L, -1);
+	}
+}
+static PersonaStateChange_t check_PersonaStateChange_t(lua_State* L, int index) {
 	PersonaStateChange_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamID");
 	lua_gettable(L, index);
 	s.m_ulSteamID = check_uint64(L, -1);
@@ -5475,22 +6197,68 @@ static PersonaStateChange_t check_PersonaStateChange_t(lua_State* L, int index) 
 	return s;
 }
 
-static GameOverlayActivated_t check_GameOverlayActivated_t(lua_State* L, int index) {
+static void check_PersonaStateChange_t_array(lua_State* L, int index, PersonaStateChange_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_PersonaStateChange_t(L, -1);
+	}
+}
+static GameOverlayActivated_t check_GameOverlayActivated_t(lua_State* L, int index) {
 	GameOverlayActivated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bActive");
 	lua_gettable(L, index);
 	s.m_bActive = check_uint8(L, -1);
 	return s;
 }
 
-static GameServerChangeRequested_t check_GameServerChangeRequested_t(lua_State* L, int index) {
+static void check_GameOverlayActivated_t_array(lua_State* L, int index, GameOverlayActivated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameOverlayActivated_t(L, -1);
+	}
+}
+static GameServerChangeRequested_t check_GameServerChangeRequested_t(lua_State* L, int index) {
 	GameServerChangeRequested_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_rgchServer");
 	lua_gettable(L, index);
 	check_char_array(L, -1, s.m_rgchServer, 64);
@@ -5500,11 +6268,34 @@ static GameServerChangeRequested_t check_GameServerChangeRequested_t(lua_State* 
 	return s;
 }
 
-static GameLobbyJoinRequested_t check_GameLobbyJoinRequested_t(lua_State* L, int index) {
+static void check_GameServerChangeRequested_t_array(lua_State* L, int index, GameServerChangeRequested_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameServerChangeRequested_t(L, -1);
+	}
+}
+static GameLobbyJoinRequested_t check_GameLobbyJoinRequested_t(lua_State* L, int index) {
 	GameLobbyJoinRequested_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDLobby");
 	lua_gettable(L, index);
 	s.m_steamIDLobby = check_CSteamID(L, -1);
@@ -5514,11 +6305,34 @@ static GameLobbyJoinRequested_t check_GameLobbyJoinRequested_t(lua_State* L, int
 	return s;
 }
 
-static AvatarImageLoaded_t check_AvatarImageLoaded_t(lua_State* L, int index) {
+static void check_GameLobbyJoinRequested_t_array(lua_State* L, int index, GameLobbyJoinRequested_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameLobbyJoinRequested_t(L, -1);
+	}
+}
+static AvatarImageLoaded_t check_AvatarImageLoaded_t(lua_State* L, int index) {
 	AvatarImageLoaded_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamID");
 	lua_gettable(L, index);
 	s.m_steamID = check_CSteamID(L, -1);
@@ -5534,11 +6348,34 @@ static AvatarImageLoaded_t check_AvatarImageLoaded_t(lua_State* L, int index) {
 	return s;
 }
 
-static ClanOfficerListResponse_t check_ClanOfficerListResponse_t(lua_State* L, int index) {
+static void check_AvatarImageLoaded_t_array(lua_State* L, int index, AvatarImageLoaded_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_AvatarImageLoaded_t(L, -1);
+	}
+}
+static ClanOfficerListResponse_t check_ClanOfficerListResponse_t(lua_State* L, int index) {
 	ClanOfficerListResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDClan");
 	lua_gettable(L, index);
 	s.m_steamIDClan = check_CSteamID(L, -1);
@@ -5551,11 +6388,34 @@ static ClanOfficerListResponse_t check_ClanOfficerListResponse_t(lua_State* L, i
 	return s;
 }
 
-static FriendRichPresenceUpdate_t check_FriendRichPresenceUpdate_t(lua_State* L, int index) {
+static void check_ClanOfficerListResponse_t_array(lua_State* L, int index, ClanOfficerListResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ClanOfficerListResponse_t(L, -1);
+	}
+}
+static FriendRichPresenceUpdate_t check_FriendRichPresenceUpdate_t(lua_State* L, int index) {
 	FriendRichPresenceUpdate_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDFriend");
 	lua_gettable(L, index);
 	s.m_steamIDFriend = check_CSteamID(L, -1);
@@ -5565,11 +6425,34 @@ static FriendRichPresenceUpdate_t check_FriendRichPresenceUpdate_t(lua_State* L,
 	return s;
 }
 
-static GameRichPresenceJoinRequested_t check_GameRichPresenceJoinRequested_t(lua_State* L, int index) {
+static void check_FriendRichPresenceUpdate_t_array(lua_State* L, int index, FriendRichPresenceUpdate_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FriendRichPresenceUpdate_t(L, -1);
+	}
+}
+static GameRichPresenceJoinRequested_t check_GameRichPresenceJoinRequested_t(lua_State* L, int index) {
 	GameRichPresenceJoinRequested_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDFriend");
 	lua_gettable(L, index);
 	s.m_steamIDFriend = check_CSteamID(L, -1);
@@ -5579,11 +6462,34 @@ static GameRichPresenceJoinRequested_t check_GameRichPresenceJoinRequested_t(lua
 	return s;
 }
 
-static GameConnectedClanChatMsg_t check_GameConnectedClanChatMsg_t(lua_State* L, int index) {
+static void check_GameRichPresenceJoinRequested_t_array(lua_State* L, int index, GameRichPresenceJoinRequested_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameRichPresenceJoinRequested_t(L, -1);
+	}
+}
+static GameConnectedClanChatMsg_t check_GameConnectedClanChatMsg_t(lua_State* L, int index) {
 	GameConnectedClanChatMsg_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDClanChat");
 	lua_gettable(L, index);
 	s.m_steamIDClanChat = check_CSteamID(L, -1);
@@ -5596,11 +6502,34 @@ static GameConnectedClanChatMsg_t check_GameConnectedClanChatMsg_t(lua_State* L,
 	return s;
 }
 
-static GameConnectedChatJoin_t check_GameConnectedChatJoin_t(lua_State* L, int index) {
+static void check_GameConnectedClanChatMsg_t_array(lua_State* L, int index, GameConnectedClanChatMsg_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameConnectedClanChatMsg_t(L, -1);
+	}
+}
+static GameConnectedChatJoin_t check_GameConnectedChatJoin_t(lua_State* L, int index) {
 	GameConnectedChatJoin_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDClanChat");
 	lua_gettable(L, index);
 	s.m_steamIDClanChat = check_CSteamID(L, -1);
@@ -5610,11 +6539,34 @@ static GameConnectedChatJoin_t check_GameConnectedChatJoin_t(lua_State* L, int i
 	return s;
 }
 
-static GameConnectedChatLeave_t check_GameConnectedChatLeave_t(lua_State* L, int index) {
+static void check_GameConnectedChatJoin_t_array(lua_State* L, int index, GameConnectedChatJoin_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameConnectedChatJoin_t(L, -1);
+	}
+}
+static GameConnectedChatLeave_t check_GameConnectedChatLeave_t(lua_State* L, int index) {
 	GameConnectedChatLeave_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDClanChat");
 	lua_gettable(L, index);
 	s.m_steamIDClanChat = check_CSteamID(L, -1);
@@ -5630,22 +6582,68 @@ static GameConnectedChatLeave_t check_GameConnectedChatLeave_t(lua_State* L, int
 	return s;
 }
 
-static DownloadClanActivityCountsResult_t check_DownloadClanActivityCountsResult_t(lua_State* L, int index) {
+static void check_GameConnectedChatLeave_t_array(lua_State* L, int index, GameConnectedChatLeave_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameConnectedChatLeave_t(L, -1);
+	}
+}
+static DownloadClanActivityCountsResult_t check_DownloadClanActivityCountsResult_t(lua_State* L, int index) {
 	DownloadClanActivityCountsResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bSuccess");
 	lua_gettable(L, index);
 	s.m_bSuccess = check_bool(L, -1);
 	return s;
 }
 
-static JoinClanChatRoomCompletionResult_t check_JoinClanChatRoomCompletionResult_t(lua_State* L, int index) {
+static void check_DownloadClanActivityCountsResult_t_array(lua_State* L, int index, DownloadClanActivityCountsResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_DownloadClanActivityCountsResult_t(L, -1);
+	}
+}
+static JoinClanChatRoomCompletionResult_t check_JoinClanChatRoomCompletionResult_t(lua_State* L, int index) {
 	JoinClanChatRoomCompletionResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDClanChat");
 	lua_gettable(L, index);
 	s.m_steamIDClanChat = check_CSteamID(L, -1);
@@ -5655,11 +6653,34 @@ static JoinClanChatRoomCompletionResult_t check_JoinClanChatRoomCompletionResult
 	return s;
 }
 
-static GameConnectedFriendChatMsg_t check_GameConnectedFriendChatMsg_t(lua_State* L, int index) {
+static void check_JoinClanChatRoomCompletionResult_t_array(lua_State* L, int index, JoinClanChatRoomCompletionResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_JoinClanChatRoomCompletionResult_t(L, -1);
+	}
+}
+static GameConnectedFriendChatMsg_t check_GameConnectedFriendChatMsg_t(lua_State* L, int index) {
 	GameConnectedFriendChatMsg_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDUser");
 	lua_gettable(L, index);
 	s.m_steamIDUser = check_CSteamID(L, -1);
@@ -5669,11 +6690,34 @@ static GameConnectedFriendChatMsg_t check_GameConnectedFriendChatMsg_t(lua_State
 	return s;
 }
 
-static FriendsGetFollowerCount_t check_FriendsGetFollowerCount_t(lua_State* L, int index) {
+static void check_GameConnectedFriendChatMsg_t_array(lua_State* L, int index, GameConnectedFriendChatMsg_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GameConnectedFriendChatMsg_t(L, -1);
+	}
+}
+static FriendsGetFollowerCount_t check_FriendsGetFollowerCount_t(lua_State* L, int index) {
 	FriendsGetFollowerCount_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -5686,11 +6730,34 @@ static FriendsGetFollowerCount_t check_FriendsGetFollowerCount_t(lua_State* L, i
 	return s;
 }
 
-static FriendsIsFollowing_t check_FriendsIsFollowing_t(lua_State* L, int index) {
+static void check_FriendsGetFollowerCount_t_array(lua_State* L, int index, FriendsGetFollowerCount_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FriendsGetFollowerCount_t(L, -1);
+	}
+}
+static FriendsIsFollowing_t check_FriendsIsFollowing_t(lua_State* L, int index) {
 	FriendsIsFollowing_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -5703,11 +6770,34 @@ static FriendsIsFollowing_t check_FriendsIsFollowing_t(lua_State* L, int index) 
 	return s;
 }
 
-static FriendsEnumerateFollowingList_t check_FriendsEnumerateFollowingList_t(lua_State* L, int index) {
+static void check_FriendsIsFollowing_t_array(lua_State* L, int index, FriendsIsFollowing_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FriendsIsFollowing_t(L, -1);
+	}
+}
+static FriendsEnumerateFollowingList_t check_FriendsEnumerateFollowingList_t(lua_State* L, int index) {
 	FriendsEnumerateFollowingList_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -5723,11 +6813,34 @@ static FriendsEnumerateFollowingList_t check_FriendsEnumerateFollowingList_t(lua
 	return s;
 }
 
-static SetPersonaNameResponse_t check_SetPersonaNameResponse_t(lua_State* L, int index) {
+static void check_FriendsEnumerateFollowingList_t_array(lua_State* L, int index, FriendsEnumerateFollowingList_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FriendsEnumerateFollowingList_t(L, -1);
+	}
+}
+static SetPersonaNameResponse_t check_SetPersonaNameResponse_t(lua_State* L, int index) {
 	SetPersonaNameResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bSuccess");
 	lua_gettable(L, index);
 	s.m_bSuccess = check_bool(L, -1);
@@ -5740,22 +6853,68 @@ static SetPersonaNameResponse_t check_SetPersonaNameResponse_t(lua_State* L, int
 	return s;
 }
 
-static LowBatteryPower_t check_LowBatteryPower_t(lua_State* L, int index) {
+static void check_SetPersonaNameResponse_t_array(lua_State* L, int index, SetPersonaNameResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SetPersonaNameResponse_t(L, -1);
+	}
+}
+static LowBatteryPower_t check_LowBatteryPower_t(lua_State* L, int index) {
 	LowBatteryPower_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nMinutesBatteryLeft");
 	lua_gettable(L, index);
 	s.m_nMinutesBatteryLeft = check_uint8(L, -1);
 	return s;
 }
 
-static SteamAPICallCompleted_t check_SteamAPICallCompleted_t(lua_State* L, int index) {
+static void check_LowBatteryPower_t_array(lua_State* L, int index, LowBatteryPower_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LowBatteryPower_t(L, -1);
+	}
+}
+static SteamAPICallCompleted_t check_SteamAPICallCompleted_t(lua_State* L, int index) {
 	SteamAPICallCompleted_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hAsyncCall");
 	lua_gettable(L, index);
 	s.m_hAsyncCall = check_SteamAPICall_t(L, -1);
@@ -5768,22 +6927,68 @@ static SteamAPICallCompleted_t check_SteamAPICallCompleted_t(lua_State* L, int i
 	return s;
 }
 
-static CheckFileSignature_t check_CheckFileSignature_t(lua_State* L, int index) {
+static void check_SteamAPICallCompleted_t_array(lua_State* L, int index, SteamAPICallCompleted_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamAPICallCompleted_t(L, -1);
+	}
+}
+static CheckFileSignature_t check_CheckFileSignature_t(lua_State* L, int index) {
 	CheckFileSignature_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eCheckFileSignature");
 	lua_gettable(L, index);
 	s.m_eCheckFileSignature = check_ECheckFileSignature(L, -1);
 	return s;
 }
 
-static GamepadTextInputDismissed_t check_GamepadTextInputDismissed_t(lua_State* L, int index) {
+static void check_CheckFileSignature_t_array(lua_State* L, int index, CheckFileSignature_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_CheckFileSignature_t(L, -1);
+	}
+}
+static GamepadTextInputDismissed_t check_GamepadTextInputDismissed_t(lua_State* L, int index) {
 	GamepadTextInputDismissed_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bSubmitted");
 	lua_gettable(L, index);
 	s.m_bSubmitted = check_bool(L, -1);
@@ -5793,11 +6998,34 @@ static GamepadTextInputDismissed_t check_GamepadTextInputDismissed_t(lua_State* 
 	return s;
 }
 
-static MatchMakingKeyValuePair_t check_MatchMakingKeyValuePair_t(lua_State* L, int index) {
+static void check_GamepadTextInputDismissed_t_array(lua_State* L, int index, GamepadTextInputDismissed_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GamepadTextInputDismissed_t(L, -1);
+	}
+}
+static MatchMakingKeyValuePair_t check_MatchMakingKeyValuePair_t(lua_State* L, int index) {
 	MatchMakingKeyValuePair_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_szKey");
 	lua_gettable(L, index);
 	check_char_array(L, -1, s.m_szKey, 256);
@@ -5807,11 +7035,34 @@ static MatchMakingKeyValuePair_t check_MatchMakingKeyValuePair_t(lua_State* L, i
 	return s;
 }
 
-static FavoritesListChanged_t check_FavoritesListChanged_t(lua_State* L, int index) {
+static void check_MatchMakingKeyValuePair_t_array(lua_State* L, int index, MatchMakingKeyValuePair_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MatchMakingKeyValuePair_t(L, -1);
+	}
+}
+static FavoritesListChanged_t check_FavoritesListChanged_t(lua_State* L, int index) {
 	FavoritesListChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nIP");
 	lua_gettable(L, index);
 	s.m_nIP = check_uint32(L, -1);
@@ -5836,11 +7087,34 @@ static FavoritesListChanged_t check_FavoritesListChanged_t(lua_State* L, int ind
 	return s;
 }
 
-static LobbyInvite_t check_LobbyInvite_t(lua_State* L, int index) {
+static void check_FavoritesListChanged_t_array(lua_State* L, int index, FavoritesListChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FavoritesListChanged_t(L, -1);
+	}
+}
+static LobbyInvite_t check_LobbyInvite_t(lua_State* L, int index) {
 	LobbyInvite_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamIDUser");
 	lua_gettable(L, index);
 	s.m_ulSteamIDUser = check_uint64(L, -1);
@@ -5853,11 +7127,34 @@ static LobbyInvite_t check_LobbyInvite_t(lua_State* L, int index) {
 	return s;
 }
 
-static LobbyEnter_t check_LobbyEnter_t(lua_State* L, int index) {
+static void check_LobbyInvite_t_array(lua_State* L, int index, LobbyInvite_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyInvite_t(L, -1);
+	}
+}
+static LobbyEnter_t check_LobbyEnter_t(lua_State* L, int index) {
 	LobbyEnter_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamIDLobby");
 	lua_gettable(L, index);
 	s.m_ulSteamIDLobby = check_uint64(L, -1);
@@ -5873,11 +7170,34 @@ static LobbyEnter_t check_LobbyEnter_t(lua_State* L, int index) {
 	return s;
 }
 
-static LobbyDataUpdate_t check_LobbyDataUpdate_t(lua_State* L, int index) {
+static void check_LobbyEnter_t_array(lua_State* L, int index, LobbyEnter_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyEnter_t(L, -1);
+	}
+}
+static LobbyDataUpdate_t check_LobbyDataUpdate_t(lua_State* L, int index) {
 	LobbyDataUpdate_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamIDLobby");
 	lua_gettable(L, index);
 	s.m_ulSteamIDLobby = check_uint64(L, -1);
@@ -5890,11 +7210,34 @@ static LobbyDataUpdate_t check_LobbyDataUpdate_t(lua_State* L, int index) {
 	return s;
 }
 
-static LobbyChatUpdate_t check_LobbyChatUpdate_t(lua_State* L, int index) {
+static void check_LobbyDataUpdate_t_array(lua_State* L, int index, LobbyDataUpdate_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyDataUpdate_t(L, -1);
+	}
+}
+static LobbyChatUpdate_t check_LobbyChatUpdate_t(lua_State* L, int index) {
 	LobbyChatUpdate_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamIDLobby");
 	lua_gettable(L, index);
 	s.m_ulSteamIDLobby = check_uint64(L, -1);
@@ -5910,11 +7253,34 @@ static LobbyChatUpdate_t check_LobbyChatUpdate_t(lua_State* L, int index) {
 	return s;
 }
 
-static LobbyChatMsg_t check_LobbyChatMsg_t(lua_State* L, int index) {
+static void check_LobbyChatUpdate_t_array(lua_State* L, int index, LobbyChatUpdate_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyChatUpdate_t(L, -1);
+	}
+}
+static LobbyChatMsg_t check_LobbyChatMsg_t(lua_State* L, int index) {
 	LobbyChatMsg_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamIDLobby");
 	lua_gettable(L, index);
 	s.m_ulSteamIDLobby = check_uint64(L, -1);
@@ -5930,11 +7296,34 @@ static LobbyChatMsg_t check_LobbyChatMsg_t(lua_State* L, int index) {
 	return s;
 }
 
-static LobbyGameCreated_t check_LobbyGameCreated_t(lua_State* L, int index) {
+static void check_LobbyChatMsg_t_array(lua_State* L, int index, LobbyChatMsg_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyChatMsg_t(L, -1);
+	}
+}
+static LobbyGameCreated_t check_LobbyGameCreated_t(lua_State* L, int index) {
 	LobbyGameCreated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamIDLobby");
 	lua_gettable(L, index);
 	s.m_ulSteamIDLobby = check_uint64(L, -1);
@@ -5950,22 +7339,68 @@ static LobbyGameCreated_t check_LobbyGameCreated_t(lua_State* L, int index) {
 	return s;
 }
 
-static LobbyMatchList_t check_LobbyMatchList_t(lua_State* L, int index) {
+static void check_LobbyGameCreated_t_array(lua_State* L, int index, LobbyGameCreated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyGameCreated_t(L, -1);
+	}
+}
+static LobbyMatchList_t check_LobbyMatchList_t(lua_State* L, int index) {
 	LobbyMatchList_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nLobbiesMatching");
 	lua_gettable(L, index);
 	s.m_nLobbiesMatching = check_uint32(L, -1);
 	return s;
 }
 
-static LobbyKicked_t check_LobbyKicked_t(lua_State* L, int index) {
+static void check_LobbyMatchList_t_array(lua_State* L, int index, LobbyMatchList_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyMatchList_t(L, -1);
+	}
+}
+static LobbyKicked_t check_LobbyKicked_t(lua_State* L, int index) {
 	LobbyKicked_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_ulSteamIDLobby");
 	lua_gettable(L, index);
 	s.m_ulSteamIDLobby = check_uint64(L, -1);
@@ -5978,11 +7413,34 @@ static LobbyKicked_t check_LobbyKicked_t(lua_State* L, int index) {
 	return s;
 }
 
-static LobbyCreated_t check_LobbyCreated_t(lua_State* L, int index) {
+static void check_LobbyKicked_t_array(lua_State* L, int index, LobbyKicked_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyKicked_t(L, -1);
+	}
+}
+static LobbyCreated_t check_LobbyCreated_t(lua_State* L, int index) {
 	LobbyCreated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -5992,11 +7450,34 @@ static LobbyCreated_t check_LobbyCreated_t(lua_State* L, int index) {
 	return s;
 }
 
-static PSNGameBootInviteResult_t check_PSNGameBootInviteResult_t(lua_State* L, int index) {
+static void check_LobbyCreated_t_array(lua_State* L, int index, LobbyCreated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LobbyCreated_t(L, -1);
+	}
+}
+static PSNGameBootInviteResult_t check_PSNGameBootInviteResult_t(lua_State* L, int index) {
 	PSNGameBootInviteResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bGameBootInviteExists");
 	lua_gettable(L, index);
 	s.m_bGameBootInviteExists = check_bool(L, -1);
@@ -6006,22 +7487,68 @@ static PSNGameBootInviteResult_t check_PSNGameBootInviteResult_t(lua_State* L, i
 	return s;
 }
 
-static FavoritesListAccountsUpdated_t check_FavoritesListAccountsUpdated_t(lua_State* L, int index) {
+static void check_PSNGameBootInviteResult_t_array(lua_State* L, int index, PSNGameBootInviteResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_PSNGameBootInviteResult_t(L, -1);
+	}
+}
+static FavoritesListAccountsUpdated_t check_FavoritesListAccountsUpdated_t(lua_State* L, int index) {
 	FavoritesListAccountsUpdated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
 	return s;
 }
 
-static RemoteStorageFileShareResult_t check_RemoteStorageFileShareResult_t(lua_State* L, int index) {
+static void check_FavoritesListAccountsUpdated_t_array(lua_State* L, int index, FavoritesListAccountsUpdated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FavoritesListAccountsUpdated_t(L, -1);
+	}
+}
+static RemoteStorageFileShareResult_t check_RemoteStorageFileShareResult_t(lua_State* L, int index) {
 	RemoteStorageFileShareResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6034,11 +7561,34 @@ static RemoteStorageFileShareResult_t check_RemoteStorageFileShareResult_t(lua_S
 	return s;
 }
 
+static void check_RemoteStorageFileShareResult_t_array(lua_State* L, int index, RemoteStorageFileShareResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageFileShareResult_t(L, -1);
+	}
+}
 static RemoteStorageSubscribePublishedFileResult_t check_RemoteStorageSubscribePublishedFileResult_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	RemoteStorageSubscribePublishedFileResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6048,11 +7598,34 @@ static RemoteStorageSubscribePublishedFileResult_t check_RemoteStorageSubscribeP
 	return s;
 }
 
+static void check_RemoteStorageSubscribePublishedFileResult_t_array(lua_State* L, int index, RemoteStorageSubscribePublishedFileResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageSubscribePublishedFileResult_t(L, -1);
+	}
+}
 static RemoteStorageUnsubscribePublishedFileResult_t check_RemoteStorageUnsubscribePublishedFileResult_t(lua_State* L, int index) {
+	RemoteStorageUnsubscribePublishedFileResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	RemoteStorageUnsubscribePublishedFileResult_t s;
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6062,11 +7635,34 @@ static RemoteStorageUnsubscribePublishedFileResult_t check_RemoteStorageUnsubscr
 	return s;
 }
 
-static RemoteStorageDownloadUGCResult_t check_RemoteStorageDownloadUGCResult_t(lua_State* L, int index) {
+static void check_RemoteStorageUnsubscribePublishedFileResult_t_array(lua_State* L, int index, RemoteStorageUnsubscribePublishedFileResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageUnsubscribePublishedFileResult_t(L, -1);
+	}
+}
+static RemoteStorageDownloadUGCResult_t check_RemoteStorageDownloadUGCResult_t(lua_State* L, int index) {
 	RemoteStorageDownloadUGCResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6088,22 +7684,68 @@ static RemoteStorageDownloadUGCResult_t check_RemoteStorageDownloadUGCResult_t(l
 	return s;
 }
 
-static RemoteStorageFileWriteAsyncComplete_t check_RemoteStorageFileWriteAsyncComplete_t(lua_State* L, int index) {
+static void check_RemoteStorageDownloadUGCResult_t_array(lua_State* L, int index, RemoteStorageDownloadUGCResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageDownloadUGCResult_t(L, -1);
+	}
+}
+static RemoteStorageFileWriteAsyncComplete_t check_RemoteStorageFileWriteAsyncComplete_t(lua_State* L, int index) {
 	RemoteStorageFileWriteAsyncComplete_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
 	return s;
 }
 
-static RemoteStorageFileReadAsyncComplete_t check_RemoteStorageFileReadAsyncComplete_t(lua_State* L, int index) {
+static void check_RemoteStorageFileWriteAsyncComplete_t_array(lua_State* L, int index, RemoteStorageFileWriteAsyncComplete_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageFileWriteAsyncComplete_t(L, -1);
+	}
+}
+static RemoteStorageFileReadAsyncComplete_t check_RemoteStorageFileReadAsyncComplete_t(lua_State* L, int index) {
 	RemoteStorageFileReadAsyncComplete_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hFileReadAsync");
 	lua_gettable(L, index);
 	s.m_hFileReadAsync = check_SteamAPICall_t(L, -1);
@@ -6119,11 +7761,34 @@ static RemoteStorageFileReadAsyncComplete_t check_RemoteStorageFileReadAsyncComp
 	return s;
 }
 
-static LeaderboardEntry_t check_LeaderboardEntry_t(lua_State* L, int index) {
+static void check_RemoteStorageFileReadAsyncComplete_t_array(lua_State* L, int index, RemoteStorageFileReadAsyncComplete_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageFileReadAsyncComplete_t(L, -1);
+	}
+}
+static LeaderboardEntry_t check_LeaderboardEntry_t(lua_State* L, int index) {
 	LeaderboardEntry_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDUser");
 	lua_gettable(L, index);
 	s.m_steamIDUser = check_CSteamID(L, -1);
@@ -6142,11 +7807,34 @@ static LeaderboardEntry_t check_LeaderboardEntry_t(lua_State* L, int index) {
 	return s;
 }
 
-static UserStatsReceived_t check_UserStatsReceived_t(lua_State* L, int index) {
+static void check_LeaderboardEntry_t_array(lua_State* L, int index, LeaderboardEntry_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LeaderboardEntry_t(L, -1);
+	}
+}
+static UserStatsReceived_t check_UserStatsReceived_t(lua_State* L, int index) {
 	UserStatsReceived_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nGameID");
 	lua_gettable(L, index);
 	s.m_nGameID = check_uint64(L, -1);
@@ -6159,11 +7847,34 @@ static UserStatsReceived_t check_UserStatsReceived_t(lua_State* L, int index) {
 	return s;
 }
 
-static UserStatsStored_t check_UserStatsStored_t(lua_State* L, int index) {
+static void check_UserStatsReceived_t_array(lua_State* L, int index, UserStatsReceived_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UserStatsReceived_t(L, -1);
+	}
+}
+static UserStatsStored_t check_UserStatsStored_t(lua_State* L, int index) {
 	UserStatsStored_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nGameID");
 	lua_gettable(L, index);
 	s.m_nGameID = check_uint64(L, -1);
@@ -6173,11 +7884,34 @@ static UserStatsStored_t check_UserStatsStored_t(lua_State* L, int index) {
 	return s;
 }
 
-static UserAchievementStored_t check_UserAchievementStored_t(lua_State* L, int index) {
+static void check_UserStatsStored_t_array(lua_State* L, int index, UserStatsStored_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UserStatsStored_t(L, -1);
+	}
+}
+static UserAchievementStored_t check_UserAchievementStored_t(lua_State* L, int index) {
 	UserAchievementStored_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nGameID");
 	lua_gettable(L, index);
 	s.m_nGameID = check_uint64(L, -1);
@@ -6196,11 +7930,34 @@ static UserAchievementStored_t check_UserAchievementStored_t(lua_State* L, int i
 	return s;
 }
 
-static LeaderboardFindResult_t check_LeaderboardFindResult_t(lua_State* L, int index) {
+static void check_UserAchievementStored_t_array(lua_State* L, int index, UserAchievementStored_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UserAchievementStored_t(L, -1);
+	}
+}
+static LeaderboardFindResult_t check_LeaderboardFindResult_t(lua_State* L, int index) {
 	LeaderboardFindResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hSteamLeaderboard");
 	lua_gettable(L, index);
 	s.m_hSteamLeaderboard = check_SteamLeaderboard_t(L, -1);
@@ -6210,11 +7967,34 @@ static LeaderboardFindResult_t check_LeaderboardFindResult_t(lua_State* L, int i
 	return s;
 }
 
-static LeaderboardScoresDownloaded_t check_LeaderboardScoresDownloaded_t(lua_State* L, int index) {
+static void check_LeaderboardFindResult_t_array(lua_State* L, int index, LeaderboardFindResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LeaderboardFindResult_t(L, -1);
+	}
+}
+static LeaderboardScoresDownloaded_t check_LeaderboardScoresDownloaded_t(lua_State* L, int index) {
 	LeaderboardScoresDownloaded_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hSteamLeaderboard");
 	lua_gettable(L, index);
 	s.m_hSteamLeaderboard = check_SteamLeaderboard_t(L, -1);
@@ -6227,11 +8007,34 @@ static LeaderboardScoresDownloaded_t check_LeaderboardScoresDownloaded_t(lua_Sta
 	return s;
 }
 
-static LeaderboardScoreUploaded_t check_LeaderboardScoreUploaded_t(lua_State* L, int index) {
+static void check_LeaderboardScoresDownloaded_t_array(lua_State* L, int index, LeaderboardScoresDownloaded_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LeaderboardScoresDownloaded_t(L, -1);
+	}
+}
+static LeaderboardScoreUploaded_t check_LeaderboardScoreUploaded_t(lua_State* L, int index) {
 	LeaderboardScoreUploaded_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bSuccess");
 	lua_gettable(L, index);
 	s.m_bSuccess = check_uint8(L, -1);
@@ -6253,11 +8056,34 @@ static LeaderboardScoreUploaded_t check_LeaderboardScoreUploaded_t(lua_State* L,
 	return s;
 }
 
-static NumberOfCurrentPlayers_t check_NumberOfCurrentPlayers_t(lua_State* L, int index) {
+static void check_LeaderboardScoreUploaded_t_array(lua_State* L, int index, LeaderboardScoreUploaded_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LeaderboardScoreUploaded_t(L, -1);
+	}
+}
+static NumberOfCurrentPlayers_t check_NumberOfCurrentPlayers_t(lua_State* L, int index) {
 	NumberOfCurrentPlayers_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bSuccess");
 	lua_gettable(L, index);
 	s.m_bSuccess = check_uint8(L, -1);
@@ -6267,22 +8093,68 @@ static NumberOfCurrentPlayers_t check_NumberOfCurrentPlayers_t(lua_State* L, int
 	return s;
 }
 
-static UserStatsUnloaded_t check_UserStatsUnloaded_t(lua_State* L, int index) {
+static void check_NumberOfCurrentPlayers_t_array(lua_State* L, int index, NumberOfCurrentPlayers_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_NumberOfCurrentPlayers_t(L, -1);
+	}
+}
+static UserStatsUnloaded_t check_UserStatsUnloaded_t(lua_State* L, int index) {
 	UserStatsUnloaded_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDUser");
 	lua_gettable(L, index);
 	s.m_steamIDUser = check_CSteamID(L, -1);
 	return s;
 }
 
-static UserAchievementIconFetched_t check_UserAchievementIconFetched_t(lua_State* L, int index) {
+static void check_UserStatsUnloaded_t_array(lua_State* L, int index, UserStatsUnloaded_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UserStatsUnloaded_t(L, -1);
+	}
+}
+static UserAchievementIconFetched_t check_UserAchievementIconFetched_t(lua_State* L, int index) {
 	UserAchievementIconFetched_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nGameID");
 	lua_gettable(L, index);
 	s.m_nGameID = check_CGameID(L, -1);
@@ -6298,11 +8170,34 @@ static UserAchievementIconFetched_t check_UserAchievementIconFetched_t(lua_State
 	return s;
 }
 
-static GlobalAchievementPercentagesReady_t check_GlobalAchievementPercentagesReady_t(lua_State* L, int index) {
+static void check_UserAchievementIconFetched_t_array(lua_State* L, int index, UserAchievementIconFetched_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UserAchievementIconFetched_t(L, -1);
+	}
+}
+static GlobalAchievementPercentagesReady_t check_GlobalAchievementPercentagesReady_t(lua_State* L, int index) {
 	GlobalAchievementPercentagesReady_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nGameID");
 	lua_gettable(L, index);
 	s.m_nGameID = check_uint64(L, -1);
@@ -6312,11 +8207,34 @@ static GlobalAchievementPercentagesReady_t check_GlobalAchievementPercentagesRea
 	return s;
 }
 
-static LeaderboardUGCSet_t check_LeaderboardUGCSet_t(lua_State* L, int index) {
+static void check_GlobalAchievementPercentagesReady_t_array(lua_State* L, int index, GlobalAchievementPercentagesReady_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GlobalAchievementPercentagesReady_t(L, -1);
+	}
+}
+static LeaderboardUGCSet_t check_LeaderboardUGCSet_t(lua_State* L, int index) {
 	LeaderboardUGCSet_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6326,11 +8244,34 @@ static LeaderboardUGCSet_t check_LeaderboardUGCSet_t(lua_State* L, int index) {
 	return s;
 }
 
-static PS3TrophiesInstalled_t check_PS3TrophiesInstalled_t(lua_State* L, int index) {
+static void check_LeaderboardUGCSet_t_array(lua_State* L, int index, LeaderboardUGCSet_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LeaderboardUGCSet_t(L, -1);
+	}
+}
+static PS3TrophiesInstalled_t check_PS3TrophiesInstalled_t(lua_State* L, int index) {
 	PS3TrophiesInstalled_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nGameID");
 	lua_gettable(L, index);
 	s.m_nGameID = check_uint64(L, -1);
@@ -6343,11 +8284,34 @@ static PS3TrophiesInstalled_t check_PS3TrophiesInstalled_t(lua_State* L, int ind
 	return s;
 }
 
-static GlobalStatsReceived_t check_GlobalStatsReceived_t(lua_State* L, int index) {
+static void check_PS3TrophiesInstalled_t_array(lua_State* L, int index, PS3TrophiesInstalled_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_PS3TrophiesInstalled_t(L, -1);
+	}
+}
+static GlobalStatsReceived_t check_GlobalStatsReceived_t(lua_State* L, int index) {
 	GlobalStatsReceived_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nGameID");
 	lua_gettable(L, index);
 	s.m_nGameID = check_uint64(L, -1);
@@ -6357,22 +8321,68 @@ static GlobalStatsReceived_t check_GlobalStatsReceived_t(lua_State* L, int index
 	return s;
 }
 
-static DlcInstalled_t check_DlcInstalled_t(lua_State* L, int index) {
+static void check_GlobalStatsReceived_t_array(lua_State* L, int index, GlobalStatsReceived_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GlobalStatsReceived_t(L, -1);
+	}
+}
+static DlcInstalled_t check_DlcInstalled_t(lua_State* L, int index) {
 	DlcInstalled_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nAppID");
 	lua_gettable(L, index);
 	s.m_nAppID = check_AppId_t(L, -1);
 	return s;
 }
 
-static RegisterActivationCodeResponse_t check_RegisterActivationCodeResponse_t(lua_State* L, int index) {
+static void check_DlcInstalled_t_array(lua_State* L, int index, DlcInstalled_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_DlcInstalled_t(L, -1);
+	}
+}
+static RegisterActivationCodeResponse_t check_RegisterActivationCodeResponse_t(lua_State* L, int index) {
 	RegisterActivationCodeResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_ERegisterActivationCodeResult(L, -1);
@@ -6382,11 +8392,34 @@ static RegisterActivationCodeResponse_t check_RegisterActivationCodeResponse_t(l
 	return s;
 }
 
-static AppProofOfPurchaseKeyResponse_t check_AppProofOfPurchaseKeyResponse_t(lua_State* L, int index) {
+static void check_RegisterActivationCodeResponse_t_array(lua_State* L, int index, RegisterActivationCodeResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RegisterActivationCodeResponse_t(L, -1);
+	}
+}
+static AppProofOfPurchaseKeyResponse_t check_AppProofOfPurchaseKeyResponse_t(lua_State* L, int index) {
 	AppProofOfPurchaseKeyResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6402,11 +8435,34 @@ static AppProofOfPurchaseKeyResponse_t check_AppProofOfPurchaseKeyResponse_t(lua
 	return s;
 }
 
-static FileDetailsResult_t check_FileDetailsResult_t(lua_State* L, int index) {
+static void check_AppProofOfPurchaseKeyResponse_t_array(lua_State* L, int index, AppProofOfPurchaseKeyResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_AppProofOfPurchaseKeyResponse_t(L, -1);
+	}
+}
+static FileDetailsResult_t check_FileDetailsResult_t(lua_State* L, int index) {
 	FileDetailsResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6422,11 +8478,34 @@ static FileDetailsResult_t check_FileDetailsResult_t(lua_State* L, int index) {
 	return s;
 }
 
-static P2PSessionState_t check_P2PSessionState_t(lua_State* L, int index) {
+static void check_FileDetailsResult_t_array(lua_State* L, int index, FileDetailsResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FileDetailsResult_t(L, -1);
+	}
+}
+static P2PSessionState_t check_P2PSessionState_t(lua_State* L, int index) {
 	P2PSessionState_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bConnectionActive");
 	lua_gettable(L, index);
 	s.m_bConnectionActive = check_uint8(L, -1);
@@ -6454,22 +8533,68 @@ static P2PSessionState_t check_P2PSessionState_t(lua_State* L, int index) {
 	return s;
 }
 
-static P2PSessionRequest_t check_P2PSessionRequest_t(lua_State* L, int index) {
+static void check_P2PSessionState_t_array(lua_State* L, int index, P2PSessionState_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_P2PSessionState_t(L, -1);
+	}
+}
+static P2PSessionRequest_t check_P2PSessionRequest_t(lua_State* L, int index) {
 	P2PSessionRequest_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDRemote");
 	lua_gettable(L, index);
 	s.m_steamIDRemote = check_CSteamID(L, -1);
 	return s;
 }
 
-static P2PSessionConnectFail_t check_P2PSessionConnectFail_t(lua_State* L, int index) {
+static void check_P2PSessionRequest_t_array(lua_State* L, int index, P2PSessionRequest_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_P2PSessionRequest_t(L, -1);
+	}
+}
+static P2PSessionConnectFail_t check_P2PSessionConnectFail_t(lua_State* L, int index) {
 	P2PSessionConnectFail_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDRemote");
 	lua_gettable(L, index);
 	s.m_steamIDRemote = check_CSteamID(L, -1);
@@ -6479,11 +8604,34 @@ static P2PSessionConnectFail_t check_P2PSessionConnectFail_t(lua_State* L, int i
 	return s;
 }
 
-static SocketStatusCallback_t check_SocketStatusCallback_t(lua_State* L, int index) {
+static void check_P2PSessionConnectFail_t_array(lua_State* L, int index, P2PSessionConnectFail_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_P2PSessionConnectFail_t(L, -1);
+	}
+}
+static SocketStatusCallback_t check_SocketStatusCallback_t(lua_State* L, int index) {
 	SocketStatusCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hSocket");
 	lua_gettable(L, index);
 	s.m_hSocket = check_SNetSocket_t(L, -1);
@@ -6499,11 +8647,34 @@ static SocketStatusCallback_t check_SocketStatusCallback_t(lua_State* L, int ind
 	return s;
 }
 
-static ScreenshotReady_t check_ScreenshotReady_t(lua_State* L, int index) {
+static void check_SocketStatusCallback_t_array(lua_State* L, int index, SocketStatusCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SocketStatusCallback_t(L, -1);
+	}
+}
+static ScreenshotReady_t check_ScreenshotReady_t(lua_State* L, int index) {
 	ScreenshotReady_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hLocal");
 	lua_gettable(L, index);
 	s.m_hLocal = check_ScreenshotHandle(L, -1);
@@ -6513,88 +8684,272 @@ static ScreenshotReady_t check_ScreenshotReady_t(lua_State* L, int index) {
 	return s;
 }
 
-static VolumeHasChanged_t check_VolumeHasChanged_t(lua_State* L, int index) {
+static void check_ScreenshotReady_t_array(lua_State* L, int index, ScreenshotReady_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ScreenshotReady_t(L, -1);
+	}
+}
+static VolumeHasChanged_t check_VolumeHasChanged_t(lua_State* L, int index) {
 	VolumeHasChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_flNewVolume");
 	lua_gettable(L, index);
 	s.m_flNewVolume = check_float(L, -1);
 	return s;
 }
 
-static MusicPlayerWantsShuffled_t check_MusicPlayerWantsShuffled_t(lua_State* L, int index) {
+static void check_VolumeHasChanged_t_array(lua_State* L, int index, VolumeHasChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_VolumeHasChanged_t(L, -1);
+	}
+}
+static MusicPlayerWantsShuffled_t check_MusicPlayerWantsShuffled_t(lua_State* L, int index) {
 	MusicPlayerWantsShuffled_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bShuffled");
 	lua_gettable(L, index);
 	s.m_bShuffled = check_bool(L, -1);
 	return s;
 }
 
-static MusicPlayerWantsLooped_t check_MusicPlayerWantsLooped_t(lua_State* L, int index) {
+static void check_MusicPlayerWantsShuffled_t_array(lua_State* L, int index, MusicPlayerWantsShuffled_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsShuffled_t(L, -1);
+	}
+}
+static MusicPlayerWantsLooped_t check_MusicPlayerWantsLooped_t(lua_State* L, int index) {
 	MusicPlayerWantsLooped_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bLooped");
 	lua_gettable(L, index);
 	s.m_bLooped = check_bool(L, -1);
 	return s;
 }
 
-static MusicPlayerWantsVolume_t check_MusicPlayerWantsVolume_t(lua_State* L, int index) {
+static void check_MusicPlayerWantsLooped_t_array(lua_State* L, int index, MusicPlayerWantsLooped_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsLooped_t(L, -1);
+	}
+}
+static MusicPlayerWantsVolume_t check_MusicPlayerWantsVolume_t(lua_State* L, int index) {
 	MusicPlayerWantsVolume_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_flNewVolume");
 	lua_gettable(L, index);
 	s.m_flNewVolume = check_float(L, -1);
 	return s;
 }
 
+static void check_MusicPlayerWantsVolume_t_array(lua_State* L, int index, MusicPlayerWantsVolume_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsVolume_t(L, -1);
+	}
+}
 static MusicPlayerSelectsQueueEntry_t check_MusicPlayerSelectsQueueEntry_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	MusicPlayerSelectsQueueEntry_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "nID");
 	lua_gettable(L, index);
 	s.nID = check_int(L, -1);
 	return s;
 }
 
+static void check_MusicPlayerSelectsQueueEntry_t_array(lua_State* L, int index, MusicPlayerSelectsQueueEntry_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerSelectsQueueEntry_t(L, -1);
+	}
+}
 static MusicPlayerSelectsPlaylistEntry_t check_MusicPlayerSelectsPlaylistEntry_t(lua_State* L, int index) {
+	MusicPlayerSelectsPlaylistEntry_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	MusicPlayerSelectsPlaylistEntry_t s;
 	lua_pushstring(L, "nID");
 	lua_gettable(L, index);
 	s.nID = check_int(L, -1);
 	return s;
 }
 
-static MusicPlayerWantsPlayingRepeatStatus_t check_MusicPlayerWantsPlayingRepeatStatus_t(lua_State* L, int index) {
+static void check_MusicPlayerSelectsPlaylistEntry_t_array(lua_State* L, int index, MusicPlayerSelectsPlaylistEntry_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerSelectsPlaylistEntry_t(L, -1);
+	}
+}
+static MusicPlayerWantsPlayingRepeatStatus_t check_MusicPlayerWantsPlayingRepeatStatus_t(lua_State* L, int index) {
 	MusicPlayerWantsPlayingRepeatStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nPlayingRepeatStatus");
 	lua_gettable(L, index);
 	s.m_nPlayingRepeatStatus = check_int(L, -1);
 	return s;
 }
 
-static HTTPRequestCompleted_t check_HTTPRequestCompleted_t(lua_State* L, int index) {
+static void check_MusicPlayerWantsPlayingRepeatStatus_t_array(lua_State* L, int index, MusicPlayerWantsPlayingRepeatStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsPlayingRepeatStatus_t(L, -1);
+	}
+}
+static HTTPRequestCompleted_t check_HTTPRequestCompleted_t(lua_State* L, int index) {
 	HTTPRequestCompleted_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hRequest");
 	lua_gettable(L, index);
 	s.m_hRequest = check_HTTPRequestHandle(L, -1);
@@ -6613,11 +8968,34 @@ static HTTPRequestCompleted_t check_HTTPRequestCompleted_t(lua_State* L, int ind
 	return s;
 }
 
-static HTTPRequestHeadersReceived_t check_HTTPRequestHeadersReceived_t(lua_State* L, int index) {
+static void check_HTTPRequestCompleted_t_array(lua_State* L, int index, HTTPRequestCompleted_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTTPRequestCompleted_t(L, -1);
+	}
+}
+static HTTPRequestHeadersReceived_t check_HTTPRequestHeadersReceived_t(lua_State* L, int index) {
 	HTTPRequestHeadersReceived_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hRequest");
 	lua_gettable(L, index);
 	s.m_hRequest = check_HTTPRequestHandle(L, -1);
@@ -6627,11 +9005,34 @@ static HTTPRequestHeadersReceived_t check_HTTPRequestHeadersReceived_t(lua_State
 	return s;
 }
 
-static HTTPRequestDataReceived_t check_HTTPRequestDataReceived_t(lua_State* L, int index) {
+static void check_HTTPRequestHeadersReceived_t_array(lua_State* L, int index, HTTPRequestHeadersReceived_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTTPRequestHeadersReceived_t(L, -1);
+	}
+}
+static HTTPRequestDataReceived_t check_HTTPRequestDataReceived_t(lua_State* L, int index) {
 	HTTPRequestDataReceived_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_hRequest");
 	lua_gettable(L, index);
 	s.m_hRequest = check_HTTPRequestHandle(L, -1);
@@ -6647,11 +9048,34 @@ static HTTPRequestDataReceived_t check_HTTPRequestDataReceived_t(lua_State* L, i
 	return s;
 }
 
-static ControllerAnalogActionData_t check_ControllerAnalogActionData_t(lua_State* L, int index) {
+static void check_HTTPRequestDataReceived_t_array(lua_State* L, int index, HTTPRequestDataReceived_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTTPRequestDataReceived_t(L, -1);
+	}
+}
+static ControllerAnalogActionData_t check_ControllerAnalogActionData_t(lua_State* L, int index) {
 	ControllerAnalogActionData_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "eMode");
 	lua_gettable(L, index);
 	s.eMode = check_EControllerSourceMode(L, -1);
@@ -6667,11 +9091,34 @@ static ControllerAnalogActionData_t check_ControllerAnalogActionData_t(lua_State
 	return s;
 }
 
-static ControllerDigitalActionData_t check_ControllerDigitalActionData_t(lua_State* L, int index) {
+static void check_ControllerAnalogActionData_t_array(lua_State* L, int index, ControllerAnalogActionData_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ControllerAnalogActionData_t(L, -1);
+	}
+}
+static ControllerDigitalActionData_t check_ControllerDigitalActionData_t(lua_State* L, int index) {
 	ControllerDigitalActionData_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "bState");
 	lua_gettable(L, index);
 	s.bState = check_bool(L, -1);
@@ -6681,11 +9128,34 @@ static ControllerDigitalActionData_t check_ControllerDigitalActionData_t(lua_Sta
 	return s;
 }
 
-static ControllerMotionData_t check_ControllerMotionData_t(lua_State* L, int index) {
+static void check_ControllerDigitalActionData_t_array(lua_State* L, int index, ControllerDigitalActionData_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ControllerDigitalActionData_t(L, -1);
+	}
+}
+static ControllerMotionData_t check_ControllerMotionData_t(lua_State* L, int index) {
 	ControllerMotionData_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "rotQuatX");
 	lua_gettable(L, index);
 	s.rotQuatX = check_float(L, -1);
@@ -6719,11 +9189,34 @@ static ControllerMotionData_t check_ControllerMotionData_t(lua_State* L, int ind
 	return s;
 }
 
-static SteamUGCDetails_t check_SteamUGCDetails_t(lua_State* L, int index) {
+static void check_ControllerMotionData_t_array(lua_State* L, int index, ControllerMotionData_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ControllerMotionData_t(L, -1);
+	}
+}
+static SteamUGCDetails_t check_SteamUGCDetails_t(lua_State* L, int index) {
 	SteamUGCDetails_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nPublishedFileId");
 	lua_gettable(L, index);
 	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
@@ -6805,11 +9298,34 @@ static SteamUGCDetails_t check_SteamUGCDetails_t(lua_State* L, int index) {
 	return s;
 }
 
-static SteamUGCQueryCompleted_t check_SteamUGCQueryCompleted_t(lua_State* L, int index) {
+static void check_SteamUGCDetails_t_array(lua_State* L, int index, SteamUGCDetails_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamUGCDetails_t(L, -1);
+	}
+}
+static SteamUGCQueryCompleted_t check_SteamUGCQueryCompleted_t(lua_State* L, int index) {
 	SteamUGCQueryCompleted_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_handle");
 	lua_gettable(L, index);
 	s.m_handle = check_UGCQueryHandle_t(L, -1);
@@ -6828,11 +9344,34 @@ static SteamUGCQueryCompleted_t check_SteamUGCQueryCompleted_t(lua_State* L, int
 	return s;
 }
 
-static SteamUGCRequestUGCDetailsResult_t check_SteamUGCRequestUGCDetailsResult_t(lua_State* L, int index) {
+static void check_SteamUGCQueryCompleted_t_array(lua_State* L, int index, SteamUGCQueryCompleted_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamUGCQueryCompleted_t(L, -1);
+	}
+}
+static SteamUGCRequestUGCDetailsResult_t check_SteamUGCRequestUGCDetailsResult_t(lua_State* L, int index) {
 	SteamUGCRequestUGCDetailsResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_details");
 	lua_gettable(L, index);
 	s.m_details = check_SteamUGCDetails_t(L, -1);
@@ -6842,11 +9381,34 @@ static SteamUGCRequestUGCDetailsResult_t check_SteamUGCRequestUGCDetailsResult_t
 	return s;
 }
 
+static void check_SteamUGCRequestUGCDetailsResult_t_array(lua_State* L, int index, SteamUGCRequestUGCDetailsResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamUGCRequestUGCDetailsResult_t(L, -1);
+	}
+}
 static CreateItemResult_t check_CreateItemResult_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	CreateItemResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6859,11 +9421,34 @@ static CreateItemResult_t check_CreateItemResult_t(lua_State* L, int index) {
 	return s;
 }
 
+static void check_CreateItemResult_t_array(lua_State* L, int index, CreateItemResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_CreateItemResult_t(L, -1);
+	}
+}
 static SubmitItemUpdateResult_t check_SubmitItemUpdateResult_t(lua_State* L, int index) {
+	SubmitItemUpdateResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	SubmitItemUpdateResult_t s;
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6876,11 +9461,34 @@ static SubmitItemUpdateResult_t check_SubmitItemUpdateResult_t(lua_State* L, int
 	return s;
 }
 
-static DownloadItemResult_t check_DownloadItemResult_t(lua_State* L, int index) {
+static void check_SubmitItemUpdateResult_t_array(lua_State* L, int index, SubmitItemUpdateResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SubmitItemUpdateResult_t(L, -1);
+	}
+}
+static DownloadItemResult_t check_DownloadItemResult_t(lua_State* L, int index) {
 	DownloadItemResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_unAppID");
 	lua_gettable(L, index);
 	s.m_unAppID = check_AppId_t(L, -1);
@@ -6893,11 +9501,34 @@ static DownloadItemResult_t check_DownloadItemResult_t(lua_State* L, int index) 
 	return s;
 }
 
-static UserFavoriteItemsListChanged_t check_UserFavoriteItemsListChanged_t(lua_State* L, int index) {
+static void check_DownloadItemResult_t_array(lua_State* L, int index, DownloadItemResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_DownloadItemResult_t(L, -1);
+	}
+}
+static UserFavoriteItemsListChanged_t check_UserFavoriteItemsListChanged_t(lua_State* L, int index) {
 	UserFavoriteItemsListChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nPublishedFileId");
 	lua_gettable(L, index);
 	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
@@ -6910,11 +9541,34 @@ static UserFavoriteItemsListChanged_t check_UserFavoriteItemsListChanged_t(lua_S
 	return s;
 }
 
-static SetUserItemVoteResult_t check_SetUserItemVoteResult_t(lua_State* L, int index) {
+static void check_UserFavoriteItemsListChanged_t_array(lua_State* L, int index, UserFavoriteItemsListChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UserFavoriteItemsListChanged_t(L, -1);
+	}
+}
+static SetUserItemVoteResult_t check_SetUserItemVoteResult_t(lua_State* L, int index) {
 	SetUserItemVoteResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nPublishedFileId");
 	lua_gettable(L, index);
 	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
@@ -6927,11 +9581,34 @@ static SetUserItemVoteResult_t check_SetUserItemVoteResult_t(lua_State* L, int i
 	return s;
 }
 
-static GetUserItemVoteResult_t check_GetUserItemVoteResult_t(lua_State* L, int index) {
+static void check_SetUserItemVoteResult_t_array(lua_State* L, int index, SetUserItemVoteResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SetUserItemVoteResult_t(L, -1);
+	}
+}
+static GetUserItemVoteResult_t check_GetUserItemVoteResult_t(lua_State* L, int index) {
 	GetUserItemVoteResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nPublishedFileId");
 	lua_gettable(L, index);
 	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
@@ -6950,33 +9627,102 @@ static GetUserItemVoteResult_t check_GetUserItemVoteResult_t(lua_State* L, int i
 	return s;
 }
 
+static void check_GetUserItemVoteResult_t_array(lua_State* L, int index, GetUserItemVoteResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GetUserItemVoteResult_t(L, -1);
+	}
+}
 static StartPlaytimeTrackingResult_t check_StartPlaytimeTrackingResult_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	StartPlaytimeTrackingResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
 	return s;
 }
 
+static void check_StartPlaytimeTrackingResult_t_array(lua_State* L, int index, StartPlaytimeTrackingResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_StartPlaytimeTrackingResult_t(L, -1);
+	}
+}
 static StopPlaytimeTrackingResult_t check_StopPlaytimeTrackingResult_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	StopPlaytimeTrackingResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
 	return s;
 }
 
+static void check_StopPlaytimeTrackingResult_t_array(lua_State* L, int index, StopPlaytimeTrackingResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_StopPlaytimeTrackingResult_t(L, -1);
+	}
+}
 static AddUGCDependencyResult_t check_AddUGCDependencyResult_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	AddUGCDependencyResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -6989,11 +9735,34 @@ static AddUGCDependencyResult_t check_AddUGCDependencyResult_t(lua_State* L, int
 	return s;
 }
 
+static void check_AddUGCDependencyResult_t_array(lua_State* L, int index, AddUGCDependencyResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_AddUGCDependencyResult_t(L, -1);
+	}
+}
 static RemoveUGCDependencyResult_t check_RemoveUGCDependencyResult_t(lua_State* L, int index) {
+	RemoveUGCDependencyResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	RemoveUGCDependencyResult_t s;
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7006,11 +9775,34 @@ static RemoveUGCDependencyResult_t check_RemoveUGCDependencyResult_t(lua_State* 
 	return s;
 }
 
+static void check_RemoveUGCDependencyResult_t_array(lua_State* L, int index, RemoveUGCDependencyResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoveUGCDependencyResult_t(L, -1);
+	}
+}
 static AddAppDependencyResult_t check_AddAppDependencyResult_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	AddAppDependencyResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7023,11 +9815,34 @@ static AddAppDependencyResult_t check_AddAppDependencyResult_t(lua_State* L, int
 	return s;
 }
 
+static void check_AddAppDependencyResult_t_array(lua_State* L, int index, AddAppDependencyResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_AddAppDependencyResult_t(L, -1);
+	}
+}
 static RemoveAppDependencyResult_t check_RemoveAppDependencyResult_t(lua_State* L, int index) {
+	RemoveAppDependencyResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	RemoveAppDependencyResult_t s;
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7040,11 +9855,34 @@ static RemoveAppDependencyResult_t check_RemoveAppDependencyResult_t(lua_State* 
 	return s;
 }
 
-static GetAppDependenciesResult_t check_GetAppDependenciesResult_t(lua_State* L, int index) {
+static void check_RemoveAppDependencyResult_t_array(lua_State* L, int index, RemoveAppDependencyResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoveAppDependencyResult_t(L, -1);
+	}
+}
+static GetAppDependenciesResult_t check_GetAppDependenciesResult_t(lua_State* L, int index) {
 	GetAppDependenciesResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7063,11 +9901,34 @@ static GetAppDependenciesResult_t check_GetAppDependenciesResult_t(lua_State* L,
 	return s;
 }
 
-static DeleteItemResult_t check_DeleteItemResult_t(lua_State* L, int index) {
+static void check_GetAppDependenciesResult_t_array(lua_State* L, int index, GetAppDependenciesResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GetAppDependenciesResult_t(L, -1);
+	}
+}
+static DeleteItemResult_t check_DeleteItemResult_t(lua_State* L, int index) {
 	DeleteItemResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7077,44 +9938,136 @@ static DeleteItemResult_t check_DeleteItemResult_t(lua_State* L, int index) {
 	return s;
 }
 
+static void check_DeleteItemResult_t_array(lua_State* L, int index, DeleteItemResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_DeleteItemResult_t(L, -1);
+	}
+}
 static SteamAppInstalled_t check_SteamAppInstalled_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	SteamAppInstalled_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_nAppID");
 	lua_gettable(L, index);
 	s.m_nAppID = check_AppId_t(L, -1);
 	return s;
 }
 
+static void check_SteamAppInstalled_t_array(lua_State* L, int index, SteamAppInstalled_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamAppInstalled_t(L, -1);
+	}
+}
 static SteamAppUninstalled_t check_SteamAppUninstalled_t(lua_State* L, int index) {
+	SteamAppUninstalled_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	SteamAppUninstalled_t s;
 	lua_pushstring(L, "m_nAppID");
 	lua_gettable(L, index);
 	s.m_nAppID = check_AppId_t(L, -1);
 	return s;
 }
 
-static HTML_BrowserReady_t check_HTML_BrowserReady_t(lua_State* L, int index) {
+static void check_SteamAppUninstalled_t_array(lua_State* L, int index, SteamAppUninstalled_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamAppUninstalled_t(L, -1);
+	}
+}
+static HTML_BrowserReady_t check_HTML_BrowserReady_t(lua_State* L, int index) {
 	HTML_BrowserReady_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
 	return s;
 }
 
-static HTML_NeedsPaint_t check_HTML_NeedsPaint_t(lua_State* L, int index) {
+static void check_HTML_BrowserReady_t_array(lua_State* L, int index, HTML_BrowserReady_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_BrowserReady_t(L, -1);
+	}
+}
+static HTML_NeedsPaint_t check_HTML_NeedsPaint_t(lua_State* L, int index) {
 	HTML_NeedsPaint_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7154,11 +10107,34 @@ static HTML_NeedsPaint_t check_HTML_NeedsPaint_t(lua_State* L, int index) {
 	return s;
 }
 
-static HTML_StartRequest_t check_HTML_StartRequest_t(lua_State* L, int index) {
+static void check_HTML_NeedsPaint_t_array(lua_State* L, int index, HTML_NeedsPaint_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_NeedsPaint_t(L, -1);
+	}
+}
+static HTML_StartRequest_t check_HTML_StartRequest_t(lua_State* L, int index) {
 	HTML_StartRequest_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7177,22 +10153,68 @@ static HTML_StartRequest_t check_HTML_StartRequest_t(lua_State* L, int index) {
 	return s;
 }
 
-static HTML_CloseBrowser_t check_HTML_CloseBrowser_t(lua_State* L, int index) {
+static void check_HTML_StartRequest_t_array(lua_State* L, int index, HTML_StartRequest_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_StartRequest_t(L, -1);
+	}
+}
+static HTML_CloseBrowser_t check_HTML_CloseBrowser_t(lua_State* L, int index) {
 	HTML_CloseBrowser_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
 	return s;
 }
 
-static HTML_URLChanged_t check_HTML_URLChanged_t(lua_State* L, int index) {
+static void check_HTML_CloseBrowser_t_array(lua_State* L, int index, HTML_CloseBrowser_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_CloseBrowser_t(L, -1);
+	}
+}
+static HTML_URLChanged_t check_HTML_URLChanged_t(lua_State* L, int index) {
 	HTML_URLChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7214,11 +10236,34 @@ static HTML_URLChanged_t check_HTML_URLChanged_t(lua_State* L, int index) {
 	return s;
 }
 
-static HTML_FinishedRequest_t check_HTML_FinishedRequest_t(lua_State* L, int index) {
+static void check_HTML_URLChanged_t_array(lua_State* L, int index, HTML_URLChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_URLChanged_t(L, -1);
+	}
+}
+static HTML_FinishedRequest_t check_HTML_FinishedRequest_t(lua_State* L, int index) {
 	HTML_FinishedRequest_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7231,11 +10276,34 @@ static HTML_FinishedRequest_t check_HTML_FinishedRequest_t(lua_State* L, int ind
 	return s;
 }
 
-static HTML_OpenLinkInNewTab_t check_HTML_OpenLinkInNewTab_t(lua_State* L, int index) {
+static void check_HTML_FinishedRequest_t_array(lua_State* L, int index, HTML_FinishedRequest_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_FinishedRequest_t(L, -1);
+	}
+}
+static HTML_OpenLinkInNewTab_t check_HTML_OpenLinkInNewTab_t(lua_State* L, int index) {
 	HTML_OpenLinkInNewTab_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7245,11 +10313,34 @@ static HTML_OpenLinkInNewTab_t check_HTML_OpenLinkInNewTab_t(lua_State* L, int i
 	return s;
 }
 
-static HTML_ChangedTitle_t check_HTML_ChangedTitle_t(lua_State* L, int index) {
+static void check_HTML_OpenLinkInNewTab_t_array(lua_State* L, int index, HTML_OpenLinkInNewTab_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_OpenLinkInNewTab_t(L, -1);
+	}
+}
+static HTML_ChangedTitle_t check_HTML_ChangedTitle_t(lua_State* L, int index) {
 	HTML_ChangedTitle_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7259,11 +10350,34 @@ static HTML_ChangedTitle_t check_HTML_ChangedTitle_t(lua_State* L, int index) {
 	return s;
 }
 
-static HTML_SearchResults_t check_HTML_SearchResults_t(lua_State* L, int index) {
+static void check_HTML_ChangedTitle_t_array(lua_State* L, int index, HTML_ChangedTitle_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_ChangedTitle_t(L, -1);
+	}
+}
+static HTML_SearchResults_t check_HTML_SearchResults_t(lua_State* L, int index) {
 	HTML_SearchResults_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7276,11 +10390,34 @@ static HTML_SearchResults_t check_HTML_SearchResults_t(lua_State* L, int index) 
 	return s;
 }
 
-static HTML_CanGoBackAndForward_t check_HTML_CanGoBackAndForward_t(lua_State* L, int index) {
+static void check_HTML_SearchResults_t_array(lua_State* L, int index, HTML_SearchResults_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_SearchResults_t(L, -1);
+	}
+}
+static HTML_CanGoBackAndForward_t check_HTML_CanGoBackAndForward_t(lua_State* L, int index) {
 	HTML_CanGoBackAndForward_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7293,11 +10430,34 @@ static HTML_CanGoBackAndForward_t check_HTML_CanGoBackAndForward_t(lua_State* L,
 	return s;
 }
 
+static void check_HTML_CanGoBackAndForward_t_array(lua_State* L, int index, HTML_CanGoBackAndForward_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_CanGoBackAndForward_t(L, -1);
+	}
+}
 static HTML_HorizontalScroll_t check_HTML_HorizontalScroll_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	HTML_HorizontalScroll_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7319,11 +10479,34 @@ static HTML_HorizontalScroll_t check_HTML_HorizontalScroll_t(lua_State* L, int i
 	return s;
 }
 
+static void check_HTML_HorizontalScroll_t_array(lua_State* L, int index, HTML_HorizontalScroll_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_HorizontalScroll_t(L, -1);
+	}
+}
 static HTML_VerticalScroll_t check_HTML_VerticalScroll_t(lua_State* L, int index) {
+	HTML_VerticalScroll_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	HTML_VerticalScroll_t s;
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7345,11 +10528,34 @@ static HTML_VerticalScroll_t check_HTML_VerticalScroll_t(lua_State* L, int index
 	return s;
 }
 
-static HTML_LinkAtPosition_t check_HTML_LinkAtPosition_t(lua_State* L, int index) {
+static void check_HTML_VerticalScroll_t_array(lua_State* L, int index, HTML_VerticalScroll_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_VerticalScroll_t(L, -1);
+	}
+}
+static HTML_LinkAtPosition_t check_HTML_LinkAtPosition_t(lua_State* L, int index) {
 	HTML_LinkAtPosition_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7371,11 +10577,34 @@ static HTML_LinkAtPosition_t check_HTML_LinkAtPosition_t(lua_State* L, int index
 	return s;
 }
 
+static void check_HTML_LinkAtPosition_t_array(lua_State* L, int index, HTML_LinkAtPosition_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_LinkAtPosition_t(L, -1);
+	}
+}
 static HTML_JSAlert_t check_HTML_JSAlert_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	HTML_JSAlert_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7385,11 +10614,34 @@ static HTML_JSAlert_t check_HTML_JSAlert_t(lua_State* L, int index) {
 	return s;
 }
 
+static void check_HTML_JSAlert_t_array(lua_State* L, int index, HTML_JSAlert_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_JSAlert_t(L, -1);
+	}
+}
 static HTML_JSConfirm_t check_HTML_JSConfirm_t(lua_State* L, int index) {
+	HTML_JSConfirm_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	HTML_JSConfirm_t s;
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7399,11 +10651,34 @@ static HTML_JSConfirm_t check_HTML_JSConfirm_t(lua_State* L, int index) {
 	return s;
 }
 
-static HTML_FileOpenDialog_t check_HTML_FileOpenDialog_t(lua_State* L, int index) {
+static void check_HTML_JSConfirm_t_array(lua_State* L, int index, HTML_JSConfirm_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_JSConfirm_t(L, -1);
+	}
+}
+static HTML_FileOpenDialog_t check_HTML_FileOpenDialog_t(lua_State* L, int index) {
 	HTML_FileOpenDialog_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7416,11 +10691,34 @@ static HTML_FileOpenDialog_t check_HTML_FileOpenDialog_t(lua_State* L, int index
 	return s;
 }
 
-static HTML_NewWindow_t check_HTML_NewWindow_t(lua_State* L, int index) {
+static void check_HTML_FileOpenDialog_t_array(lua_State* L, int index, HTML_FileOpenDialog_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_FileOpenDialog_t(L, -1);
+	}
+}
+static HTML_NewWindow_t check_HTML_NewWindow_t(lua_State* L, int index) {
 	HTML_NewWindow_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7445,11 +10743,34 @@ static HTML_NewWindow_t check_HTML_NewWindow_t(lua_State* L, int index) {
 	return s;
 }
 
-static HTML_SetCursor_t check_HTML_SetCursor_t(lua_State* L, int index) {
+static void check_HTML_NewWindow_t_array(lua_State* L, int index, HTML_NewWindow_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_NewWindow_t(L, -1);
+	}
+}
+static HTML_SetCursor_t check_HTML_SetCursor_t(lua_State* L, int index) {
 	HTML_SetCursor_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7459,11 +10780,34 @@ static HTML_SetCursor_t check_HTML_SetCursor_t(lua_State* L, int index) {
 	return s;
 }
 
+static void check_HTML_SetCursor_t_array(lua_State* L, int index, HTML_SetCursor_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_SetCursor_t(L, -1);
+	}
+}
 static HTML_StatusText_t check_HTML_StatusText_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	HTML_StatusText_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7473,11 +10817,34 @@ static HTML_StatusText_t check_HTML_StatusText_t(lua_State* L, int index) {
 	return s;
 }
 
+static void check_HTML_StatusText_t_array(lua_State* L, int index, HTML_StatusText_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_StatusText_t(L, -1);
+	}
+}
 static HTML_ShowToolTip_t check_HTML_ShowToolTip_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	HTML_ShowToolTip_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7487,11 +10854,34 @@ static HTML_ShowToolTip_t check_HTML_ShowToolTip_t(lua_State* L, int index) {
 	return s;
 }
 
+static void check_HTML_ShowToolTip_t_array(lua_State* L, int index, HTML_ShowToolTip_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_ShowToolTip_t(L, -1);
+	}
+}
 static HTML_UpdateToolTip_t check_HTML_UpdateToolTip_t(lua_State* L, int index) {
+	HTML_UpdateToolTip_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	HTML_UpdateToolTip_t s;
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7501,22 +10891,68 @@ static HTML_UpdateToolTip_t check_HTML_UpdateToolTip_t(lua_State* L, int index) 
 	return s;
 }
 
-static HTML_HideToolTip_t check_HTML_HideToolTip_t(lua_State* L, int index) {
+static void check_HTML_UpdateToolTip_t_array(lua_State* L, int index, HTML_UpdateToolTip_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_UpdateToolTip_t(L, -1);
+	}
+}
+static HTML_HideToolTip_t check_HTML_HideToolTip_t(lua_State* L, int index) {
 	HTML_HideToolTip_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
 	return s;
 }
 
-static HTML_BrowserRestarted_t check_HTML_BrowserRestarted_t(lua_State* L, int index) {
+static void check_HTML_HideToolTip_t_array(lua_State* L, int index, HTML_HideToolTip_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_HideToolTip_t(L, -1);
+	}
+}
+static HTML_BrowserRestarted_t check_HTML_BrowserRestarted_t(lua_State* L, int index) {
 	HTML_BrowserRestarted_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "unBrowserHandle");
 	lua_gettable(L, index);
 	s.unBrowserHandle = check_HHTMLBrowser(L, -1);
@@ -7526,11 +10962,34 @@ static HTML_BrowserRestarted_t check_HTML_BrowserRestarted_t(lua_State* L, int i
 	return s;
 }
 
-static SteamItemDetails_t check_SteamItemDetails_t(lua_State* L, int index) {
+static void check_HTML_BrowserRestarted_t_array(lua_State* L, int index, HTML_BrowserRestarted_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_HTML_BrowserRestarted_t(L, -1);
+	}
+}
+static SteamItemDetails_t check_SteamItemDetails_t(lua_State* L, int index) {
 	SteamItemDetails_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_itemId");
 	lua_gettable(L, index);
 	s.m_itemId = check_SteamItemInstanceID_t(L, -1);
@@ -7546,11 +11005,34 @@ static SteamItemDetails_t check_SteamItemDetails_t(lua_State* L, int index) {
 	return s;
 }
 
-static SteamInventoryResultReady_t check_SteamInventoryResultReady_t(lua_State* L, int index) {
+static void check_SteamItemDetails_t_array(lua_State* L, int index, SteamItemDetails_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamItemDetails_t(L, -1);
+	}
+}
+static SteamInventoryResultReady_t check_SteamInventoryResultReady_t(lua_State* L, int index) {
 	SteamInventoryResultReady_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_handle");
 	lua_gettable(L, index);
 	s.m_handle = check_SteamInventoryResult_t(L, -1);
@@ -7560,22 +11042,68 @@ static SteamInventoryResultReady_t check_SteamInventoryResultReady_t(lua_State* 
 	return s;
 }
 
-static SteamInventoryFullUpdate_t check_SteamInventoryFullUpdate_t(lua_State* L, int index) {
+static void check_SteamInventoryResultReady_t_array(lua_State* L, int index, SteamInventoryResultReady_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamInventoryResultReady_t(L, -1);
+	}
+}
+static SteamInventoryFullUpdate_t check_SteamInventoryFullUpdate_t(lua_State* L, int index) {
 	SteamInventoryFullUpdate_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_handle");
 	lua_gettable(L, index);
 	s.m_handle = check_SteamInventoryResult_t(L, -1);
 	return s;
 }
 
-static SteamInventoryEligiblePromoItemDefIDs_t check_SteamInventoryEligiblePromoItemDefIDs_t(lua_State* L, int index) {
+static void check_SteamInventoryFullUpdate_t_array(lua_State* L, int index, SteamInventoryFullUpdate_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamInventoryFullUpdate_t(L, -1);
+	}
+}
+static SteamInventoryEligiblePromoItemDefIDs_t check_SteamInventoryEligiblePromoItemDefIDs_t(lua_State* L, int index) {
 	SteamInventoryEligiblePromoItemDefIDs_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_result");
 	lua_gettable(L, index);
 	s.m_result = check_EResult(L, -1);
@@ -7591,11 +11119,34 @@ static SteamInventoryEligiblePromoItemDefIDs_t check_SteamInventoryEligiblePromo
 	return s;
 }
 
-static SteamInventoryStartPurchaseResult_t check_SteamInventoryStartPurchaseResult_t(lua_State* L, int index) {
+static void check_SteamInventoryEligiblePromoItemDefIDs_t_array(lua_State* L, int index, SteamInventoryEligiblePromoItemDefIDs_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamInventoryEligiblePromoItemDefIDs_t(L, -1);
+	}
+}
+static SteamInventoryStartPurchaseResult_t check_SteamInventoryStartPurchaseResult_t(lua_State* L, int index) {
 	SteamInventoryStartPurchaseResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_result");
 	lua_gettable(L, index);
 	s.m_result = check_EResult(L, -1);
@@ -7608,11 +11159,34 @@ static SteamInventoryStartPurchaseResult_t check_SteamInventoryStartPurchaseResu
 	return s;
 }
 
-static SteamInventoryRequestPricesResult_t check_SteamInventoryRequestPricesResult_t(lua_State* L, int index) {
+static void check_SteamInventoryStartPurchaseResult_t_array(lua_State* L, int index, SteamInventoryStartPurchaseResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamInventoryStartPurchaseResult_t(L, -1);
+	}
+}
+static SteamInventoryRequestPricesResult_t check_SteamInventoryRequestPricesResult_t(lua_State* L, int index) {
 	SteamInventoryRequestPricesResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_result");
 	lua_gettable(L, index);
 	s.m_result = check_EResult(L, -1);
@@ -7622,22 +11196,68 @@ static SteamInventoryRequestPricesResult_t check_SteamInventoryRequestPricesResu
 	return s;
 }
 
-static BroadcastUploadStop_t check_BroadcastUploadStop_t(lua_State* L, int index) {
+static void check_SteamInventoryRequestPricesResult_t_array(lua_State* L, int index, SteamInventoryRequestPricesResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamInventoryRequestPricesResult_t(L, -1);
+	}
+}
+static BroadcastUploadStop_t check_BroadcastUploadStop_t(lua_State* L, int index) {
 	BroadcastUploadStop_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EBroadcastUploadResult(L, -1);
 	return s;
 }
 
-static GetVideoURLResult_t check_GetVideoURLResult_t(lua_State* L, int index) {
+static void check_BroadcastUploadStop_t_array(lua_State* L, int index, BroadcastUploadStop_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_BroadcastUploadStop_t(L, -1);
+	}
+}
+static GetVideoURLResult_t check_GetVideoURLResult_t(lua_State* L, int index) {
 	GetVideoURLResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7650,11 +11270,34 @@ static GetVideoURLResult_t check_GetVideoURLResult_t(lua_State* L, int index) {
 	return s;
 }
 
-static GetOPFSettingsResult_t check_GetOPFSettingsResult_t(lua_State* L, int index) {
+static void check_GetVideoURLResult_t_array(lua_State* L, int index, GetVideoURLResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GetVideoURLResult_t(L, -1);
+	}
+}
+static GetOPFSettingsResult_t check_GetOPFSettingsResult_t(lua_State* L, int index) {
 	GetOPFSettingsResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7664,11 +11307,34 @@ static GetOPFSettingsResult_t check_GetOPFSettingsResult_t(lua_State* L, int ind
 	return s;
 }
 
-static GSClientApprove_t check_GSClientApprove_t(lua_State* L, int index) {
+static void check_GetOPFSettingsResult_t_array(lua_State* L, int index, GetOPFSettingsResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GetOPFSettingsResult_t(L, -1);
+	}
+}
+static GSClientApprove_t check_GSClientApprove_t(lua_State* L, int index) {
 	GSClientApprove_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_SteamID");
 	lua_gettable(L, index);
 	s.m_SteamID = check_CSteamID(L, -1);
@@ -7678,11 +11344,34 @@ static GSClientApprove_t check_GSClientApprove_t(lua_State* L, int index) {
 	return s;
 }
 
-static GSClientDeny_t check_GSClientDeny_t(lua_State* L, int index) {
+static void check_GSClientApprove_t_array(lua_State* L, int index, GSClientApprove_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSClientApprove_t(L, -1);
+	}
+}
+static GSClientDeny_t check_GSClientDeny_t(lua_State* L, int index) {
 	GSClientDeny_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_SteamID");
 	lua_gettable(L, index);
 	s.m_SteamID = check_CSteamID(L, -1);
@@ -7695,11 +11384,34 @@ static GSClientDeny_t check_GSClientDeny_t(lua_State* L, int index) {
 	return s;
 }
 
-static GSClientKick_t check_GSClientKick_t(lua_State* L, int index) {
+static void check_GSClientDeny_t_array(lua_State* L, int index, GSClientDeny_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSClientDeny_t(L, -1);
+	}
+}
+static GSClientKick_t check_GSClientKick_t(lua_State* L, int index) {
 	GSClientKick_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_SteamID");
 	lua_gettable(L, index);
 	s.m_SteamID = check_CSteamID(L, -1);
@@ -7709,11 +11421,34 @@ static GSClientKick_t check_GSClientKick_t(lua_State* L, int index) {
 	return s;
 }
 
-static GSClientAchievementStatus_t check_GSClientAchievementStatus_t(lua_State* L, int index) {
+static void check_GSClientKick_t_array(lua_State* L, int index, GSClientKick_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSClientKick_t(L, -1);
+	}
+}
+static GSClientAchievementStatus_t check_GSClientAchievementStatus_t(lua_State* L, int index) {
 	GSClientAchievementStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_SteamID");
 	lua_gettable(L, index);
 	s.m_SteamID = check_uint64(L, -1);
@@ -7726,22 +11461,68 @@ static GSClientAchievementStatus_t check_GSClientAchievementStatus_t(lua_State* 
 	return s;
 }
 
-static GSPolicyResponse_t check_GSPolicyResponse_t(lua_State* L, int index) {
+static void check_GSClientAchievementStatus_t_array(lua_State* L, int index, GSClientAchievementStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSClientAchievementStatus_t(L, -1);
+	}
+}
+static GSPolicyResponse_t check_GSPolicyResponse_t(lua_State* L, int index) {
 	GSPolicyResponse_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_bSecure");
 	lua_gettable(L, index);
 	s.m_bSecure = check_uint8(L, -1);
 	return s;
 }
 
-static GSGameplayStats_t check_GSGameplayStats_t(lua_State* L, int index) {
+static void check_GSPolicyResponse_t_array(lua_State* L, int index, GSPolicyResponse_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSPolicyResponse_t(L, -1);
+	}
+}
+static GSGameplayStats_t check_GSGameplayStats_t(lua_State* L, int index) {
 	GSGameplayStats_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7757,11 +11538,34 @@ static GSGameplayStats_t check_GSGameplayStats_t(lua_State* L, int index) {
 	return s;
 }
 
-static GSClientGroupStatus_t check_GSClientGroupStatus_t(lua_State* L, int index) {
+static void check_GSGameplayStats_t_array(lua_State* L, int index, GSGameplayStats_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSGameplayStats_t(L, -1);
+	}
+}
+static GSClientGroupStatus_t check_GSClientGroupStatus_t(lua_State* L, int index) {
 	GSClientGroupStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_SteamIDUser");
 	lua_gettable(L, index);
 	s.m_SteamIDUser = check_CSteamID(L, -1);
@@ -7777,11 +11581,34 @@ static GSClientGroupStatus_t check_GSClientGroupStatus_t(lua_State* L, int index
 	return s;
 }
 
-static GSReputation_t check_GSReputation_t(lua_State* L, int index) {
+static void check_GSClientGroupStatus_t_array(lua_State* L, int index, GSClientGroupStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSClientGroupStatus_t(L, -1);
+	}
+}
+static GSReputation_t check_GSReputation_t(lua_State* L, int index) {
 	GSReputation_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7806,22 +11633,68 @@ static GSReputation_t check_GSReputation_t(lua_State* L, int index) {
 	return s;
 }
 
-static AssociateWithClanResult_t check_AssociateWithClanResult_t(lua_State* L, int index) {
+static void check_GSReputation_t_array(lua_State* L, int index, GSReputation_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSReputation_t(L, -1);
+	}
+}
+static AssociateWithClanResult_t check_AssociateWithClanResult_t(lua_State* L, int index) {
 	AssociateWithClanResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
 	return s;
 }
 
-static ComputeNewPlayerCompatibilityResult_t check_ComputeNewPlayerCompatibilityResult_t(lua_State* L, int index) {
+static void check_AssociateWithClanResult_t_array(lua_State* L, int index, AssociateWithClanResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_AssociateWithClanResult_t(L, -1);
+	}
+}
+static ComputeNewPlayerCompatibilityResult_t check_ComputeNewPlayerCompatibilityResult_t(lua_State* L, int index) {
 	ComputeNewPlayerCompatibilityResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7840,11 +11713,34 @@ static ComputeNewPlayerCompatibilityResult_t check_ComputeNewPlayerCompatibility
 	return s;
 }
 
+static void check_ComputeNewPlayerCompatibilityResult_t_array(lua_State* L, int index, ComputeNewPlayerCompatibilityResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ComputeNewPlayerCompatibilityResult_t(L, -1);
+	}
+}
 static GSStatsReceived_t check_GSStatsReceived_t(lua_State* L, int index) {
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
 	GSStatsReceived_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7854,11 +11750,34 @@ static GSStatsReceived_t check_GSStatsReceived_t(lua_State* L, int index) {
 	return s;
 }
 
+static void check_GSStatsReceived_t_array(lua_State* L, int index, GSStatsReceived_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSStatsReceived_t(L, -1);
+	}
+}
 static GSStatsStored_t check_GSStatsStored_t(lua_State* L, int index) {
+	GSStatsStored_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	GSStatsStored_t s;
 	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
 	s.m_eResult = check_EResult(L, -1);
@@ -7868,17 +11787,60 @@ static GSStatsStored_t check_GSStatsStored_t(lua_State* L, int index) {
 	return s;
 }
 
-static GSStatsUnloaded_t check_GSStatsUnloaded_t(lua_State* L, int index) {
+static void check_GSStatsStored_t_array(lua_State* L, int index, GSStatsStored_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSStatsStored_t(L, -1);
+	}
+}
+static GSStatsUnloaded_t check_GSStatsUnloaded_t(lua_State* L, int index) {
 	GSStatsUnloaded_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
 	lua_pushstring(L, "m_steamIDUser");
 	lua_gettable(L, index);
 	s.m_steamIDUser = check_CSteamID(L, -1);
 	return s;
 }
 
+static void check_GSStatsUnloaded_t_array(lua_State* L, int index, GSStatsUnloaded_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_GSStatsUnloaded_t(L, -1);
+	}
+}
 
 
 
@@ -9122,7 +13084,7 @@ static int ISteamUser_TerminateGameConnection(lua_State* L) {
 
 static int ISteamUser_GetAuthSessionTicket(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 pcbTicket; /*out_param*/
+	uint32 pcbTicket = check_uint32(L, 3); /*out_param*/
 	int cbMaxTicket = check_int(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pTicket_buffer = check_buffer(L, 1); /*buffer_param*/
 	void * pTicket = 0x0;
@@ -9217,7 +13179,7 @@ static int ISteamUser_RequestEncryptedAppTicket(lua_State* L) {
 
 static int ISteamUser_GetEncryptedAppTicket(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 pcbTicket; /*out_param*/
+	uint32 pcbTicket = check_uint32(L, 3); /*out_param*/
 	int cbMaxTicket = check_int(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pTicket_buffer = check_buffer(L, 1); /*buffer_param*/
 	void * pTicket = 0x0;
@@ -9484,7 +13446,7 @@ static int ISteamFriends_GetFriendsGroupMembersList(lua_State* L) {
 	int nMembersCount; /*out_array_call_param*/
 	FriendsGroupID_t friendsGroupID = check_FriendsGroupID_t(L, 1); /*normal*/
 	nMembersCount = friends->GetFriendsGroupMembersCount(friendsGroupID);/*out_array_call*/
-	CSteamID pOutSteamIDMembers[nMembersCount];
+	CSteamID pOutSteamIDMembers[nMembersCount]; /*out_array_call*/
 
 	friends->GetFriendsGroupMembersList(friendsGroupID, pOutSteamIDMembers, nMembersCount);
 	assert(top + 0 == lua_gettop(L));
@@ -9548,9 +13510,9 @@ static int ISteamFriends_GetClanTag(lua_State* L) {
 
 static int ISteamFriends_GetClanActivityCounts(lua_State* L) {
 	int top = lua_gettop(L);
-	int pnChatting; /*out_param*/
-	int pnInGame; /*out_param*/
-	int pnOnline; /*out_param*/
+	int pnChatting = check_int(L, 4); /*out_param*/
+	int pnInGame = check_int(L, 3); /*out_param*/
+	int pnOnline = check_int(L, 2); /*out_param*/
 	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->GetClanActivityCounts(steamIDClan, &pnOnline, &pnInGame, &pnChatting);
@@ -9957,7 +13919,7 @@ static int ISteamFriends_SendClanChatMessage(lua_State* L) {
 
 static int ISteamFriends_GetClanChatMessage(lua_State* L) {
 	int top = lua_gettop(L);
-	EChatEntryType peChatEntryType; /*out_param*/
+	EChatEntryType peChatEntryType = check_EChatEntryType(L, 5); /*out_param*/
 	int cchTextMax = check_int(L, 4); /*normal*/
 	dmScript::LuaHBuffer * prgchText_buffer = check_buffer(L, 3); /*buffer_param*/
 	void * prgchText = 0x0;
@@ -10045,7 +14007,7 @@ static int ISteamFriends_ReplyToFriendMessage(lua_State* L) {
 
 static int ISteamFriends_GetFriendMessage(lua_State* L) {
 	int top = lua_gettop(L);
-	EChatEntryType peChatEntryType; /*out_param*/
+	EChatEntryType peChatEntryType = check_EChatEntryType(L, 5); /*out_param*/
 	int cubData = check_int(L, 4); /*normal*/
 	dmScript::LuaHBuffer * pvData_buffer = check_buffer(L, 3); /*buffer_param*/
 	void * pvData = 0x0;
@@ -10166,8 +14128,8 @@ static int ISteamUtils_GetIPCountry(lua_State* L) {
 
 static int ISteamUtils_GetImageSize(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 pnHeight; /*out_param*/
-	uint32 pnWidth; /*out_param*/
+	uint32 pnHeight = check_uint32(L, 3); /*out_param*/
+	uint32 pnWidth = check_uint32(L, 2); /*out_param*/
 	int iImage = check_int(L, 1); /*normal*/
 
 	bool r = utils->GetImageSize(iImage, &pnWidth, &pnHeight);
@@ -10197,8 +14159,8 @@ static int ISteamUtils_GetImageRGBA(lua_State* L) {
 
 static int ISteamUtils_GetCSERIPPort(lua_State* L) {
 	int top = lua_gettop(L);
-	uint16 usPort; /*out_param*/
-	uint32 unIP; /*out_param*/
+	uint16 usPort = check_uint16(L, 2); /*out_param*/
+	uint32 unIP = check_uint32(L, 1); /*out_param*/
 
 	bool r = utils->GetCSERIPPort(&unIP, &usPort);
 	push_bool(L, r);
@@ -10240,7 +14202,7 @@ static int ISteamUtils_SetOverlayNotificationPosition(lua_State* L) {
 
 static int ISteamUtils_IsAPICallCompleted(lua_State* L) {
 	int top = lua_gettop(L);
-	bool pbFailed; /*out_param*/
+	bool pbFailed = check_bool(L, 2); /*out_param*/
 	SteamAPICall_t hSteamAPICall = check_SteamAPICall_t(L, 1); /*normal*/
 
 	bool r = utils->IsAPICallCompleted(hSteamAPICall, &pbFailed);
@@ -10264,7 +14226,7 @@ static int ISteamUtils_GetAPICallFailureReason(lua_State* L) {
 
 static int ISteamUtils_GetAPICallResult(lua_State* L) {
 	int top = lua_gettop(L);
-	bool pbFailed; /*out_param*/
+	bool pbFailed = check_bool(L, 5); /*out_param*/
 	int iCallbackExpected = check_int(L, 4); /*normal*/
 	int cubCallback = check_int(L, 3); /*normal*/
 	dmScript::LuaHBuffer * pCallback_buffer = check_buffer(L, 2); /*buffer_param*/
@@ -10440,12 +14402,12 @@ static int ISteamMatchmaking_GetFavoriteGameCount(lua_State* L) {
 
 static int ISteamMatchmaking_GetFavoriteGame(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 pRTime32LastPlayedOnServer; /*out_param*/
-	uint32 punFlags; /*out_param*/
-	uint16 pnQueryPort; /*out_param*/
-	uint16 pnConnPort; /*out_param*/
-	uint32 pnIP; /*out_param*/
-	AppId_t pnAppID; /*out_param*/
+	uint32 pRTime32LastPlayedOnServer = check_uint32(L, 7); /*out_param*/
+	uint32 punFlags = check_uint32(L, 6); /*out_param*/
+	uint16 pnQueryPort = check_uint16(L, 5); /*out_param*/
+	uint16 pnConnPort = check_uint16(L, 4); /*out_param*/
+	uint32 pnIP = check_uint32(L, 3); /*out_param*/
+	AppId_t pnAppID = check_AppId_t(L, 2); /*out_param*/
 	int iGame = check_int(L, 1); /*normal*/
 
 	bool r = matchmaking->GetFavoriteGame(iGame, &pnAppID, &pnIP, &pnConnPort, &pnQueryPort, &punFlags, &pRTime32LastPlayedOnServer);
@@ -10754,7 +14716,7 @@ static int ISteamMatchmaking_SendLobbyChatMsg(lua_State* L) {
 
 static int ISteamMatchmaking_GetLobbyChatEntry(lua_State* L) {
 	int top = lua_gettop(L);
-	EChatEntryType peChatEntryType; /*out_param*/
+	EChatEntryType peChatEntryType = check_EChatEntryType(L, 5); /*out_param*/
 	int cubData = check_int(L, 4); /*normal*/
 	dmScript::LuaHBuffer * pvData_buffer = check_buffer(L, 3); /*buffer_param*/
 	void * pvData = 0x0;
@@ -10797,8 +14759,8 @@ static int ISteamMatchmaking_SetLobbyGameServer(lua_State* L) {
 
 static int ISteamMatchmaking_GetLobbyGameServer(lua_State* L) {
 	int top = lua_gettop(L);
-	uint16 punGameServerPort; /*out_param*/
-	uint32 punGameServerIP; /*out_param*/
+	uint16 punGameServerPort = check_uint16(L, 3); /*out_param*/
+	uint32 punGameServerIP = check_uint32(L, 2); /*out_param*/
 	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
 	class CSteamID psteamIDGameServer; /*out_struct*/
 
@@ -11119,7 +15081,7 @@ static int ISteamRemoteStorage_GetFileCount(lua_State* L) {
 
 static int ISteamRemoteStorage_GetFileNameAndSize(lua_State* L) {
 	int top = lua_gettop(L);
-	int32 pnFileSizeInBytes; /*out_param*/
+	int32 pnFileSizeInBytes = check_int32(L, 2); /*out_param*/
 	int iFile = check_int(L, 1); /*normal*/
 
 	const char * r = remote_storage->GetFileNameAndSize(iFile, &pnFileSizeInBytes);
@@ -11132,8 +15094,8 @@ static int ISteamRemoteStorage_GetFileNameAndSize(lua_State* L) {
 
 static int ISteamRemoteStorage_GetQuota(lua_State* L) {
 	int top = lua_gettop(L);
-	uint64 puAvailableBytes; /*out_param*/
-	uint64 pnTotalBytes; /*out_param*/
+	uint64 puAvailableBytes = check_uint64(L, 2); /*out_param*/
+	uint64 pnTotalBytes = check_uint64(L, 1); /*out_param*/
 
 	bool r = remote_storage->GetQuota(&pnTotalBytes, &puAvailableBytes);
 	push_bool(L, r);
@@ -11186,8 +15148,8 @@ static int ISteamRemoteStorage_UGCDownload(lua_State* L) {
 
 static int ISteamRemoteStorage_GetUGCDownloadProgress(lua_State* L) {
 	int top = lua_gettop(L);
-	int32 pnBytesExpected; /*out_param*/
-	int32 pnBytesDownloaded; /*out_param*/
+	int32 pnBytesExpected = check_int32(L, 3); /*out_param*/
+	int32 pnBytesDownloaded = check_int32(L, 2); /*out_param*/
 	UGCHandle_t hContent = check_UGCHandle_t(L, 1); /*normal*/
 
 	bool r = remote_storage->GetUGCDownloadProgress(hContent, &pnBytesDownloaded, &pnBytesExpected);
@@ -11201,8 +15163,8 @@ static int ISteamRemoteStorage_GetUGCDownloadProgress(lua_State* L) {
 
 static int ISteamRemoteStorage_GetUGCDetails(lua_State* L) {
 	int top = lua_gettop(L);
-	int32 pnFileSizeInBytes; /*out_param*/
-	AppId_t pnAppID; /*out_param*/
+	int32 pnFileSizeInBytes = check_int32(L, 3); /*out_param*/
+	AppId_t pnAppID = check_AppId_t(L, 2); /*out_param*/
 	UGCHandle_t hContent = check_UGCHandle_t(L, 1); /*normal*/
 	char ** ppchName; /*out_string*/
 	class CSteamID pSteamIDOwner; /*out_struct*/
@@ -11280,7 +15242,7 @@ static int ISteamUserStats_RequestCurrentStats(lua_State* L) {
 
 static int ISteamUserStats_GetStatInt(lua_State* L) {
 	int top = lua_gettop(L);
-	int32 pData; /*out_param*/
+	int32 pData = check_int32(L, 2); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
 	bool r = user_stats->GetStat(pchName, &pData);
@@ -11293,7 +15255,7 @@ static int ISteamUserStats_GetStatInt(lua_State* L) {
 
 static int ISteamUserStats_GetStatFloat(lua_State* L) {
 	int top = lua_gettop(L);
-	float pData; /*out_param*/
+	float pData = check_float(L, 2); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
 	bool r = user_stats->GetStat(pchName, &pData);
@@ -11343,7 +15305,7 @@ static int ISteamUserStats_UpdateAvgRateStat(lua_State* L) {
 
 static int ISteamUserStats_GetAchievement(lua_State* L) {
 	int top = lua_gettop(L);
-	bool pbAchieved; /*out_param*/
+	bool pbAchieved = check_bool(L, 2); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
 	bool r = user_stats->GetAchievement(pchName, &pbAchieved);
@@ -11378,8 +15340,8 @@ static int ISteamUserStats_ClearAchievement(lua_State* L) {
 
 static int ISteamUserStats_GetAchievementAndUnlockTime(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punUnlockTime; /*out_param*/
-	bool pbAchieved; /*out_param*/
+	uint32 punUnlockTime = check_uint32(L, 3); /*out_param*/
+	bool pbAchieved = check_bool(L, 2); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
 	bool r = user_stats->GetAchievementAndUnlockTime(pchName, &pbAchieved, &punUnlockTime);
@@ -11470,7 +15432,7 @@ static int ISteamUserStats_RequestUserStats(lua_State* L) {
 
 static int ISteamUserStats_GetUserStatInt(lua_State* L) {
 	int top = lua_gettop(L);
-	int32 pData; /*out_param*/
+	int32 pData = check_int32(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
@@ -11484,7 +15446,7 @@ static int ISteamUserStats_GetUserStatInt(lua_State* L) {
 
 static int ISteamUserStats_GetUserStatFloat(lua_State* L) {
 	int top = lua_gettop(L);
-	float pData; /*out_param*/
+	float pData = check_float(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
@@ -11498,7 +15460,7 @@ static int ISteamUserStats_GetUserStatFloat(lua_State* L) {
 
 static int ISteamUserStats_GetUserAchievement(lua_State* L) {
 	int top = lua_gettop(L);
-	bool pbAchieved; /*out_param*/
+	bool pbAchieved = check_bool(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
@@ -11512,8 +15474,8 @@ static int ISteamUserStats_GetUserAchievement(lua_State* L) {
 
 static int ISteamUserStats_GetUserAchievementAndUnlockTime(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punUnlockTime; /*out_param*/
-	bool pbAchieved; /*out_param*/
+	uint32 punUnlockTime = check_uint32(L, 4); /*out_param*/
+	bool pbAchieved = check_bool(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
 	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
 
@@ -11636,11 +15598,12 @@ static int ISteamUserStats_DownloadLeaderboardEntriesForUsers(lua_State* L) {
 
 static int ISteamUserStats_GetDownloadedLeaderboardEntry(lua_State* L) {
 	int top = lua_gettop(L);
-	int cDetailsMax = check_int(L, 3); /*normal*/
-	struct LeaderboardEntry_t pLeaderboardEntry; /*out_param*/
+	int cDetailsMax = check_int(L, 5); /*normal*/
+	struct LeaderboardEntry_t pLeaderboardEntry = check_LeaderboardEntry_t(L, 3); /*out_param*/
 	int index = check_int(L, 2); /*normal*/
 	SteamLeaderboardEntries_t hSteamLeaderboardEntries = check_SteamLeaderboardEntries_t(L, 1); /*normal*/
-	int32 pDetails[cDetailsMax]; /*out_array_count*/
+	int32 pDetails[cDetailsMax];
+	check_int32_array(L, 4, pDetails, cDetailsMax); /*out_array_count*/
 
 	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries, index, &pLeaderboardEntry, pDetails, cDetailsMax);
 	push_bool(L, r);
@@ -11702,8 +15665,8 @@ static int ISteamUserStats_RequestGlobalAchievementPercentages(lua_State* L) {
 
 static int ISteamUserStats_GetMostAchievedAchievementInfo(lua_State* L) {
 	int top = lua_gettop(L);
-	bool pbAchieved; /*out_param*/
-	float pflPercent; /*out_param*/
+	bool pbAchieved = check_bool(L, 4); /*out_param*/
+	float pflPercent = check_float(L, 3); /*out_param*/
 	uint32 unNameBufLen = check_uint32(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pchName_buffer = check_buffer(L, 1); /*buffer_param*/
 	char * pchName = 0x0;
@@ -11721,8 +15684,8 @@ static int ISteamUserStats_GetMostAchievedAchievementInfo(lua_State* L) {
 
 static int ISteamUserStats_GetNextMostAchievedAchievementInfo(lua_State* L) {
 	int top = lua_gettop(L);
-	bool pbAchieved; /*out_param*/
-	float pflPercent; /*out_param*/
+	bool pbAchieved = check_bool(L, 5); /*out_param*/
+	float pflPercent = check_float(L, 4); /*out_param*/
 	uint32 unNameBufLen = check_uint32(L, 3); /*normal*/
 	dmScript::LuaHBuffer * pchName_buffer = check_buffer(L, 2); /*buffer_param*/
 	char * pchName = 0x0;
@@ -11741,7 +15704,7 @@ static int ISteamUserStats_GetNextMostAchievedAchievementInfo(lua_State* L) {
 
 static int ISteamUserStats_GetAchievementAchievedPercent(lua_State* L) {
 	int top = lua_gettop(L);
-	float pflPercent; /*out_param*/
+	float pflPercent = check_float(L, 2); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
 
 	bool r = user_stats->GetAchievementAchievedPercent(pchName, &pflPercent);
@@ -11764,7 +15727,7 @@ static int ISteamUserStats_RequestGlobalStats(lua_State* L) {
 
 static int ISteamUserStats_GetGlobalStatInt(lua_State* L) {
 	int top = lua_gettop(L);
-	int64 pData; /*out_param*/
+	int64 pData = check_int64(L, 2); /*out_param*/
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
 
 	bool r = user_stats->GetGlobalStat(pchStatName, &pData);
@@ -11777,7 +15740,7 @@ static int ISteamUserStats_GetGlobalStatInt(lua_State* L) {
 
 static int ISteamUserStats_GetGlobalStatFloat(lua_State* L) {
 	int top = lua_gettop(L);
-	double pData; /*out_param*/
+	double pData = check_double(L, 2); /*out_param*/
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
 
 	bool r = user_stats->GetGlobalStat(pchStatName, &pData);
@@ -11941,13 +15904,13 @@ static int ISteamApps_GetDLCCount(lua_State* L) {
 
 static int ISteamApps_BGetDLCDataByIndex(lua_State* L) {
 	int top = lua_gettop(L);
-	int cchNameBufferSize = check_int(L, 3); /*normal*/
-	dmScript::LuaHBuffer * pchName_buffer = check_buffer(L, 2); /*buffer_param*/
+	int cchNameBufferSize = check_int(L, 5); /*normal*/
+	dmScript::LuaHBuffer * pchName_buffer = check_buffer(L, 4); /*buffer_param*/
 	char * pchName = 0x0;
 	uint32_t pchName_buffersize = 0;
 	dmBuffer::Result pchName_buffer_result = dmBuffer::GetBytes(pchName_buffer->m_Buffer, (void**)&pchName, &pchName_buffersize);
-	bool pbAvailable; /*out_param*/
-	AppId_t pAppID; /*out_param*/
+	bool pbAvailable = check_bool(L, 3); /*out_param*/
+	AppId_t pAppID = check_AppId_t(L, 2); /*out_param*/
 	int iDLC = check_int(L, 1); /*normal*/
 
 	bool r = apps->BGetDLCDataByIndex(iDLC, &pAppID, &pbAvailable, pchName, cchNameBufferSize);
@@ -12014,8 +15977,8 @@ static int ISteamApps_MarkContentCorrupt(lua_State* L) {
 
 static int ISteamApps_GetInstalledDepots(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 cMaxDepots = check_uint32(L, 2); /*normal*/
-	DepotId_t pvecDepots; /*out_param*/
+	uint32 cMaxDepots = check_uint32(L, 3); /*normal*/
+	DepotId_t pvecDepots = check_DepotId_t(L, 2); /*out_param*/
 	AppId_t appID = check_AppId_t(L, 1); /*normal*/
 
 	uint32 r = apps->GetInstalledDepots(appID, &pvecDepots, cMaxDepots);
@@ -12076,8 +16039,8 @@ static int ISteamApps_GetLaunchQueryParam(lua_State* L) {
 
 static int ISteamApps_GetDlcDownloadProgress(lua_State* L) {
 	int top = lua_gettop(L);
-	uint64 punBytesTotal; /*out_param*/
-	uint64 punBytesDownloaded; /*out_param*/
+	uint64 punBytesTotal = check_uint64(L, 3); /*out_param*/
+	uint64 punBytesDownloaded = check_uint64(L, 2); /*out_param*/
 	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
 
 	bool r = apps->GetDlcDownloadProgress(nAppID, &punBytesDownloaded, &punBytesTotal);
@@ -12134,8 +16097,8 @@ static int ISteamNetworking_SendP2PPacket(lua_State* L) {
 
 static int ISteamNetworking_IsP2PPacketAvailable(lua_State* L) {
 	int top = lua_gettop(L);
-	int nChannel = check_int(L, 1); /*normal*/
-	uint32 pcubMsgSize; /*out_param*/
+	int nChannel = check_int(L, 2); /*normal*/
+	uint32 pcubMsgSize = check_uint32(L, 1); /*out_param*/
 
 	bool r = networking->IsP2PPacketAvailable(&pcubMsgSize, nChannel);
 	push_bool(L, r);
@@ -12147,9 +16110,9 @@ static int ISteamNetworking_IsP2PPacketAvailable(lua_State* L) {
 
 static int ISteamNetworking_ReadP2PPacket(lua_State* L) {
 	int top = lua_gettop(L);
-	int nChannel = check_int(L, 3); /*normal*/
-	CSteamID psteamIDRemote; /*out_param*/
-	uint32 pcubMsgSize; /*out_param*/
+	int nChannel = check_int(L, 5); /*normal*/
+	CSteamID psteamIDRemote = check_class_CSteamID(L, 4); /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 3); /*out_param*/
 	uint32 cubDest = check_uint32(L, 2); /*normal*/
 	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 1); /*buffer_param*/
 	void * pubDest = 0x0;
@@ -12201,7 +16164,7 @@ static int ISteamNetworking_CloseP2PChannelWithUser(lua_State* L) {
 
 static int ISteamNetworking_GetP2PSessionState(lua_State* L) {
 	int top = lua_gettop(L);
-	struct P2PSessionState_t pConnectionState; /*out_param*/
+	struct P2PSessionState_t pConnectionState = check_P2PSessionState_t(L, 2); /*out_param*/
 	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
 
 	bool r = networking->GetP2PSessionState(steamIDRemote, &pConnectionState);
@@ -12307,7 +16270,7 @@ static int ISteamNetworking_SendDataOnSocket(lua_State* L) {
 
 static int ISteamNetworking_IsDataAvailableOnSocket(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 pcubMsgSize; /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 2); /*out_param*/
 	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
 
 	bool r = networking->IsDataAvailableOnSocket(hSocket, &pcubMsgSize);
@@ -12320,7 +16283,7 @@ static int ISteamNetworking_IsDataAvailableOnSocket(lua_State* L) {
 
 static int ISteamNetworking_RetrieveDataFromSocket(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 pcubMsgSize; /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 4); /*out_param*/
 	uint32 cubDest = check_uint32(L, 3); /*normal*/
 	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
 	void * pubDest = 0x0;
@@ -12338,8 +16301,8 @@ static int ISteamNetworking_RetrieveDataFromSocket(lua_State* L) {
 
 static int ISteamNetworking_IsDataAvailable(lua_State* L) {
 	int top = lua_gettop(L);
-	SNetSocket_t phSocket; /*out_param*/
-	uint32 pcubMsgSize; /*out_param*/
+	SNetSocket_t phSocket = check_SNetSocket_t(L, 3); /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 2); /*out_param*/
 	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
 
 	bool r = networking->IsDataAvailable(hListenSocket, &pcubMsgSize, &phSocket);
@@ -12353,8 +16316,8 @@ static int ISteamNetworking_IsDataAvailable(lua_State* L) {
 
 static int ISteamNetworking_RetrieveData(lua_State* L) {
 	int top = lua_gettop(L);
-	SNetSocket_t phSocket; /*out_param*/
-	uint32 pcubMsgSize; /*out_param*/
+	SNetSocket_t phSocket = check_SNetSocket_t(L, 5); /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 4); /*out_param*/
 	uint32 cubDest = check_uint32(L, 3); /*normal*/
 	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
 	void * pubDest = 0x0;
@@ -12373,10 +16336,10 @@ static int ISteamNetworking_RetrieveData(lua_State* L) {
 
 static int ISteamNetworking_GetSocketInfo(lua_State* L) {
 	int top = lua_gettop(L);
-	uint16 punPortRemote; /*out_param*/
-	uint32 punIPRemote; /*out_param*/
-	int peSocketStatus; /*out_param*/
-	CSteamID pSteamIDRemote; /*out_param*/
+	uint16 punPortRemote = check_uint16(L, 5); /*out_param*/
+	uint32 punIPRemote = check_uint32(L, 4); /*out_param*/
+	int peSocketStatus = check_int(L, 3); /*out_param*/
+	CSteamID pSteamIDRemote = check_class_CSteamID(L, 2); /*out_param*/
 	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
 
 	bool r = networking->GetSocketInfo(hSocket, &pSteamIDRemote, &peSocketStatus, &punIPRemote, &punPortRemote);
@@ -12392,8 +16355,8 @@ static int ISteamNetworking_GetSocketInfo(lua_State* L) {
 
 static int ISteamNetworking_GetListenSocketInfo(lua_State* L) {
 	int top = lua_gettop(L);
-	uint16 pnPort; /*out_param*/
-	uint32 pnIP; /*out_param*/
+	uint16 pnPort = check_uint16(L, 3); /*out_param*/
+	uint32 pnIP = check_uint32(L, 2); /*out_param*/
 	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
 
 	bool r = networking->GetListenSocketInfo(hListenSocket, &pnIP, &pnPort);
@@ -12542,8 +16505,8 @@ static int ISteamUGC_CreateQueryAllUGCRequest(lua_State* L) {
 
 static int ISteamUGC_CreateQueryUGCDetailsRequest(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unNumPublishedFileIDs = check_uint32(L, 1); /*normal*/
-	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+	uint32 unNumPublishedFileIDs = check_uint32(L, 2); /*normal*/
+	PublishedFileId_t pvecPublishedFileID = check_PublishedFileId_t(L, 1); /*out_param*/
 
 	UGCQueryHandle_t r = ugc->CreateQueryUGCDetailsRequest(&pvecPublishedFileID, unNumPublishedFileIDs);
 	push_UGCQueryHandle_t(L, r);
@@ -12565,7 +16528,7 @@ static int ISteamUGC_SendQueryUGCRequest(lua_State* L) {
 
 static int ISteamUGC_GetQueryUGCResult(lua_State* L) {
 	int top = lua_gettop(L);
-	struct SteamUGCDetails_t pDetails; /*out_param*/
+	struct SteamUGCDetails_t pDetails = check_SteamUGCDetails_t(L, 3); /*out_param*/
 	uint32 index = check_uint32(L, 2); /*normal*/
 	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
 
@@ -12613,8 +16576,8 @@ static int ISteamUGC_GetQueryUGCMetadata(lua_State* L) {
 
 static int ISteamUGC_GetQueryUGCChildren(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 cMaxEntries = check_uint32(L, 3); /*normal*/
-	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+	uint32 cMaxEntries = check_uint32(L, 4); /*normal*/
+	PublishedFileId_t pvecPublishedFileID = check_PublishedFileId_t(L, 3); /*out_param*/
 	uint32 index = check_uint32(L, 2); /*normal*/
 	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
 
@@ -12628,7 +16591,7 @@ static int ISteamUGC_GetQueryUGCChildren(lua_State* L) {
 
 static int ISteamUGC_GetQueryUGCStatistic(lua_State* L) {
 	int top = lua_gettop(L);
-	uint64 pStatValue; /*out_param*/
+	uint64 pStatValue = check_uint64(L, 4); /*out_param*/
 	EItemStatistic eStatType = check_EItemStatistic(L, 3); /*normal*/
 	uint32 index = check_uint32(L, 2); /*normal*/
 	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
@@ -12655,7 +16618,7 @@ static int ISteamUGC_GetQueryUGCNumAdditionalPreviews(lua_State* L) {
 
 static int ISteamUGC_GetQueryUGCAdditionalPreview(lua_State* L) {
 	int top = lua_gettop(L);
-	EItemPreviewType pPreviewType; /*out_param*/
+	EItemPreviewType pPreviewType = check_EItemPreviewType(L, 8); /*out_param*/
 	uint32 cchOriginalFileNameSize = check_uint32(L, 7); /*normal*/
 	dmScript::LuaHBuffer * pchOriginalFileName_buffer = check_buffer(L, 6); /*buffer_param*/
 	char * pchOriginalFileName = 0x0;
@@ -13025,10 +16988,10 @@ static int ISteamUGC_SetItemVisibility(lua_State* L) {
 
 static int ISteamUGC_SetItemTags(lua_State* L) {
 	int top = lua_gettop(L);
-	const struct SteamParamStringArray_t * pTags = check_const_struct_SteamParamStringArray_t_ptr(L, 2); /*normal*/
+	const struct SteamParamStringArray_t pTags = check_const_struct_SteamParamStringArray_t(L, 2); /*normal*/
 	UGCUpdateHandle_t updateHandle = check_UGCUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = ugc->SetItemTags(updateHandle, pTags);
+	bool r = ugc->SetItemTags(updateHandle, &pTags);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -13160,8 +17123,8 @@ static int ISteamUGC_SubmitItemUpdate(lua_State* L) {
 
 static int ISteamUGC_GetItemUpdateProgress(lua_State* L) {
 	int top = lua_gettop(L);
-	uint64 punBytesTotal; /*out_param*/
-	uint64 punBytesProcessed; /*out_param*/
+	uint64 punBytesTotal = check_uint64(L, 3); /*out_param*/
+	uint64 punBytesProcessed = check_uint64(L, 2); /*out_param*/
 	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
 
 	EItemUpdateStatus r = ugc->GetItemUpdateProgress(handle, &punBytesProcessed, &punBytesTotal);
@@ -13248,8 +17211,8 @@ static int ISteamUGC_GetNumSubscribedItems(lua_State* L) {
 
 static int ISteamUGC_GetSubscribedItems(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 cMaxEntries = check_uint32(L, 1); /*normal*/
-	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+	uint32 cMaxEntries = check_uint32(L, 2); /*normal*/
+	PublishedFileId_t pvecPublishedFileID = check_PublishedFileId_t(L, 1); /*out_param*/
 
 	uint32 r = ugc->GetSubscribedItems(&pvecPublishedFileID, cMaxEntries);
 	push_uint32(L, r);
@@ -13272,13 +17235,13 @@ static int ISteamUGC_GetItemState(lua_State* L) {
 
 static int ISteamUGC_GetItemInstallInfo(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punTimeStamp; /*out_param*/
-	uint32 cchFolderSize = check_uint32(L, 3); /*normal*/
-	dmScript::LuaHBuffer * pchFolder_buffer = check_buffer(L, 2); /*buffer_param*/
+	uint32 punTimeStamp = check_uint32(L, 5); /*out_param*/
+	uint32 cchFolderSize = check_uint32(L, 4); /*normal*/
+	dmScript::LuaHBuffer * pchFolder_buffer = check_buffer(L, 3); /*buffer_param*/
 	char * pchFolder = 0x0;
 	uint32_t pchFolder_buffersize = 0;
 	dmBuffer::Result pchFolder_buffer_result = dmBuffer::GetBytes(pchFolder_buffer->m_Buffer, (void**)&pchFolder, &pchFolder_buffersize);
-	uint64 punSizeOnDisk; /*out_param*/
+	uint64 punSizeOnDisk = check_uint64(L, 2); /*out_param*/
 	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
 
 	bool r = ugc->GetItemInstallInfo(nPublishedFileID, &punSizeOnDisk, pchFolder, cchFolderSize, &punTimeStamp);
@@ -13292,8 +17255,8 @@ static int ISteamUGC_GetItemInstallInfo(lua_State* L) {
 
 static int ISteamUGC_GetItemDownloadInfo(lua_State* L) {
 	int top = lua_gettop(L);
-	uint64 punBytesTotal; /*out_param*/
-	uint64 punBytesDownloaded; /*out_param*/
+	uint64 punBytesTotal = check_uint64(L, 3); /*out_param*/
+	uint64 punBytesDownloaded = check_uint64(L, 2); /*out_param*/
 	PublishedFileId_t nPublishedFileID = check_PublishedFileId_t(L, 1); /*normal*/
 
 	bool r = ugc->GetItemDownloadInfo(nPublishedFileID, &punBytesDownloaded, &punBytesTotal);
@@ -13340,8 +17303,8 @@ static int ISteamUGC_SuspendDownloads(lua_State* L) {
 
 static int ISteamUGC_StartPlaytimeTracking(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unNumPublishedFileIDs = check_uint32(L, 1); /*normal*/
-	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+	uint32 unNumPublishedFileIDs = check_uint32(L, 2); /*normal*/
+	PublishedFileId_t pvecPublishedFileID = check_PublishedFileId_t(L, 1); /*out_param*/
 
 	SteamAPICall_t r = ugc->StartPlaytimeTracking(&pvecPublishedFileID, unNumPublishedFileIDs);
 	steamCallbackWrapper->TrackSteamAPICallStartPlaytimeTrackingResult_t(r);
@@ -13351,8 +17314,8 @@ static int ISteamUGC_StartPlaytimeTracking(lua_State* L) {
 
 static int ISteamUGC_StopPlaytimeTracking(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unNumPublishedFileIDs = check_uint32(L, 1); /*normal*/
-	PublishedFileId_t pvecPublishedFileID; /*out_param*/
+	uint32 unNumPublishedFileIDs = check_uint32(L, 2); /*normal*/
+	PublishedFileId_t pvecPublishedFileID = check_PublishedFileId_t(L, 1); /*out_param*/
 
 	SteamAPICall_t r = ugc->StopPlaytimeTracking(&pvecPublishedFileID, unNumPublishedFileIDs);
 	steamCallbackWrapper->TrackSteamAPICallStopPlaytimeTrackingResult_t(r);
@@ -13446,9 +17409,10 @@ static int ISteamInventory_GetResultStatus(lua_State* L) {
 
 static int ISteamInventory_GetResultItems(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punOutItemsArraySize; /*out_param*/
+	uint32 punOutItemsArraySize = check_uint32(L, 3); /*out_param*/
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
-	struct SteamItemDetails_t pOutItemsArray[punOutItemsArraySize]; /*out_array_count*/
+	struct SteamItemDetails_t pOutItemsArray[punOutItemsArraySize];
+	check_SteamItemDetails_t_array(L, 2, pOutItemsArray, punOutItemsArraySize); /*out_array_count*/
 
 	bool r = inventory->GetResultItems(resultHandle, pOutItemsArray, &punOutItemsArraySize);
 	push_bool(L, r);
@@ -13461,7 +17425,7 @@ static int ISteamInventory_GetResultItems(lua_State* L) {
 
 static int ISteamInventory_GetResultItemProperty(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punValueBufferSizeOut; /*out_param*/
+	uint32 punValueBufferSizeOut = check_uint32(L, 5); /*out_param*/
 	dmScript::LuaHBuffer * pchValueBuffer_buffer = check_buffer(L, 4); /*buffer_param*/
 	char * pchValueBuffer = 0x0;
 	uint32_t pchValueBuffer_buffersize = 0;
@@ -13512,7 +17476,7 @@ static int ISteamInventory_DestroyResult(lua_State* L) {
 
 static int ISteamInventory_GetAllItems(lua_State* L) {
 	int top = lua_gettop(L);
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->GetAllItems(&pResultHandle);
 	push_bool(L, r);
@@ -13524,15 +17488,15 @@ static int ISteamInventory_GetAllItems(lua_State* L) {
 
 static int ISteamInventory_GetItemsByID(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unCountInstanceIDs = check_uint32(L, 2); /*normal*/
-	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	uint32 unCountInstanceIDs = check_uint32(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
 	SteamItemInstanceID_t pInstanceIDs[unCountInstanceIDs];
 	for(int i=1; i<=unCountInstanceIDs; i++) {
-		lua_rawgeti(L, 1, i);
-		pInstanceIDs[i] = check_SteamItemInstanceID_t(L, 1 + 1);
+		lua_rawgeti(L, 2, i);
+		pInstanceIDs[i] = check_SteamItemInstanceID_t(L, 2 + 1);
 		lua_pop(L, 1);
 	}
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->GetItemsByID(&pResultHandle, pInstanceIDs, unCountInstanceIDs);
 	push_bool(L, r);
@@ -13544,7 +17508,7 @@ static int ISteamInventory_GetItemsByID(lua_State* L) {
 
 static int ISteamInventory_SerializeResult(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punOutBufferSize; /*out_param*/
+	uint32 punOutBufferSize = check_uint32(L, 3); /*out_param*/
 	dmScript::LuaHBuffer * pOutBuffer_buffer = check_buffer(L, 2); /*buffer_param*/
 	void * pOutBuffer = 0x0;
 	uint32_t pOutBuffer_buffersize = 0;
@@ -13561,10 +17525,10 @@ static int ISteamInventory_SerializeResult(lua_State* L) {
 
 static int ISteamInventory_DeserializeResult(lua_State* L) {
 	int top = lua_gettop(L);
-	bool bRESERVED_MUST_BE_FALSE = check_bool(L, 3); /*normal*/
-	uint32 unBufferSize = check_uint32(L, 2); /*normal*/
-	const void * pBuffer = check_const_void_ptr(L, 1); /*normal*/
-	SteamInventoryResult_t pOutResultHandle; /*out_param*/
+	bool bRESERVED_MUST_BE_FALSE = check_bool(L, 4); /*normal*/
+	uint32 unBufferSize = check_uint32(L, 3); /*normal*/
+	const void * pBuffer = check_const_void_ptr(L, 2); /*normal*/
+	SteamInventoryResult_t pOutResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->DeserializeResult(&pOutResultHandle, pBuffer, unBufferSize, bRESERVED_MUST_BE_FALSE);
 	push_bool(L, r);
@@ -13576,22 +17540,22 @@ static int ISteamInventory_DeserializeResult(lua_State* L) {
 
 static int ISteamInventory_GenerateItems(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unArrayLength = check_uint32(L, 3); /*normal*/
-	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	uint32 unArrayLength = check_uint32(L, 4); /*normal*/
+	luaL_checktype(L, 3, LUA_TTABLE); /*array_count*/
 	uint32 punArrayQuantity[unArrayLength];
 	for(int i=1; i<=unArrayLength; i++) {
-		lua_rawgeti(L, 2, i);
-		punArrayQuantity[i] = check_uint32(L, 2 + 1);
+		lua_rawgeti(L, 3, i);
+		punArrayQuantity[i] = check_uint32(L, 3 + 1);
 		lua_pop(L, 1);
 	}
-	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
 	SteamItemDef_t pArrayItemDefs[unArrayLength];
 	for(int i=1; i<=unArrayLength; i++) {
-		lua_rawgeti(L, 1, i);
-		pArrayItemDefs[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_rawgeti(L, 2, i);
+		pArrayItemDefs[i] = check_SteamItemDef_t(L, 2 + 1);
 		lua_pop(L, 1);
 	}
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->GenerateItems(&pResultHandle, pArrayItemDefs, punArrayQuantity, unArrayLength);
 	push_bool(L, r);
@@ -13603,7 +17567,7 @@ static int ISteamInventory_GenerateItems(lua_State* L) {
 
 static int ISteamInventory_GrantPromoItems(lua_State* L) {
 	int top = lua_gettop(L);
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->GrantPromoItems(&pResultHandle);
 	push_bool(L, r);
@@ -13615,8 +17579,8 @@ static int ISteamInventory_GrantPromoItems(lua_State* L) {
 
 static int ISteamInventory_AddPromoItem(lua_State* L) {
 	int top = lua_gettop(L);
-	SteamItemDef_t itemDef = check_SteamItemDef_t(L, 1); /*normal*/
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamItemDef_t itemDef = check_SteamItemDef_t(L, 2); /*normal*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->AddPromoItem(&pResultHandle, itemDef);
 	push_bool(L, r);
@@ -13628,15 +17592,15 @@ static int ISteamInventory_AddPromoItem(lua_State* L) {
 
 static int ISteamInventory_AddPromoItems(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unArrayLength = check_uint32(L, 2); /*normal*/
-	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	uint32 unArrayLength = check_uint32(L, 3); /*normal*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
 	SteamItemDef_t pArrayItemDefs[unArrayLength];
 	for(int i=1; i<=unArrayLength; i++) {
-		lua_rawgeti(L, 1, i);
-		pArrayItemDefs[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_rawgeti(L, 2, i);
+		pArrayItemDefs[i] = check_SteamItemDef_t(L, 2 + 1);
 		lua_pop(L, 1);
 	}
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->AddPromoItems(&pResultHandle, pArrayItemDefs, unArrayLength);
 	push_bool(L, r);
@@ -13648,9 +17612,9 @@ static int ISteamInventory_AddPromoItems(lua_State* L) {
 
 static int ISteamInventory_ConsumeItem(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unQuantity = check_uint32(L, 2); /*normal*/
-	SteamItemInstanceID_t itemConsume = check_SteamItemInstanceID_t(L, 1); /*normal*/
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	uint32 unQuantity = check_uint32(L, 3); /*normal*/
+	SteamItemInstanceID_t itemConsume = check_SteamItemInstanceID_t(L, 2); /*normal*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->ConsumeItem(&pResultHandle, itemConsume, unQuantity);
 	push_bool(L, r);
@@ -13662,37 +17626,37 @@ static int ISteamInventory_ConsumeItem(lua_State* L) {
 
 static int ISteamInventory_ExchangeItems(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unArrayDestroyLength = check_uint32(L, 6); /*normal*/
-	luaL_checktype(L, 5, LUA_TTABLE); /*array_count*/
+	uint32 unArrayDestroyLength = check_uint32(L, 7); /*normal*/
+	luaL_checktype(L, 6, LUA_TTABLE); /*array_count*/
 	uint32 punArrayDestroyQuantity[unArrayDestroyLength];
 	for(int i=1; i<=unArrayDestroyLength; i++) {
-		lua_rawgeti(L, 5, i);
-		punArrayDestroyQuantity[i] = check_uint32(L, 5 + 1);
+		lua_rawgeti(L, 6, i);
+		punArrayDestroyQuantity[i] = check_uint32(L, 6 + 1);
 		lua_pop(L, 1);
 	}
-	luaL_checktype(L, 4, LUA_TTABLE); /*array_count*/
+	luaL_checktype(L, 5, LUA_TTABLE); /*array_count*/
 	SteamItemInstanceID_t pArrayDestroy[unArrayDestroyLength];
 	for(int i=1; i<=unArrayDestroyLength; i++) {
-		lua_rawgeti(L, 4, i);
-		pArrayDestroy[i] = check_SteamItemInstanceID_t(L, 4 + 1);
+		lua_rawgeti(L, 5, i);
+		pArrayDestroy[i] = check_SteamItemInstanceID_t(L, 5 + 1);
 		lua_pop(L, 1);
 	}
-	uint32 unArrayGenerateLength = check_uint32(L, 3); /*normal*/
-	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	uint32 unArrayGenerateLength = check_uint32(L, 4); /*normal*/
+	luaL_checktype(L, 3, LUA_TTABLE); /*array_count*/
 	uint32 punArrayGenerateQuantity[unArrayGenerateLength];
 	for(int i=1; i<=unArrayGenerateLength; i++) {
-		lua_rawgeti(L, 2, i);
-		punArrayGenerateQuantity[i] = check_uint32(L, 2 + 1);
+		lua_rawgeti(L, 3, i);
+		punArrayGenerateQuantity[i] = check_uint32(L, 3 + 1);
 		lua_pop(L, 1);
 	}
-	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
 	SteamItemDef_t pArrayGenerate[unArrayGenerateLength];
 	for(int i=1; i<=unArrayGenerateLength; i++) {
-		lua_rawgeti(L, 1, i);
-		pArrayGenerate[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_rawgeti(L, 2, i);
+		pArrayGenerate[i] = check_SteamItemDef_t(L, 2 + 1);
 		lua_pop(L, 1);
 	}
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->ExchangeItems(&pResultHandle, pArrayGenerate, punArrayGenerateQuantity, unArrayGenerateLength, pArrayDestroy, punArrayDestroyQuantity, unArrayDestroyLength);
 	push_bool(L, r);
@@ -13704,10 +17668,10 @@ static int ISteamInventory_ExchangeItems(lua_State* L) {
 
 static int ISteamInventory_TransferItemQuantity(lua_State* L) {
 	int top = lua_gettop(L);
-	SteamItemInstanceID_t itemIdDest = check_SteamItemInstanceID_t(L, 3); /*normal*/
-	uint32 unQuantity = check_uint32(L, 2); /*normal*/
-	SteamItemInstanceID_t itemIdSource = check_SteamItemInstanceID_t(L, 1); /*normal*/
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamItemInstanceID_t itemIdDest = check_SteamItemInstanceID_t(L, 4); /*normal*/
+	uint32 unQuantity = check_uint32(L, 3); /*normal*/
+	SteamItemInstanceID_t itemIdSource = check_SteamItemInstanceID_t(L, 2); /*normal*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->TransferItemQuantity(&pResultHandle, itemIdSource, unQuantity, itemIdDest);
 	push_bool(L, r);
@@ -13727,8 +17691,8 @@ static int ISteamInventory_SendItemDropHeartbeat(lua_State* L) {
 
 static int ISteamInventory_TriggerItemDrop(lua_State* L) {
 	int top = lua_gettop(L);
-	SteamItemDef_t dropListDefinition = check_SteamItemDef_t(L, 1); /*normal*/
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamItemDef_t dropListDefinition = check_SteamItemDef_t(L, 2); /*normal*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->TriggerItemDrop(&pResultHandle, dropListDefinition);
 	push_bool(L, r);
@@ -13740,38 +17704,38 @@ static int ISteamInventory_TriggerItemDrop(lua_State* L) {
 
 static int ISteamInventory_TradeItems(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 nArrayGetLength = check_uint32(L, 7); /*normal*/
-	luaL_checktype(L, 6, LUA_TTABLE); /*array_count*/
+	uint32 nArrayGetLength = check_uint32(L, 8); /*normal*/
+	luaL_checktype(L, 7, LUA_TTABLE); /*array_count*/
 	uint32 pArrayGetQuantity[nArrayGetLength];
 	for(int i=1; i<=nArrayGetLength; i++) {
-		lua_rawgeti(L, 6, i);
-		pArrayGetQuantity[i] = check_uint32(L, 6 + 1);
+		lua_rawgeti(L, 7, i);
+		pArrayGetQuantity[i] = check_uint32(L, 7 + 1);
 		lua_pop(L, 1);
 	}
-	luaL_checktype(L, 5, LUA_TTABLE); /*array_count*/
+	luaL_checktype(L, 6, LUA_TTABLE); /*array_count*/
 	SteamItemInstanceID_t pArrayGet[nArrayGetLength];
 	for(int i=1; i<=nArrayGetLength; i++) {
-		lua_rawgeti(L, 5, i);
-		pArrayGet[i] = check_SteamItemInstanceID_t(L, 5 + 1);
+		lua_rawgeti(L, 6, i);
+		pArrayGet[i] = check_SteamItemInstanceID_t(L, 6 + 1);
 		lua_pop(L, 1);
 	}
-	uint32 nArrayGiveLength = check_uint32(L, 4); /*normal*/
-	luaL_checktype(L, 3, LUA_TTABLE); /*array_count*/
+	uint32 nArrayGiveLength = check_uint32(L, 5); /*normal*/
+	luaL_checktype(L, 4, LUA_TTABLE); /*array_count*/
 	uint32 pArrayGiveQuantity[nArrayGiveLength];
 	for(int i=1; i<=nArrayGiveLength; i++) {
-		lua_rawgeti(L, 3, i);
-		pArrayGiveQuantity[i] = check_uint32(L, 3 + 1);
+		lua_rawgeti(L, 4, i);
+		pArrayGiveQuantity[i] = check_uint32(L, 4 + 1);
 		lua_pop(L, 1);
 	}
-	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	luaL_checktype(L, 3, LUA_TTABLE); /*array_count*/
 	SteamItemInstanceID_t pArrayGive[nArrayGiveLength];
 	for(int i=1; i<=nArrayGiveLength; i++) {
-		lua_rawgeti(L, 2, i);
-		pArrayGive[i] = check_SteamItemInstanceID_t(L, 2 + 1);
+		lua_rawgeti(L, 3, i);
+		pArrayGive[i] = check_SteamItemInstanceID_t(L, 3 + 1);
 		lua_pop(L, 1);
 	}
-	class CSteamID steamIDTradePartner = check_class_CSteamID(L, 1); /*normal*/
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	class CSteamID steamIDTradePartner = check_class_CSteamID(L, 2); /*normal*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->TradeItems(&pResultHandle, steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength);
 	push_bool(L, r);
@@ -13793,8 +17757,9 @@ static int ISteamInventory_LoadItemDefinitions(lua_State* L) {
 
 static int ISteamInventory_GetItemDefinitionIDs(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punItemDefIDsArraySize; /*out_param*/
-	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize]; /*out_array_count*/
+	uint32 punItemDefIDsArraySize = check_uint32(L, 2); /*out_param*/
+	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize];
+	check_SteamItemDef_t_array(L, 1, pItemDefIDs, punItemDefIDsArraySize); /*out_array_count*/
 
 	bool r = inventory->GetItemDefinitionIDs(pItemDefIDs, &punItemDefIDsArraySize);
 	push_bool(L, r);
@@ -13807,7 +17772,7 @@ static int ISteamInventory_GetItemDefinitionIDs(lua_State* L) {
 
 static int ISteamInventory_GetItemDefinitionProperty(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punValueBufferSizeOut; /*out_param*/
+	uint32 punValueBufferSizeOut = check_uint32(L, 4); /*out_param*/
 	dmScript::LuaHBuffer * pchValueBuffer_buffer = check_buffer(L, 3); /*buffer_param*/
 	char * pchValueBuffer = 0x0;
 	uint32_t pchValueBuffer_buffersize = 0;
@@ -13835,9 +17800,10 @@ static int ISteamInventory_RequestEligiblePromoItemDefinitionsIDs(lua_State* L) 
 
 static int ISteamInventory_GetEligiblePromoItemDefinitionIDs(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 punItemDefIDsArraySize; /*out_param*/
+	uint32 punItemDefIDsArraySize = check_uint32(L, 3); /*out_param*/
 	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
-	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize]; /*out_array_count*/
+	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize];
+	check_SteamItemDef_t_array(L, 2, pItemDefIDs, punItemDefIDsArraySize); /*out_array_count*/
 
 	bool r = inventory->GetEligiblePromoItemDefinitionIDs(steamID, pItemDefIDs, &punItemDefIDsArraySize);
 	push_bool(L, r);
@@ -13893,9 +17859,11 @@ static int ISteamInventory_GetNumItemsWithPrices(lua_State* L) {
 
 static int ISteamInventory_GetItemsWithPrices(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unArrayLength = check_uint32(L, 1); /*normal*/
-	SteamItemDef_t pArrayItemDefs[unArrayLength]; /*out_array_count*/
-	uint64 pPrices[unArrayLength]; /*out_array_count*/
+	uint32 unArrayLength = check_uint32(L, 3); /*normal*/
+	SteamItemDef_t pArrayItemDefs[unArrayLength];
+	check_SteamItemDef_t_array(L, 1, pArrayItemDefs, unArrayLength); /*out_array_count*/
+	uint64 pPrices[unArrayLength];
+	check_uint64_array(L, 2, pPrices, unArrayLength); /*out_array_count*/
 
 	bool r = inventory->GetItemsWithPrices(pArrayItemDefs, pPrices, unArrayLength);
 	push_bool(L, r);
@@ -13908,7 +17876,7 @@ static int ISteamInventory_GetItemsWithPrices(lua_State* L) {
 
 static int ISteamInventory_GetItemPrice(lua_State* L) {
 	int top = lua_gettop(L);
-	uint64 pPrice; /*out_param*/
+	uint64 pPrice = check_uint64(L, 2); /*out_param*/
 	SteamItemDef_t iDefinition = check_SteamItemDef_t(L, 1); /*normal*/
 
 	bool r = inventory->GetItemPrice(iDefinition, &pPrice);
@@ -14000,7 +17968,7 @@ static int ISteamInventory_SetPropertyFloat(lua_State* L) {
 
 static int ISteamInventory_SubmitUpdateProperties(lua_State* L) {
 	int top = lua_gettop(L);
-	SteamInventoryResult_t pResultHandle; /*out_param*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 2); /*out_param*/
 	SteamInventoryUpdateHandle_t handle = check_SteamInventoryUpdateHandle_t(L, 1); /*normal*/
 
 	bool r = inventory->SubmitUpdateProperties(handle, &pResultHandle);

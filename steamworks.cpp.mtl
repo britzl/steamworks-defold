@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "steamworks.h"
 #include "steam_api.h"
 #include "steam_gameserver.h"
 #include "luautils.h"
@@ -305,15 +306,30 @@ static void push_{{name}}_array(lua_State* L, {{name}} arr[], unsigned int size)
 * CHECK primitives
 ******************************/
 static lua_Number check_int(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return luaL_checknumber(L, index);
+	}
+	return 0;
 }
 static lua_Number check_bool(lua_State* L, int index) {
-	return lua_toboolean(L, index);
+	if(lua_isnumber(L, index)) {
+		return lua_toboolean(L, index);
+	}
+	return 0;
 }
 static lua_Number check_float(lua_State* L, int index) {
-	return luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return luaL_checknumber(L, index);
+	}
+	return 0;
 }
 static void check_float_array(lua_State* L, int index, float * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -332,9 +348,18 @@ static lua_Number check_double(lua_State* L, int index) {
 }
 {{#typedefs.int}}
 static {{typedef}} check_{{typedef}}(lua_State* L, int index) {
-	return ({{typedef}})luaL_checknumber(L, index);
+	if(lua_isnumber(L, index)) {
+		return ({{typedef}})luaL_checknumber(L, index);
+	}
+	return ({{typedef}})0;
 }
 static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -375,18 +400,50 @@ static void check_char_array(lua_State* L, int index, char* dest, unsigned int s
 * CHECK (u)int64 (from string)
 ******************************/
 static uint64 check_uint64(lua_State* L, int index) {
-	const char * s = luaL_checkstring(L, index);
-	return strtoull(s, NULL, 10);
+	if(lua_isstring(L, index)) {
+		const char * s = luaL_checkstring(L, index);
+		return strtoull(s, NULL, 10);
+	}
+	return 0;
 }
 static int64 check_int64(lua_State* L, int index) {
-	const char * s = luaL_checkstring(L, index);
-	return strtoll(s, NULL, 10);
+	if(lua_isstring(L, index)) {
+		const char * s = luaL_checkstring(L, index);
+		return strtoll(s, NULL, 10);
+	}
+	return 0;
+}
+static void check_uint64_array(lua_State* L, int index, uint64 * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_uint64(L, -1);
+	}
 }
 {{#typedefs.uint64}}
 static {{typedef}} check_{{typedef}}(lua_State* L, int index) {
 	return ({{typedef}})check_uint64(L, index);
 }
 static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -406,6 +463,12 @@ static {{typedef}} check_{{typedef}}(lua_State* L, int index) {
 	return ({{typedef}})check_int64(L, index);
 }
 static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -449,6 +512,12 @@ static CSteamID check_class_CSteamID(lua_State* L, int index) {
 	return check_CSteamID(L, index);
 }
 static void check_CSteamID_array(lua_State* L, int index, CSteamID *ids, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
@@ -476,10 +545,16 @@ static CGameID check_CGameID(lua_State* L, int index) {
 * CHECK structs
 ******************************/
 static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
+	servernetadr_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		s.SetConnectionPort(0);
+		s.SetQueryPort(0);
+		s.SetIP(0);
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	servernetadr_t s;
 	lua_pushstring(L, "m_usConnectionPort");
 	lua_gettable(L, index);
 	s.SetConnectionPort(check_uint16(L, -1));
@@ -491,14 +566,19 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
-static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(lua_State* L, int index) {
+static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_State* L, int index) {
+	SteamParamStringArray_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		s.m_nNumStrings = 0;
+		s.m_ppStrings = 0;
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
 	const int table_size = lua_objlen(L, index);
 	const char *pStrings[table_size];
 
-	SteamParamStringArray_t s;
 	s.m_nNumStrings = table_size;
 	s.m_ppStrings = pStrings;
 	for(int i=1; i<=table_size; i++) {
@@ -506,14 +586,17 @@ static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(l
 		lua_gettable(L, index);
 		pStrings[i] = luaL_checkstring(L, -1);
 	}
-	return &s;
+	return s;
 }
 {{#structs}}
 static {{struct}} check_{{name}}(lua_State* L, int index) {
+	{{struct}} s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	{{struct}} s;
 	{{#fields}}
 	lua_pushstring(L, "{{fieldname}}");
 	lua_gettable(L, index);
@@ -524,6 +607,26 @@ static {{struct}} check_{{name}}(lua_State* L, int index) {
 	return s;
 }
 
+static void check_{{name}}_array(lua_State* L, int index, {{struct}} *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_{{name}}(L, -1);
+	}
+}
 {{/structs}}
 
 
@@ -618,11 +721,11 @@ static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^metho
 {{/normal_param}}{{#out_struct}}	{{paramtype}} {{paramname}}; /*out_struct*/
 {{/out_struct}}{{#out_string}}	{{paramtype}} {{paramname}}; /*out_string*/
 {{/out_string}}{{#out_array_call}}	{{out_array_call_counter}} = {{classname_lower}}->{{out_array_call_function}}({{out_array_call_params}});/*out_array_call*/
-	{{paramtype}} {{paramname}}[{{out_array_call_counter}}];
+	{{paramtype}} {{paramname}}[{{out_array_call_counter}}]; /*out_array_call*/
 {{/out_array_call}}{{#out_array_call_param}}	{{paramtype}} {{paramname}}; /*out_array_call_param*/
-{{/out_array_call_param}}{{#out_array_param}}	{{paramtype}} {{paramname}}; /*out_array_param*/
-{{/out_array_param}}{{#out_array_count}}	{{paramtype}} {{paramname}}[{{out_array_count}}]; /*out_array_count*/
-{{/out_array_count}}{{#out_param}}	{{paramtype}} {{paramname}}; /*out_param*/
+{{/out_array_call_param}}{{#out_array_count}}	{{paramtype}} {{paramname}}[{{out_array_count}}];
+	check_{{paramtypestring}}_array(L, {{paramindex}}, {{paramname}}, {{out_array_count}}); /*out_array_count*/
+{{/out_array_count}}{{#out_param}}	{{paramtype}} {{paramname}} = check_{{paramtypestring}}(L, {{paramindex}}); /*out_param*/
 {{/out_param}}{{#array_count_param}}	{{paramtype}} {{paramname}}; /*array_count_param*/
 {{/array_count_param}}{{#array_count}}	luaL_checktype(L, {{paramindex}}, LUA_TTABLE); /*array_count*/
 	{{paramtype}} {{paramname}}[{{array_count}}];

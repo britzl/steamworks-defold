@@ -16,14 +16,8 @@ The extension exports the following functions:
 
 {{#hasparams}}**PARAMS**
 {{/hasparams}}
-{{#params}}
-{{#normal_param}}* `{{paramname}}` ({{paramtype}})
-{{/normal_param}}{{#out_struct}}* `{{paramname}}` ({{paramtype}})
-{{/out_struct}}{{#array_count_param}}* `{{paramname}}` (number)
-{{/array_count_param}}{{#array_count}}* `{{paramname}}` (table)
-{{/array_count}}{{#buffer_param}}* `{{paramname}}` (buffer)
-{{/buffer_param}}
-{{/params}}
+{{#params_in}}* `{{paramname}}` ({{paramtypelua}})
+{{/params_in}}
 
 {{#hasreturntype}}
 {{#steamapicall}}

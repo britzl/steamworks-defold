@@ -116,7 +116,8 @@ function on_message(self, message_id, message, sender)
 		local entry_count = message.m_cEntryCount
 		local entries = {}
 		for i=0,entry_count-1 do
-			local ok, details, entry = steamworks.user_stats_get_downloaded_leaderboard_entry(message.m_hSteamLeaderboardEntries, i, 0)
+			local ok, details, entry = steamworks.user_stats_get_downloaded_leaderboard_entry(message.m_hSteamLeaderboardEntries, i)
+			
 			if ok then
 				pprint(details)
 				local name = steamworks.friends_get_friend_persona_name(details.m_steamIDUser)
