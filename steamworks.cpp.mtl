@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "steamworks.h"
 #include "steam_api.h"
 #include "steam_gameserver.h"
 #include "luautils.h"
@@ -565,12 +566,12 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
-static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(lua_State* L, int index) {
+static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_State* L, int index) {
 	SteamParamStringArray_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		s.m_nNumStrings = 0;
 		s.m_ppStrings = 0;
-		return &s;
+		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
@@ -585,7 +586,7 @@ static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(l
 		lua_gettable(L, index);
 		pStrings[i] = luaL_checkstring(L, -1);
 	}
-	return &s;
+	return s;
 }
 {{#structs}}
 static {{struct}} check_{{name}}(lua_State* L, int index) {
@@ -720,7 +721,7 @@ static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^metho
 {{/normal_param}}{{#out_struct}}	{{paramtype}} {{paramname}}; /*out_struct*/
 {{/out_struct}}{{#out_string}}	{{paramtype}} {{paramname}}; /*out_string*/
 {{/out_string}}{{#out_array_call}}	{{out_array_call_counter}} = {{classname_lower}}->{{out_array_call_function}}({{out_array_call_params}});/*out_array_call*/
-	{{paramtype}} {{paramname}}[{{out_array_call_counter}}];
+	{{paramtype}} {{paramname}}[{{out_array_call_counter}}]; /*out_array_call*/
 {{/out_array_call}}{{#out_array_call_param}}	{{paramtype}} {{paramname}}; /*out_array_call_param*/
 {{/out_array_call_param}}{{#out_array_count}}	{{paramtype}} {{paramname}}[{{out_array_count}}];
 	check_{{paramtypestring}}_array(L, {{paramindex}}, {{paramname}}, {{out_array_count}}); /*out_array_count*/

@@ -15,6 +15,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "steamworks.h"
 #include "steam_api.h"
 #include "steam_gameserver.h"
 #include "luautils.h"
@@ -5695,12 +5696,12 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
-static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(lua_State* L, int index) {
+static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_State* L, int index) {
 	SteamParamStringArray_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		s.m_nNumStrings = 0;
 		s.m_ppStrings = 0;
-		return &s;
+		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
@@ -5715,7 +5716,7 @@ static SteamParamStringArray_t* check_const_struct_SteamParamStringArray_t_ptr(l
 		lua_gettable(L, index);
 		pStrings[i] = luaL_checkstring(L, -1);
 	}
-	return &s;
+	return s;
 }
 static ValvePackingSentinel_t check_ValvePackingSentinel_t(lua_State* L, int index) {
 	ValvePackingSentinel_t s;
@@ -13445,7 +13446,7 @@ static int ISteamFriends_GetFriendsGroupMembersList(lua_State* L) {
 	int nMembersCount; /*out_array_call_param*/
 	FriendsGroupID_t friendsGroupID = check_FriendsGroupID_t(L, 1); /*normal*/
 	nMembersCount = friends->GetFriendsGroupMembersCount(friendsGroupID);/*out_array_call*/
-	CSteamID pOutSteamIDMembers[nMembersCount];
+	CSteamID pOutSteamIDMembers[nMembersCount]; /*out_array_call*/
 
 	friends->GetFriendsGroupMembersList(friendsGroupID, pOutSteamIDMembers, nMembersCount);
 	assert(top + 0 == lua_gettop(L));
@@ -16987,10 +16988,10 @@ static int ISteamUGC_SetItemVisibility(lua_State* L) {
 
 static int ISteamUGC_SetItemTags(lua_State* L) {
 	int top = lua_gettop(L);
-	const struct SteamParamStringArray_t * pTags = check_const_struct_SteamParamStringArray_t_ptr(L, 2); /*normal*/
+	const struct SteamParamStringArray_t pTags = check_const_struct_SteamParamStringArray_t(L, 2); /*normal*/
 	UGCUpdateHandle_t updateHandle = check_UGCUpdateHandle_t(L, 1); /*normal*/
 
-	bool r = ugc->SetItemTags(updateHandle, pTags);
+	bool r = ugc->SetItemTags(updateHandle, &pTags);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));

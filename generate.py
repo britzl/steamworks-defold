@@ -157,10 +157,15 @@ def parse_methods(methods):
                         param["normal_param"] = True
                         param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
-                        param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
                         param["paramtypelua"] = paramtype_to_lua(paramtype)
                         p.insert(0, param)
-                        method["paramnames"].append(paramname)
+                        if "SteamParamStringArray_t" in paramtype:
+                            param["paramtype"] = paramtype.replace(" *", "")
+                            param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
+                            method["paramnames"].append("&" + paramname)
+                        else:
+                            param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
+                            method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
 
                     if param.get("in_param"):
@@ -285,10 +290,16 @@ def generate():
     j["enums"] = parse_enums(j["enums"])
     j["callbacks"] = parse_callbacks(j["methods"])
 
-    with open("extension.mtl", 'r') as f:
+    with open("steamworks.cpp.mtl", 'r') as f:
         extension_mtl = f.read()
         result = pystache.render(extension_mtl, j)
-        with codecs.open("steamworks/src/extension.cpp", 'wb' "utf-8") as f:
+        with codecs.open("steamworks/src/steamworks.cpp", 'wb' "utf-8") as f:
+            f.write(HTMLParser.HTMLParser().unescape(result))
+
+    with open("steamworks.h.mtl", 'r') as f:
+        extension_mtl = f.read()
+        result = pystache.render(extension_mtl, j)
+        with codecs.open("steamworks/include/steamworks.h", 'wb' "utf-8") as f:
             f.write(HTMLParser.HTMLParser().unescape(result))
 
     with open("api_ref.mtl", 'r') as f:
