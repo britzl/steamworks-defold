@@ -32,6 +32,14 @@ The Steamworks API will not initialize if it does not know the App ID of your ga
 		steamworks.user_stats_request_current_stats()
 	end
 
+	function final(self)
+		steamworks.final()
+	end
+
+	function update(self, dt)
+		steamworks.update()
+	end
+
 ## Using the SteamAPI
 The extension exposes most of the Steamworks functionality through an auto-generated API. Refer to the [API Overview](steamworks/api_ref.md) for a list of all generated functions, constants and callbacks.
 
