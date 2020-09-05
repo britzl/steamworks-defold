@@ -11,7 +11,6 @@
       returns:
       - name: r
         type: HSteamUser
-
 #***********************************
 
     - name: user_logged_on
@@ -21,7 +20,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_get_steam_id
@@ -31,28 +29,28 @@
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: user_terminate_game_connection
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#TerminateGameConnection
       parameters:
-      - name: usPortServer
+      - name: [2] usPortServer
         type: number
-      - name: unIPServer
+      - name: [1] unIPServer
         type: number
       
-
 #***********************************
 
     - name: user_get_auth_session_ticket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#GetAuthSessionTicket
       parameters:
-      - name: cbMaxTicket
+      - name: [3] pcbTicket OUTPARAM
+	    type: number
+      - name: [2] cbMaxTicket
         type: number
-      - name: pTicket
+      - name: [1] pTicket
         type: buffer
       
       returns:
@@ -60,59 +58,54 @@
         type: HAuthTicket
       - name: pcbTicket
         type: number
-
 #***********************************
 
     - name: user_begin_auth_session
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#BeginAuthSession
       parameters:
-      - name: steamID
+      - name: [3] steamID
         type: string
-      - name: cbAuthTicket
+      - name: [2] cbAuthTicket
         type: number
-      - name: pAuthTicket
+      - name: [1] pAuthTicket
         type: string
       
       returns:
       - name: r
         type: EBeginAuthSessionResult
-
 #***********************************
 
     - name: user_end_auth_session
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#EndAuthSession
       parameters:
-      - name: steamID
+      - name: [1] steamID
         type: string
       
-
 #***********************************
 
     - name: user_cancel_auth_ticket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#CancelAuthTicket
       parameters:
-      - name: hAuthTicket
+      - name: [1] hAuthTicket
         type: HAuthTicket
       
-
 #***********************************
 
     - name: user_user_has_license_for_app
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#UserHasLicenseForApp
       parameters:
-      - name: appID
+      - name: [2] appID
         type: number
-      - name: steamID
+      - name: [1] steamID
         type: string
       
       returns:
       - name: r
         type: EUserHasLicenseForAppResult
-
 #***********************************
 
     - name: user_is_behind_nat
@@ -122,42 +115,41 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_advertise_game
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#AdvertiseGame
       parameters:
-      - name: usPortServer
+      - name: [3] usPortServer
         type: number
-      - name: unIPServer
+      - name: [2] unIPServer
         type: number
-      - name: steamIDGameServer
+      - name: [1] steamIDGameServer
         type: string
       
-
 #***********************************
 
     - name: user_request_encrypted_app_ticket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#RequestEncryptedAppTicket
       parameters:
-      - name: cbDataToInclude
+      - name: [2] cbDataToInclude
         type: number
-      - name: pDataToInclude
+      - name: [1] pDataToInclude
         type: buffer
       
-
 #***********************************
 
     - name: user_get_encrypted_app_ticket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#GetEncryptedAppTicket
       parameters:
-      - name: cbMaxTicket
+      - name: [3] pcbTicket OUTPARAM
+	    type: number
+      - name: [2] cbMaxTicket
         type: number
-      - name: pTicket
+      - name: [1] pTicket
         type: buffer
       
       returns:
@@ -165,22 +157,20 @@
         type: bool
       - name: pcbTicket
         type: number
-
 #***********************************
 
     - name: user_get_game_badge_level
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#GetGameBadgeLevel
       parameters:
-      - name: bFoil
+      - name: [2] bFoil
         type: boolean
-      - name: nSeries
+      - name: [1] nSeries
         type: number
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: user_get_player_steam_level
@@ -190,17 +180,15 @@
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: user_request_store_auth_url
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#RequestStoreAuthURL
       parameters:
-      - name: pchRedirectURL
+      - name: [1] pchRedirectURL
         type: string
       
-
 #***********************************
 
     - name: user_is_phone_verified
@@ -210,7 +198,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_is_two_factor_enabled
@@ -220,7 +207,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_is_phone_identifying
@@ -230,7 +216,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_is_phone_requiring_verification
@@ -240,7 +225,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_get_persona_name
@@ -250,17 +234,15 @@
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_set_persona_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#SetPersonaName
       parameters:
-      - name: pchPersonaName
+      - name: [1] pchPersonaName
         type: string
       
-
 #***********************************
 
     - name: friends_get_persona_state
@@ -270,128 +252,118 @@
       returns:
       - name: r
         type: EPersonaState
-
 #***********************************
 
     - name: friends_get_friend_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCount
       parameters:
-      - name: iFriendFlags
+      - name: [1] iFriendFlags
         type: number
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_friend_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendByIndex
       parameters:
-      - name: iFriendFlags
+      - name: [2] iFriendFlags
         type: number
-      - name: iFriend
+      - name: [1] iFriend
         type: number
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: friends_get_friend_relationship
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRelationship
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: EFriendRelationship
-
 #***********************************
 
     - name: friends_get_friend_persona_state
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaState
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: EPersonaState
-
 #***********************************
 
     - name: friends_get_friend_persona_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaName
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_get_friend_game_played
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendGamePlayed
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_get_friend_persona_name_history
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendPersonaNameHistory
       parameters:
-      - name: iPersonaName
+      - name: [2] iPersonaName
         type: number
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_get_friend_steam_level
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendSteamLevel
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_player_nickname
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetPlayerNickname
       parameters:
-      - name: steamIDPlayer
+      - name: [1] steamIDPlayer
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_get_friends_group_count
@@ -401,71 +373,65 @@
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_friends_group_id_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupIDByIndex
       parameters:
-      - name: iFG
+      - name: [1] iFG
         type: number
       
       returns:
       - name: r
         type: FriendsGroupID_t
-
 #***********************************
 
     - name: friends_get_friends_group_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupName
       parameters:
-      - name: friendsGroupID
+      - name: [1] friendsGroupID
         type: number
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_get_friends_group_members_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersCount
       parameters:
-      - name: friendsGroupID
+      - name: [1] friendsGroupID
         type: number
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_friends_group_members_list
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupMembersList
       parameters:
-      - name: friendsGroupID
+      - name: [1] friendsGroupID
         type: number
       
-
 #***********************************
 
     - name: friends_has_friend
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#HasFriend
       parameters:
-      - name: iFriendFlags
+      - name: [2] iFriendFlags
         type: number
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_get_clan_count
@@ -475,53 +441,55 @@
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_clan_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanByIndex
       parameters:
-      - name: iClan
+      - name: [1] iClan
         type: number
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: friends_get_clan_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanName
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_get_clan_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanTag
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_get_clan_activity_counts
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanActivityCounts
       parameters:
-      - name: steamIDClan
+      - name: [4] pnChatting OUTPARAM
+	    type: number
+      - name: [3] pnInGame OUTPARAM
+	    type: number
+      - name: [2] pnOnline OUTPARAM
+	    type: number
+      - name: [1] steamIDClan
         type: string
       
       returns:
@@ -533,243 +501,223 @@
         type: number
       - name: pnOnline
         type: number
-
 #***********************************
 
     - name: friends_download_clan_activity_counts
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#DownloadClanActivityCounts
       parameters:
-      - name: cClansToRequest
+      - name: [2] cClansToRequest
         type: number
-      - name: psteamIDClans
+      - name: [1] psteamIDClans
         type: table (string)
       
-
 #***********************************
 
     - name: friends_get_friend_count_from_source
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCountFromSource
       parameters:
-      - name: steamIDSource
+      - name: [1] steamIDSource
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_friend_from_source_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendFromSourceByIndex
       parameters:
-      - name: iFriend
+      - name: [2] iFriend
         type: number
-      - name: steamIDSource
+      - name: [1] steamIDSource
         type: string
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: friends_is_user_in_source
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#IsUserInSource
       parameters:
-      - name: steamIDSource
+      - name: [2] steamIDSource
         type: string
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_set_in_game_voice_speaking
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#SetInGameVoiceSpeaking
       parameters:
-      - name: bSpeaking
+      - name: [2] bSpeaking
         type: boolean
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
-
 #***********************************
 
     - name: friends_activate_game_overlay
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlay
       parameters:
-      - name: pchDialog
+      - name: [1] pchDialog
         type: string
       
-
 #***********************************
 
     - name: friends_activate_game_overlay_to_user
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayToUser
       parameters:
-      - name: steamID
+      - name: [2] steamID
         type: string
-      - name: pchDialog
+      - name: [1] pchDialog
         type: string
       
-
 #***********************************
 
     - name: friends_activate_game_overlay_to_web_page
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayToWebPage
       parameters:
-      - name: pchURL
+      - name: [1] pchURL
         type: string
       
-
 #***********************************
 
     - name: friends_activate_game_overlay_to_store
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayToStore
       parameters:
-      - name: eFlag
+      - name: [2] eFlag
         type: EOverlayToStoreFlag
-      - name: nAppID
+      - name: [1] nAppID
         type: number
       
-
 #***********************************
 
     - name: friends_set_played_with
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#SetPlayedWith
       parameters:
-      - name: steamIDUserPlayedWith
+      - name: [1] steamIDUserPlayedWith
         type: string
       
-
 #***********************************
 
     - name: friends_activate_game_overlay_invite_dialog
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayInviteDialog
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
-
 #***********************************
 
     - name: friends_get_small_friend_avatar
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetSmallFriendAvatar
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_medium_friend_avatar
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetMediumFriendAvatar
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_large_friend_avatar
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetLargeFriendAvatar
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_request_user_information
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#RequestUserInformation
       parameters:
-      - name: bRequireNameOnly
+      - name: [2] bRequireNameOnly
         type: boolean
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_request_clan_officer_list
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#RequestClanOfficerList
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
-
 #***********************************
 
     - name: friends_get_clan_owner
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOwner
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: friends_get_clan_officer_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerCount
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_clan_officer_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanOfficerByIndex
       parameters:
-      - name: iOfficer
+      - name: [2] iOfficer
         type: number
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: friends_get_user_restrictions
@@ -779,28 +727,25 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: friends_set_rich_presence
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#SetRichPresence
       parameters:
-      - name: pchValue
+      - name: [2] pchValue
         type: string
-      - name: pchKey
+      - name: [1] pchKey
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_clear_rich_presence
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ClearRichPresence
-
 
 #***********************************
 
@@ -808,68 +753,63 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresence
       parameters:
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_get_friend_rich_presence_key_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyCount
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_friend_rich_presence_key_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendRichPresenceKeyByIndex
       parameters:
-      - name: iKey
+      - name: [2] iKey
         type: number
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: friends_request_friend_rich_presence
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#RequestFriendRichPresence
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
-
 #***********************************
 
     - name: friends_invite_user_to_game
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#InviteUserToGame
       parameters:
-      - name: pchConnectString
+      - name: [2] pchConnectString
         type: string
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_get_coplay_friend_count
@@ -879,125 +819,118 @@
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_coplay_friend
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriend
       parameters:
-      - name: iCoplayFriend
+      - name: [1] iCoplayFriend
         type: number
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: friends_get_friend_coplay_time
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayTime
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_friend_coplay_game
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendCoplayGame
       parameters:
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: AppId_t
-
 #***********************************
 
     - name: friends_join_clan_chat_room
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#JoinClanChatRoom
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
-
 #***********************************
 
     - name: friends_leave_clan_chat_room
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#LeaveClanChatRoom
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_get_clan_chat_member_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMemberCount
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: friends_get_chat_member_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetChatMemberByIndex
       parameters:
-      - name: iUser
+      - name: [2] iUser
         type: number
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: friends_send_clan_chat_message
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#SendClanChatMessage
       parameters:
-      - name: pchText
+      - name: [2] pchText
         type: string
-      - name: steamIDClanChat
+      - name: [1] steamIDClanChat
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_get_clan_chat_message
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanChatMessage
       parameters:
-      - name: cchTextMax
+      - name: [5] peChatEntryType OUTPARAM
+	    type: EChatEntryType
+      - name: [4] cchTextMax
         type: number
-      - name: prgchText
+      - name: [3] prgchText
         type: buffer
-      - name: iMessage
+      - name: [2] iMessage
         type: number
-      - name: steamIDClanChat
+      - name: [1] steamIDClanChat
         type: string
       
       returns:
@@ -1005,102 +938,97 @@
         type: int
       - name: peChatEntryType
         type: EChatEntryType
-
 #***********************************
 
     - name: friends_is_clan_chat_admin
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatAdmin
       parameters:
-      - name: steamIDUser
+      - name: [2] steamIDUser
         type: string
-      - name: steamIDClanChat
+      - name: [1] steamIDClanChat
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_is_clan_chat_window_open_in_steam
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#IsClanChatWindowOpenInSteam
       parameters:
-      - name: steamIDClanChat
+      - name: [1] steamIDClanChat
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_open_clan_chat_window_in_steam
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#OpenClanChatWindowInSteam
       parameters:
-      - name: steamIDClanChat
+      - name: [1] steamIDClanChat
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_close_clan_chat_window_in_steam
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#CloseClanChatWindowInSteam
       parameters:
-      - name: steamIDClanChat
+      - name: [1] steamIDClanChat
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_set_listen_for_friends_messages
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#SetListenForFriendsMessages
       parameters:
-      - name: bInterceptEnabled
+      - name: [1] bInterceptEnabled
         type: boolean
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_reply_to_friend_message
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ReplyToFriendMessage
       parameters:
-      - name: pchMsgToSend
+      - name: [2] pchMsgToSend
         type: string
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_get_friend_message
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendMessage
       parameters:
-      - name: cubData
+      - name: [5] peChatEntryType OUTPARAM
+	    type: EChatEntryType
+      - name: [4] cubData
         type: number
-      - name: pvData
+      - name: [3] pvData
         type: buffer
-      - name: iMessageID
+      - name: [2] iMessageID
         type: number
-      - name: steamIDFriend
+      - name: [1] steamIDFriend
         type: string
       
       returns:
@@ -1108,63 +1036,57 @@
         type: int
       - name: peChatEntryType
         type: EChatEntryType
-
 #***********************************
 
     - name: friends_get_follower_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFollowerCount
       parameters:
-      - name: steamID
+      - name: [1] steamID
         type: string
       
-
 #***********************************
 
     - name: friends_is_following
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#IsFollowing
       parameters:
-      - name: steamID
+      - name: [1] steamID
         type: string
       
-
 #***********************************
 
     - name: friends_enumerate_following_list
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#EnumerateFollowingList
       parameters:
-      - name: unStartIndex
+      - name: [1] unStartIndex
         type: number
       
-
 #***********************************
 
     - name: friends_is_clan_public
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#IsClanPublic
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: friends_is_clan_official_game_group
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#IsClanOfficialGameGroup
       parameters:
-      - name: steamIDClan
+      - name: [1] steamIDClan
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_get_seconds_since_app_active
@@ -1174,7 +1096,6 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: utils_get_seconds_since_computer_active
@@ -1184,7 +1105,6 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: utils_get_connected_universe
@@ -1194,7 +1114,6 @@
       returns:
       - name: r
         type: EUniverse
-
 #***********************************
 
     - name: utils_get_server_real_time
@@ -1204,7 +1123,6 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: utils_get_ip_country
@@ -1214,14 +1132,17 @@
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: utils_get_image_size
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetImageSize
       parameters:
-      - name: iImage
+      - name: [3] pnHeight OUTPARAM
+	    type: number
+      - name: [2] pnWidth OUTPARAM
+	    type: number
+      - name: [1] iImage
         type: number
       
       returns:
@@ -1231,30 +1152,32 @@
         type: number
       - name: pnWidth
         type: number
-
 #***********************************
 
     - name: utils_get_image_rgba
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetImageRGBA
       parameters:
-      - name: nDestBufferSize
+      - name: [3] nDestBufferSize
         type: number
-      - name: pubDest
+      - name: [2] pubDest
         type: buffer
-      - name: iImage
+      - name: [1] iImage
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_get_cserip_port
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetCSERIPPort
       parameters:
+      - name: [2] usPort OUTPARAM
+	    type: number
+      - name: [1] unIP OUTPARAM
+	    type: number
       
       returns:
       - name: r
@@ -1263,7 +1186,6 @@
         type: number
       - name: unIP
         type: number
-
 #***********************************
 
     - name: utils_get_current_battery_power
@@ -1273,7 +1195,6 @@
       returns:
       - name: r
         type: uint8
-
 #***********************************
 
     - name: utils_get_app_id
@@ -1283,24 +1204,24 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: utils_set_overlay_notification_position
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationPosition
       parameters:
-      - name: eNotificationPosition
+      - name: [1] eNotificationPosition
         type: ENotificationPosition
       
-
 #***********************************
 
     - name: utils_is_api_call_completed
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#IsAPICallCompleted
       parameters:
-      - name: hSteamAPICall
+      - name: [2] pbFailed OUTPARAM
+	    type: boolean
+      - name: [1] hSteamAPICall
         type: number
       
       returns:
@@ -1308,33 +1229,33 @@
         type: bool
       - name: pbFailed
         type: boolean
-
 #***********************************
 
     - name: utils_get_api_call_failure_reason
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallFailureReason
       parameters:
-      - name: hSteamAPICall
+      - name: [1] hSteamAPICall
         type: number
       
       returns:
       - name: r
         type: ESteamAPICallFailure
-
 #***********************************
 
     - name: utils_get_api_call_result
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetAPICallResult
       parameters:
-      - name: iCallbackExpected
+      - name: [5] pbFailed OUTPARAM
+	    type: boolean
+      - name: [4] iCallbackExpected
         type: number
-      - name: cubCallback
+      - name: [3] cubCallback
         type: number
-      - name: pCallback
+      - name: [2] pCallback
         type: buffer
-      - name: hSteamAPICall
+      - name: [1] hSteamAPICall
         type: number
       
       returns:
@@ -1342,7 +1263,6 @@
         type: bool
       - name: pbFailed
         type: boolean
-
 #***********************************
 
     - name: utils_get_ipc_call_count
@@ -1352,7 +1272,6 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: utils_is_overlay_enabled
@@ -1362,7 +1281,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_overlay_needs_present
@@ -1372,38 +1290,35 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_check_file_signature
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#CheckFileSignature
       parameters:
-      - name: szFileName
+      - name: [1] szFileName
         type: string
       
-
 #***********************************
 
     - name: utils_show_gamepad_text_input
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#ShowGamepadTextInput
       parameters:
-      - name: pchExistingText
+      - name: [5] pchExistingText
         type: string
-      - name: unCharMax
+      - name: [4] unCharMax
         type: number
-      - name: pchDescription
+      - name: [3] pchDescription
         type: string
-      - name: eLineInputMode
+      - name: [2] eLineInputMode
         type: EGamepadTextInputLineMode
-      - name: eInputMode
+      - name: [1] eInputMode
         type: EGamepadTextInputMode
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_get_entered_gamepad_text_length
@@ -1413,22 +1328,20 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: utils_get_entered_gamepad_text_input
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextInput
       parameters:
-      - name: cchText
+      - name: [2] cchText
         type: number
-      - name: pchText
+      - name: [1] pchText
         type: buffer
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_get_steam_ui_language
@@ -1438,7 +1351,6 @@
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: utils_is_steam_running_in_vr
@@ -1448,19 +1360,17 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_set_overlay_notification_inset
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#SetOverlayNotificationInset
       parameters:
-      - name: nVerticalInset
+      - name: [2] nVerticalInset
         type: number
-      - name: nHorizontalInset
+      - name: [1] nHorizontalInset
         type: number
       
-
 #***********************************
 
     - name: utils_is_steam_in_big_picture_mode
@@ -1470,13 +1380,11 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_start_vr_dashboard
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#StartVRDashboard
-
 
 #***********************************
 
@@ -1487,17 +1395,15 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: utils_set_vr_headset_streaming_enabled
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#SetVRHeadsetStreamingEnabled
       parameters:
-      - name: bEnabled
+      - name: [1] bEnabled
         type: boolean
       
-
 #***********************************
 
     - name: matchmaking_get_favorite_game_count
@@ -1507,14 +1413,25 @@
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: matchmaking_get_favorite_game
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGame
       parameters:
-      - name: iGame
+      - name: [7] pRTime32LastPlayedOnServer OUTPARAM
+	    type: number
+      - name: [6] punFlags OUTPARAM
+	    type: number
+      - name: [5] pnQueryPort OUTPARAM
+	    type: number
+      - name: [4] pnConnPort OUTPARAM
+	    type: number
+      - name: [3] pnIP OUTPARAM
+	    type: number
+      - name: [2] pnAppID OUTPARAM
+	    type: number
+      - name: [1] iGame
         type: number
       
       returns:
@@ -1532,57 +1449,53 @@
         type: number
       - name: pnAppID
         type: number
-
 #***********************************
 
     - name: matchmaking_add_favorite_game
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddFavoriteGame
       parameters:
-      - name: rTime32LastPlayedOnServer
+      - name: [6] rTime32LastPlayedOnServer
         type: number
-      - name: unFlags
+      - name: [5] unFlags
         type: number
-      - name: nQueryPort
+      - name: [4] nQueryPort
         type: number
-      - name: nConnPort
+      - name: [3] nConnPort
         type: number
-      - name: nIP
+      - name: [2] nIP
         type: number
-      - name: nAppID
+      - name: [1] nAppID
         type: number
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: matchmaking_remove_favorite_game
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#RemoveFavoriteGame
       parameters:
-      - name: unFlags
+      - name: [5] unFlags
         type: number
-      - name: nQueryPort
+      - name: [4] nQueryPort
         type: number
-      - name: nConnPort
+      - name: [3] nConnPort
         type: number
-      - name: nIP
+      - name: [2] nIP
         type: number
-      - name: nAppID
+      - name: [1] nAppID
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_request_lobby_list
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyList
-
 
 #***********************************
 
@@ -1590,312 +1503,292 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListStringFilter
       parameters:
-      - name: eComparisonType
+      - name: [3] eComparisonType
         type: ELobbyComparison
-      - name: pchValueToMatch
+      - name: [2] pchValueToMatch
         type: string
-      - name: pchKeyToMatch
+      - name: [1] pchKeyToMatch
         type: string
       
-
 #***********************************
 
     - name: matchmaking_add_request_lobby_list_numerical_filter
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNumericalFilter
       parameters:
-      - name: eComparisonType
+      - name: [3] eComparisonType
         type: ELobbyComparison
-      - name: nValueToMatch
+      - name: [2] nValueToMatch
         type: number
-      - name: pchKeyToMatch
+      - name: [1] pchKeyToMatch
         type: string
       
-
 #***********************************
 
     - name: matchmaking_add_request_lobby_list_near_value_filter
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListNearValueFilter
       parameters:
-      - name: nValueToBeCloseTo
+      - name: [2] nValueToBeCloseTo
         type: number
-      - name: pchKeyToMatch
+      - name: [1] pchKeyToMatch
         type: string
       
-
 #***********************************
 
     - name: matchmaking_add_request_lobby_list_filter_slots_available
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListFilterSlotsAvailable
       parameters:
-      - name: nSlotsAvailable
+      - name: [1] nSlotsAvailable
         type: number
       
-
 #***********************************
 
     - name: matchmaking_add_request_lobby_list_distance_filter
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListDistanceFilter
       parameters:
-      - name: eLobbyDistanceFilter
+      - name: [1] eLobbyDistanceFilter
         type: ELobbyDistanceFilter
       
-
 #***********************************
 
     - name: matchmaking_add_request_lobby_list_result_count_filter
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListResultCountFilter
       parameters:
-      - name: cMaxResults
+      - name: [1] cMaxResults
         type: number
       
-
 #***********************************
 
     - name: matchmaking_add_request_lobby_list_compatible_members_filter
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#AddRequestLobbyListCompatibleMembersFilter
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
-
 #***********************************
 
     - name: matchmaking_get_lobby_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyByIndex
       parameters:
-      - name: iLobby
+      - name: [1] iLobby
         type: number
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: matchmaking_create_lobby
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#CreateLobby
       parameters:
-      - name: cMaxMembers
+      - name: [2] cMaxMembers
         type: number
-      - name: eLobbyType
+      - name: [1] eLobbyType
         type: ELobbyType
       
-
 #***********************************
 
     - name: matchmaking_join_lobby
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#JoinLobby
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
-
 #***********************************
 
     - name: matchmaking_leave_lobby
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#LeaveLobby
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
-
 #***********************************
 
     - name: matchmaking_invite_user_to_lobby
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#InviteUserToLobby
       parameters:
-      - name: steamIDInvitee
+      - name: [2] steamIDInvitee
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_get_num_lobby_members
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetNumLobbyMembers
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: matchmaking_get_lobby_member_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberByIndex
       parameters:
-      - name: iMember
+      - name: [2] iMember
         type: number
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: matchmaking_get_lobby_data
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyData
       parameters:
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: matchmaking_set_lobby_data
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyData
       parameters:
-      - name: pchValue
+      - name: [3] pchValue
         type: string
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_get_lobby_data_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataCount
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: matchmaking_get_lobby_data_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyDataByIndex
       parameters:
-      - name: cchValueBufferSize
+      - name: [6] cchValueBufferSize
         type: number
-      - name: pchValue
+      - name: [5] pchValue
         type: buffer
-      - name: cchKeyBufferSize
+      - name: [4] cchKeyBufferSize
         type: number
-      - name: pchKey
+      - name: [3] pchKey
         type: buffer
-      - name: iLobbyData
+      - name: [2] iLobbyData
         type: number
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_delete_lobby_data
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#DeleteLobbyData
       parameters:
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_get_lobby_member_data
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberData
       parameters:
-      - name: pchKey
+      - name: [3] pchKey
         type: string
-      - name: steamIDUser
+      - name: [2] steamIDUser
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: matchmaking_set_lobby_member_data
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberData
       parameters:
-      - name: pchValue
+      - name: [3] pchValue
         type: string
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
-
 #***********************************
 
     - name: matchmaking_send_lobby_chat_msg
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SendLobbyChatMsg
       parameters:
-      - name: cubMsgBody
+      - name: [3] cubMsgBody
         type: number
-      - name: pvMsgBody
+      - name: [2] pvMsgBody
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_get_lobby_chat_entry
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyChatEntry
       parameters:
-      - name: cubData
+      - name: [5] peChatEntryType OUTPARAM
+	    type: EChatEntryType
+      - name: [4] cubData
         type: number
-      - name: pvData
+      - name: [3] pvData
         type: buffer
-      - name: iChatID
+      - name: [2] iChatID
         type: number
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
@@ -1903,43 +1796,44 @@
         type: int
       - name: peChatEntryType
         type: EChatEntryType
-
 #***********************************
 
     - name: matchmaking_request_lobby_data
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyData
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_set_lobby_game_server
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyGameServer
       parameters:
-      - name: steamIDGameServer
+      - name: [4] steamIDGameServer
         type: string
-      - name: unGameServerPort
+      - name: [3] unGameServerPort
         type: number
-      - name: unGameServerIP
+      - name: [2] unGameServerIP
         type: number
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
-
 #***********************************
 
     - name: matchmaking_get_lobby_game_server
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyGameServer
       parameters:
-      - name: steamIDLobby
+      - name: [3] punGameServerPort OUTPARAM
+	    type: number
+      - name: [2] punGameServerIP OUTPARAM
+	    type: number
+      - name: [1] steamIDLobby
         type: string
       
       returns:
@@ -1949,359 +1843,333 @@
         type: number
       - name: punGameServerIP
         type: number
-
 #***********************************
 
     - name: matchmaking_set_lobby_member_limit
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyMemberLimit
       parameters:
-      - name: cMaxMembers
+      - name: [2] cMaxMembers
         type: number
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_get_lobby_member_limit
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyMemberLimit
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: matchmaking_set_lobby_type
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyType
       parameters:
-      - name: eLobbyType
+      - name: [2] eLobbyType
         type: ELobbyType
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_set_lobby_joinable
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyJoinable
       parameters:
-      - name: bLobbyJoinable
+      - name: [2] bLobbyJoinable
         type: boolean
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_get_lobby_owner
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetLobbyOwner
       parameters:
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: matchmaking_set_lobby_owner
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLobbyOwner
       parameters:
-      - name: steamIDNewOwner
+      - name: [2] steamIDNewOwner
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: matchmaking_set_linked_lobby
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#SetLinkedLobby
       parameters:
-      - name: steamIDLobbyDependent
+      - name: [2] steamIDLobbyDependent
         type: string
-      - name: steamIDLobby
+      - name: [1] steamIDLobby
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_write
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWrite
       parameters:
-      - name: cubData
+      - name: [3] cubData
         type: number
-      - name: pvData
+      - name: [2] pvData
         type: string
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_read
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileRead
       parameters:
-      - name: cubDataToRead
+      - name: [3] cubDataToRead
         type: number
-      - name: pvData
+      - name: [2] pvData
         type: buffer
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: int32
-
 #***********************************
 
     - name: remote_storage_file_write_async
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteAsync
       parameters:
-      - name: cubData
+      - name: [3] cubData
         type: number
-      - name: pvData
+      - name: [2] pvData
         type: string
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
-
 #***********************************
 
     - name: remote_storage_file_read_async
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsync
       parameters:
-      - name: cubToRead
+      - name: [3] cubToRead
         type: number
-      - name: nOffset
+      - name: [2] nOffset
         type: number
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
-
 #***********************************
 
     - name: remote_storage_file_read_async_complete
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileReadAsyncComplete
       parameters:
-      - name: cubToRead
+      - name: [3] cubToRead
         type: number
-      - name: pvBuffer
+      - name: [2] pvBuffer
         type: buffer
-      - name: hReadCall
+      - name: [1] hReadCall
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_forget
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileForget
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_delete
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileDelete
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_share
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileShare
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
-
 #***********************************
 
     - name: remote_storage_set_sync_platforms
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetSyncPlatforms
       parameters:
-      - name: eRemoteStoragePlatform
+      - name: [2] eRemoteStoragePlatform
         type: ERemoteStoragePlatform
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_write_stream_open
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamOpen
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: UGCFileWriteStreamHandle_t
-
 #***********************************
 
     - name: remote_storage_file_write_stream_write_chunk
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamWriteChunk
       parameters:
-      - name: cubData
+      - name: [3] cubData
         type: number
-      - name: pvData
+      - name: [2] pvData
         type: string
-      - name: writeHandle
+      - name: [1] writeHandle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_write_stream_close
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamClose
       parameters:
-      - name: writeHandle
+      - name: [1] writeHandle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_write_stream_cancel
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileWriteStreamCancel
       parameters:
-      - name: writeHandle
+      - name: [1] writeHandle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_exists
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FileExists
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_file_persisted
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#FilePersisted
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_get_file_size
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileSize
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: int32
-
 #***********************************
 
     - name: remote_storage_get_file_timestamp
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileTimestamp
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: int64
-
 #***********************************
 
     - name: remote_storage_get_sync_platforms
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetSyncPlatforms
       parameters:
-      - name: pchFile
+      - name: [1] pchFile
         type: string
       
       returns:
       - name: r
         type: ERemoteStoragePlatform
-
 #***********************************
 
     - name: remote_storage_get_file_count
@@ -2311,14 +2179,15 @@
       returns:
       - name: r
         type: int32
-
 #***********************************
 
     - name: remote_storage_get_file_name_and_size
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileNameAndSize
       parameters:
-      - name: iFile
+      - name: [2] pnFileSizeInBytes OUTPARAM
+	    type: number
+      - name: [1] iFile
         type: number
       
       returns:
@@ -2326,13 +2195,16 @@
         type: const_char_ptr
       - name: pnFileSizeInBytes
         type: number
-
 #***********************************
 
     - name: remote_storage_get_quota
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetQuota
       parameters:
+      - name: [2] puAvailableBytes OUTPARAM
+	    type: string
+      - name: [1] pnTotalBytes OUTPARAM
+	    type: string
       
       returns:
       - name: r
@@ -2341,7 +2213,6 @@
         type: string
       - name: pnTotalBytes
         type: string
-
 #***********************************
 
     - name: remote_storage_is_cloud_enabled_for_account
@@ -2351,7 +2222,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_is_cloud_enabled_for_app
@@ -2361,36 +2231,37 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: remote_storage_set_cloud_enabled_for_app
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetCloudEnabledForApp
       parameters:
-      - name: bEnabled
+      - name: [1] bEnabled
         type: boolean
       
-
 #***********************************
 
     - name: remote_storage_ugc_download
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownload
       parameters:
-      - name: unPriority
+      - name: [2] unPriority
         type: number
-      - name: hContent
+      - name: [1] hContent
         type: number
       
-
 #***********************************
 
     - name: remote_storage_get_ugc_download_progress
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDownloadProgress
       parameters:
-      - name: hContent
+      - name: [3] pnBytesExpected OUTPARAM
+	    type: number
+      - name: [2] pnBytesDownloaded OUTPARAM
+	    type: number
+      - name: [1] hContent
         type: number
       
       returns:
@@ -2400,14 +2271,17 @@
         type: number
       - name: pnBytesDownloaded
         type: number
-
 #***********************************
 
     - name: remote_storage_get_ugc_details
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUGCDetails
       parameters:
-      - name: hContent
+      - name: [3] pnFileSizeInBytes OUTPARAM
+	    type: number
+      - name: [2] pnAppID OUTPARAM
+	    type: number
+      - name: [1] hContent
         type: number
       
       returns:
@@ -2419,28 +2293,26 @@
         type: number
       - name: ppchName
         type: string
-
 #***********************************
 
     - name: remote_storage_ugc_read
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCRead
       parameters:
-      - name: eAction
+      - name: [5] eAction
         type: EUGCReadAction
-      - name: cOffset
+      - name: [4] cOffset
         type: number
-      - name: cubDataToRead
+      - name: [3] cubDataToRead
         type: number
-      - name: pvData
+      - name: [2] pvData
         type: buffer
-      - name: hContent
+      - name: [1] hContent
         type: number
       
       returns:
       - name: r
         type: int32
-
 #***********************************
 
     - name: remote_storage_get_cached_ugc_count
@@ -2450,34 +2322,31 @@
       returns:
       - name: r
         type: int32
-
 #***********************************
 
     - name: remote_storage_get_cached_ugc_handle
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCHandle
       parameters:
-      - name: iCachedContent
+      - name: [1] iCachedContent
         type: number
       
       returns:
       - name: r
         type: UGCHandle_t
-
 #***********************************
 
     - name: remote_storage_ugc_download_to_location
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation
       parameters:
-      - name: unPriority
+      - name: [3] unPriority
         type: number
-      - name: pchLocation
+      - name: [2] pchLocation
         type: string
-      - name: hContent
+      - name: [1] hContent
         type: number
       
-
 #***********************************
 
     - name: user_stats_request_current_stats
@@ -2487,14 +2356,15 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_get_stat_int
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat
       parameters:
-      - name: pchName
+      - name: [2] pData OUTPARAM
+	    type: number
+      - name: [1] pchName
         type: string
       
       returns:
@@ -2502,14 +2372,15 @@
         type: bool
       - name: pData
         type: number
-
 #***********************************
 
     - name: user_stats_get_stat_float
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat
       parameters:
-      - name: pchName
+      - name: [2] pData OUTPARAM
+	    type: number
+      - name: [1] pchName
         type: string
       
       returns:
@@ -2517,61 +2388,59 @@
         type: bool
       - name: pData
         type: number
-
 #***********************************
 
     - name: user_stats_set_stat_int
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat
       parameters:
-      - name: nData
+      - name: [2] nData
         type: number
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_set_stat_float
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat
       parameters:
-      - name: fData
+      - name: [2] fData
         type: number
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_update_avg_rate_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#UpdateAvgRateStat
       parameters:
-      - name: dSessionLength
+      - name: [3] dSessionLength
         type: double
-      - name: flCountThisSession
+      - name: [2] flCountThisSession
         type: number
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_get_achievement
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievement
       parameters:
-      - name: pchName
+      - name: [2] pbAchieved OUTPARAM
+	    type: boolean
+      - name: [1] pchName
         type: string
       
       returns:
@@ -2579,40 +2448,41 @@
         type: bool
       - name: pbAchieved
         type: boolean
-
 #***********************************
 
     - name: user_stats_set_achievement
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#SetAchievement
       parameters:
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_clear_achievement
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#ClearAchievement
       parameters:
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_get_achievement_and_unlock_time
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAndUnlockTime
       parameters:
-      - name: pchName
+      - name: [3] punUnlockTime OUTPARAM
+	    type: number
+      - name: [2] pbAchieved OUTPARAM
+	    type: boolean
+      - name: [1] pchName
         type: string
       
       returns:
@@ -2622,7 +2492,6 @@
         type: number
       - name: pbAchieved
         type: boolean
-
 #***********************************
 
     - name: user_stats_store_stats
@@ -2632,52 +2501,48 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_get_achievement_icon
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementIcon
       parameters:
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: user_stats_get_achievement_display_attribute
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementDisplayAttribute
       parameters:
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: user_stats_indicate_achievement_progress
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#IndicateAchievementProgress
       parameters:
-      - name: nMaxProgress
+      - name: [3] nMaxProgress
         type: number
-      - name: nCurProgress
+      - name: [2] nCurProgress
         type: number
-      - name: pchName
+      - name: [1] pchName
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_get_num_achievements
@@ -2687,39 +2552,38 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: user_stats_get_achievement_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementName
       parameters:
-      - name: iAchievement
+      - name: [1] iAchievement
         type: number
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: user_stats_request_user_stats
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#RequestUserStats
       parameters:
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
-
 #***********************************
 
     - name: user_stats_get_user_stat_int
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
       parameters:
-      - name: pchName
+      - name: [3] pData OUTPARAM
+	    type: number
+      - name: [2] pchName
         type: string
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
       returns:
@@ -2727,16 +2591,17 @@
         type: bool
       - name: pData
         type: number
-
 #***********************************
 
     - name: user_stats_get_user_stat_float
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
       parameters:
-      - name: pchName
+      - name: [3] pData OUTPARAM
+	    type: number
+      - name: [2] pchName
         type: string
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
       returns:
@@ -2744,16 +2609,17 @@
         type: bool
       - name: pData
         type: number
-
 #***********************************
 
     - name: user_stats_get_user_achievement
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievement
       parameters:
-      - name: pchName
+      - name: [3] pbAchieved OUTPARAM
+	    type: boolean
+      - name: [2] pchName
         type: string
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
       returns:
@@ -2761,16 +2627,19 @@
         type: bool
       - name: pbAchieved
         type: boolean
-
 #***********************************
 
     - name: user_stats_get_user_achievement_and_unlock_time
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserAchievementAndUnlockTime
       parameters:
-      - name: pchName
+      - name: [4] punUnlockTime OUTPARAM
+	    type: number
+      - name: [3] pbAchieved OUTPARAM
+	    type: boolean
+      - name: [2] pchName
         type: string
-      - name: steamIDUser
+      - name: [1] steamIDUser
         type: string
       
       returns:
@@ -2780,139 +2649,131 @@
         type: number
       - name: pbAchieved
         type: boolean
-
 #***********************************
 
     - name: user_stats_reset_all_stats
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#ResetAllStats
       parameters:
-      - name: bAchievementsToo
+      - name: [1] bAchievementsToo
         type: boolean
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: user_stats_find_or_create_leaderboard
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#FindOrCreateLeaderboard
       parameters:
-      - name: eLeaderboardDisplayType
+      - name: [3] eLeaderboardDisplayType
         type: ELeaderboardDisplayType
-      - name: eLeaderboardSortMethod
+      - name: [2] eLeaderboardSortMethod
         type: ELeaderboardSortMethod
-      - name: pchLeaderboardName
+      - name: [1] pchLeaderboardName
         type: string
       
-
 #***********************************
 
     - name: user_stats_find_leaderboard
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#FindLeaderboard
       parameters:
-      - name: pchLeaderboardName
+      - name: [1] pchLeaderboardName
         type: string
       
-
 #***********************************
 
     - name: user_stats_get_leaderboard_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardName
       parameters:
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: user_stats_get_leaderboard_entry_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardEntryCount
       parameters:
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: user_stats_get_leaderboard_sort_method
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardSortMethod
       parameters:
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
       returns:
       - name: r
         type: ELeaderboardSortMethod
-
 #***********************************
 
     - name: user_stats_get_leaderboard_display_type
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetLeaderboardDisplayType
       parameters:
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
       returns:
       - name: r
         type: ELeaderboardDisplayType
-
 #***********************************
 
     - name: user_stats_download_leaderboard_entries
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntries
       parameters:
-      - name: nRangeEnd
+      - name: [4] nRangeEnd
         type: number
-      - name: nRangeStart
+      - name: [3] nRangeStart
         type: number
-      - name: eLeaderboardDataRequest
+      - name: [2] eLeaderboardDataRequest
         type: ELeaderboardDataRequest
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
-
 #***********************************
 
     - name: user_stats_download_leaderboard_entries_for_users
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#DownloadLeaderboardEntriesForUsers
       parameters:
-      - name: cUsers
+      - name: [3] cUsers
         type: number
-      - name: prgUsers
+      - name: [2] prgUsers
         type: table (string)
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
-
 #***********************************
 
     - name: user_stats_get_downloaded_leaderboard_entry
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetDownloadedLeaderboardEntry
       parameters:
-      - name: cDetailsMax
+      - name: [5] cDetailsMax
         type: number
-      - name: index
+      - name: [3] pLeaderboardEntry OUTPARAM
+	    type: table
+      - name: [2] index
         type: number
-      - name: hSteamLeaderboardEntries
+      - name: [1] hSteamLeaderboardEntries
         type: number
-      - name: pDetails
+      - name: [4] pDetails
         type: number
       
       returns:
@@ -2923,43 +2784,39 @@
       - name: pDetails
         type: table
 
-
 #***********************************
 
     - name: user_stats_upload_leaderboard_score
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#UploadLeaderboardScore
       parameters:
-      - name: cScoreDetailsCount
+      - name: [5] cScoreDetailsCount
         type: number
-      - name: pScoreDetails
+      - name: [4] pScoreDetails
         type: table (number)
-      - name: nScore
+      - name: [3] nScore
         type: number
-      - name: eLeaderboardUploadScoreMethod
+      - name: [2] eLeaderboardUploadScoreMethod
         type: ELeaderboardUploadScoreMethod
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
-
 #***********************************
 
     - name: user_stats_attach_leaderboard_ugc
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#AttachLeaderboardUGC
       parameters:
-      - name: hUGC
+      - name: [2] hUGC
         type: number
-      - name: hSteamLeaderboard
+      - name: [1] hSteamLeaderboard
         type: number
       
-
 #***********************************
 
     - name: user_stats_get_number_of_current_players
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers
-
 
 #***********************************
 
@@ -2967,16 +2824,19 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages
 
-
 #***********************************
 
     - name: user_stats_get_most_achieved_achievement_info
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetMostAchievedAchievementInfo
       parameters:
-      - name: unNameBufLen
+      - name: [4] pbAchieved OUTPARAM
+	    type: boolean
+      - name: [3] pflPercent OUTPARAM
+	    type: number
+      - name: [2] unNameBufLen
         type: number
-      - name: pchName
+      - name: [1] pchName
         type: buffer
       
       returns:
@@ -2986,18 +2846,21 @@
         type: boolean
       - name: pflPercent
         type: number
-
 #***********************************
 
     - name: user_stats_get_next_most_achieved_achievement_info
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetNextMostAchievedAchievementInfo
       parameters:
-      - name: unNameBufLen
+      - name: [5] pbAchieved OUTPARAM
+	    type: boolean
+      - name: [4] pflPercent OUTPARAM
+	    type: number
+      - name: [3] unNameBufLen
         type: number
-      - name: pchName
+      - name: [2] pchName
         type: buffer
-      - name: iIteratorPrevious
+      - name: [1] iIteratorPrevious
         type: number
       
       returns:
@@ -3007,14 +2870,15 @@
         type: boolean
       - name: pflPercent
         type: number
-
 #***********************************
 
     - name: user_stats_get_achievement_achieved_percent
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementAchievedPercent
       parameters:
-      - name: pchName
+      - name: [2] pflPercent OUTPARAM
+	    type: number
+      - name: [1] pchName
         type: string
       
       returns:
@@ -3022,24 +2886,24 @@
         type: bool
       - name: pflPercent
         type: number
-
 #***********************************
 
     - name: user_stats_request_global_stats
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalStats
       parameters:
-      - name: nHistoryDays
+      - name: [1] nHistoryDays
         type: number
       
-
 #***********************************
 
     - name: user_stats_get_global_stat_int
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat
       parameters:
-      - name: pchStatName
+      - name: [2] pData OUTPARAM
+	    type: string
+      - name: [1] pchStatName
         type: string
       
       returns:
@@ -3047,14 +2911,15 @@
         type: bool
       - name: pData
         type: string
-
 #***********************************
 
     - name: user_stats_get_global_stat_float
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat
       parameters:
-      - name: pchStatName
+      - name: [2] pData OUTPARAM
+	    type: double
+      - name: [1] pchStatName
         type: string
       
       returns:
@@ -3062,41 +2927,38 @@
         type: bool
       - name: pData
         type: double
-
 #***********************************
 
     - name: user_stats_get_global_stat_int_history
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory
       parameters:
-      - name: cubData
+      - name: [3] cubData
         type: number
-      - name: pData
+      - name: [2] pData
         type: table (string)
-      - name: pchStatName
+      - name: [1] pchStatName
         type: string
       
       returns:
       - name: r
         type: int32
-
 #***********************************
 
     - name: user_stats_get_global_stat_float_history
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory
       parameters:
-      - name: cubData
+      - name: [3] cubData
         type: number
-      - name: pData
+      - name: [2] pData
         type: table (double)
-      - name: pchStatName
+      - name: [1] pchStatName
         type: string
       
       returns:
       - name: r
         type: int32
-
 #***********************************
 
     - name: apps_is_subscribed
@@ -3106,7 +2968,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_is_low_violence
@@ -3116,7 +2977,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_is_cybercafe
@@ -3126,7 +2986,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_is_vac_banned
@@ -3136,7 +2995,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_get_current_game_language
@@ -3146,7 +3004,6 @@
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: apps_get_available_game_languages
@@ -3156,46 +3013,42 @@
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: apps_is_subscribed_app
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedApp
       parameters:
-      - name: appID
+      - name: [1] appID
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_is_dlc_installed
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsDlcInstalled
       parameters:
-      - name: appID
+      - name: [1] appID
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_get_earliest_purchase_unix_time
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetEarliestPurchaseUnixTime
       parameters:
-      - name: nAppID
+      - name: [1] nAppID
         type: number
       
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: apps_is_subscribed_from_free_weekend
@@ -3205,7 +3058,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_get_dlc_count
@@ -3215,18 +3067,21 @@
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: apps_get_dlc_data_by_index
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BGetDLCDataByIndex
       parameters:
-      - name: cchNameBufferSize
+      - name: [5] cchNameBufferSize
         type: number
-      - name: pchName
+      - name: [4] pchName
         type: buffer
-      - name: iDLC
+      - name: [3] pbAvailable OUTPARAM
+	    type: boolean
+      - name: [2] pAppID OUTPARAM
+	    type: number
+      - name: [1] iDLC
         type: number
       
       returns:
@@ -3236,74 +3091,70 @@
         type: boolean
       - name: pAppID
         type: number
-
 #***********************************
 
     - name: apps_install_dlc
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#InstallDLC
       parameters:
-      - name: nAppID
+      - name: [1] nAppID
         type: number
       
-
 #***********************************
 
     - name: apps_uninstall_dlc
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#UninstallDLC
       parameters:
-      - name: nAppID
+      - name: [1] nAppID
         type: number
       
-
 #***********************************
 
     - name: apps_request_app_proof_of_purchase_key
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#RequestAppProofOfPurchaseKey
       parameters:
-      - name: nAppID
+      - name: [1] nAppID
         type: number
       
-
 #***********************************
 
     - name: apps_get_current_beta_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentBetaName
       parameters:
-      - name: cchNameBufferSize
+      - name: [2] cchNameBufferSize
         type: number
-      - name: pchName
+      - name: [1] pchName
         type: buffer
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_mark_content_corrupt
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#MarkContentCorrupt
       parameters:
-      - name: bMissingFilesOnly
+      - name: [1] bMissingFilesOnly
         type: boolean
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_get_installed_depots
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetInstalledDepots
       parameters:
-      - name: cMaxDepots
+      - name: [3] cMaxDepots
         type: number
-      - name: appID
+      - name: [2] pvecDepots OUTPARAM
+	    type: number
+      - name: [1] appID
         type: number
       
       returns:
@@ -3311,37 +3162,34 @@
         type: uint32
       - name: pvecDepots
         type: number
-
 #***********************************
 
     - name: apps_get_app_install_dir
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetAppInstallDir
       parameters:
-      - name: cchFolderBufferSize
+      - name: [3] cchFolderBufferSize
         type: number
-      - name: pchFolder
+      - name: [2] pchFolder
         type: buffer
-      - name: appID
+      - name: [1] appID
         type: number
       
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: apps_is_app_installed
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsAppInstalled
       parameters:
-      - name: appID
+      - name: [1] appID
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: apps_get_app_owner
@@ -3351,27 +3199,29 @@
       returns:
       - name: r
         type: class_CSteamID
-
 #***********************************
 
     - name: apps_get_launch_query_param
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchQueryParam
       parameters:
-      - name: pchKey
+      - name: [1] pchKey
         type: string
       
       returns:
       - name: r
         type: const_char_ptr
-
 #***********************************
 
     - name: apps_get_dlc_download_progress
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetDlcDownloadProgress
       parameters:
-      - name: nAppID
+      - name: [3] punBytesTotal OUTPARAM
+	    type: string
+      - name: [2] punBytesDownloaded OUTPARAM
+	    type: string
+      - name: [1] nAppID
         type: number
       
       returns:
@@ -3381,7 +3231,6 @@
         type: string
       - name: punBytesDownloaded
         type: string
-
 #***********************************
 
     - name: apps_get_app_build_id
@@ -3391,13 +3240,11 @@
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: apps_request_all_proof_of_purchase_keys
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#RequestAllProofOfPurchaseKeys
-
 
 #***********************************
 
@@ -3405,57 +3252,60 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetFileDetails
       parameters:
-      - name: pszFileName
+      - name: [1] pszFileName
         type: string
       
-
 #***********************************
 
     - name: networking_send_p2p_packet
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket
       parameters:
-      - name: nChannel
+      - name: [5] nChannel
         type: number
-      - name: eP2PSendType
+      - name: [4] eP2PSendType
         type: EP2PSend
-      - name: cubData
+      - name: [3] cubData
         type: number
-      - name: pubData
+      - name: [2] pubData
         type: string
-      - name: steamIDRemote
+      - name: [1] steamIDRemote
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_is_p2p_packet_available
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable
       parameters:
-      - name: nChannel
+      - name: [2] nChannel
         type: number
+      - name: [1] pcubMsgSize OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pcubMsgSize
         type: number
-
 #***********************************
 
     - name: networking_read_p2p_packet
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket
       parameters:
-      - name: nChannel
+      - name: [5] nChannel
         type: number
-      - name: cubDest
+      - name: [4] psteamIDRemote OUTPARAM
+	    type: string
+      - name: [3] pcubMsgSize OUTPARAM
+	    type: number
+      - name: [2] cubDest
         type: number
-      - name: pubDest
+      - name: [1] pubDest
         type: buffer
       
       returns:
@@ -3465,55 +3315,53 @@
         type: string
       - name: pcubMsgSize
         type: number
-
 #***********************************
 
     - name: networking_accept_p2p_session_with_user
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser
       parameters:
-      - name: steamIDRemote
+      - name: [1] steamIDRemote
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_close_p2p_session_with_user
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser
       parameters:
-      - name: steamIDRemote
+      - name: [1] steamIDRemote
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_close_p2p_channel_with_user
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser
       parameters:
-      - name: nChannel
+      - name: [2] nChannel
         type: number
-      - name: steamIDRemote
+      - name: [1] steamIDRemote
         type: string
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_get_p2p_session_state
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState
       parameters:
-      - name: steamIDRemote
+      - name: [2] pConnectionState OUTPARAM
+	    type: table
+      - name: [1] steamIDRemote
         type: string
       
       returns:
@@ -3521,131 +3369,125 @@
         type: bool
       - name: pConnectionState
         type: table
-
 #***********************************
 
     - name: networking_allow_p2p_packet_relay
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay
       parameters:
-      - name: bAllow
+      - name: [1] bAllow
         type: boolean
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_create_listen_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket
       parameters:
-      - name: bAllowUseOfPacketRelay
+      - name: [4] bAllowUseOfPacketRelay
         type: boolean
-      - name: nPort
+      - name: [3] nPort
         type: number
-      - name: nIP
+      - name: [2] nIP
         type: number
-      - name: nVirtualP2PPort
+      - name: [1] nVirtualP2PPort
         type: number
       
       returns:
       - name: r
         type: SNetListenSocket_t
-
 #***********************************
 
     - name: networking_create_p2p_connection_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket
       parameters:
-      - name: bAllowUseOfPacketRelay
+      - name: [4] bAllowUseOfPacketRelay
         type: boolean
-      - name: nTimeoutSec
+      - name: [3] nTimeoutSec
         type: number
-      - name: nVirtualPort
+      - name: [2] nVirtualPort
         type: number
-      - name: steamIDTarget
+      - name: [1] steamIDTarget
         type: string
       
       returns:
       - name: r
         type: SNetSocket_t
-
 #***********************************
 
     - name: networking_create_connection_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket
       parameters:
-      - name: nTimeoutSec
+      - name: [3] nTimeoutSec
         type: number
-      - name: nPort
+      - name: [2] nPort
         type: number
-      - name: nIP
+      - name: [1] nIP
         type: number
       
       returns:
       - name: r
         type: SNetSocket_t
-
 #***********************************
 
     - name: networking_destroy_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket
       parameters:
-      - name: bNotifyRemoteEnd
+      - name: [2] bNotifyRemoteEnd
         type: boolean
-      - name: hSocket
+      - name: [1] hSocket
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_destroy_listen_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket
       parameters:
-      - name: bNotifyRemoteEnd
+      - name: [2] bNotifyRemoteEnd
         type: boolean
-      - name: hSocket
+      - name: [1] hSocket
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_send_data_on_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket
       parameters:
-      - name: bReliable
+      - name: [4] bReliable
         type: boolean
-      - name: cubData
+      - name: [3] cubData
         type: number
-      - name: pubData
+      - name: [2] pubData
         type: buffer
-      - name: hSocket
+      - name: [1] hSocket
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: networking_is_data_available_on_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket
       parameters:
-      - name: hSocket
+      - name: [2] pcubMsgSize OUTPARAM
+	    type: number
+      - name: [1] hSocket
         type: number
       
       returns:
@@ -3653,18 +3495,19 @@
         type: bool
       - name: pcubMsgSize
         type: number
-
 #***********************************
 
     - name: networking_retrieve_data_from_socket
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket
       parameters:
-      - name: cubDest
+      - name: [4] pcubMsgSize OUTPARAM
+	    type: number
+      - name: [3] cubDest
         type: number
-      - name: pubDest
+      - name: [2] pubDest
         type: buffer
-      - name: hSocket
+      - name: [1] hSocket
         type: number
       
       returns:
@@ -3672,14 +3515,17 @@
         type: bool
       - name: pcubMsgSize
         type: number
-
 #***********************************
 
     - name: networking_is_data_available
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable
       parameters:
-      - name: hListenSocket
+      - name: [3] phSocket OUTPARAM
+	    type: number
+      - name: [2] pcubMsgSize OUTPARAM
+	    type: number
+      - name: [1] hListenSocket
         type: number
       
       returns:
@@ -3689,18 +3535,21 @@
         type: number
       - name: pcubMsgSize
         type: number
-
 #***********************************
 
     - name: networking_retrieve_data
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData
       parameters:
-      - name: cubDest
+      - name: [5] phSocket OUTPARAM
+	    type: number
+      - name: [4] pcubMsgSize OUTPARAM
+	    type: number
+      - name: [3] cubDest
         type: number
-      - name: pubDest
+      - name: [2] pubDest
         type: buffer
-      - name: hListenSocket
+      - name: [1] hListenSocket
         type: number
       
       returns:
@@ -3710,14 +3559,21 @@
         type: number
       - name: pcubMsgSize
         type: number
-
 #***********************************
 
     - name: networking_get_socket_info
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo
       parameters:
-      - name: hSocket
+      - name: [5] punPortRemote OUTPARAM
+	    type: number
+      - name: [4] punIPRemote OUTPARAM
+	    type: number
+      - name: [3] peSocketStatus OUTPARAM
+	    type: number
+      - name: [2] pSteamIDRemote OUTPARAM
+	    type: string
+      - name: [1] hSocket
         type: number
       
       returns:
@@ -3731,14 +3587,17 @@
         type: number
       - name: pSteamIDRemote
         type: string
-
 #***********************************
 
     - name: networking_get_listen_socket_info
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo
       parameters:
-      - name: hListenSocket
+      - name: [3] pnPort OUTPARAM
+	    type: number
+      - name: [2] pnIP OUTPARAM
+	    type: number
+      - name: [1] hListenSocket
         type: number
       
       returns:
@@ -3748,33 +3607,30 @@
         type: number
       - name: pnIP
         type: number
-
 #***********************************
 
     - name: networking_get_socket_connection_type
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType
       parameters:
-      - name: hSocket
+      - name: [1] hSocket
         type: number
       
       returns:
       - name: r
         type: ESNetSocketConnectionType
-
 #***********************************
 
     - name: networking_get_max_packet_size
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize
       parameters:
-      - name: hSocket
+      - name: [1] hSocket
         type: number
       
       returns:
       - name: r
         type: int
-
 #***********************************
 
     - name: music_is_enabled
@@ -3784,7 +3640,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: music_is_playing
@@ -3794,7 +3649,6 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: music_get_playback_status
@@ -3804,13 +3658,11 @@
       returns:
       - name: r
         type: AudioPlayback_Status
-
 #***********************************
 
     - name: music_play
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#Play
-
 
 #***********************************
 
@@ -3818,13 +3670,11 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#Pause
 
-
 #***********************************
 
     - name: music_play_previous
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#PlayPrevious
-
 
 #***********************************
 
@@ -3832,17 +3682,15 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#PlayNext
 
-
 #***********************************
 
     - name: music_set_volume
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#SetVolume
       parameters:
-      - name: flVolume
+      - name: [1] flVolume
         type: number
       
-
 #***********************************
 
     - name: music_get_volume
@@ -3852,87 +3700,86 @@
       returns:
       - name: r
         type: float
-
 #***********************************
 
     - name: ugc_create_query_user_ugc_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUserUGCRequest
       parameters:
-      - name: unPage
+      - name: [7] unPage
         type: number
-      - name: nConsumerAppID
+      - name: [6] nConsumerAppID
         type: number
-      - name: nCreatorAppID
+      - name: [5] nCreatorAppID
         type: number
-      - name: eSortOrder
+      - name: [4] eSortOrder
         type: EUserUGCListSortOrder
-      - name: eMatchingUGCType
+      - name: [3] eMatchingUGCType
         type: EUGCMatchingUGCType
-      - name: eListType
+      - name: [2] eListType
         type: EUserUGCList
-      - name: unAccountID
+      - name: [1] unAccountID
         type: number
       
       returns:
       - name: r
         type: UGCQueryHandle_t
-
 #***********************************
 
     - name: ugc_create_query_all_ugc_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryAllUGCRequest
       parameters:
-      - name: unPage
+      - name: [5] unPage
         type: number
-      - name: nConsumerAppID
+      - name: [4] nConsumerAppID
         type: number
-      - name: nCreatorAppID
+      - name: [3] nCreatorAppID
         type: number
-      - name: eMatchingeMatchingUGCTypeFileType
+      - name: [2] eMatchingeMatchingUGCTypeFileType
         type: EUGCMatchingUGCType
-      - name: eQueryType
+      - name: [1] eQueryType
         type: EUGCQuery
       
       returns:
       - name: r
         type: UGCQueryHandle_t
-
 #***********************************
 
     - name: ugc_create_query_ugc_details_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUGCDetailsRequest
       parameters:
-      - name: unNumPublishedFileIDs
+      - name: [2] unNumPublishedFileIDs
         type: number
+      - name: [1] pvecPublishedFileID OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: UGCQueryHandle_t
       - name: pvecPublishedFileID
         type: number
-
 #***********************************
 
     - name: ugc_send_query_ugc_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SendQueryUGCRequest
       parameters:
-      - name: handle
+      - name: [1] handle
         type: number
       
-
 #***********************************
 
     - name: ugc_get_query_ugc_result
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCResult
       parameters:
-      - name: index
+      - name: [3] pDetails OUTPARAM
+	    type: table
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
@@ -3940,56 +3787,55 @@
         type: bool
       - name: pDetails
         type: table
-
 #***********************************
 
     - name: ugc_get_query_ugc_preview_url
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCPreviewURL
       parameters:
-      - name: cchURLSize
+      - name: [4] cchURLSize
         type: number
-      - name: pchURL
+      - name: [3] pchURL
         type: buffer
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_get_query_ugc_metadata
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCMetadata
       parameters:
-      - name: cchMetadatasize
+      - name: [4] cchMetadatasize
         type: number
-      - name: pchMetadata
+      - name: [3] pchMetadata
         type: buffer
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_get_query_ugc_children
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCChildren
       parameters:
-      - name: cMaxEntries
+      - name: [4] cMaxEntries
         type: number
-      - name: index
+      - name: [3] pvecPublishedFileID OUTPARAM
+	    type: number
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
@@ -3997,18 +3843,19 @@
         type: bool
       - name: pvecPublishedFileID
         type: number
-
 #***********************************
 
     - name: ugc_get_query_ugc_statistic
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCStatistic
       parameters:
-      - name: eStatType
+      - name: [4] pStatValue OUTPARAM
+	    type: string
+      - name: [3] eStatType
         type: EItemStatistic
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
@@ -4016,41 +3863,41 @@
         type: bool
       - name: pStatValue
         type: string
-
 #***********************************
 
     - name: ugc_get_query_ugc_num_additional_previews
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumAdditionalPreviews
       parameters:
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: ugc_get_query_ugc_additional_preview
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCAdditionalPreview
       parameters:
-      - name: cchOriginalFileNameSize
+      - name: [8] pPreviewType OUTPARAM
+	    type: EItemPreviewType
+      - name: [7] cchOriginalFileNameSize
         type: number
-      - name: pchOriginalFileName
+      - name: [6] pchOriginalFileName
         type: buffer
-      - name: cchURLSize
+      - name: [5] cchURLSize
         type: number
-      - name: pchURLOrVideoID
+      - name: [4] pchURLOrVideoID
         type: buffer
-      - name: previewIndex
+      - name: [3] previewIndex
         type: number
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
@@ -4058,608 +3905,572 @@
         type: bool
       - name: pPreviewType
         type: EItemPreviewType
-
 #***********************************
 
     - name: ugc_get_query_ugc_num_key_value_tags
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumKeyValueTags
       parameters:
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: ugc_get_query_ugc_key_value_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCKeyValueTag
       parameters:
-      - name: cchValueSize
+      - name: [7] cchValueSize
         type: number
-      - name: pchValue
+      - name: [6] pchValue
         type: buffer
-      - name: cchKeySize
+      - name: [5] cchKeySize
         type: number
-      - name: pchKey
+      - name: [4] pchKey
         type: buffer
-      - name: keyValueTagIndex
+      - name: [3] keyValueTagIndex
         type: number
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_release_query_ugc_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#ReleaseQueryUGCRequest
       parameters:
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_add_required_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredTag
       parameters:
-      - name: pTagName
+      - name: [2] pTagName
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_add_excluded_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddExcludedTag
       parameters:
-      - name: pTagName
+      - name: [2] pTagName
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_only_i_ds
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnOnlyIDs
       parameters:
-      - name: bReturnOnlyIDs
+      - name: [2] bReturnOnlyIDs
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_key_value_tags
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnKeyValueTags
       parameters:
-      - name: bReturnKeyValueTags
+      - name: [2] bReturnKeyValueTags
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_long_description
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnLongDescription
       parameters:
-      - name: bReturnLongDescription
+      - name: [2] bReturnLongDescription
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_metadata
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnMetadata
       parameters:
-      - name: bReturnMetadata
+      - name: [2] bReturnMetadata
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_children
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnChildren
       parameters:
-      - name: bReturnChildren
+      - name: [2] bReturnChildren
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_additional_previews
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnAdditionalPreviews
       parameters:
-      - name: bReturnAdditionalPreviews
+      - name: [2] bReturnAdditionalPreviews
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_total_only
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnTotalOnly
       parameters:
-      - name: bReturnTotalOnly
+      - name: [2] bReturnTotalOnly
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_return_playtime_stats
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetReturnPlaytimeStats
       parameters:
-      - name: unDays
+      - name: [2] unDays
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_language
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetLanguage
       parameters:
-      - name: pchLanguage
+      - name: [2] pchLanguage
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_allow_cached_response
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetAllowCachedResponse
       parameters:
-      - name: unMaxAgeSeconds
+      - name: [2] unMaxAgeSeconds
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_cloud_file_name_filter
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetCloudFileNameFilter
       parameters:
-      - name: pMatchCloudFileName
+      - name: [2] pMatchCloudFileName
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_match_any_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetMatchAnyTag
       parameters:
-      - name: bMatchAnyTag
+      - name: [2] bMatchAnyTag
         type: boolean
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_search_text
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetSearchText
       parameters:
-      - name: pSearchText
+      - name: [2] pSearchText
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_ranked_by_trend_days
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetRankedByTrendDays
       parameters:
-      - name: unDays
+      - name: [2] unDays
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_add_required_key_value_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredKeyValueTag
       parameters:
-      - name: pValue
+      - name: [3] pValue
         type: string
-      - name: pKey
+      - name: [2] pKey
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_request_ugc_details
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#RequestUGCDetails
       parameters:
-      - name: unMaxAgeSeconds
+      - name: [2] unMaxAgeSeconds
         type: number
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_create_item
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#CreateItem
       parameters:
-      - name: eFileType
+      - name: [2] eFileType
         type: EWorkshopFileType
-      - name: nConsumerAppId
+      - name: [1] nConsumerAppId
         type: number
       
-
 #***********************************
 
     - name: ugc_start_item_update
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#StartItemUpdate
       parameters:
-      - name: nPublishedFileID
+      - name: [2] nPublishedFileID
         type: number
-      - name: nConsumerAppId
+      - name: [1] nConsumerAppId
         type: number
       
       returns:
       - name: r
         type: UGCUpdateHandle_t
-
 #***********************************
 
     - name: ugc_set_item_title
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemTitle
       parameters:
-      - name: pchTitle
+      - name: [2] pchTitle
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_item_description
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemDescription
       parameters:
-      - name: pchDescription
+      - name: [2] pchDescription
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_item_update_language
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemUpdateLanguage
       parameters:
-      - name: pchLanguage
+      - name: [2] pchLanguage
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_item_metadata
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemMetadata
       parameters:
-      - name: pchMetaData
+      - name: [2] pchMetaData
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_item_visibility
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemVisibility
       parameters:
-      - name: eVisibility
+      - name: [2] eVisibility
         type: ERemoteStoragePublishedFileVisibility
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_item_tags
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemTags
       parameters:
-      - name: pTags
+      - name: [2] pTags
         type: table
-      - name: updateHandle
+      - name: [1] updateHandle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_item_content
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemContent
       parameters:
-      - name: pszContentFolder
+      - name: [2] pszContentFolder
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_set_item_preview
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetItemPreview
       parameters:
-      - name: pszPreviewFile
+      - name: [2] pszPreviewFile
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_remove_item_key_value_tags
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemKeyValueTags
       parameters:
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_add_item_key_value_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddItemKeyValueTag
       parameters:
-      - name: pchValue
+      - name: [3] pchValue
         type: string
-      - name: pchKey
+      - name: [2] pchKey
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_add_item_preview_file
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddItemPreviewFile
       parameters:
-      - name: type
+      - name: [3] type
         type: EItemPreviewType
-      - name: pszPreviewFile
+      - name: [2] pszPreviewFile
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_add_item_preview_video
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddItemPreviewVideo
       parameters:
-      - name: pszVideoID
+      - name: [2] pszVideoID
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_update_item_preview_file
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#UpdateItemPreviewFile
       parameters:
-      - name: pszPreviewFile
+      - name: [3] pszPreviewFile
         type: string
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_update_item_preview_video
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#UpdateItemPreviewVideo
       parameters:
-      - name: pszVideoID
+      - name: [3] pszVideoID
         type: string
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_remove_item_preview
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemPreview
       parameters:
-      - name: index
+      - name: [2] index
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_submit_item_update
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SubmitItemUpdate
       parameters:
-      - name: pchChangeNote
+      - name: [2] pchChangeNote
         type: string
-      - name: handle
+      - name: [1] handle
         type: number
       
-
 #***********************************
 
     - name: ugc_get_item_update_progress
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetItemUpdateProgress
       parameters:
-      - name: handle
+      - name: [3] punBytesTotal OUTPARAM
+	    type: string
+      - name: [2] punBytesProcessed OUTPARAM
+	    type: string
+      - name: [1] handle
         type: number
       
       returns:
@@ -4669,73 +4480,66 @@
         type: string
       - name: punBytesProcessed
         type: string
-
 #***********************************
 
     - name: ugc_set_user_item_vote
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetUserItemVote
       parameters:
-      - name: bVoteUp
+      - name: [2] bVoteUp
         type: boolean
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_get_user_item_vote
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetUserItemVote
       parameters:
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_add_item_to_favorites
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddItemToFavorites
       parameters:
-      - name: nPublishedFileID
+      - name: [2] nPublishedFileID
         type: number
-      - name: nAppId
+      - name: [1] nAppId
         type: number
       
-
 #***********************************
 
     - name: ugc_remove_item_from_favorites
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#RemoveItemFromFavorites
       parameters:
-      - name: nPublishedFileID
+      - name: [2] nPublishedFileID
         type: number
-      - name: nAppId
+      - name: [1] nAppId
         type: number
       
-
 #***********************************
 
     - name: ugc_subscribe_item
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SubscribeItem
       parameters:
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_unsubscribe_item
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#UnsubscribeItem
       parameters:
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_get_num_subscribed_items
@@ -4745,46 +4549,49 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: ugc_get_subscribed_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetSubscribedItems
       parameters:
-      - name: cMaxEntries
+      - name: [2] cMaxEntries
         type: number
+      - name: [1] pvecPublishedFileID OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: uint32
       - name: pvecPublishedFileID
         type: number
-
 #***********************************
 
     - name: ugc_get_item_state
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetItemState
       parameters:
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: ugc_get_item_install_info
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetItemInstallInfo
       parameters:
-      - name: cchFolderSize
+      - name: [5] punTimeStamp OUTPARAM
+	    type: number
+      - name: [4] cchFolderSize
         type: number
-      - name: pchFolder
+      - name: [3] pchFolder
         type: buffer
-      - name: nPublishedFileID
+      - name: [2] punSizeOnDisk OUTPARAM
+	    type: string
+      - name: [1] nPublishedFileID
         type: number
       
       returns:
@@ -4794,14 +4601,17 @@
         type: number
       - name: punSizeOnDisk
         type: string
-
 #***********************************
 
     - name: ugc_get_item_download_info
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetItemDownloadInfo
       parameters:
-      - name: nPublishedFileID
+      - name: [3] punBytesTotal OUTPARAM
+	    type: string
+      - name: [2] punBytesDownloaded OUTPARAM
+	    type: string
+      - name: [1] nPublishedFileID
         type: number
       
       returns:
@@ -4811,73 +4621,70 @@
         type: string
       - name: punBytesDownloaded
         type: string
-
 #***********************************
 
     - name: ugc_download_item
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#DownloadItem
       parameters:
-      - name: bHighPriority
+      - name: [2] bHighPriority
         type: boolean
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_init_workshop_for_game_server
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#BInitWorkshopForGameServer
       parameters:
-      - name: pszFolder
+      - name: [2] pszFolder
         type: string
-      - name: unWorkshopDepotID
+      - name: [1] unWorkshopDepotID
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: ugc_suspend_downloads
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#SuspendDownloads
       parameters:
-      - name: bSuspend
+      - name: [1] bSuspend
         type: boolean
       
-
 #***********************************
 
     - name: ugc_start_playtime_tracking
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#StartPlaytimeTracking
       parameters:
-      - name: unNumPublishedFileIDs
+      - name: [2] unNumPublishedFileIDs
         type: number
+      - name: [1] pvecPublishedFileID OUTPARAM
+	    type: number
       
-
 #***********************************
 
     - name: ugc_stop_playtime_tracking
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTracking
       parameters:
-      - name: unNumPublishedFileIDs
+      - name: [2] unNumPublishedFileIDs
         type: number
+      - name: [1] pvecPublishedFileID OUTPARAM
+	    type: number
       
-
 #***********************************
 
     - name: ugc_stop_playtime_tracking_for_all_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTrackingForAllItems
-
 
 #***********************************
 
@@ -4885,90 +4692,85 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddDependency
       parameters:
-      - name: nChildPublishedFileID
+      - name: [2] nChildPublishedFileID
         type: number
-      - name: nParentPublishedFileID
+      - name: [1] nParentPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_remove_dependency
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#RemoveDependency
       parameters:
-      - name: nChildPublishedFileID
+      - name: [2] nChildPublishedFileID
         type: number
-      - name: nParentPublishedFileID
+      - name: [1] nParentPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_add_app_dependency
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddAppDependency
       parameters:
-      - name: nAppID
+      - name: [2] nAppID
         type: number
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_remove_app_dependency
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#RemoveAppDependency
       parameters:
-      - name: nAppID
+      - name: [2] nAppID
         type: number
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_get_app_dependencies
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetAppDependencies
       parameters:
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: ugc_delete_item
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#DeleteItem
       parameters:
-      - name: nPublishedFileID
+      - name: [1] nPublishedFileID
         type: number
       
-
 #***********************************
 
     - name: inventory_get_result_status
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetResultStatus
       parameters:
-      - name: resultHandle
+      - name: [1] resultHandle
         type: number
       
       returns:
       - name: r
         type: EResult
-
 #***********************************
 
     - name: inventory_get_result_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItems
       parameters:
-      - name: resultHandle
+      - name: [3] punOutItemsArraySize OUTPARAM
+	    type: number
+      - name: [1] resultHandle
         type: number
-      - name: pOutItemsArray
+      - name: [2] pOutItemsArray
         type: table
       
       returns:
@@ -4979,20 +4781,21 @@
       - name: pOutItemsArray
         type: table
 
-
 #***********************************
 
     - name: inventory_get_result_item_property
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetResultItemProperty
       parameters:
-      - name: pchValueBuffer
+      - name: [5] punValueBufferSizeOut OUTPARAM
+	    type: number
+      - name: [4] pchValueBuffer
         type: buffer
-      - name: pchPropertyName
+      - name: [3] pchPropertyName
         type: string
-      - name: unItemIndex
+      - name: [2] unItemIndex
         type: number
-      - name: resultHandle
+      - name: [1] resultHandle
         type: number
       
       returns:
@@ -5000,84 +4803,84 @@
         type: bool
       - name: punValueBufferSizeOut
         type: number
-
 #***********************************
 
     - name: inventory_get_result_timestamp
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetResultTimestamp
       parameters:
-      - name: resultHandle
+      - name: [1] resultHandle
         type: number
       
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: inventory_check_result_steam_id
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#CheckResultSteamID
       parameters:
-      - name: steamIDExpected
+      - name: [2] steamIDExpected
         type: string
-      - name: resultHandle
+      - name: [1] resultHandle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: inventory_destroy_result
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#DestroyResult
       parameters:
-      - name: resultHandle
+      - name: [1] resultHandle
         type: number
       
-
 #***********************************
 
     - name: inventory_get_all_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetAllItems
       parameters:
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_get_items_by_id
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsByID
       parameters:
-      - name: unCountInstanceIDs
+      - name: [3] unCountInstanceIDs
         type: number
-      - name: pInstanceIDs
+      - name: [2] pInstanceIDs
         type: table (number)
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_serialize_result
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SerializeResult
       parameters:
-      - name: pOutBuffer
+      - name: [3] punOutBufferSize OUTPARAM
+	    type: number
+      - name: [2] pOutBuffer
         type: buffer
-      - name: resultHandle
+      - name: [1] resultHandle
         type: number
       
       returns:
@@ -5085,157 +4888,163 @@
         type: bool
       - name: punOutBufferSize
         type: number
-
 #***********************************
 
     - name: inventory_deserialize_result
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#DeserializeResult
       parameters:
-      - name: bRESERVED_MUST_BE_FALSE
+      - name: [4] bRESERVED_MUST_BE_FALSE
         type: boolean
-      - name: unBufferSize
+      - name: [3] unBufferSize
         type: number
-      - name: pBuffer
+      - name: [2] pBuffer
         type: string
+      - name: [1] pOutResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pOutResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_generate_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GenerateItems
       parameters:
-      - name: unArrayLength
+      - name: [4] unArrayLength
         type: number
-      - name: punArrayQuantity
+      - name: [3] punArrayQuantity
         type: table (number)
-      - name: pArrayItemDefs
+      - name: [2] pArrayItemDefs
         type: table (number)
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_grant_promo_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GrantPromoItems
       parameters:
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_add_promo_item
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItem
       parameters:
-      - name: itemDef
+      - name: [2] itemDef
         type: number
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_add_promo_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#AddPromoItems
       parameters:
-      - name: unArrayLength
+      - name: [3] unArrayLength
         type: number
-      - name: pArrayItemDefs
+      - name: [2] pArrayItemDefs
         type: table (number)
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_consume_item
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#ConsumeItem
       parameters:
-      - name: unQuantity
+      - name: [3] unQuantity
         type: number
-      - name: itemConsume
+      - name: [2] itemConsume
         type: number
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_exchange_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#ExchangeItems
       parameters:
-      - name: unArrayDestroyLength
+      - name: [7] unArrayDestroyLength
         type: number
-      - name: punArrayDestroyQuantity
+      - name: [6] punArrayDestroyQuantity
         type: table (number)
-      - name: pArrayDestroy
+      - name: [5] pArrayDestroy
         type: table (number)
-      - name: unArrayGenerateLength
+      - name: [4] unArrayGenerateLength
         type: number
-      - name: punArrayGenerateQuantity
+      - name: [3] punArrayGenerateQuantity
         type: table (number)
-      - name: pArrayGenerate
+      - name: [2] pArrayGenerate
         type: table (number)
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_transfer_item_quantity
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#TransferItemQuantity
       parameters:
-      - name: itemIdDest
+      - name: [4] itemIdDest
         type: number
-      - name: unQuantity
+      - name: [3] unQuantity
         type: number
-      - name: itemIdSource
+      - name: [2] itemIdSource
         type: number
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_send_item_drop_heartbeat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SendItemDropHeartbeat
-
 
 #***********************************
 
@@ -5243,42 +5052,44 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#TriggerItemDrop
       parameters:
-      - name: dropListDefinition
+      - name: [2] dropListDefinition
         type: number
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_trade_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#TradeItems
       parameters:
-      - name: nArrayGetLength
+      - name: [8] nArrayGetLength
         type: number
-      - name: pArrayGetQuantity
+      - name: [7] pArrayGetQuantity
         type: table (number)
-      - name: pArrayGet
+      - name: [6] pArrayGet
         type: table (number)
-      - name: nArrayGiveLength
+      - name: [5] nArrayGiveLength
         type: number
-      - name: pArrayGiveQuantity
+      - name: [4] pArrayGiveQuantity
         type: table (number)
-      - name: pArrayGive
+      - name: [3] pArrayGive
         type: table (number)
-      - name: steamIDTradePartner
+      - name: [2] steamIDTradePartner
         type: string
+      - name: [1] pResultHandle OUTPARAM
+	    type: number
       
       returns:
       - name: r
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
     - name: inventory_load_item_definitions
@@ -5288,14 +5099,15 @@
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: inventory_get_item_definition_i_ds
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionIDs
       parameters:
-      - name: pItemDefIDs
+      - name: [2] punItemDefIDsArraySize OUTPARAM
+	    type: number
+      - name: [1] pItemDefIDs
         type: number
       
       returns:
@@ -5305,7 +5117,6 @@
         type: number
       - name: pItemDefIDs
         type: table
-
 
 #***********************************
 
@@ -5313,11 +5124,13 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetItemDefinitionProperty
       parameters:
-      - name: pchValueBuffer
+      - name: [4] punValueBufferSizeOut OUTPARAM
+	    type: number
+      - name: [3] pchValueBuffer
         type: buffer
-      - name: pchPropertyName
+      - name: [2] pchPropertyName
         type: string
-      - name: iDefinition
+      - name: [1] iDefinition
         type: number
       
       returns:
@@ -5325,26 +5138,26 @@
         type: bool
       - name: punValueBufferSizeOut
         type: number
-
 #***********************************
 
     - name: inventory_request_eligible_promo_item_definitions_i_ds
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#RequestEligiblePromoItemDefinitionsIDs
       parameters:
-      - name: steamID
+      - name: [1] steamID
         type: string
       
-
 #***********************************
 
     - name: inventory_get_eligible_promo_item_definition_i_ds
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetEligiblePromoItemDefinitionIDs
       parameters:
-      - name: steamID
+      - name: [3] punItemDefIDsArraySize OUTPARAM
+	    type: number
+      - name: [1] steamID
         type: string
-      - name: pItemDefIDs
+      - name: [2] pItemDefIDs
         type: number
       
       returns:
@@ -5355,27 +5168,24 @@
       - name: pItemDefIDs
         type: table
 
-
 #***********************************
 
     - name: inventory_start_purchase
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#StartPurchase
       parameters:
-      - name: unArrayLength
+      - name: [3] unArrayLength
         type: number
-      - name: punArrayQuantity
+      - name: [2] punArrayQuantity
         type: table (number)
-      - name: pArrayItemDefs
+      - name: [1] pArrayItemDefs
         type: table (number)
       
-
 #***********************************
 
     - name: inventory_request_prices
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices
-
 
 #***********************************
 
@@ -5386,18 +5196,17 @@
       returns:
       - name: r
         type: uint32
-
 #***********************************
 
     - name: inventory_get_items_with_prices
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices
       parameters:
-      - name: unArrayLength
+      - name: [3] unArrayLength
         type: number
-      - name: pArrayItemDefs
+      - name: [1] pArrayItemDefs
         type: number
-      - name: pPrices
+      - name: [2] pPrices
         type: string
       
       returns:
@@ -5408,7 +5217,6 @@
 
       - name: pPrices
         type: table
-
 
 #***********************************
 
@@ -5416,7 +5224,9 @@
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetItemPrice
       parameters:
-      - name: iDefinition
+      - name: [2] pPrice OUTPARAM
+	    type: string
+      - name: [1] iDefinition
         type: number
       
       returns:
@@ -5424,7 +5234,6 @@
         type: bool
       - name: pPrice
         type: string
-
 #***********************************
 
     - name: inventory_start_update_properties
@@ -5434,107 +5243,103 @@
       returns:
       - name: r
         type: SteamInventoryUpdateHandle_t
-
 #***********************************
 
     - name: inventory_remove_property
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#RemoveProperty
       parameters:
-      - name: pchPropertyName
+      - name: [3] pchPropertyName
         type: string
-      - name: nItemID
+      - name: [2] nItemID
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: inventory_set_property_string
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
-      - name: pchPropertyValue
+      - name: [4] pchPropertyValue
         type: string
-      - name: pchPropertyName
+      - name: [3] pchPropertyName
         type: string
-      - name: nItemID
+      - name: [2] nItemID
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: inventory_set_property_bool
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
-      - name: bValue
+      - name: [4] bValue
         type: boolean
-      - name: pchPropertyName
+      - name: [3] pchPropertyName
         type: string
-      - name: nItemID
+      - name: [2] nItemID
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: inventory_set_property_int
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
-      - name: nValue
+      - name: [4] nValue
         type: string
-      - name: pchPropertyName
+      - name: [3] pchPropertyName
         type: string
-      - name: nItemID
+      - name: [2] nItemID
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: inventory_set_property_float
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
-      - name: flValue
+      - name: [4] flValue
         type: number
-      - name: pchPropertyName
+      - name: [3] pchPropertyName
         type: string
-      - name: nItemID
+      - name: [2] nItemID
         type: number
-      - name: handle
+      - name: [1] handle
         type: number
       
       returns:
       - name: r
         type: bool
-
 #***********************************
 
     - name: inventory_submit_update_properties
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SubmitUpdateProperties
       parameters:
-      - name: handle
+      - name: [2] pResultHandle OUTPARAM
+	    type: number
+      - name: [1] handle
         type: number
       
       returns:
@@ -5542,7 +5347,6 @@
         type: bool
       - name: pResultHandle
         type: number
-
 #***********************************
 
 

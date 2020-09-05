@@ -16,10 +16,11 @@ The extension exports the following functions:
 
 {{#hasparams}}
 **PARAMS**
-{{#params}}{{#normal_param}}* `{{paramname}}` ({{paramtypelua}})
-{{/normal_param}}{{#out_array_count}}* `{{paramname}}` ({{paramtypelua}})
-{{/out_array_count}}{{#array_count}}* `{{paramname}}` (table  of {{paramtypelua}})
-{{/array_count}}{{#buffer_param}}* `{{paramname}}` (buffer)
+{{#params}}{{#normal_param}}* [{{paramindex}}] `{{paramname}}` ({{paramtypelua}})
+{{/normal_param}}{{#out_array_count}}* [{{paramindex}}] `{{paramname}}` ({{paramtypelua}})
+{{/out_array_count}}{{#out_param}}* [{{paramindex}}] `{{paramname}}` ({{paramtypelua}})
+{{/out_param}}{{#array_count}}* [{{paramindex}}] `{{paramname}}` (table  of {{paramtypelua}})
+{{/array_count}}{{#buffer_param}}* [{{paramindex}}] `{{paramname}}` (buffer)
 {{/buffer_param}}
 {{/params}}
 {{/hasparams}}
