@@ -25,10 +25,12 @@ The extension exports the following functions:
 {{/hasparams}}
 {{#hasreturntype}}
 {{#steamapicall}}
+
 **CALLBACK**
 * `{{callresult}}`
 {{/steamapicall}}
 {{^steamapicall}}
+
 **RETURN**
 * `r` ({{returntypestring}})
 {{#params}}{{#out_param}}* `{{paramname}}` ({{paramtype}})

@@ -410,17 +410,20 @@ The extension exports the following functions:
 
 ### <a name="user_get_h_steam_user"></a>steamworks.user_get_h_steam_user() - [ISteamUser#GetHSteamUser](https://partner.steamgames.com/doc/api/ISteamUser#GetHSteamUser)
 
+
 **RETURN**
 * `r` (HSteamUser)
 
 
 ### <a name="user_logged_on"></a>steamworks.user_logged_on() - [ISteamUser#BLoggedOn](https://partner.steamgames.com/doc/api/ISteamUser#BLoggedOn)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_get_steam_id"></a>steamworks.user_get_steam_id() - [ISteamUser#GetSteamID](https://partner.steamgames.com/doc/api/ISteamUser#GetSteamID)
+
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -437,6 +440,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cbMaxTicket` (number)
 * `pTicket` (buffer)
+
 **RETURN**
 * `r` (HAuthTicket)
 * `pcbTicket` (uint32)
@@ -448,6 +452,7 @@ The extension exports the following functions:
 * `steamID` (string)
 * `cbAuthTicket` (number)
 * `pAuthTicket` (string)
+
 **RETURN**
 * `r` (EBeginAuthSessionResult)
 
@@ -467,11 +472,13 @@ The extension exports the following functions:
 **PARAMS**
 * `appID` (number)
 * `steamID` (string)
+
 **RETURN**
 * `r` (EUserHasLicenseForAppResult)
 
 
 ### <a name="user_is_behind_nat"></a>steamworks.user_is_behind_nat() - [ISteamUser#BIsBehindNAT](https://partner.steamgames.com/doc/api/ISteamUser#BIsBehindNAT)
+
 
 **RETURN**
 * `r` (bool)
@@ -489,6 +496,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cbDataToInclude` (number)
 * `pDataToInclude` (buffer)
+
 **CALLBACK**
 * `EncryptedAppTicketResponse_t`
 
@@ -497,6 +505,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cbMaxTicket` (number)
 * `pTicket` (buffer)
+
 **RETURN**
 * `r` (bool)
 * `pcbTicket` (uint32)
@@ -507,11 +516,13 @@ The extension exports the following functions:
 **PARAMS**
 * `bFoil` (boolean)
 * `nSeries` (number)
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="user_get_player_steam_level"></a>steamworks.user_get_player_steam_level() - [ISteamUser#GetPlayerSteamLevel](https://partner.steamgames.com/doc/api/ISteamUser#GetPlayerSteamLevel)
+
 
 **RETURN**
 * `r` (int)
@@ -521,10 +532,12 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchRedirectURL` (string)
+
 **CALLBACK**
 * `StoreAuthURLResponse_t`
 
 ### <a name="user_is_phone_verified"></a>steamworks.user_is_phone_verified() - [ISteamUser#BIsPhoneVerified](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneVerified)
+
 
 **RETURN**
 * `r` (bool)
@@ -532,11 +545,13 @@ The extension exports the following functions:
 
 ### <a name="user_is_two_factor_enabled"></a>steamworks.user_is_two_factor_enabled() - [ISteamUser#BIsTwoFactorEnabled](https://partner.steamgames.com/doc/api/ISteamUser#BIsTwoFactorEnabled)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_is_phone_identifying"></a>steamworks.user_is_phone_identifying() - [ISteamUser#BIsPhoneIdentifying](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneIdentifying)
+
 
 **RETURN**
 * `r` (bool)
@@ -544,11 +559,13 @@ The extension exports the following functions:
 
 ### <a name="user_is_phone_requiring_verification"></a>steamworks.user_is_phone_requiring_verification() - [ISteamUser#BIsPhoneRequiringVerification](https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneRequiringVerification)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="friends_get_persona_name"></a>steamworks.friends_get_persona_name() - [ISteamFriends#GetPersonaName](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaName)
+
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -558,10 +575,12 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchPersonaName` (string)
+
 **CALLBACK**
 * `SetPersonaNameResponse_t`
 
 ### <a name="friends_get_persona_state"></a>steamworks.friends_get_persona_state() - [ISteamFriends#GetPersonaState](https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaState)
+
 
 **RETURN**
 * `r` (EPersonaState)
@@ -571,6 +590,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iFriendFlags` (number)
+
 **RETURN**
 * `r` (int)
 
@@ -580,6 +600,7 @@ The extension exports the following functions:
 **PARAMS**
 * `iFriendFlags` (number)
 * `iFriend` (number)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -588,6 +609,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (EFriendRelationship)
 
@@ -596,6 +618,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (EPersonaState)
 
@@ -604,6 +627,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -612,6 +636,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -621,6 +646,7 @@ The extension exports the following functions:
 **PARAMS**
 * `iPersonaName` (number)
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -629,6 +655,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -637,11 +664,13 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDPlayer` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="friends_get_friends_group_count"></a>steamworks.friends_get_friends_group_count() - [ISteamFriends#GetFriendsGroupCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupCount)
+
 
 **RETURN**
 * `r` (int)
@@ -651,6 +680,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iFG` (number)
+
 **RETURN**
 * `r` (FriendsGroupID_t)
 
@@ -659,6 +689,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `friendsGroupID` (number)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -667,6 +698,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `friendsGroupID` (number)
+
 **RETURN**
 * `r` (int)
 
@@ -681,11 +713,13 @@ The extension exports the following functions:
 **PARAMS**
 * `iFriendFlags` (number)
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="friends_get_clan_count"></a>steamworks.friends_get_clan_count() - [ISteamFriends#GetClanCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetClanCount)
+
 
 **RETURN**
 * `r` (int)
@@ -695,6 +729,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iClan` (number)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -703,6 +738,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -711,6 +747,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -719,6 +756,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (bool)
 * `pnChatting` (int)
@@ -731,6 +769,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cClansToRequest` (number)
 * `psteamIDClans` (table  of string)
+
 **CALLBACK**
 * `DownloadClanActivityCountsResult_t`
 
@@ -738,6 +777,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDSource` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -747,6 +787,7 @@ The extension exports the following functions:
 **PARAMS**
 * `iFriend` (number)
 * `steamIDSource` (string)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -756,6 +797,7 @@ The extension exports the following functions:
 **PARAMS**
 * `steamIDSource` (string)
 * `steamIDUser` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -802,6 +844,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -810,6 +853,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -818,6 +862,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -827,6 +872,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bRequireNameOnly` (boolean)
 * `steamIDUser` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -835,6 +881,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **CALLBACK**
 * `ClanOfficerListResponse_t`
 
@@ -842,6 +889,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -850,6 +898,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -859,11 +908,13 @@ The extension exports the following functions:
 **PARAMS**
 * `iOfficer` (number)
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (class_CSteamID)
 
 
 ### <a name="friends_get_user_restrictions"></a>steamworks.friends_get_user_restrictions() - [ISteamFriends#GetUserRestrictions](https://partner.steamgames.com/doc/api/ISteamFriends#GetUserRestrictions)
+
 
 **RETURN**
 * `r` (uint32)
@@ -874,6 +925,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchValue` (string)
 * `pchKey` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -886,6 +938,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchKey` (string)
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -894,6 +947,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -903,6 +957,7 @@ The extension exports the following functions:
 **PARAMS**
 * `iKey` (number)
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -917,11 +972,13 @@ The extension exports the following functions:
 **PARAMS**
 * `pchConnectString` (string)
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="friends_get_coplay_friend_count"></a>steamworks.friends_get_coplay_friend_count() - [ISteamFriends#GetCoplayFriendCount](https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriendCount)
+
 
 **RETURN**
 * `r` (int)
@@ -931,6 +988,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iCoplayFriend` (number)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -939,6 +997,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -947,6 +1006,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (AppId_t)
 
@@ -955,6 +1015,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **CALLBACK**
 * `JoinClanChatRoomCompletionResult_t`
 
@@ -962,6 +1023,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -970,6 +1032,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -979,6 +1042,7 @@ The extension exports the following functions:
 **PARAMS**
 * `iUser` (number)
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -988,6 +1052,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchText` (string)
 * `steamIDClanChat` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -999,6 +1064,7 @@ The extension exports the following functions:
 * `prgchText` (buffer)
 * `iMessage` (number)
 * `steamIDClanChat` (string)
+
 **RETURN**
 * `r` (int)
 * `peChatEntryType` (EChatEntryType)
@@ -1009,6 +1075,7 @@ The extension exports the following functions:
 **PARAMS**
 * `steamIDUser` (string)
 * `steamIDClanChat` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1017,6 +1084,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClanChat` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1025,6 +1093,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClanChat` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1033,6 +1102,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClanChat` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1041,6 +1111,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bInterceptEnabled` (boolean)
+
 **RETURN**
 * `r` (bool)
 
@@ -1050,6 +1121,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchMsgToSend` (string)
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1061,6 +1133,7 @@ The extension exports the following functions:
 * `pvData` (buffer)
 * `iMessageID` (number)
 * `steamIDFriend` (string)
+
 **RETURN**
 * `r` (int)
 * `peChatEntryType` (EChatEntryType)
@@ -1070,6 +1143,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamID` (string)
+
 **CALLBACK**
 * `FriendsGetFollowerCount_t`
 
@@ -1077,6 +1151,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamID` (string)
+
 **CALLBACK**
 * `FriendsIsFollowing_t`
 
@@ -1084,6 +1159,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `unStartIndex` (number)
+
 **CALLBACK**
 * `FriendsEnumerateFollowingList_t`
 
@@ -1091,6 +1167,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1099,11 +1176,13 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDClan` (string)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="utils_get_seconds_since_app_active"></a>steamworks.utils_get_seconds_since_app_active() - [ISteamUtils#GetSecondsSinceAppActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceAppActive)
+
 
 **RETURN**
 * `r` (uint32)
@@ -1111,11 +1190,13 @@ The extension exports the following functions:
 
 ### <a name="utils_get_seconds_since_computer_active"></a>steamworks.utils_get_seconds_since_computer_active() - [ISteamUtils#GetSecondsSinceComputerActive](https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceComputerActive)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="utils_get_connected_universe"></a>steamworks.utils_get_connected_universe() - [ISteamUtils#GetConnectedUniverse](https://partner.steamgames.com/doc/api/ISteamUtils#GetConnectedUniverse)
+
 
 **RETURN**
 * `r` (EUniverse)
@@ -1123,11 +1204,13 @@ The extension exports the following functions:
 
 ### <a name="utils_get_server_real_time"></a>steamworks.utils_get_server_real_time() - [ISteamUtils#GetServerRealTime](https://partner.steamgames.com/doc/api/ISteamUtils#GetServerRealTime)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="utils_get_ip_country"></a>steamworks.utils_get_ip_country() - [ISteamUtils#GetIPCountry](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCountry)
+
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -1137,6 +1220,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iImage` (number)
+
 **RETURN**
 * `r` (bool)
 * `pnHeight` (uint32)
@@ -1149,6 +1233,7 @@ The extension exports the following functions:
 * `nDestBufferSize` (number)
 * `pubDest` (buffer)
 * `iImage` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -1156,6 +1241,7 @@ The extension exports the following functions:
 ### <a name="utils_get_cserip_port"></a>steamworks.utils_get_cserip_port(unIP, usPort) - [ISteamUtils#GetCSERIPPort](https://partner.steamgames.com/doc/api/ISteamUtils#GetCSERIPPort)
 
 **PARAMS**
+
 **RETURN**
 * `r` (bool)
 * `usPort` (uint16)
@@ -1164,11 +1250,13 @@ The extension exports the following functions:
 
 ### <a name="utils_get_current_battery_power"></a>steamworks.utils_get_current_battery_power() - [ISteamUtils#GetCurrentBatteryPower](https://partner.steamgames.com/doc/api/ISteamUtils#GetCurrentBatteryPower)
 
+
 **RETURN**
 * `r` (uint8)
 
 
 ### <a name="utils_get_app_id"></a>steamworks.utils_get_app_id() - [ISteamUtils#GetAppID](https://partner.steamgames.com/doc/api/ISteamUtils#GetAppID)
+
 
 **RETURN**
 * `r` (uint32)
@@ -1183,6 +1271,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSteamAPICall` (number)
+
 **RETURN**
 * `r` (bool)
 * `pbFailed` (bool)
@@ -1192,6 +1281,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSteamAPICall` (number)
+
 **RETURN**
 * `r` (ESteamAPICallFailure)
 
@@ -1203,6 +1293,7 @@ The extension exports the following functions:
 * `cubCallback` (number)
 * `pCallback` (buffer)
 * `hSteamAPICall` (number)
+
 **RETURN**
 * `r` (bool)
 * `pbFailed` (bool)
@@ -1210,17 +1301,20 @@ The extension exports the following functions:
 
 ### <a name="utils_get_ipc_call_count"></a>steamworks.utils_get_ipc_call_count() - [ISteamUtils#GetIPCCallCount](https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCCallCount)
 
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="utils_is_overlay_enabled"></a>steamworks.utils_is_overlay_enabled() - [ISteamUtils#IsOverlayEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#IsOverlayEnabled)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="utils_overlay_needs_present"></a>steamworks.utils_overlay_needs_present() - [ISteamUtils#BOverlayNeedsPresent](https://partner.steamgames.com/doc/api/ISteamUtils#BOverlayNeedsPresent)
+
 
 **RETURN**
 * `r` (bool)
@@ -1230,6 +1324,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `szFileName` (string)
+
 **CALLBACK**
 * `CheckFileSignature_t`
 
@@ -1241,11 +1336,13 @@ The extension exports the following functions:
 * `pchDescription` (string)
 * `eLineInputMode` (EGamepadTextInputLineMode)
 * `eInputMode` (EGamepadTextInputMode)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="utils_get_entered_gamepad_text_length"></a>steamworks.utils_get_entered_gamepad_text_length() - [ISteamUtils#GetEnteredGamepadTextLength](https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextLength)
+
 
 **RETURN**
 * `r` (uint32)
@@ -1256,17 +1353,20 @@ The extension exports the following functions:
 **PARAMS**
 * `cchText` (number)
 * `pchText` (buffer)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="utils_get_steam_ui_language"></a>steamworks.utils_get_steam_ui_language() - [ISteamUtils#GetSteamUILanguage](https://partner.steamgames.com/doc/api/ISteamUtils#GetSteamUILanguage)
 
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="utils_is_steam_running_in_vr"></a>steamworks.utils_is_steam_running_in_vr() - [ISteamUtils#IsSteamRunningInVR](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamRunningInVR)
+
 
 **RETURN**
 * `r` (bool)
@@ -1280,6 +1380,7 @@ The extension exports the following functions:
 
 ### <a name="utils_is_steam_in_big_picture_mode"></a>steamworks.utils_is_steam_in_big_picture_mode() - [ISteamUtils#IsSteamInBigPictureMode](https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamInBigPictureMode)
 
+
 **RETURN**
 * `r` (bool)
 
@@ -1288,6 +1389,7 @@ The extension exports the following functions:
 
 
 ### <a name="utils_is_vr_headset_streaming_enabled"></a>steamworks.utils_is_vr_headset_streaming_enabled() - [ISteamUtils#IsVRHeadsetStreamingEnabled](https://partner.steamgames.com/doc/api/ISteamUtils#IsVRHeadsetStreamingEnabled)
+
 
 **RETURN**
 * `r` (bool)
@@ -1300,6 +1402,7 @@ The extension exports the following functions:
 
 ### <a name="matchmaking_get_favorite_game_count"></a>steamworks.matchmaking_get_favorite_game_count() - [ISteamMatchmaking#GetFavoriteGameCount](https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGameCount)
 
+
 **RETURN**
 * `r` (int)
 
@@ -1308,6 +1411,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iGame` (number)
+
 **RETURN**
 * `r` (bool)
 * `pRTime32LastPlayedOnServer` (uint32)
@@ -1327,6 +1431,7 @@ The extension exports the following functions:
 * `nConnPort` (number)
 * `nIP` (number)
 * `nAppID` (number)
+
 **RETURN**
 * `r` (int)
 
@@ -1339,11 +1444,13 @@ The extension exports the following functions:
 * `nConnPort` (number)
 * `nIP` (number)
 * `nAppID` (number)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="matchmaking_request_lobby_list"></a>steamworks.matchmaking_request_lobby_list() - [ISteamMatchmaking#RequestLobbyList](https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyList)
+
 
 **CALLBACK**
 * `LobbyMatchList_t`
@@ -1392,6 +1499,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iLobby` (number)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -1401,6 +1509,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cMaxMembers` (number)
 * `eLobbyType` (ELobbyType)
+
 **CALLBACK**
 * `LobbyCreated_t`
 
@@ -1408,6 +1517,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDLobby` (string)
+
 **CALLBACK**
 * `LobbyEnter_t`
 
@@ -1421,6 +1531,7 @@ The extension exports the following functions:
 **PARAMS**
 * `steamIDInvitee` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1429,6 +1540,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -1438,6 +1550,7 @@ The extension exports the following functions:
 **PARAMS**
 * `iMember` (number)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -1447,6 +1560,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchKey` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -1457,6 +1571,7 @@ The extension exports the following functions:
 * `pchValue` (string)
 * `pchKey` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1465,6 +1580,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -1478,6 +1594,7 @@ The extension exports the following functions:
 * `pchKey` (buffer)
 * `iLobbyData` (number)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1487,6 +1604,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchKey` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1497,6 +1615,7 @@ The extension exports the following functions:
 * `pchKey` (string)
 * `steamIDUser` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -1514,6 +1633,7 @@ The extension exports the following functions:
 * `cubMsgBody` (number)
 * `pvMsgBody` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1525,6 +1645,7 @@ The extension exports the following functions:
 * `pvData` (buffer)
 * `iChatID` (number)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (int)
 * `peChatEntryType` (EChatEntryType)
@@ -1534,6 +1655,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1550,6 +1672,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 * `punGameServerPort` (uint16)
@@ -1561,6 +1684,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cMaxMembers` (number)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1569,6 +1693,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -1578,6 +1703,7 @@ The extension exports the following functions:
 **PARAMS**
 * `eLobbyType` (ELobbyType)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1587,6 +1713,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bLobbyJoinable` (boolean)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1595,6 +1722,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (class_CSteamID)
 
@@ -1604,6 +1732,7 @@ The extension exports the following functions:
 **PARAMS**
 * `steamIDNewOwner` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1613,6 +1742,7 @@ The extension exports the following functions:
 **PARAMS**
 * `steamIDLobbyDependent` (string)
 * `steamIDLobby` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1623,6 +1753,7 @@ The extension exports the following functions:
 * `cubData` (number)
 * `pvData` (string)
 * `pchFile` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1633,6 +1764,7 @@ The extension exports the following functions:
 * `cubDataToRead` (number)
 * `pvData` (buffer)
 * `pchFile` (string)
+
 **RETURN**
 * `r` (int32)
 
@@ -1643,6 +1775,7 @@ The extension exports the following functions:
 * `cubData` (number)
 * `pvData` (string)
 * `pchFile` (string)
+
 **CALLBACK**
 * `RemoteStorageFileWriteAsyncComplete_t`
 
@@ -1652,6 +1785,7 @@ The extension exports the following functions:
 * `cubToRead` (number)
 * `nOffset` (number)
 * `pchFile` (string)
+
 **CALLBACK**
 * `RemoteStorageFileReadAsyncComplete_t`
 
@@ -1661,6 +1795,7 @@ The extension exports the following functions:
 * `cubToRead` (number)
 * `pvBuffer` (buffer)
 * `hReadCall` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -1669,6 +1804,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1677,6 +1813,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1685,6 +1822,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **CALLBACK**
 * `RemoteStorageFileShareResult_t`
 
@@ -1693,6 +1831,7 @@ The extension exports the following functions:
 **PARAMS**
 * `eRemoteStoragePlatform` (ERemoteStoragePlatform)
 * `pchFile` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1701,6 +1840,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (UGCFileWriteStreamHandle_t)
 
@@ -1711,6 +1851,7 @@ The extension exports the following functions:
 * `cubData` (number)
 * `pvData` (string)
 * `writeHandle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -1719,6 +1860,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `writeHandle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -1727,6 +1869,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `writeHandle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -1735,6 +1878,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1743,6 +1887,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1751,6 +1896,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (int32)
 
@@ -1759,6 +1905,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (int64)
 
@@ -1767,11 +1914,13 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchFile` (string)
+
 **RETURN**
 * `r` (ERemoteStoragePlatform)
 
 
 ### <a name="remote_storage_get_file_count"></a>steamworks.remote_storage_get_file_count() - [ISteamRemoteStorage#GetFileCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileCount)
+
 
 **RETURN**
 * `r` (int32)
@@ -1781,6 +1930,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iFile` (number)
+
 **RETURN**
 * `r` (const_char_ptr)
 * `pnFileSizeInBytes` (int32)
@@ -1789,6 +1939,7 @@ The extension exports the following functions:
 ### <a name="remote_storage_get_quota"></a>steamworks.remote_storage_get_quota(pnTotalBytes, puAvailableBytes) - [ISteamRemoteStorage#GetQuota](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetQuota)
 
 **PARAMS**
+
 **RETURN**
 * `r` (bool)
 * `puAvailableBytes` (uint64)
@@ -1797,11 +1948,13 @@ The extension exports the following functions:
 
 ### <a name="remote_storage_is_cloud_enabled_for_account"></a>steamworks.remote_storage_is_cloud_enabled_for_account() - [ISteamRemoteStorage#IsCloudEnabledForAccount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForAccount)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="remote_storage_is_cloud_enabled_for_app"></a>steamworks.remote_storage_is_cloud_enabled_for_app() - [ISteamRemoteStorage#IsCloudEnabledForApp](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForApp)
+
 
 **RETURN**
 * `r` (bool)
@@ -1817,6 +1970,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unPriority` (number)
 * `hContent` (number)
+
 **CALLBACK**
 * `RemoteStorageDownloadUGCResult_t`
 
@@ -1824,6 +1978,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hContent` (number)
+
 **RETURN**
 * `r` (bool)
 * `pnBytesExpected` (int32)
@@ -1834,6 +1989,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hContent` (number)
+
 **RETURN**
 * `r` (bool)
 * `pnFileSizeInBytes` (int32)
@@ -1849,11 +2005,13 @@ The extension exports the following functions:
 * `cubDataToRead` (number)
 * `pvData` (buffer)
 * `hContent` (number)
+
 **RETURN**
 * `r` (int32)
 
 
 ### <a name="remote_storage_get_cached_ugc_count"></a>steamworks.remote_storage_get_cached_ugc_count() - [ISteamRemoteStorage#GetCachedUGCCount](https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCCount)
+
 
 **RETURN**
 * `r` (int32)
@@ -1863,6 +2021,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iCachedContent` (number)
+
 **RETURN**
 * `r` (UGCHandle_t)
 
@@ -1873,10 +2032,12 @@ The extension exports the following functions:
 * `unPriority` (number)
 * `pchLocation` (string)
 * `hContent` (number)
+
 **CALLBACK**
 * `RemoteStorageDownloadUGCResult_t`
 
 ### <a name="user_stats_request_current_stats"></a>steamworks.user_stats_request_current_stats() - [ISteamUserStats#RequestCurrentStats](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestCurrentStats)
+
 
 **RETURN**
 * `r` (bool)
@@ -1886,6 +2047,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 * `pData` (int32)
@@ -1895,6 +2057,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 * `pData` (float)
@@ -1905,6 +2068,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nData` (number)
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1914,6 +2078,7 @@ The extension exports the following functions:
 **PARAMS**
 * `fData` (number)
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1924,6 +2089,7 @@ The extension exports the following functions:
 * `dSessionLength` (double)
 * `flCountThisSession` (number)
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1932,6 +2098,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 * `pbAchieved` (bool)
@@ -1941,6 +2108,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1949,6 +2117,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -1957,6 +2126,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 * `punUnlockTime` (uint32)
@@ -1964,6 +2134,7 @@ The extension exports the following functions:
 
 
 ### <a name="user_stats_store_stats"></a>steamworks.user_stats_store_stats() - [ISteamUserStats#StoreStats](https://partner.steamgames.com/doc/api/ISteamUserStats#StoreStats)
+
 
 **RETURN**
 * `r` (bool)
@@ -1973,6 +2144,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (int)
 
@@ -1982,6 +2154,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchKey` (string)
 * `pchName` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -1992,11 +2165,13 @@ The extension exports the following functions:
 * `nMaxProgress` (number)
 * `nCurProgress` (number)
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="user_stats_get_num_achievements"></a>steamworks.user_stats_get_num_achievements() - [ISteamUserStats#GetNumAchievements](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumAchievements)
+
 
 **RETURN**
 * `r` (uint32)
@@ -2006,6 +2181,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iAchievement` (number)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -2014,6 +2190,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDUser` (string)
+
 **CALLBACK**
 * `UserStatsReceived_t`
 
@@ -2022,6 +2199,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchName` (string)
 * `steamIDUser` (string)
+
 **RETURN**
 * `r` (bool)
 * `pData` (int32)
@@ -2032,6 +2210,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchName` (string)
 * `steamIDUser` (string)
+
 **RETURN**
 * `r` (bool)
 * `pData` (float)
@@ -2042,6 +2221,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchName` (string)
 * `steamIDUser` (string)
+
 **RETURN**
 * `r` (bool)
 * `pbAchieved` (bool)
@@ -2052,6 +2232,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchName` (string)
 * `steamIDUser` (string)
+
 **RETURN**
 * `r` (bool)
 * `punUnlockTime` (uint32)
@@ -2062,6 +2243,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bAchievementsToo` (boolean)
+
 **RETURN**
 * `r` (bool)
 
@@ -2072,6 +2254,7 @@ The extension exports the following functions:
 * `eLeaderboardDisplayType` (ELeaderboardDisplayType)
 * `eLeaderboardSortMethod` (ELeaderboardSortMethod)
 * `pchLeaderboardName` (string)
+
 **CALLBACK**
 * `LeaderboardFindResult_t`
 
@@ -2079,6 +2262,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchLeaderboardName` (string)
+
 **CALLBACK**
 * `LeaderboardFindResult_t`
 
@@ -2086,6 +2270,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSteamLeaderboard` (number)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -2094,6 +2279,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSteamLeaderboard` (number)
+
 **RETURN**
 * `r` (int)
 
@@ -2102,6 +2288,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSteamLeaderboard` (number)
+
 **RETURN**
 * `r` (ELeaderboardSortMethod)
 
@@ -2110,6 +2297,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSteamLeaderboard` (number)
+
 **RETURN**
 * `r` (ELeaderboardDisplayType)
 
@@ -2121,6 +2309,7 @@ The extension exports the following functions:
 * `nRangeStart` (number)
 * `eLeaderboardDataRequest` (ELeaderboardDataRequest)
 * `hSteamLeaderboard` (number)
+
 **CALLBACK**
 * `LeaderboardScoresDownloaded_t`
 
@@ -2130,6 +2319,7 @@ The extension exports the following functions:
 * `cUsers` (number)
 * `prgUsers` (table  of string)
 * `hSteamLeaderboard` (number)
+
 **CALLBACK**
 * `LeaderboardScoresDownloaded_t`
 
@@ -2140,6 +2330,7 @@ The extension exports the following functions:
 * `index` (number)
 * `hSteamLeaderboardEntries` (number)
 * `pDetails` (number)
+
 **RETURN**
 * `r` (bool)
 * `pLeaderboardEntry` (struct LeaderboardEntry_t)
@@ -2154,6 +2345,7 @@ The extension exports the following functions:
 * `nScore` (number)
 * `eLeaderboardUploadScoreMethod` (ELeaderboardUploadScoreMethod)
 * `hSteamLeaderboard` (number)
+
 **CALLBACK**
 * `LeaderboardScoreUploaded_t`
 
@@ -2162,15 +2354,18 @@ The extension exports the following functions:
 **PARAMS**
 * `hUGC` (number)
 * `hSteamLeaderboard` (number)
+
 **CALLBACK**
 * `LeaderboardUGCSet_t`
 
 ### <a name="user_stats_get_number_of_current_players"></a>steamworks.user_stats_get_number_of_current_players() - [ISteamUserStats#GetNumberOfCurrentPlayers](https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers)
 
+
 **CALLBACK**
 * `NumberOfCurrentPlayers_t`
 
 ### <a name="user_stats_request_global_achievement_percentages"></a>steamworks.user_stats_request_global_achievement_percentages() - [ISteamUserStats#RequestGlobalAchievementPercentages](https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages)
+
 
 **CALLBACK**
 * `GlobalAchievementPercentagesReady_t`
@@ -2180,6 +2375,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unNameBufLen` (number)
 * `pchName` (buffer)
+
 **RETURN**
 * `r` (int)
 * `pbAchieved` (bool)
@@ -2192,6 +2388,7 @@ The extension exports the following functions:
 * `unNameBufLen` (number)
 * `pchName` (buffer)
 * `iIteratorPrevious` (number)
+
 **RETURN**
 * `r` (int)
 * `pbAchieved` (bool)
@@ -2202,6 +2399,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchName` (string)
+
 **RETURN**
 * `r` (bool)
 * `pflPercent` (float)
@@ -2211,6 +2409,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nHistoryDays` (number)
+
 **CALLBACK**
 * `GlobalStatsReceived_t`
 
@@ -2218,6 +2417,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchStatName` (string)
+
 **RETURN**
 * `r` (bool)
 * `pData` (int64)
@@ -2227,6 +2427,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchStatName` (string)
+
 **RETURN**
 * `r` (bool)
 * `pData` (double)
@@ -2238,6 +2439,7 @@ The extension exports the following functions:
 * `cubData` (number)
 * `pData` (table  of string)
 * `pchStatName` (string)
+
 **RETURN**
 * `r` (int32)
 
@@ -2248,11 +2450,13 @@ The extension exports the following functions:
 * `cubData` (number)
 * `pData` (table  of double)
 * `pchStatName` (string)
+
 **RETURN**
 * `r` (int32)
 
 
 ### <a name="apps_is_subscribed"></a>steamworks.apps_is_subscribed() - [ISteamApps#BIsSubscribed](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribed)
+
 
 **RETURN**
 * `r` (bool)
@@ -2260,11 +2464,13 @@ The extension exports the following functions:
 
 ### <a name="apps_is_low_violence"></a>steamworks.apps_is_low_violence() - [ISteamApps#BIsLowViolence](https://partner.steamgames.com/doc/api/ISteamApps#BIsLowViolence)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_is_cybercafe"></a>steamworks.apps_is_cybercafe() - [ISteamApps#BIsCybercafe](https://partner.steamgames.com/doc/api/ISteamApps#BIsCybercafe)
+
 
 **RETURN**
 * `r` (bool)
@@ -2272,17 +2478,20 @@ The extension exports the following functions:
 
 ### <a name="apps_is_vac_banned"></a>steamworks.apps_is_vac_banned() - [ISteamApps#BIsVACBanned](https://partner.steamgames.com/doc/api/ISteamApps#BIsVACBanned)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_get_current_game_language"></a>steamworks.apps_get_current_game_language() - [ISteamApps#GetCurrentGameLanguage](https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentGameLanguage)
 
+
 **RETURN**
 * `r` (const_char_ptr)
 
 
 ### <a name="apps_get_available_game_languages"></a>steamworks.apps_get_available_game_languages() - [ISteamApps#GetAvailableGameLanguages](https://partner.steamgames.com/doc/api/ISteamApps#GetAvailableGameLanguages)
+
 
 **RETURN**
 * `r` (const_char_ptr)
@@ -2292,6 +2501,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `appID` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2300,6 +2510,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `appID` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2308,17 +2519,20 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nAppID` (number)
+
 **RETURN**
 * `r` (uint32)
 
 
 ### <a name="apps_is_subscribed_from_free_weekend"></a>steamworks.apps_is_subscribed_from_free_weekend() - [ISteamApps#BIsSubscribedFromFreeWeekend](https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFreeWeekend)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_get_dlc_count"></a>steamworks.apps_get_dlc_count() - [ISteamApps#GetDLCCount](https://partner.steamgames.com/doc/api/ISteamApps#GetDLCCount)
+
 
 **RETURN**
 * `r` (int)
@@ -2330,6 +2544,7 @@ The extension exports the following functions:
 * `cchNameBufferSize` (number)
 * `pchName` (buffer)
 * `iDLC` (number)
+
 **RETURN**
 * `r` (bool)
 * `pbAvailable` (bool)
@@ -2356,6 +2571,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cchNameBufferSize` (number)
 * `pchName` (buffer)
+
 **RETURN**
 * `r` (bool)
 
@@ -2364,6 +2580,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bMissingFilesOnly` (boolean)
+
 **RETURN**
 * `r` (bool)
 
@@ -2373,6 +2590,7 @@ The extension exports the following functions:
 **PARAMS**
 * `cMaxDepots` (number)
 * `appID` (number)
+
 **RETURN**
 * `r` (uint32)
 * `pvecDepots` (DepotId_t)
@@ -2384,6 +2602,7 @@ The extension exports the following functions:
 * `cchFolderBufferSize` (number)
 * `pchFolder` (buffer)
 * `appID` (number)
+
 **RETURN**
 * `r` (uint32)
 
@@ -2392,11 +2611,13 @@ The extension exports the following functions:
 
 **PARAMS**
 * `appID` (number)
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="apps_get_app_owner"></a>steamworks.apps_get_app_owner() - [ISteamApps#GetAppOwner](https://partner.steamgames.com/doc/api/ISteamApps#GetAppOwner)
+
 
 **RETURN**
 * `r` (class_CSteamID)
@@ -2406,6 +2627,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pchKey` (string)
+
 **RETURN**
 * `r` (const_char_ptr)
 
@@ -2414,6 +2636,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nAppID` (number)
+
 **RETURN**
 * `r` (bool)
 * `punBytesTotal` (uint64)
@@ -2421,6 +2644,7 @@ The extension exports the following functions:
 
 
 ### <a name="apps_get_app_build_id"></a>steamworks.apps_get_app_build_id() - [ISteamApps#GetAppBuildId](https://partner.steamgames.com/doc/api/ISteamApps#GetAppBuildId)
+
 
 **RETURN**
 * `r` (int)
@@ -2433,6 +2657,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pszFileName` (string)
+
 **CALLBACK**
 * `FileDetailsResult_t`
 
@@ -2444,6 +2669,7 @@ The extension exports the following functions:
 * `cubData` (number)
 * `pubData` (string)
 * `steamIDRemote` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -2452,6 +2678,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nChannel` (number)
+
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
@@ -2463,6 +2690,7 @@ The extension exports the following functions:
 * `nChannel` (number)
 * `cubDest` (number)
 * `pubDest` (buffer)
+
 **RETURN**
 * `r` (bool)
 * `psteamIDRemote` (CSteamID)
@@ -2473,6 +2701,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDRemote` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -2481,6 +2710,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDRemote` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -2490,6 +2720,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nChannel` (number)
 * `steamIDRemote` (string)
+
 **RETURN**
 * `r` (bool)
 
@@ -2498,6 +2729,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamIDRemote` (string)
+
 **RETURN**
 * `r` (bool)
 * `pConnectionState` (struct P2PSessionState_t)
@@ -2507,6 +2739,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `bAllow` (boolean)
+
 **RETURN**
 * `r` (bool)
 
@@ -2518,6 +2751,7 @@ The extension exports the following functions:
 * `nPort` (number)
 * `nIP` (number)
 * `nVirtualP2PPort` (number)
+
 **RETURN**
 * `r` (SNetListenSocket_t)
 
@@ -2529,6 +2763,7 @@ The extension exports the following functions:
 * `nTimeoutSec` (number)
 * `nVirtualPort` (number)
 * `steamIDTarget` (string)
+
 **RETURN**
 * `r` (SNetSocket_t)
 
@@ -2539,6 +2774,7 @@ The extension exports the following functions:
 * `nTimeoutSec` (number)
 * `nPort` (number)
 * `nIP` (number)
+
 **RETURN**
 * `r` (SNetSocket_t)
 
@@ -2548,6 +2784,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bNotifyRemoteEnd` (boolean)
 * `hSocket` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2557,6 +2794,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bNotifyRemoteEnd` (boolean)
 * `hSocket` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2568,6 +2806,7 @@ The extension exports the following functions:
 * `cubData` (number)
 * `pubData` (buffer)
 * `hSocket` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2576,6 +2815,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSocket` (number)
+
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
@@ -2587,6 +2827,7 @@ The extension exports the following functions:
 * `cubDest` (number)
 * `pubDest` (buffer)
 * `hSocket` (number)
+
 **RETURN**
 * `r` (bool)
 * `pcubMsgSize` (uint32)
@@ -2596,6 +2837,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hListenSocket` (number)
+
 **RETURN**
 * `r` (bool)
 * `phSocket` (SNetSocket_t)
@@ -2608,6 +2850,7 @@ The extension exports the following functions:
 * `cubDest` (number)
 * `pubDest` (buffer)
 * `hListenSocket` (number)
+
 **RETURN**
 * `r` (bool)
 * `phSocket` (SNetSocket_t)
@@ -2618,6 +2861,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSocket` (number)
+
 **RETURN**
 * `r` (bool)
 * `punPortRemote` (uint16)
@@ -2630,6 +2874,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hListenSocket` (number)
+
 **RETURN**
 * `r` (bool)
 * `pnPort` (uint16)
@@ -2640,6 +2885,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSocket` (number)
+
 **RETURN**
 * `r` (ESNetSocketConnectionType)
 
@@ -2648,11 +2894,13 @@ The extension exports the following functions:
 
 **PARAMS**
 * `hSocket` (number)
+
 **RETURN**
 * `r` (int)
 
 
 ### <a name="music_is_enabled"></a>steamworks.music_is_enabled() - [ISteamMusic#BIsEnabled](https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled)
+
 
 **RETURN**
 * `r` (bool)
@@ -2660,11 +2908,13 @@ The extension exports the following functions:
 
 ### <a name="music_is_playing"></a>steamworks.music_is_playing() - [ISteamMusic#BIsPlaying](https://partner.steamgames.com/doc/api/ISteamMusic#BIsPlaying)
 
+
 **RETURN**
 * `r` (bool)
 
 
 ### <a name="music_get_playback_status"></a>steamworks.music_get_playback_status() - [ISteamMusic#GetPlaybackStatus](https://partner.steamgames.com/doc/api/ISteamMusic#GetPlaybackStatus)
+
 
 **RETURN**
 * `r` (AudioPlayback_Status)
@@ -2689,6 +2939,7 @@ The extension exports the following functions:
 
 ### <a name="music_get_volume"></a>steamworks.music_get_volume() - [ISteamMusic#GetVolume](https://partner.steamgames.com/doc/api/ISteamMusic#GetVolume)
 
+
 **RETURN**
 * `r` (float)
 
@@ -2703,6 +2954,7 @@ The extension exports the following functions:
 * `eMatchingUGCType` (EUGCMatchingUGCType)
 * `eListType` (EUserUGCList)
 * `unAccountID` (number)
+
 **RETURN**
 * `r` (UGCQueryHandle_t)
 
@@ -2715,6 +2967,7 @@ The extension exports the following functions:
 * `nCreatorAppID` (number)
 * `eMatchingeMatchingUGCTypeFileType` (EUGCMatchingUGCType)
 * `eQueryType` (EUGCQuery)
+
 **RETURN**
 * `r` (UGCQueryHandle_t)
 
@@ -2723,6 +2976,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `unNumPublishedFileIDs` (number)
+
 **RETURN**
 * `r` (UGCQueryHandle_t)
 * `pvecPublishedFileID` (PublishedFileId_t)
@@ -2732,6 +2986,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `handle` (number)
+
 **CALLBACK**
 * `SteamUGCQueryCompleted_t`
 
@@ -2740,6 +2995,7 @@ The extension exports the following functions:
 **PARAMS**
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 * `pDetails` (struct SteamUGCDetails_t)
@@ -2752,6 +3008,7 @@ The extension exports the following functions:
 * `pchURL` (buffer)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2763,6 +3020,7 @@ The extension exports the following functions:
 * `pchMetadata` (buffer)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2773,6 +3031,7 @@ The extension exports the following functions:
 * `cMaxEntries` (number)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 * `pvecPublishedFileID` (PublishedFileId_t)
@@ -2784,6 +3043,7 @@ The extension exports the following functions:
 * `eStatType` (EItemStatistic)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 * `pStatValue` (uint64)
@@ -2794,6 +3054,7 @@ The extension exports the following functions:
 **PARAMS**
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (uint32)
 
@@ -2808,6 +3069,7 @@ The extension exports the following functions:
 * `previewIndex` (number)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 * `pPreviewType` (EItemPreviewType)
@@ -2818,6 +3080,7 @@ The extension exports the following functions:
 **PARAMS**
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (uint32)
 
@@ -2832,6 +3095,7 @@ The extension exports the following functions:
 * `keyValueTagIndex` (number)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2840,6 +3104,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2849,6 +3114,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pTagName` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2858,6 +3124,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pTagName` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2867,6 +3134,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bReturnOnlyIDs` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2876,6 +3144,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bReturnKeyValueTags` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2885,6 +3154,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bReturnLongDescription` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2894,6 +3164,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bReturnMetadata` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2903,6 +3174,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bReturnChildren` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2912,6 +3184,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bReturnAdditionalPreviews` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2921,6 +3194,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bReturnTotalOnly` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2930,6 +3204,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unDays` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2939,6 +3214,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchLanguage` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2948,6 +3224,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unMaxAgeSeconds` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2957,6 +3234,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pMatchCloudFileName` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2966,6 +3244,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bMatchAnyTag` (boolean)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2975,6 +3254,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pSearchText` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2984,6 +3264,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unDays` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -2994,6 +3275,7 @@ The extension exports the following functions:
 * `pValue` (string)
 * `pKey` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3003,6 +3285,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unMaxAgeSeconds` (number)
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `SteamUGCRequestUGCDetailsResult_t`
 
@@ -3011,6 +3294,7 @@ The extension exports the following functions:
 **PARAMS**
 * `eFileType` (EWorkshopFileType)
 * `nConsumerAppId` (number)
+
 **CALLBACK**
 * `CreateItemResult_t`
 
@@ -3019,6 +3303,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nPublishedFileID` (number)
 * `nConsumerAppId` (number)
+
 **RETURN**
 * `r` (UGCUpdateHandle_t)
 
@@ -3028,6 +3313,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchTitle` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3037,6 +3323,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchDescription` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3046,6 +3333,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchLanguage` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3055,6 +3343,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchMetaData` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3064,6 +3353,7 @@ The extension exports the following functions:
 **PARAMS**
 * `eVisibility` (ERemoteStoragePublishedFileVisibility)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3073,6 +3363,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pTags` (table)
 * `updateHandle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3082,6 +3373,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pszContentFolder` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3091,6 +3383,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pszPreviewFile` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3100,6 +3393,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchKey` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3110,6 +3404,7 @@ The extension exports the following functions:
 * `pchValue` (string)
 * `pchKey` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3120,6 +3415,7 @@ The extension exports the following functions:
 * `type` (EItemPreviewType)
 * `pszPreviewFile` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3129,6 +3425,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pszVideoID` (string)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3139,6 +3436,7 @@ The extension exports the following functions:
 * `pszPreviewFile` (string)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3149,6 +3447,7 @@ The extension exports the following functions:
 * `pszVideoID` (string)
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3158,6 +3457,7 @@ The extension exports the following functions:
 **PARAMS**
 * `index` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3167,6 +3467,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pchChangeNote` (string)
 * `handle` (number)
+
 **CALLBACK**
 * `SubmitItemUpdateResult_t`
 
@@ -3174,6 +3475,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `handle` (number)
+
 **RETURN**
 * `r` (EItemUpdateStatus)
 * `punBytesTotal` (uint64)
@@ -3185,6 +3487,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bVoteUp` (boolean)
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `SetUserItemVoteResult_t`
 
@@ -3192,6 +3495,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `GetUserItemVoteResult_t`
 
@@ -3200,6 +3504,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nPublishedFileID` (number)
 * `nAppId` (number)
+
 **CALLBACK**
 * `UserFavoriteItemsListChanged_t`
 
@@ -3208,6 +3513,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nPublishedFileID` (number)
 * `nAppId` (number)
+
 **CALLBACK**
 * `UserFavoriteItemsListChanged_t`
 
@@ -3215,6 +3521,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `RemoteStorageSubscribePublishedFileResult_t`
 
@@ -3222,10 +3529,12 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `RemoteStorageUnsubscribePublishedFileResult_t`
 
 ### <a name="ugc_get_num_subscribed_items"></a>steamworks.ugc_get_num_subscribed_items() - [ISteamUGC#GetNumSubscribedItems](https://partner.steamgames.com/doc/api/ISteamUGC#GetNumSubscribedItems)
+
 
 **RETURN**
 * `r` (uint32)
@@ -3235,6 +3544,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `cMaxEntries` (number)
+
 **RETURN**
 * `r` (uint32)
 * `pvecPublishedFileID` (PublishedFileId_t)
@@ -3244,6 +3554,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nPublishedFileID` (number)
+
 **RETURN**
 * `r` (uint32)
 
@@ -3254,6 +3565,7 @@ The extension exports the following functions:
 * `cchFolderSize` (number)
 * `pchFolder` (buffer)
 * `nPublishedFileID` (number)
+
 **RETURN**
 * `r` (bool)
 * `punTimeStamp` (uint32)
@@ -3264,6 +3576,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nPublishedFileID` (number)
+
 **RETURN**
 * `r` (bool)
 * `punBytesTotal` (uint64)
@@ -3275,6 +3588,7 @@ The extension exports the following functions:
 **PARAMS**
 * `bHighPriority` (boolean)
 * `nPublishedFileID` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3284,6 +3598,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pszFolder` (string)
 * `unWorkshopDepotID` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3297,6 +3612,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `unNumPublishedFileIDs` (number)
+
 **CALLBACK**
 * `StartPlaytimeTrackingResult_t`
 
@@ -3304,10 +3620,12 @@ The extension exports the following functions:
 
 **PARAMS**
 * `unNumPublishedFileIDs` (number)
+
 **CALLBACK**
 * `StopPlaytimeTrackingResult_t`
 
 ### <a name="ugc_stop_playtime_tracking_for_all_items"></a>steamworks.ugc_stop_playtime_tracking_for_all_items() - [ISteamUGC#StopPlaytimeTrackingForAllItems](https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTrackingForAllItems)
+
 
 **CALLBACK**
 * `StopPlaytimeTrackingResult_t`
@@ -3317,6 +3635,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nChildPublishedFileID` (number)
 * `nParentPublishedFileID` (number)
+
 **CALLBACK**
 * `AddUGCDependencyResult_t`
 
@@ -3325,6 +3644,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nChildPublishedFileID` (number)
 * `nParentPublishedFileID` (number)
+
 **CALLBACK**
 * `RemoveUGCDependencyResult_t`
 
@@ -3333,6 +3653,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nAppID` (number)
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `AddAppDependencyResult_t`
 
@@ -3341,6 +3662,7 @@ The extension exports the following functions:
 **PARAMS**
 * `nAppID` (number)
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `RemoveAppDependencyResult_t`
 
@@ -3348,6 +3670,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `GetAppDependenciesResult_t`
 
@@ -3355,6 +3678,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `nPublishedFileID` (number)
+
 **CALLBACK**
 * `DeleteItemResult_t`
 
@@ -3362,6 +3686,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `resultHandle` (number)
+
 **RETURN**
 * `r` (EResult)
 
@@ -3371,6 +3696,7 @@ The extension exports the following functions:
 **PARAMS**
 * `resultHandle` (number)
 * `pOutItemsArray` (table)
+
 **RETURN**
 * `r` (bool)
 * `punOutItemsArraySize` (uint32)
@@ -3384,6 +3710,7 @@ The extension exports the following functions:
 * `pchPropertyName` (string)
 * `unItemIndex` (number)
 * `resultHandle` (number)
+
 **RETURN**
 * `r` (bool)
 * `punValueBufferSizeOut` (uint32)
@@ -3393,6 +3720,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `resultHandle` (number)
+
 **RETURN**
 * `r` (uint32)
 
@@ -3402,6 +3730,7 @@ The extension exports the following functions:
 **PARAMS**
 * `steamIDExpected` (string)
 * `resultHandle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3414,6 +3743,7 @@ The extension exports the following functions:
 ### <a name="inventory_get_all_items"></a>steamworks.inventory_get_all_items(pResultHandle) - [ISteamInventory#GetAllItems](https://partner.steamgames.com/doc/api/ISteamInventory#GetAllItems)
 
 **PARAMS**
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3424,6 +3754,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unCountInstanceIDs` (number)
 * `pInstanceIDs` (table  of number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3434,6 +3765,7 @@ The extension exports the following functions:
 **PARAMS**
 * `pOutBuffer` (buffer)
 * `resultHandle` (number)
+
 **RETURN**
 * `r` (bool)
 * `punOutBufferSize` (uint32)
@@ -3445,6 +3777,7 @@ The extension exports the following functions:
 * `bRESERVED_MUST_BE_FALSE` (boolean)
 * `unBufferSize` (number)
 * `pBuffer` (string)
+
 **RETURN**
 * `r` (bool)
 * `pOutResultHandle` (SteamInventoryResult_t)
@@ -3456,6 +3789,7 @@ The extension exports the following functions:
 * `unArrayLength` (number)
 * `punArrayQuantity` (table  of number)
 * `pArrayItemDefs` (table  of number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3464,6 +3798,7 @@ The extension exports the following functions:
 ### <a name="inventory_grant_promo_items"></a>steamworks.inventory_grant_promo_items(pResultHandle) - [ISteamInventory#GrantPromoItems](https://partner.steamgames.com/doc/api/ISteamInventory#GrantPromoItems)
 
 **PARAMS**
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3473,6 +3808,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `itemDef` (number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3483,6 +3819,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unArrayLength` (number)
 * `pArrayItemDefs` (table  of number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3493,6 +3830,7 @@ The extension exports the following functions:
 **PARAMS**
 * `unQuantity` (number)
 * `itemConsume` (number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3507,6 +3845,7 @@ The extension exports the following functions:
 * `unArrayGenerateLength` (number)
 * `punArrayGenerateQuantity` (table  of number)
 * `pArrayGenerate` (table  of number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3518,6 +3857,7 @@ The extension exports the following functions:
 * `itemIdDest` (number)
 * `unQuantity` (number)
 * `itemIdSource` (number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3530,6 +3870,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `dropListDefinition` (number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
@@ -3545,12 +3886,14 @@ The extension exports the following functions:
 * `pArrayGiveQuantity` (table  of number)
 * `pArrayGive` (table  of number)
 * `steamIDTradePartner` (string)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
 
 
 ### <a name="inventory_load_item_definitions"></a>steamworks.inventory_load_item_definitions() - [ISteamInventory#LoadItemDefinitions](https://partner.steamgames.com/doc/api/ISteamInventory#LoadItemDefinitions)
+
 
 **RETURN**
 * `r` (bool)
@@ -3560,6 +3903,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `pItemDefIDs` (number)
+
 **RETURN**
 * `r` (bool)
 * `punItemDefIDsArraySize` (uint32)
@@ -3572,6 +3916,7 @@ The extension exports the following functions:
 * `pchValueBuffer` (buffer)
 * `pchPropertyName` (string)
 * `iDefinition` (number)
+
 **RETURN**
 * `r` (bool)
 * `punValueBufferSizeOut` (uint32)
@@ -3581,6 +3926,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `steamID` (string)
+
 **CALLBACK**
 * `SteamInventoryEligiblePromoItemDefIDs_t`
 
@@ -3589,6 +3935,7 @@ The extension exports the following functions:
 **PARAMS**
 * `steamID` (string)
 * `pItemDefIDs` (number)
+
 **RETURN**
 * `r` (bool)
 * `punItemDefIDsArraySize` (uint32)
@@ -3601,15 +3948,18 @@ The extension exports the following functions:
 * `unArrayLength` (number)
 * `punArrayQuantity` (table  of number)
 * `pArrayItemDefs` (table  of number)
+
 **CALLBACK**
 * `SteamInventoryStartPurchaseResult_t`
 
 ### <a name="inventory_request_prices"></a>steamworks.inventory_request_prices() - [ISteamInventory#RequestPrices](https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices)
 
+
 **CALLBACK**
 * `SteamInventoryRequestPricesResult_t`
 
 ### <a name="inventory_get_num_items_with_prices"></a>steamworks.inventory_get_num_items_with_prices() - [ISteamInventory#GetNumItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetNumItemsWithPrices)
+
 
 **RETURN**
 * `r` (uint32)
@@ -3621,6 +3971,7 @@ The extension exports the following functions:
 * `unArrayLength` (number)
 * `pArrayItemDefs` (number)
 * `pPrices` (string)
+
 **RETURN**
 * `r` (bool)
 * `pArrayItemDefs` (table) unArrayLength
@@ -3631,12 +3982,14 @@ The extension exports the following functions:
 
 **PARAMS**
 * `iDefinition` (number)
+
 **RETURN**
 * `r` (bool)
 * `pPrice` (uint64)
 
 
 ### <a name="inventory_start_update_properties"></a>steamworks.inventory_start_update_properties() - [ISteamInventory#StartUpdateProperties](https://partner.steamgames.com/doc/api/ISteamInventory#StartUpdateProperties)
+
 
 **RETURN**
 * `r` (SteamInventoryUpdateHandle_t)
@@ -3648,6 +4001,7 @@ The extension exports the following functions:
 * `pchPropertyName` (string)
 * `nItemID` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3659,6 +4013,7 @@ The extension exports the following functions:
 * `pchPropertyName` (string)
 * `nItemID` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3670,6 +4025,7 @@ The extension exports the following functions:
 * `pchPropertyName` (string)
 * `nItemID` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3681,6 +4037,7 @@ The extension exports the following functions:
 * `pchPropertyName` (string)
 * `nItemID` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3692,6 +4049,7 @@ The extension exports the following functions:
 * `pchPropertyName` (string)
 * `nItemID` (number)
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 
@@ -3700,6 +4058,7 @@ The extension exports the following functions:
 
 **PARAMS**
 * `handle` (number)
+
 **RETURN**
 * `r` (bool)
 * `pResultHandle` (SteamInventoryResult_t)
