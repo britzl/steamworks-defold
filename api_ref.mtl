@@ -14,11 +14,15 @@ The extension exports the following functions:
 {{#methods}}
 ### <a name="{{classname_lower}}_{{methodname_lower}}"></a>steamworks.{{classname_lower}}_{{methodname_lower}}({{paramnames_in}}) - [{{classname}}#{{methodname}}](https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}})
 
-{{#hasparams}}**PARAMS**
+{{#hasparams}}
+**PARAMS**
+{{#params}}{{#normal_param}}* `{{paramname}}` ({{paramtypelua}})
+{{/normal_param}}{{#out_array_count}}* `{{paramname}}` ({{paramtypelua}})
+{{/out_array_count}}{{#array_count}}* `{{paramname}}` (table  of {{paramtypelua}})
+{{/array_count}}{{#buffer_param}}* `{{paramname}}` (buffer)
+{{/buffer_param}}
+{{/params}}
 {{/hasparams}}
-{{#params_in}}* `{{paramname}}` ({{paramtypelua}})
-{{/params_in}}
-
 {{#hasreturntype}}
 {{#steamapicall}}
 **CALLBACK**

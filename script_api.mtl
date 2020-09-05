@@ -10,19 +10,31 @@
       desc: https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}}
       {{#hasparams}}
       parameters:
-      {{/hasparams}}
-      {{#params_in}}
-      - name: {{paramname}}
+      {{#params}}{{#normal_param}}- name: {{paramname}}
         type: {{paramtypelua}}
-      {{/params_in}}
-      {{#hasreturntype}}
-      {{^steamapicall}}
+      {{/normal_param}}{{#out_array_count}}- name: {{paramname}}
+        type: {{paramtypelua}}
+      {{/out_array_count}}{{#array_count}}- name: {{paramname}}
+        type: table ({{paramtypelua}})
+      {{/array_count}}{{#buffer_param}}- name: {{paramname}}
+        type: buffer
+      {{/buffer_param}}{{/params}}{{/hasparams}}{{#hasreturntype}}{{^steamapicall}}
       returns:
       - name: r
-        type: {{returntypestring}}
-        desc:
+        type: {{returntypestring}}{{#params}}{{#out_param}}
+      - name: {{paramname}}
+        type: {{paramtypelua}}{{/out_param}}{{#out_string}}
+      - name: {{paramname}}
+        type: string{{/out_string}}{{#out_array_count}}
+      - name: {{paramname}}
+        type: table
+        {{/out_array_count}}
+      {{/params}}
       {{/steamapicall}}
       {{/hasreturntype}}
+
+
+#***********************************
 
 {{/methods}}
 
