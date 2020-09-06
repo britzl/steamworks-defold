@@ -10,20 +10,20 @@
       desc: https://partner.steamgames.com/doc/api/{{classname}}#{{methodname}}
       {{#hasparams}}
       parameters:
-      {{#params}}{{#normal_param}}- name: [{{paramindex}}] {{paramname}}
+      {{#params_doc}}{{#normal_param}}- name: {{paramname}}
         type: {{paramtypelua}}
-      {{/normal_param}}{{#out_array_count}}- name: [{{paramindex}}] {{paramname}}
+      {{/normal_param}}{{#out_array_count}}- name: {{paramname}}
         type: {{paramtypelua}}
-      {{/out_array_count}}{{#out_param}}- name: [{{paramindex}}] {{paramname}}
-	    type: {{paramtypelua}}
-      {{/out_param}}{{#array_count}}- name: [{{paramindex}}] {{paramname}}
+      {{/out_array_count}}{{#out_param}}- name: {{paramname}}
+        type: {{paramtypelua}}
+      {{/out_param}}{{#array_count}}- name: {{paramname}}
         type: table ({{paramtypelua}})
-      {{/array_count}}{{#buffer_param}}- name: [{{paramindex}}] {{paramname}}
+      {{/array_count}}{{#buffer_param}}- name: {{paramname}}
         type: buffer
-      {{/buffer_param}}{{/params}}{{/hasparams}}{{#hasreturntype}}{{^steamapicall}}
+      {{/buffer_param}}{{/params_doc}}{{/hasparams}}{{#hasreturntype}}{{^steamapicall}}
       returns:
       - name: r
-        type: {{returntypestring}}{{#params}}{{#out_param}}
+        type: {{returntypestring}}{{#params_doc}}{{#out_param}}
       - name: {{paramname}}
         type: {{paramtypelua}}{{/out_param}}{{#out_string}}
       - name: {{paramname}}
@@ -31,7 +31,7 @@
       - name: {{paramname}}
         type: table
         {{/out_array_count}}
-      {{/params}}
+      {{/params_doc}}
       {{/steamapicall}}
       {{/hasreturntype}}
 

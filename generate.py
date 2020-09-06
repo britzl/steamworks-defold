@@ -57,20 +57,23 @@ def parse_methods(methods):
             method["paramcount_out"] = 0
             if methodparams is not None:
                 method["paramcount"] = len(methodparams)
-                p = []
+                p_api = []
+                p_doc = []
+                normal_params = []
                 out_array_call_params = []
                 for param in methodparams:
+                    p_doc.append(param)
                     paramname = param.get("paramname")
                     paramtype = param.get("paramtype")
                     # A struct that will be populated with data by the method
                     if param.get("out_struct") is not None:
                         param["paramtype"] = paramtype.replace(" *", "")
-                        p.append(param)
+                        p_api.append(param)
                         method["paramnames"].append("&" + paramname)
                     # A string that will be populated with data by the method
                     elif param.get("out_string") is not None:
                         param["paramtypestring"] = paramtype.replace(" **", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
-                        p.append(param)
+                        p_api.append(param)
                         method["paramnames"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
                     # An array that will be populated with data by the method
@@ -81,7 +84,7 @@ def parse_methods(methods):
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
                         param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
                         param["paramtypelua"] = paramtype_to_lua(paramtype)
-                        p.append(param)
+                        p_api.append(param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
@@ -94,7 +97,7 @@ def parse_methods(methods):
                         param["out_array_call_function"] = function
                         param["out_array_call_params"] = params
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
-                        p.append(param)
+                        p_api.append(param)
                         method["paramnames"].append(paramname)
                     # An array of data with a length specified by another parameter
                     elif param.get("array_count") is not None:
@@ -102,7 +105,7 @@ def parse_methods(methods):
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
                         param["paramtypelua"] = paramtype_to_lua(paramtype)
-                        p.insert(0, param)
+                        p_api.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A "data blob" input parameter
@@ -112,7 +115,7 @@ def parse_methods(methods):
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_")
                         param["paramtypelua"] = "string"
-                        p.insert(0, param)
+                        p_api.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
@@ -122,7 +125,7 @@ def parse_methods(methods):
                         param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypelua"] = "string"
-                        p.insert(0, param)
+                        p_api.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                     # A parameter that the method writes a return value to
@@ -132,7 +135,7 @@ def parse_methods(methods):
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypestring"] = paramtype.replace(" *", "_ptr")
                         param["paramtypelua"] = "string"
-                        p.insert(0, param)
+                        p_api.insert(0, param)
                         method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
@@ -144,21 +147,21 @@ def parse_methods(methods):
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
                         param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "")
                         param["paramtypelua"] = paramtype_to_lua(paramtype)
-                        p.insert(0, param)
+                        p_api.insert(0, param)
                         method["paramnames"].append("&" + paramname)
                         method["paramnames_in"].append(paramname)
                         method["paramcount_out"] = method["paramcount_out"] + 1
                     # A parameter that an "out_array_call" will write to
                     elif paramname in out_array_call_params:
                         param["out_array_call_param"] = True
-                        p.insert(0, param)
+                        p_api.insert(0, param)
                         method["paramnames"].append(paramname)
                     else:
                         param["normal_param"] = True
                         param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtypelua"] = paramtype_to_lua(paramtype)
-                        p.insert(0, param)
+                        p_api.insert(0, param)
                         if "SteamParamStringArray_t" in paramtype:
                             param["paramtype"] = paramtype.replace(" *", "")
                             param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
@@ -172,7 +175,8 @@ def parse_methods(methods):
                         method["params_in"].append(param)
                     if param.get("out_param"):
                         method["params_out"].append(param)
-                method["params"] = p
+                method["params"] = p_api
+                method["params_doc"] = p_doc
             else:
                 method["paramcount"] = 0
 

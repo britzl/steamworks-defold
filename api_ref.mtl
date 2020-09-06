@@ -16,13 +16,13 @@ The extension exports the following functions:
 
 {{#hasparams}}
 **PARAMS**
-{{#params}}{{#normal_param}}* [{{paramindex}}] `{{paramname}}` ({{paramtypelua}})
-{{/normal_param}}{{#out_array_count}}* [{{paramindex}}] `{{paramname}}` ({{paramtypelua}})
-{{/out_array_count}}{{#out_param}}* [{{paramindex}}] `{{paramname}}` ({{paramtypelua}})
-{{/out_param}}{{#array_count}}* [{{paramindex}}] `{{paramname}}` (table  of {{paramtypelua}})
-{{/array_count}}{{#buffer_param}}* [{{paramindex}}] `{{paramname}}` (buffer)
+{{#params_doc}}{{#normal_param}}* `{{paramname}}` ({{paramtypelua}})
+{{/normal_param}}{{#out_array_count}}* `{{paramname}}` ({{paramtypelua}})
+{{/out_array_count}}{{#out_param}}* `{{paramname}}` ({{paramtypelua}})
+{{/out_param}}{{#array_count}}* `{{paramname}}` (table of {{paramtypelua}})
+{{/array_count}}{{#buffer_param}}* `{{paramname}}` (buffer)
 {{/buffer_param}}
-{{/params}}
+{{/params_doc}}
 {{/hasparams}}
 {{#hasreturntype}}
 {{#steamapicall}}
@@ -34,10 +34,10 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` ({{returntypestring}})
-{{#params}}{{#out_param}}* `{{paramname}}` ({{paramtype}})
+{{#params_doc}}{{#out_param}}* `{{paramname}}` ({{paramtype}})
 {{/out_param}}{{#out_string}}* `{{paramname}}` (string)
 {{/out_string}}{{#out_array_count}}* `{{paramname}}` (table) {{out_array_count}}
-{{/out_array_count}}{{/params}}
+{{/out_array_count}}{{/params_doc}}
 {{/steamapicall}}
 {{/hasreturntype}}
 
