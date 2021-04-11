@@ -782,7 +782,9 @@ extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDeb
 static int Init(lua_State* L) {
 	DM_LUA_STACK_CHECK(L, 0);
 	dmLogInfo("Init");
-	SteamAPI_Init();
+	if(!SteamAPI_Init()) {
+		luaL_error(L, "Error initialising SteamAPI");
+	}
 	if (!SteamAPI_IsSteamRunning()) {
 		luaL_error(L, "Steam is not running");
 	}
