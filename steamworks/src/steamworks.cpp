@@ -34,14 +34,14 @@ static ISteamApps *apps;
 static ISteamFriends *friends;
 static ISteamMatchmaking *matchmaking;
 static ISteamMusic *music;
-static ISteamNetworking *networking;
 static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
 static ISteamRemoteStorage *remote_storage;
 static ISteamInventory *inventory;
 static ISteamUGC *ugc;
-
+static ISteamParties *parties;
+static ISteamInput *input;
 
 
 /*****************************
@@ -94,6 +94,9 @@ static void push_const_char_ptr(lua_State* L, const char * s) {
 }
 static void push_char_ptr(lua_State* L, char * s) {
 	lua_pushstring(L, s);
+}
+static void push_void_ptr(lua_State* L, void * s) {
+	lua_pushstring(L, (char *)s);
 }
 static void push_uint8(lua_State* L, unsigned char n) {
 	lua_pushinteger(L, n);
@@ -161,32 +164,10 @@ static void push_uint32_array(lua_State* L, unsigned int arr[], unsigned int siz
 		lua_settable(L, -3);
 	}
 }
-static void push_PackageId_t(lua_State* L, uint32 n) {
+static void push_AppId_t(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_PackageId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_PackageId_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
-static void push_BundleId_t(lua_State* L, uint32 n) {
-	lua_pushinteger(L, n);
-}
-static void push_BundleId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_BundleId_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
-static void push_AppId_t(lua_State* L, uint32 n) {
-	lua_pushinteger(L, n);
-}
-static void push_AppId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_AppId_t_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -194,21 +175,10 @@ static void push_AppId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
 		lua_settable(L, -3);
 	}
 }
-static void push_PhysicalItemId_t(lua_State* L, uint32 n) {
+static void push_DepotId_t(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_PhysicalItemId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_PhysicalItemId_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
-static void push_DepotId_t(lua_State* L, uint32 n) {
-	lua_pushinteger(L, n);
-}
-static void push_DepotId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_DepotId_t_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -216,10 +186,10 @@ static void push_DepotId_t_array(lua_State* L, uint32 arr[], unsigned int size) 
 		lua_settable(L, -3);
 	}
 }
-static void push_RTime32(lua_State* L, uint32 n) {
+static void push_RTime32(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_RTime32_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_RTime32_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -227,21 +197,10 @@ static void push_RTime32_array(lua_State* L, uint32 arr[], unsigned int size) {
 		lua_settable(L, -3);
 	}
 }
-static void push_CellID_t(lua_State* L, uint32 n) {
+static void push_AccountID_t(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_CellID_t_array(lua_State* L, uint32 arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_CellID_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
-static void push_AccountID_t(lua_State* L, uint32 n) {
-	lua_pushinteger(L, n);
-}
-static void push_AccountID_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_AccountID_t_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -249,21 +208,10 @@ static void push_AccountID_t_array(lua_State* L, uint32 arr[], unsigned int size
 		lua_settable(L, -3);
 	}
 }
-static void push_PartnerId_t(lua_State* L, uint32 n) {
+static void push_HAuthTicket(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_PartnerId_t_array(lua_State* L, uint32 arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_PartnerId_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
-static void push_HAuthTicket(lua_State* L, uint32 n) {
-	lua_pushinteger(L, n);
-}
-static void push_HAuthTicket_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_HAuthTicket_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -271,10 +219,10 @@ static void push_HAuthTicket_array(lua_State* L, uint32 arr[], unsigned int size
 		lua_settable(L, -3);
 	}
 }
-static void push_HSteamPipe(lua_State* L, int32 n) {
+static void push_HSteamPipe(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
-static void push_HSteamPipe_array(lua_State* L, int32 arr[], unsigned int size) {
+static void push_HSteamPipe_array(lua_State* L, int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -282,10 +230,10 @@ static void push_HSteamPipe_array(lua_State* L, int32 arr[], unsigned int size) 
 		lua_settable(L, -3);
 	}
 }
-static void push_HSteamUser(lua_State* L, int32 n) {
+static void push_HSteamUser(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
-static void push_HSteamUser_array(lua_State* L, int32 arr[], unsigned int size) {
+static void push_HSteamUser_array(lua_State* L, int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -293,10 +241,10 @@ static void push_HSteamUser_array(lua_State* L, int32 arr[], unsigned int size) 
 		lua_settable(L, -3);
 	}
 }
-static void push_FriendsGroupID_t(lua_State* L, int16 n) {
+static void push_FriendsGroupID_t(lua_State* L, short n) {
 	lua_pushinteger(L, n);
 }
-static void push_FriendsGroupID_t_array(lua_State* L, int16 arr[], unsigned int size) {
+static void push_FriendsGroupID_t_array(lua_State* L, short arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -315,10 +263,10 @@ static void push_HServerQuery_array(lua_State* L, int arr[], unsigned int size) 
 		lua_settable(L, -3);
 	}
 }
-static void push_SNetSocket_t(lua_State* L, uint32 n) {
+static void push_SNetSocket_t(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_SNetSocket_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_SNetSocket_t_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -326,10 +274,10 @@ static void push_SNetSocket_t_array(lua_State* L, uint32 arr[], unsigned int siz
 		lua_settable(L, -3);
 	}
 }
-static void push_SNetListenSocket_t(lua_State* L, uint32 n) {
+static void push_SNetListenSocket_t(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_SNetListenSocket_t_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_SNetListenSocket_t_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -337,10 +285,10 @@ static void push_SNetListenSocket_t_array(lua_State* L, uint32 arr[], unsigned i
 		lua_settable(L, -3);
 	}
 }
-static void push_ScreenshotHandle(lua_State* L, uint32 n) {
+static void push_ScreenshotHandle(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_ScreenshotHandle_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_ScreenshotHandle_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -348,10 +296,10 @@ static void push_ScreenshotHandle_array(lua_State* L, uint32 arr[], unsigned int
 		lua_settable(L, -3);
 	}
 }
-static void push_HTTPRequestHandle(lua_State* L, uint32 n) {
+static void push_HTTPRequestHandle(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_HTTPRequestHandle_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_HTTPRequestHandle_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -359,10 +307,10 @@ static void push_HTTPRequestHandle_array(lua_State* L, uint32 arr[], unsigned in
 		lua_settable(L, -3);
 	}
 }
-static void push_HTTPCookieContainerHandle(lua_State* L, uint32 n) {
+static void push_HTTPCookieContainerHandle(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_HTTPCookieContainerHandle_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_HTTPCookieContainerHandle_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -370,10 +318,10 @@ static void push_HTTPCookieContainerHandle_array(lua_State* L, uint32 arr[], uns
 		lua_settable(L, -3);
 	}
 }
-static void push_HHTMLBrowser(lua_State* L, uint32 n) {
+static void push_HHTMLBrowser(lua_State* L, unsigned int n) {
 	lua_pushinteger(L, n);
 }
-static void push_HHTMLBrowser_array(lua_State* L, uint32 arr[], unsigned int size) {
+static void push_HHTMLBrowser_array(lua_State* L, unsigned int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -381,10 +329,10 @@ static void push_HHTMLBrowser_array(lua_State* L, uint32 arr[], unsigned int siz
 		lua_settable(L, -3);
 	}
 }
-static void push_SteamItemDef_t(lua_State* L, int32 n) {
+static void push_SteamItemDef_t(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
-static void push_SteamItemDef_t_array(lua_State* L, int32 arr[], unsigned int size) {
+static void push_SteamItemDef_t_array(lua_State* L, int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -392,10 +340,10 @@ static void push_SteamItemDef_t_array(lua_State* L, int32 arr[], unsigned int si
 		lua_settable(L, -3);
 	}
 }
-static void push_SteamInventoryResult_t(lua_State* L, int32 n) {
+static void push_SteamInventoryResult_t(lua_State* L, int n) {
 	lua_pushinteger(L, n);
 }
-static void push_SteamInventoryResult_t_array(lua_State* L, int32 arr[], unsigned int size) {
+static void push_SteamInventoryResult_t_array(lua_State* L, int arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
@@ -403,10 +351,70 @@ static void push_SteamInventoryResult_t_array(lua_State* L, int32 arr[], unsigne
 		lua_settable(L, -3);
 	}
 }
+static void push_RemotePlaySessionID_t(lua_State* L, unsigned int n) {
+	lua_pushinteger(L, n);
+}
+static void push_RemotePlaySessionID_t_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemotePlaySessionID_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HSteamNetConnection(lua_State* L, unsigned int n) {
+	lua_pushinteger(L, n);
+}
+static void push_HSteamNetConnection_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HSteamNetConnection(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HSteamListenSocket(lua_State* L, unsigned int n) {
+	lua_pushinteger(L, n);
+}
+static void push_HSteamListenSocket_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HSteamListenSocket(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_HSteamNetPollGroup(lua_State* L, unsigned int n) {
+	lua_pushinteger(L, n);
+}
+static void push_HSteamNetPollGroup_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_HSteamNetPollGroup(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetworkingPOPID(lua_State* L, unsigned int n) {
+	lua_pushinteger(L, n);
+}
+static void push_SteamNetworkingPOPID_array(lua_State* L, unsigned int arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetworkingPOPID(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 
 /*****************************
 * PUSH (u)int64 (to strings)
 ******************************/
+static void push_int64_t(lua_State* L, int64_t n) {
+	char buf[22];
+	snprintf(buf, sizeof(buf), "%lld", n);
+	lua_pushstring(L, buf);
+}
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
 	snprintf(buf, sizeof(buf), "%lld", n);
@@ -428,6 +436,28 @@ static void push_lint64_array(lua_State* L, lint64 arr[], unsigned int size) {
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_lint64(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_intp(lua_State* L, intp n) {
+	push_int64(L, n);
+}
+static void push_intp_array(lua_State* L, intp arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_intp(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetworkingMicroseconds(lua_State* L, SteamNetworkingMicroseconds n) {
+	push_int64(L, n);
+}
+static void push_SteamNetworkingMicroseconds_array(lua_State* L, SteamNetworkingMicroseconds arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetworkingMicroseconds(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -456,38 +486,14 @@ static void push_ulint64_array(lua_State* L, ulint64 arr[], unsigned int size) {
 	}
 
 }
-static void push_GID_t(lua_State* L, GID_t n) {
+static void push_uintp(lua_State* L, uintp n) {
 	push_uint64(L, n);
 }
-static void push_GID_t_array(lua_State* L, GID_t arr[], unsigned int size) {
+static void push_uintp_array(lua_State* L, uintp arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_GID_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-
-}
-static void push_JobID_t(lua_State* L, JobID_t n) {
-	push_uint64(L, n);
-}
-static void push_JobID_t_array(lua_State* L, JobID_t arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_JobID_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-
-}
-static void push_AssetClassId_t(lua_State* L, AssetClassId_t n) {
-	push_uint64(L, n);
-}
-static void push_AssetClassId_t_array(lua_State* L, AssetClassId_t arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_AssetClassId_t(L, arr[i]);
+		push_uintp(L, arr[i]);
 		lua_settable(L, -3);
 	}
 
@@ -504,26 +510,14 @@ static void push_SteamAPICall_t_array(lua_State* L, SteamAPICall_t arr[], unsign
 	}
 
 }
-static void push_ManifestId_t(lua_State* L, ManifestId_t n) {
+static void push_PartyBeaconID_t(lua_State* L, PartyBeaconID_t n) {
 	push_uint64(L, n);
 }
-static void push_ManifestId_t_array(lua_State* L, ManifestId_t arr[], unsigned int size) {
+static void push_PartyBeaconID_t_array(lua_State* L, PartyBeaconID_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_ManifestId_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-
-}
-static void push_SiteId_t(lua_State* L, SiteId_t n) {
-	push_uint64(L, n);
-}
-static void push_SiteId_t_array(lua_State* L, SiteId_t arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_SiteId_t(L, arr[i]);
+		push_PartyBeaconID_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 
@@ -596,6 +590,54 @@ static void push_SteamLeaderboardEntries_t_array(lua_State* L, SteamLeaderboardE
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_SteamLeaderboardEntries_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+
+}
+static void push_InputHandle_t(lua_State* L, InputHandle_t n) {
+	push_uint64(L, n);
+}
+static void push_InputHandle_t_array(lua_State* L, InputHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_InputHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+
+}
+static void push_InputActionSetHandle_t(lua_State* L, InputActionSetHandle_t n) {
+	push_uint64(L, n);
+}
+static void push_InputActionSetHandle_t_array(lua_State* L, InputActionSetHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_InputActionSetHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+
+}
+static void push_InputDigitalActionHandle_t(lua_State* L, InputDigitalActionHandle_t n) {
+	push_uint64(L, n);
+}
+static void push_InputDigitalActionHandle_t_array(lua_State* L, InputDigitalActionHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_InputDigitalActionHandle_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+
+}
+static void push_InputAnalogActionHandle_t(lua_State* L, InputAnalogActionHandle_t n) {
+	push_uint64(L, n);
+}
+static void push_InputAnalogActionHandle_t_array(lua_State* L, InputAnalogActionHandle_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_InputAnalogActionHandle_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 
@@ -700,6 +742,9 @@ static void push_SteamInventoryUpdateHandle_t_array(lua_State* L, SteamInventory
 /*****************************
 * PUSH enums
 ******************************/
+static void push_ESteamIPType(lua_State* L, ESteamIPType n) {
+	lua_pushinteger(L, n);
+}
 static void push_EUniverse(lua_State* L, EUniverse n) {
 	lua_pushinteger(L, n);
 }
@@ -724,18 +769,6 @@ static void push_EUserHasLicenseForAppResult(lua_State* L, EUserHasLicenseForApp
 static void push_EAccountType(lua_State* L, EAccountType n) {
 	lua_pushinteger(L, n);
 }
-static void push_EAppReleaseState(lua_State* L, EAppReleaseState n) {
-	lua_pushinteger(L, n);
-}
-static void push_EAppOwnershipFlags(lua_State* L, EAppOwnershipFlags n) {
-	lua_pushinteger(L, n);
-}
-static void push_EAppType(lua_State* L, EAppType n) {
-	lua_pushinteger(L, n);
-}
-static void push_ESteamUserStatType(lua_State* L, ESteamUserStatType n) {
-	lua_pushinteger(L, n);
-}
 static void push_EChatEntryType(lua_State* L, EChatEntryType n) {
 	lua_pushinteger(L, n);
 }
@@ -745,19 +778,34 @@ static void push_EChatRoomEnterResponse(lua_State* L, EChatRoomEnterResponse n) 
 static void push_EChatSteamIDInstanceFlags(lua_State* L, EChatSteamIDInstanceFlags n) {
 	lua_pushinteger(L, n);
 }
-static void push_EMarketingMessageFlags(lua_State* L, EMarketingMessageFlags n) {
-	lua_pushinteger(L, n);
-}
 static void push_ENotificationPosition(lua_State* L, ENotificationPosition n) {
 	lua_pushinteger(L, n);
 }
 static void push_EBroadcastUploadResult(lua_State* L, EBroadcastUploadResult n) {
 	lua_pushinteger(L, n);
 }
-static void push_ELaunchOptionType(lua_State* L, ELaunchOptionType n) {
+static void push_EMarketNotAllowedReasonFlags(lua_State* L, EMarketNotAllowedReasonFlags n) {
 	lua_pushinteger(L, n);
 }
-static void push_EVRHMDType(lua_State* L, EVRHMDType n) {
+static void push_EDurationControlProgress(lua_State* L, EDurationControlProgress n) {
+	lua_pushinteger(L, n);
+}
+static void push_EDurationControlNotification(lua_State* L, EDurationControlNotification n) {
+	lua_pushinteger(L, n);
+}
+static void push_EDurationControlOnlineState(lua_State* L, EDurationControlOnlineState n) {
+	lua_pushinteger(L, n);
+}
+static void push_EGameSearchErrorCode_t(lua_State* L, EGameSearchErrorCode_t n) {
+	lua_pushinteger(L, n);
+}
+static void push_EPlayerResult_t(lua_State* L, EPlayerResult_t n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamIPv6ConnectivityProtocol(lua_State* L, ESteamIPv6ConnectivityProtocol n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamIPv6ConnectivityState(lua_State* L, ESteamIPv6ConnectivityState n) {
 	lua_pushinteger(L, n);
 }
 static void push_EFriendRelationship(lua_State* L, EFriendRelationship n) {
@@ -775,6 +823,15 @@ static void push_EUserRestriction(lua_State* L, EUserRestriction n) {
 static void push_EOverlayToStoreFlag(lua_State* L, EOverlayToStoreFlag n) {
 	lua_pushinteger(L, n);
 }
+static void push_EActivateGameOverlayToWebPageMode(lua_State* L, EActivateGameOverlayToWebPageMode n) {
+	lua_pushinteger(L, n);
+}
+static void push_ECommunityProfileItemType(lua_State* L, ECommunityProfileItemType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ECommunityProfileItemProperty(lua_State* L, ECommunityProfileItemProperty n) {
+	lua_pushinteger(L, n);
+}
 static void push_EPersonaChange(lua_State* L, EPersonaChange n) {
 	lua_pushinteger(L, n);
 }
@@ -785,6 +842,12 @@ static void push_EGamepadTextInputMode(lua_State* L, EGamepadTextInputMode n) {
 	lua_pushinteger(L, n);
 }
 static void push_EGamepadTextInputLineMode(lua_State* L, EGamepadTextInputLineMode n) {
+	lua_pushinteger(L, n);
+}
+static void push_EFloatingGamepadTextInputMode(lua_State* L, EFloatingGamepadTextInputMode n) {
+	lua_pushinteger(L, n);
+}
+static void push_ETextFilteringContext(lua_State* L, ETextFilteringContext n) {
 	lua_pushinteger(L, n);
 }
 static void push_ECheckFileSignature(lua_State* L, ECheckFileSignature n) {
@@ -805,6 +868,12 @@ static void push_ELobbyDistanceFilter(lua_State* L, ELobbyDistanceFilter n) {
 static void push_EChatMemberStateChange(lua_State* L, EChatMemberStateChange n) {
 	lua_pushinteger(L, n);
 }
+static void push_ESteamPartyBeaconLocationType(lua_State* L, ESteamPartyBeaconLocationType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamPartyBeaconLocationData(lua_State* L, ESteamPartyBeaconLocationData n) {
+	lua_pushinteger(L, n);
+}
 static void push_ERemoteStoragePlatform(lua_State* L, ERemoteStoragePlatform n) {
 	lua_pushinteger(L, n);
 }
@@ -814,7 +883,25 @@ static void push_ERemoteStoragePublishedFileVisibility(lua_State* L, ERemoteStor
 static void push_EWorkshopFileType(lua_State* L, EWorkshopFileType n) {
 	lua_pushinteger(L, n);
 }
+static void push_EWorkshopVote(lua_State* L, EWorkshopVote n) {
+	lua_pushinteger(L, n);
+}
+static void push_EWorkshopFileAction(lua_State* L, EWorkshopFileAction n) {
+	lua_pushinteger(L, n);
+}
+static void push_EWorkshopEnumerationType(lua_State* L, EWorkshopEnumerationType n) {
+	lua_pushinteger(L, n);
+}
+static void push_EWorkshopVideoProvider(lua_State* L, EWorkshopVideoProvider n) {
+	lua_pushinteger(L, n);
+}
 static void push_EUGCReadAction(lua_State* L, EUGCReadAction n) {
+	lua_pushinteger(L, n);
+}
+static void push_ERemoteStorageLocalFileChange(lua_State* L, ERemoteStorageLocalFileChange n) {
+	lua_pushinteger(L, n);
+}
+static void push_ERemoteStorageFilePathType(lua_State* L, ERemoteStorageFilePathType n) {
 	lua_pushinteger(L, n);
 }
 static void push_ELeaderboardDataRequest(lua_State* L, ELeaderboardDataRequest n) {
@@ -856,22 +943,46 @@ static void push_EHTTPMethod(lua_State* L, EHTTPMethod n) {
 static void push_EHTTPStatusCode(lua_State* L, EHTTPStatusCode n) {
 	lua_pushinteger(L, n);
 }
+static void push_EInputSourceMode(lua_State* L, EInputSourceMode n) {
+	lua_pushinteger(L, n);
+}
+static void push_EInputActionOrigin(lua_State* L, EInputActionOrigin n) {
+	lua_pushinteger(L, n);
+}
+static void push_EXboxOrigin(lua_State* L, EXboxOrigin n) {
+	lua_pushinteger(L, n);
+}
 static void push_ESteamControllerPad(lua_State* L, ESteamControllerPad n) {
 	lua_pushinteger(L, n);
 }
-static void push_EControllerSource(lua_State* L, EControllerSource n) {
+static void push_EControllerHapticLocation(lua_State* L, EControllerHapticLocation n) {
 	lua_pushinteger(L, n);
 }
-static void push_EControllerSourceMode(lua_State* L, EControllerSourceMode n) {
+static void push_EControllerHapticType(lua_State* L, EControllerHapticType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamInputType(lua_State* L, ESteamInputType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamInputConfigurationEnableType(lua_State* L, ESteamInputConfigurationEnableType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamInputLEDFlag(lua_State* L, ESteamInputLEDFlag n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamInputGlyphSize(lua_State* L, ESteamInputGlyphSize n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamInputGlyphStyle(lua_State* L, ESteamInputGlyphStyle n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamInputActionEventType(lua_State* L, ESteamInputActionEventType n) {
 	lua_pushinteger(L, n);
 }
 static void push_EControllerActionOrigin(lua_State* L, EControllerActionOrigin n) {
 	lua_pushinteger(L, n);
 }
 static void push_ESteamControllerLEDFlag(lua_State* L, ESteamControllerLEDFlag n) {
-	lua_pushinteger(L, n);
-}
-static void push_ESteamInputType(lua_State* L, ESteamInputType n) {
 	lua_pushinteger(L, n);
 }
 static void push_EUGCMatchingUGCType(lua_State* L, EUGCMatchingUGCType n) {
@@ -902,6 +1013,48 @@ static void push_ESteamItemFlags(lua_State* L, ESteamItemFlags n) {
 	lua_pushinteger(L, n);
 }
 static void push_EParentalFeature(lua_State* L, EParentalFeature n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamDeviceFormFactor(lua_State* L, ESteamDeviceFormFactor n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingAvailability(lua_State* L, ESteamNetworkingAvailability n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingIdentityType(lua_State* L, ESteamNetworkingIdentityType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingFakeIPType(lua_State* L, ESteamNetworkingFakeIPType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingConnectionState(lua_State* L, ESteamNetworkingConnectionState n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetConnectionEnd(lua_State* L, ESteamNetConnectionEnd n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingConfigScope(lua_State* L, ESteamNetworkingConfigScope n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingConfigDataType(lua_State* L, ESteamNetworkingConfigDataType n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingConfigValue(lua_State* L, ESteamNetworkingConfigValue n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingGetConfigValueResult(lua_State* L, ESteamNetworkingGetConfigValueResult n) {
+	lua_pushinteger(L, n);
+}
+static void push_ESteamNetworkingSocketsDebugOutputType(lua_State* L, ESteamNetworkingSocketsDebugOutputType n) {
+	lua_pushinteger(L, n);
+}
+static void push_EServerMode(lua_State* L, EServerMode n) {
+	lua_pushinteger(L, n);
+}
+static void push_EFailureType(lua_State* L, IPCFailure_t::EFailureType n) {
+	lua_pushinteger(L, n);
+}
+static void push_PlayerAcceptState_t(lua_State* L, RequestPlayersForGameResultCallback_t::PlayerAcceptState_t n) {
 	lua_pushinteger(L, n);
 }
 
@@ -1011,26 +1164,528 @@ static void push_SteamParamStringArray_t(lua_State* L, SteamParamStringArray_t s
 		lua_settable(L, -3);
 	}
 }
-static void push_ValvePackingSentinel_t(lua_State* L, ValvePackingSentinel_t s) {
+static void push_SteamIPAddress_t(lua_State* L, SteamIPAddress_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "m_u32");
-	push_uint32(L, s.m_u32);
+	lua_pushstring(L, "m_rgubIPv6");
+	push_uint8_array(L, s.m_rgubIPv6, 16);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_u64");
-	push_uint64(L, s.m_u64);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_u16");
-	push_uint16(L, s.m_u16);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_d");
-	push_double(L, s.m_d);
+	lua_pushstring(L, "m_eType");
+	push_ESteamIPType(L, s.m_eType);
 	lua_settable(L, -3);
 }
-static void push_ValvePackingSentinel_t_array(lua_State* L, ValvePackingSentinel_t arr[], unsigned int size) {
+static void push_SteamIPAddress_t_array(lua_State* L, SteamIPAddress_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_ValvePackingSentinel_t(L, arr[i]);
+		push_SteamIPAddress_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FriendGameInfo_t(lua_State* L, FriendGameInfo_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_gameID");
+	push_CGameID(L, s.m_gameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unGameIP");
+	push_uint32(L, s.m_unGameIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usGamePort");
+	push_uint16(L, s.m_usGamePort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usQueryPort");
+	push_uint16(L, s.m_usQueryPort);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDLobby");
+	push_CSteamID(L, s.m_steamIDLobby);
+	lua_settable(L, -3);
+}
+static void push_FriendGameInfo_t_array(lua_State* L, FriendGameInfo_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FriendGameInfo_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MatchMakingKeyValuePair_t(lua_State* L, MatchMakingKeyValuePair_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_szKey");
+	push_char_array(L, s.m_szKey, 256);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szValue");
+	push_char_array(L, s.m_szValue, 256);
+	lua_settable(L, -3);
+}
+static void push_MatchMakingKeyValuePair_t_array(lua_State* L, MatchMakingKeyValuePair_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MatchMakingKeyValuePair_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamPartyBeaconLocation_t(lua_State* L, SteamPartyBeaconLocation_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eType");
+	push_ESteamPartyBeaconLocationType(L, s.m_eType);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulLocationID");
+	push_uint64(L, s.m_ulLocationID);
+	lua_settable(L, -3);
+}
+static void push_SteamPartyBeaconLocation_t_array(lua_State* L, SteamPartyBeaconLocation_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamPartyBeaconLocation_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LeaderboardEntry_t(lua_State* L, LeaderboardEntry_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamIDUser");
+	push_CSteamID(L, s.m_steamIDUser);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nGlobalRank");
+	push_int32(L, s.m_nGlobalRank);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nScore");
+	push_int32(L, s.m_nScore);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cDetails");
+	push_int32(L, s.m_cDetails);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hUGC");
+	push_UGCHandle_t(L, s.m_hUGC);
+	lua_settable(L, -3);
+}
+static void push_LeaderboardEntry_t_array(lua_State* L, LeaderboardEntry_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LeaderboardEntry_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_P2PSessionState_t(lua_State* L, P2PSessionState_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_bConnectionActive");
+	push_uint8(L, s.m_bConnectionActive);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bConnecting");
+	push_uint8(L, s.m_bConnecting);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eP2PSessionError");
+	push_uint8(L, s.m_eP2PSessionError);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUsingRelay");
+	push_uint8(L, s.m_bUsingRelay);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nBytesQueuedForSend");
+	push_int32(L, s.m_nBytesQueuedForSend);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPacketsQueuedForSend");
+	push_int32(L, s.m_nPacketsQueuedForSend);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nRemoteIP");
+	push_uint32(L, s.m_nRemoteIP);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nRemotePort");
+	push_uint16(L, s.m_nRemotePort);
+	lua_settable(L, -3);
+}
+static void push_P2PSessionState_t_array(lua_State* L, P2PSessionState_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_P2PSessionState_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_InputAnalogActionData_t(lua_State* L, InputAnalogActionData_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "eMode");
+	push_EInputSourceMode(L, s.eMode);
+	lua_settable(L, -3);
+	lua_pushstring(L, "x");
+	push_float(L, s.x);
+	lua_settable(L, -3);
+	lua_pushstring(L, "y");
+	push_float(L, s.y);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bActive");
+	push_bool(L, s.bActive);
+	lua_settable(L, -3);
+}
+static void push_InputAnalogActionData_t_array(lua_State* L, InputAnalogActionData_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_InputAnalogActionData_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_InputDigitalActionData_t(lua_State* L, InputDigitalActionData_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "bState");
+	push_bool(L, s.bState);
+	lua_settable(L, -3);
+	lua_pushstring(L, "bActive");
+	push_bool(L, s.bActive);
+	lua_settable(L, -3);
+}
+static void push_InputDigitalActionData_t_array(lua_State* L, InputDigitalActionData_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_InputDigitalActionData_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_InputMotionData_t(lua_State* L, InputMotionData_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "rotQuatX");
+	push_float(L, s.rotQuatX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotQuatY");
+	push_float(L, s.rotQuatY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotQuatZ");
+	push_float(L, s.rotQuatZ);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotQuatW");
+	push_float(L, s.rotQuatW);
+	lua_settable(L, -3);
+	lua_pushstring(L, "posAccelX");
+	push_float(L, s.posAccelX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "posAccelY");
+	push_float(L, s.posAccelY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "posAccelZ");
+	push_float(L, s.posAccelZ);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotVelX");
+	push_float(L, s.rotVelX);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotVelY");
+	push_float(L, s.rotVelY);
+	lua_settable(L, -3);
+	lua_pushstring(L, "rotVelZ");
+	push_float(L, s.rotVelZ);
+	lua_settable(L, -3);
+}
+static void push_InputMotionData_t_array(lua_State* L, InputMotionData_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_InputMotionData_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamUGCDetails_t(lua_State* L, SteamUGCDetails_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eFileType");
+	push_EWorkshopFileType(L, s.m_eFileType);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCreatorAppID");
+	push_AppId_t(L, s.m_nCreatorAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nConsumerAppID");
+	push_AppId_t(L, s.m_nConsumerAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTitle");
+	push_char_array(L, s.m_rgchTitle, 129);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchDescription");
+	push_char_array(L, s.m_rgchDescription, 8000);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	push_uint64(L, s.m_ulSteamIDOwner);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeCreated");
+	push_uint32(L, s.m_rtimeCreated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeUpdated");
+	push_uint32(L, s.m_rtimeUpdated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeAddedToUserList");
+	push_uint32(L, s.m_rtimeAddedToUserList);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eVisibility");
+	push_ERemoteStoragePublishedFileVisibility(L, s.m_eVisibility);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bBanned");
+	push_bool(L, s.m_bBanned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	push_bool(L, s.m_bAcceptedForUse);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bTagsTruncated");
+	push_bool(L, s.m_bTagsTruncated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTags");
+	push_char_array(L, s.m_rgchTags, 1025);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hFile");
+	push_UGCHandle_t(L, s.m_hFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hPreviewFile");
+	push_UGCHandle_t(L, s.m_hPreviewFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_pchFileName");
+	push_char_array(L, s.m_pchFileName, 260);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nFileSize");
+	push_int32(L, s.m_nFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	push_int32(L, s.m_nPreviewFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchURL");
+	push_char_array(L, s.m_rgchURL, 256);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unVotesUp");
+	push_uint32(L, s.m_unVotesUp);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unVotesDown");
+	push_uint32(L, s.m_unVotesDown);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flScore");
+	push_float(L, s.m_flScore);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unNumChildren");
+	push_uint32(L, s.m_unNumChildren);
+	lua_settable(L, -3);
+}
+static void push_SteamUGCDetails_t_array(lua_State* L, SteamUGCDetails_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamUGCDetails_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamItemDetails_t(lua_State* L, SteamItemDetails_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_itemId");
+	push_SteamItemInstanceID_t(L, s.m_itemId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iDefinition");
+	push_SteamItemDef_t(L, s.m_iDefinition);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unQuantity");
+	push_uint16(L, s.m_unQuantity);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unFlags");
+	push_uint16(L, s.m_unFlags);
+	lua_settable(L, -3);
+}
+static void push_SteamItemDetails_t_array(lua_State* L, SteamItemDetails_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamItemDetails_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetworkingIPAddr(lua_State* L, SteamNetworkingIPAddr s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ipv6");
+	push_uint8_array(L, s.m_ipv6, 16);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_port");
+	push_uint16(L, s.m_port);
+	lua_settable(L, -3);
+}
+static void push_SteamNetworkingIPAddr_array(lua_State* L, SteamNetworkingIPAddr arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetworkingIPAddr(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetworkingIdentity(lua_State* L, SteamNetworkingIdentity s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eType");
+	push_ESteamNetworkingIdentityType(L, s.m_eType);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cbSize");
+	push_int(L, s.m_cbSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szUnknownRawString");
+	push_char_array(L, s.m_szUnknownRawString, 128);
+	lua_settable(L, -3);
+}
+static void push_SteamNetworkingIdentity_array(lua_State* L, SteamNetworkingIdentity arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetworkingIdentity(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetConnectionInfo_t(lua_State* L, SteamNetConnectionInfo_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_identityRemote");
+	push_SteamNetworkingIdentity(L, s.m_identityRemote);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nUserData");
+	push_int64(L, s.m_nUserData);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hListenSocket");
+	push_HSteamListenSocket(L, s.m_hListenSocket);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_addrRemote");
+	push_SteamNetworkingIPAddr(L, s.m_addrRemote);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m__pad1");
+	push_uint16(L, s.m__pad1);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_idPOPRemote");
+	push_SteamNetworkingPOPID(L, s.m_idPOPRemote);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_idPOPRelay");
+	push_SteamNetworkingPOPID(L, s.m_idPOPRelay);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eState");
+	push_ESteamNetworkingConnectionState(L, s.m_eState);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eEndReason");
+	push_int(L, s.m_eEndReason);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szEndDebug");
+	push_char_array(L, s.m_szEndDebug, 128);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_szConnectionDescription");
+	push_char_array(L, s.m_szConnectionDescription, 128);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nFlags");
+	push_int(L, s.m_nFlags);
+	lua_settable(L, -3);
+	lua_pushstring(L, "reserved");
+	push_uint32_array(L, s.reserved, 63);
+	lua_settable(L, -3);
+}
+static void push_SteamNetConnectionInfo_t_array(lua_State* L, SteamNetConnectionInfo_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetConnectionInfo_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetConnectionRealTimeStatus_t(lua_State* L, SteamNetConnectionRealTimeStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eState");
+	push_ESteamNetworkingConnectionState(L, s.m_eState);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPing");
+	push_int(L, s.m_nPing);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flConnectionQualityLocal");
+	push_float(L, s.m_flConnectionQualityLocal);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flConnectionQualityRemote");
+	push_float(L, s.m_flConnectionQualityRemote);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flOutPacketsPerSec");
+	push_float(L, s.m_flOutPacketsPerSec);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flOutBytesPerSec");
+	push_float(L, s.m_flOutBytesPerSec);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flInPacketsPerSec");
+	push_float(L, s.m_flInPacketsPerSec);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_flInBytesPerSec");
+	push_float(L, s.m_flInBytesPerSec);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nSendRateBytesPerSecond");
+	push_int(L, s.m_nSendRateBytesPerSecond);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cbPendingUnreliable");
+	push_int(L, s.m_cbPendingUnreliable);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cbPendingReliable");
+	push_int(L, s.m_cbPendingReliable);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cbSentUnackedReliable");
+	push_int(L, s.m_cbSentUnackedReliable);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usecQueueTime");
+	push_SteamNetworkingMicroseconds(L, s.m_usecQueueTime);
+	lua_settable(L, -3);
+	lua_pushstring(L, "reserved");
+	push_uint32_array(L, s.reserved, 16);
+	lua_settable(L, -3);
+}
+static void push_SteamNetConnectionRealTimeStatus_t_array(lua_State* L, SteamNetConnectionRealTimeStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetConnectionRealTimeStatus_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetConnectionRealTimeLaneStatus_t(lua_State* L, SteamNetConnectionRealTimeLaneStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_cbPendingUnreliable");
+	push_int(L, s.m_cbPendingUnreliable);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cbPendingReliable");
+	push_int(L, s.m_cbPendingReliable);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cbSentUnackedReliable");
+	push_int(L, s.m_cbSentUnackedReliable);
+	lua_settable(L, -3);
+	lua_pushstring(L, "_reservePad1");
+	push_int(L, s._reservePad1);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_usecQueueTime");
+	push_SteamNetworkingMicroseconds(L, s.m_usecQueueTime);
+	lua_settable(L, -3);
+	lua_pushstring(L, "reserved");
+	push_uint32_array(L, s.reserved, 10);
+	lua_settable(L, -3);
+}
+static void push_SteamNetConnectionRealTimeLaneStatus_t_array(lua_State* L, SteamNetConnectionRealTimeLaneStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetConnectionRealTimeLaneStatus_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetworkPingLocation_t(lua_State* L, SteamNetworkPingLocation_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_data");
+	push_uint8_array(L, s.m_data, 512);
+	lua_settable(L, -3);
+}
+static void push_SteamNetworkPingLocation_t_array(lua_State* L, SteamNetworkPingLocation_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetworkPingLocation_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamServersConnected_t(lua_State* L, SteamServersConnected_t s) {
+	lua_newtable(L);
+}
+static void push_SteamServersConnected_t_array(lua_State* L, SteamServersConnected_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamServersConnected_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -1088,6 +1743,31 @@ static void push_ClientGameServerDeny_t_array(lua_State* L, ClientGameServerDeny
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_ClientGameServerDeny_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_IPCFailure_t(lua_State* L, IPCFailure_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eFailureType");
+	push_uint8(L, s.m_eFailureType);
+	lua_settable(L, -3);
+}
+static void push_IPCFailure_t_array(lua_State* L, IPCFailure_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_IPCFailure_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_LicensesUpdated_t(lua_State* L, LicensesUpdated_t s) {
+	lua_newtable(L);
+}
+static void push_LicensesUpdated_t_array(lua_State* L, LicensesUpdated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_LicensesUpdated_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -1190,46 +1870,64 @@ static void push_StoreAuthURLResponse_t_array(lua_State* L, StoreAuthURLResponse
 		lua_settable(L, -3);
 	}
 }
-static void push_FriendGameInfo_t(lua_State* L, FriendGameInfo_t s) {
+static void push_MarketEligibilityResponse_t(lua_State* L, MarketEligibilityResponse_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "m_gameID");
-	push_CGameID(L, s.m_gameID);
+	lua_pushstring(L, "m_bAllowed");
+	push_bool(L, s.m_bAllowed);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_unGameIP");
-	push_uint32(L, s.m_unGameIP);
+	lua_pushstring(L, "m_eNotAllowedReason");
+	push_EMarketNotAllowedReasonFlags(L, s.m_eNotAllowedReason);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_usGamePort");
-	push_uint16(L, s.m_usGamePort);
+	lua_pushstring(L, "m_rtAllowedAtTime");
+	push_RTime32(L, s.m_rtAllowedAtTime);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_usQueryPort");
-	push_uint16(L, s.m_usQueryPort);
+	lua_pushstring(L, "m_cdaySteamGuardRequiredDays");
+	push_int(L, s.m_cdaySteamGuardRequiredDays);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_steamIDLobby");
-	push_CSteamID(L, s.m_steamIDLobby);
+	lua_pushstring(L, "m_cdayNewDeviceCooldown");
+	push_int(L, s.m_cdayNewDeviceCooldown);
 	lua_settable(L, -3);
 }
-static void push_FriendGameInfo_t_array(lua_State* L, FriendGameInfo_t arr[], unsigned int size) {
+static void push_MarketEligibilityResponse_t_array(lua_State* L, MarketEligibilityResponse_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_FriendGameInfo_t(L, arr[i]);
+		push_MarketEligibilityResponse_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
-static void push_FriendSessionStateInfo_t(lua_State* L, FriendSessionStateInfo_t s) {
+static void push_DurationControl_t(lua_State* L, DurationControl_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "m_uiOnlineSessionInstances");
-	push_uint32(L, s.m_uiOnlineSessionInstances);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_uiPublishedToFriendsSessionInstance");
-	push_uint8(L, s.m_uiPublishedToFriendsSessionInstance);
+	lua_pushstring(L, "m_appid");
+	push_AppId_t(L, s.m_appid);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bApplicable");
+	push_bool(L, s.m_bApplicable);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_csecsLast5h");
+	push_int32(L, s.m_csecsLast5h);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_progress");
+	push_EDurationControlProgress(L, s.m_progress);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_notification");
+	push_EDurationControlNotification(L, s.m_notification);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_csecsToday");
+	push_int32(L, s.m_csecsToday);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_csecsRemaining");
+	push_int32(L, s.m_csecsRemaining);
 	lua_settable(L, -3);
 }
-static void push_FriendSessionStateInfo_t_array(lua_State* L, FriendSessionStateInfo_t arr[], unsigned int size) {
+static void push_DurationControl_t_array(lua_State* L, DurationControl_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_FriendSessionStateInfo_t(L, arr[i]);
+		push_DurationControl_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -1566,6 +2264,88 @@ static void push_SetPersonaNameResponse_t_array(lua_State* L, SetPersonaNameResp
 		lua_settable(L, -3);
 	}
 }
+static void push_UnreadChatMessagesChanged_t(lua_State* L, UnreadChatMessagesChanged_t s) {
+	lua_newtable(L);
+}
+static void push_UnreadChatMessagesChanged_t_array(lua_State* L, UnreadChatMessagesChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UnreadChatMessagesChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_OverlayBrowserProtocolNavigation_t(lua_State* L, OverlayBrowserProtocolNavigation_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "rgchURI");
+	push_char_array(L, s.rgchURI, 1024);
+	lua_settable(L, -3);
+}
+static void push_OverlayBrowserProtocolNavigation_t_array(lua_State* L, OverlayBrowserProtocolNavigation_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_OverlayBrowserProtocolNavigation_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_EquippedProfileItemsChanged_t(lua_State* L, EquippedProfileItemsChanged_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+}
+static void push_EquippedProfileItemsChanged_t_array(lua_State* L, EquippedProfileItemsChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_EquippedProfileItemsChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_EquippedProfileItems_t(lua_State* L, EquippedProfileItems_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamID");
+	push_CSteamID(L, s.m_steamID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bHasAnimatedAvatar");
+	push_bool(L, s.m_bHasAnimatedAvatar);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bHasAvatarFrame");
+	push_bool(L, s.m_bHasAvatarFrame);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bHasProfileModifier");
+	push_bool(L, s.m_bHasProfileModifier);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bHasProfileBackground");
+	push_bool(L, s.m_bHasProfileBackground);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bHasMiniProfileBackground");
+	push_bool(L, s.m_bHasMiniProfileBackground);
+	lua_settable(L, -3);
+}
+static void push_EquippedProfileItems_t_array(lua_State* L, EquippedProfileItems_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_EquippedProfileItems_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_IPCountry_t(lua_State* L, IPCountry_t s) {
+	lua_newtable(L);
+}
+static void push_IPCountry_t_array(lua_State* L, IPCountry_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_IPCountry_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_LowBatteryPower_t(lua_State* L, LowBatteryPower_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_nMinutesBatteryLeft");
@@ -1600,6 +2380,17 @@ static void push_SteamAPICallCompleted_t_array(lua_State* L, SteamAPICallComplet
 		lua_settable(L, -3);
 	}
 }
+static void push_SteamShutdown_t(lua_State* L, SteamShutdown_t s) {
+	lua_newtable(L);
+}
+static void push_SteamShutdown_t_array(lua_State* L, SteamShutdown_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamShutdown_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_CheckFileSignature_t(lua_State* L, CheckFileSignature_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eCheckFileSignature");
@@ -1631,20 +2422,25 @@ static void push_GamepadTextInputDismissed_t_array(lua_State* L, GamepadTextInpu
 		lua_settable(L, -3);
 	}
 }
-static void push_MatchMakingKeyValuePair_t(lua_State* L, MatchMakingKeyValuePair_t s) {
+static void push_AppResumingFromSuspend_t(lua_State* L, AppResumingFromSuspend_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "m_szKey");
-	push_char_array(L, s.m_szKey, 256);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_szValue");
-	push_char_array(L, s.m_szValue, 256);
-	lua_settable(L, -3);
 }
-static void push_MatchMakingKeyValuePair_t_array(lua_State* L, MatchMakingKeyValuePair_t arr[], unsigned int size) {
+static void push_AppResumingFromSuspend_t_array(lua_State* L, AppResumingFromSuspend_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_MatchMakingKeyValuePair_t(L, arr[i]);
+		push_AppResumingFromSuspend_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_FloatingGamepadTextInputDismissed_t(lua_State* L, FloatingGamepadTextInputDismissed_t s) {
+	lua_newtable(L);
+}
+static void push_FloatingGamepadTextInputDismissed_t_array(lua_State* L, FloatingGamepadTextInputDismissed_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_FloatingGamepadTextInputDismissed_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -1894,6 +2690,272 @@ static void push_FavoritesListAccountsUpdated_t_array(lua_State* L, FavoritesLis
 		lua_settable(L, -3);
 	}
 }
+static void push_SearchForGameProgressCallback_t(lua_State* L, SearchForGameProgressCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ullSearchID");
+	push_uint64(L, s.m_ullSearchID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_lobbyID");
+	push_CSteamID(L, s.m_lobbyID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDEndedSearch");
+	push_CSteamID(L, s.m_steamIDEndedSearch);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nSecondsRemainingEstimate");
+	push_int32(L, s.m_nSecondsRemainingEstimate);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_cPlayersSearching");
+	push_int32(L, s.m_cPlayersSearching);
+	lua_settable(L, -3);
+}
+static void push_SearchForGameProgressCallback_t_array(lua_State* L, SearchForGameProgressCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SearchForGameProgressCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SearchForGameResultCallback_t(lua_State* L, SearchForGameResultCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ullSearchID");
+	push_uint64(L, s.m_ullSearchID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCountPlayersInGame");
+	push_int32(L, s.m_nCountPlayersInGame);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCountAcceptedGame");
+	push_int32(L, s.m_nCountAcceptedGame);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDHost");
+	push_CSteamID(L, s.m_steamIDHost);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bFinalCallback");
+	push_bool(L, s.m_bFinalCallback);
+	lua_settable(L, -3);
+}
+static void push_SearchForGameResultCallback_t_array(lua_State* L, SearchForGameResultCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SearchForGameResultCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RequestPlayersForGameProgressCallback_t(lua_State* L, RequestPlayersForGameProgressCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ullSearchID");
+	push_uint64(L, s.m_ullSearchID);
+	lua_settable(L, -3);
+}
+static void push_RequestPlayersForGameProgressCallback_t_array(lua_State* L, RequestPlayersForGameProgressCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RequestPlayersForGameProgressCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RequestPlayersForGameResultCallback_t(lua_State* L, RequestPlayersForGameResultCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ullSearchID");
+	push_uint64(L, s.m_ullSearchID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_SteamIDPlayerFound");
+	push_CSteamID(L, s.m_SteamIDPlayerFound);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_SteamIDLobby");
+	push_CSteamID(L, s.m_SteamIDLobby);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ePlayerAcceptState");
+	push_PlayerAcceptState_t(L, s.m_ePlayerAcceptState);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPlayerIndex");
+	push_int32(L, s.m_nPlayerIndex);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalPlayersFound");
+	push_int32(L, s.m_nTotalPlayersFound);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalPlayersAcceptedGame");
+	push_int32(L, s.m_nTotalPlayersAcceptedGame);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nSuggestedTeamIndex");
+	push_int32(L, s.m_nSuggestedTeamIndex);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ullUniqueGameID");
+	push_uint64(L, s.m_ullUniqueGameID);
+	lua_settable(L, -3);
+}
+static void push_RequestPlayersForGameResultCallback_t_array(lua_State* L, RequestPlayersForGameResultCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RequestPlayersForGameResultCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RequestPlayersForGameFinalResultCallback_t(lua_State* L, RequestPlayersForGameFinalResultCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ullSearchID");
+	push_uint64(L, s.m_ullSearchID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ullUniqueGameID");
+	push_uint64(L, s.m_ullUniqueGameID);
+	lua_settable(L, -3);
+}
+static void push_RequestPlayersForGameFinalResultCallback_t_array(lua_State* L, RequestPlayersForGameFinalResultCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RequestPlayersForGameFinalResultCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SubmitPlayerResultResultCallback_t(lua_State* L, SubmitPlayerResultResultCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "ullUniqueGameID");
+	push_uint64(L, s.ullUniqueGameID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "steamIDPlayer");
+	push_CSteamID(L, s.steamIDPlayer);
+	lua_settable(L, -3);
+}
+static void push_SubmitPlayerResultResultCallback_t_array(lua_State* L, SubmitPlayerResultResultCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SubmitPlayerResultResultCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_EndGameResultCallback_t(lua_State* L, EndGameResultCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "ullUniqueGameID");
+	push_uint64(L, s.ullUniqueGameID);
+	lua_settable(L, -3);
+}
+static void push_EndGameResultCallback_t_array(lua_State* L, EndGameResultCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_EndGameResultCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_JoinPartyCallback_t(lua_State* L, JoinPartyCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulBeaconID");
+	push_PartyBeaconID_t(L, s.m_ulBeaconID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_SteamIDBeaconOwner");
+	push_CSteamID(L, s.m_SteamIDBeaconOwner);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchConnectString");
+	push_char_array(L, s.m_rgchConnectString, 256);
+	lua_settable(L, -3);
+}
+static void push_JoinPartyCallback_t_array(lua_State* L, JoinPartyCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_JoinPartyCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_CreateBeaconCallback_t(lua_State* L, CreateBeaconCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulBeaconID");
+	push_PartyBeaconID_t(L, s.m_ulBeaconID);
+	lua_settable(L, -3);
+}
+static void push_CreateBeaconCallback_t_array(lua_State* L, CreateBeaconCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_CreateBeaconCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ReservationNotificationCallback_t(lua_State* L, ReservationNotificationCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_ulBeaconID");
+	push_PartyBeaconID_t(L, s.m_ulBeaconID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_steamIDJoiner");
+	push_CSteamID(L, s.m_steamIDJoiner);
+	lua_settable(L, -3);
+}
+static void push_ReservationNotificationCallback_t_array(lua_State* L, ReservationNotificationCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ReservationNotificationCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ChangeNumOpenSlotsCallback_t(lua_State* L, ChangeNumOpenSlotsCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+}
+static void push_ChangeNumOpenSlotsCallback_t_array(lua_State* L, ChangeNumOpenSlotsCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ChangeNumOpenSlotsCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_AvailableBeaconLocationsUpdated_t(lua_State* L, AvailableBeaconLocationsUpdated_t s) {
+	lua_newtable(L);
+}
+static void push_AvailableBeaconLocationsUpdated_t_array(lua_State* L, AvailableBeaconLocationsUpdated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_AvailableBeaconLocationsUpdated_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ActiveBeaconsUpdated_t(lua_State* L, ActiveBeaconsUpdated_t s) {
+	lua_newtable(L);
+}
+static void push_ActiveBeaconsUpdated_t_array(lua_State* L, ActiveBeaconsUpdated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ActiveBeaconsUpdated_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_RemoteStorageFileShareResult_t(lua_State* L, RemoteStorageFileShareResult_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eResult");
@@ -1914,6 +2976,66 @@ static void push_RemoteStorageFileShareResult_t_array(lua_State* L, RemoteStorag
 		lua_settable(L, -3);
 	}
 }
+static void push_RemoteStoragePublishFileResult_t(lua_State* L, RemoteStoragePublishFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	push_bool(L, s.m_bUserNeedsToAcceptWorkshopLegalAgreement);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishFileResult_t_array(lua_State* L, RemoteStoragePublishFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageDeletePublishedFileResult_t(lua_State* L, RemoteStorageDeletePublishedFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageDeletePublishedFileResult_t_array(lua_State* L, RemoteStorageDeletePublishedFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageDeletePublishedFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumerateUserPublishedFilesResult_t(lua_State* L, RemoteStorageEnumerateUserPublishedFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateUserPublishedFilesResult_t_array(lua_State* L, RemoteStorageEnumerateUserPublishedFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateUserPublishedFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_RemoteStorageSubscribePublishedFileResult_t(lua_State* L, RemoteStorageSubscribePublishedFileResult_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eResult");
@@ -1931,6 +3053,32 @@ static void push_RemoteStorageSubscribePublishedFileResult_t_array(lua_State* L,
 		lua_settable(L, -3);
 	}
 }
+static void push_RemoteStorageEnumerateUserSubscribedFilesResult_t(lua_State* L, RemoteStorageEnumerateUserSubscribedFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgRTimeSubscribed");
+	push_uint32_array(L, s.m_rgRTimeSubscribed, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateUserSubscribedFilesResult_t_array(lua_State* L, RemoteStorageEnumerateUserSubscribedFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateUserSubscribedFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_RemoteStorageUnsubscribePublishedFileResult_t(lua_State* L, RemoteStorageUnsubscribePublishedFileResult_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eResult");
@@ -1945,6 +3093,26 @@ static void push_RemoteStorageUnsubscribePublishedFileResult_t_array(lua_State* 
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_RemoteStorageUnsubscribePublishedFileResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageUpdatePublishedFileResult_t(lua_State* L, RemoteStorageUpdatePublishedFileResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	push_bool(L, s.m_bUserNeedsToAcceptWorkshopLegalAgreement);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageUpdatePublishedFileResult_t_array(lua_State* L, RemoteStorageUpdatePublishedFileResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageUpdatePublishedFileResult_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -1974,6 +3142,338 @@ static void push_RemoteStorageDownloadUGCResult_t_array(lua_State* L, RemoteStor
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_RemoteStorageDownloadUGCResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageGetPublishedFileDetailsResult_t(lua_State* L, RemoteStorageGetPublishedFileDetailsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nCreatorAppID");
+	push_AppId_t(L, s.m_nCreatorAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nConsumerAppID");
+	push_AppId_t(L, s.m_nConsumerAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTitle");
+	push_char_array(L, s.m_rgchTitle, 129);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchDescription");
+	push_char_array(L, s.m_rgchDescription, 8000);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hFile");
+	push_UGCHandle_t(L, s.m_hFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_hPreviewFile");
+	push_UGCHandle_t(L, s.m_hPreviewFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	push_uint64(L, s.m_ulSteamIDOwner);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeCreated");
+	push_uint32(L, s.m_rtimeCreated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtimeUpdated");
+	push_uint32(L, s.m_rtimeUpdated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eVisibility");
+	push_ERemoteStoragePublishedFileVisibility(L, s.m_eVisibility);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bBanned");
+	push_bool(L, s.m_bBanned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchTags");
+	push_char_array(L, s.m_rgchTags, 1025);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bTagsTruncated");
+	push_bool(L, s.m_bTagsTruncated);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_pchFileName");
+	push_char_array(L, s.m_pchFileName, 260);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nFileSize");
+	push_int32(L, s.m_nFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	push_int32(L, s.m_nPreviewFileSize);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchURL");
+	push_char_array(L, s.m_rgchURL, 256);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eFileType");
+	push_EWorkshopFileType(L, s.m_eFileType);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	push_bool(L, s.m_bAcceptedForUse);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageGetPublishedFileDetailsResult_t_array(lua_State* L, RemoteStorageGetPublishedFileDetailsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageGetPublishedFileDetailsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumerateWorkshopFilesResult_t(lua_State* L, RemoteStorageEnumerateWorkshopFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgScore");
+	push_float_array(L, s.m_rgScore, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppId");
+	push_AppId_t(L, s.m_nAppId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unStartIndex");
+	push_uint32(L, s.m_unStartIndex);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateWorkshopFilesResult_t_array(lua_State* L, RemoteStorageEnumerateWorkshopFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateWorkshopFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageGetPublishedItemVoteDetailsResult_t(lua_State* L, RemoteStorageGetPublishedItemVoteDetailsResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unPublishedFileId");
+	push_PublishedFileId_t(L, s.m_unPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nVotesFor");
+	push_int32(L, s.m_nVotesFor);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nVotesAgainst");
+	push_int32(L, s.m_nVotesAgainst);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nReports");
+	push_int32(L, s.m_nReports);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_fScore");
+	push_float(L, s.m_fScore);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageGetPublishedItemVoteDetailsResult_t_array(lua_State* L, RemoteStorageGetPublishedItemVoteDetailsResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageGetPublishedItemVoteDetailsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileSubscribed_t(lua_State* L, RemoteStoragePublishedFileSubscribed_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileSubscribed_t_array(lua_State* L, RemoteStoragePublishedFileSubscribed_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileSubscribed_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileUnsubscribed_t(lua_State* L, RemoteStoragePublishedFileUnsubscribed_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileUnsubscribed_t_array(lua_State* L, RemoteStoragePublishedFileUnsubscribed_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileUnsubscribed_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileDeleted_t(lua_State* L, RemoteStoragePublishedFileDeleted_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileDeleted_t_array(lua_State* L, RemoteStoragePublishedFileDeleted_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileDeleted_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageUpdateUserPublishedItemVoteResult_t(lua_State* L, RemoteStorageUpdateUserPublishedItemVoteResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageUpdateUserPublishedItemVoteResult_t_array(lua_State* L, RemoteStorageUpdateUserPublishedItemVoteResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageUpdateUserPublishedItemVoteResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageUserVoteDetails_t(lua_State* L, RemoteStorageUserVoteDetails_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eVote");
+	push_EWorkshopVote(L, s.m_eVote);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageUserVoteDetails_t_array(lua_State* L, RemoteStorageUserVoteDetails_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageUserVoteDetails_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t(lua_State* L, RemoteStorageEnumerateUserSharedWorkshopFilesResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t_array(lua_State* L, RemoteStorageEnumerateUserSharedWorkshopFilesResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageSetUserPublishedFileActionResult_t(lua_State* L, RemoteStorageSetUserPublishedFileActionResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eAction");
+	push_EWorkshopFileAction(L, s.m_eAction);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageSetUserPublishedFileActionResult_t_array(lua_State* L, RemoteStorageSetUserPublishedFileActionResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageSetUserPublishedFileActionResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(lua_State* L, RemoteStorageEnumeratePublishedFilesByUserActionResult_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eAction");
+	push_EWorkshopFileAction(L, s.m_eAction);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nResultsReturned");
+	push_int32(L, s.m_nResultsReturned);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nTotalResultCount");
+	push_int32(L, s.m_nTotalResultCount);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	push_PublishedFileId_t_array(L, s.m_rgPublishedFileId, 50);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgRTimeUpdated");
+	push_uint32_array(L, s.m_rgRTimeUpdated, 50);
+	lua_settable(L, -3);
+}
+static void push_RemoteStorageEnumeratePublishedFilesByUserActionResult_t_array(lua_State* L, RemoteStorageEnumeratePublishedFilesByUserActionResult_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishFileProgress_t(lua_State* L, RemoteStoragePublishFileProgress_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_dPercentFile");
+	push_double(L, s.m_dPercentFile);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bPreview");
+	push_bool(L, s.m_bPreview);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishFileProgress_t_array(lua_State* L, RemoteStoragePublishFileProgress_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishFileProgress_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_RemoteStoragePublishedFileUpdated_t(lua_State* L, RemoteStoragePublishedFileUpdated_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_ulUnused");
+	push_uint64(L, s.m_ulUnused);
+	lua_settable(L, -3);
+}
+static void push_RemoteStoragePublishedFileUpdated_t_array(lua_State* L, RemoteStoragePublishedFileUpdated_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_RemoteStoragePublishedFileUpdated_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -2014,29 +3514,14 @@ static void push_RemoteStorageFileReadAsyncComplete_t_array(lua_State* L, Remote
 		lua_settable(L, -3);
 	}
 }
-static void push_LeaderboardEntry_t(lua_State* L, LeaderboardEntry_t s) {
+static void push_RemoteStorageLocalFileChange_t(lua_State* L, RemoteStorageLocalFileChange_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "m_steamIDUser");
-	push_CSteamID(L, s.m_steamIDUser);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nGlobalRank");
-	push_int32(L, s.m_nGlobalRank);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nScore");
-	push_int32(L, s.m_nScore);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_cDetails");
-	push_int32(L, s.m_cDetails);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_hUGC");
-	push_UGCHandle_t(L, s.m_hUGC);
-	lua_settable(L, -3);
 }
-static void push_LeaderboardEntry_t_array(lua_State* L, LeaderboardEntry_t arr[], unsigned int size) {
+static void push_RemoteStorageLocalFileChange_t_array(lua_State* L, RemoteStorageLocalFileChange_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_LeaderboardEntry_t(L, arr[i]);
+		push_RemoteStorageLocalFileChange_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -2325,6 +3810,17 @@ static void push_RegisterActivationCodeResponse_t_array(lua_State* L, RegisterAc
 		lua_settable(L, -3);
 	}
 }
+static void push_NewUrlLaunchParameters_t(lua_State* L, NewUrlLaunchParameters_t s) {
+	lua_newtable(L);
+}
+static void push_NewUrlLaunchParameters_t_array(lua_State* L, NewUrlLaunchParameters_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_NewUrlLaunchParameters_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_AppProofOfPurchaseKeyResponse_t(lua_State* L, AppProofOfPurchaseKeyResponse_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eResult");
@@ -2371,38 +3867,26 @@ static void push_FileDetailsResult_t_array(lua_State* L, FileDetailsResult_t arr
 		lua_settable(L, -3);
 	}
 }
-static void push_P2PSessionState_t(lua_State* L, P2PSessionState_t s) {
+static void push_TimedTrialStatus_t(lua_State* L, TimedTrialStatus_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "m_bConnectionActive");
-	push_uint8(L, s.m_bConnectionActive);
+	lua_pushstring(L, "m_unAppID");
+	push_AppId_t(L, s.m_unAppID);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_bConnecting");
-	push_uint8(L, s.m_bConnecting);
+	lua_pushstring(L, "m_bIsOffline");
+	push_bool(L, s.m_bIsOffline);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_eP2PSessionError");
-	push_uint8(L, s.m_eP2PSessionError);
+	lua_pushstring(L, "m_unSecondsAllowed");
+	push_uint32(L, s.m_unSecondsAllowed);
 	lua_settable(L, -3);
-	lua_pushstring(L, "m_bUsingRelay");
-	push_uint8(L, s.m_bUsingRelay);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nBytesQueuedForSend");
-	push_int32(L, s.m_nBytesQueuedForSend);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nPacketsQueuedForSend");
-	push_int32(L, s.m_nPacketsQueuedForSend);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nRemoteIP");
-	push_uint32(L, s.m_nRemoteIP);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nRemotePort");
-	push_uint16(L, s.m_nRemotePort);
+	lua_pushstring(L, "m_unSecondsPlayed");
+	push_uint32(L, s.m_unSecondsPlayed);
 	lua_settable(L, -3);
 }
-static void push_P2PSessionState_t_array(lua_State* L, P2PSessionState_t arr[], unsigned int size) {
+static void push_TimedTrialStatus_t_array(lua_State* L, TimedTrialStatus_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_P2PSessionState_t(L, arr[i]);
+		push_TimedTrialStatus_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -2477,6 +3961,28 @@ static void push_ScreenshotReady_t_array(lua_State* L, ScreenshotReady_t arr[], 
 		lua_settable(L, -3);
 	}
 }
+static void push_ScreenshotRequested_t(lua_State* L, ScreenshotRequested_t s) {
+	lua_newtable(L);
+}
+static void push_ScreenshotRequested_t_array(lua_State* L, ScreenshotRequested_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ScreenshotRequested_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_PlaybackStatusHasChanged_t(lua_State* L, PlaybackStatusHasChanged_t s) {
+	lua_newtable(L);
+}
+static void push_PlaybackStatusHasChanged_t_array(lua_State* L, PlaybackStatusHasChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_PlaybackStatusHasChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_VolumeHasChanged_t(lua_State* L, VolumeHasChanged_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_flNewVolume");
@@ -2488,6 +3994,94 @@ static void push_VolumeHasChanged_t_array(lua_State* L, VolumeHasChanged_t arr[]
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_VolumeHasChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerRemoteWillActivate_t(lua_State* L, MusicPlayerRemoteWillActivate_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerRemoteWillActivate_t_array(lua_State* L, MusicPlayerRemoteWillActivate_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerRemoteWillActivate_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerRemoteWillDeactivate_t(lua_State* L, MusicPlayerRemoteWillDeactivate_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerRemoteWillDeactivate_t_array(lua_State* L, MusicPlayerRemoteWillDeactivate_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerRemoteWillDeactivate_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerRemoteToFront_t(lua_State* L, MusicPlayerRemoteToFront_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerRemoteToFront_t_array(lua_State* L, MusicPlayerRemoteToFront_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerRemoteToFront_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWillQuit_t(lua_State* L, MusicPlayerWillQuit_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerWillQuit_t_array(lua_State* L, MusicPlayerWillQuit_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWillQuit_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsPlay_t(lua_State* L, MusicPlayerWantsPlay_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerWantsPlay_t_array(lua_State* L, MusicPlayerWantsPlay_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsPlay_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsPause_t(lua_State* L, MusicPlayerWantsPause_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerWantsPause_t_array(lua_State* L, MusicPlayerWantsPause_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsPause_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsPlayPrevious_t(lua_State* L, MusicPlayerWantsPlayPrevious_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerWantsPlayPrevious_t_array(lua_State* L, MusicPlayerWantsPlayPrevious_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsPlayPrevious_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_MusicPlayerWantsPlayNext_t(lua_State* L, MusicPlayerWantsPlayNext_t s) {
+	lua_newtable(L);
+}
+static void push_MusicPlayerWantsPlayNext_t_array(lua_State* L, MusicPlayerWantsPlayNext_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_MusicPlayerWantsPlayNext_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -2641,173 +4235,63 @@ static void push_HTTPRequestDataReceived_t_array(lua_State* L, HTTPRequestDataRe
 		lua_settable(L, -3);
 	}
 }
-static void push_ControllerAnalogActionData_t(lua_State* L, ControllerAnalogActionData_t s) {
+static void push_SteamInputDeviceConnected_t(lua_State* L, SteamInputDeviceConnected_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "eMode");
-	push_EControllerSourceMode(L, s.eMode);
-	lua_settable(L, -3);
-	lua_pushstring(L, "x");
-	push_float(L, s.x);
-	lua_settable(L, -3);
-	lua_pushstring(L, "y");
-	push_float(L, s.y);
-	lua_settable(L, -3);
-	lua_pushstring(L, "bActive");
-	push_bool(L, s.bActive);
+	lua_pushstring(L, "m_ulConnectedDeviceHandle");
+	push_InputHandle_t(L, s.m_ulConnectedDeviceHandle);
 	lua_settable(L, -3);
 }
-static void push_ControllerAnalogActionData_t_array(lua_State* L, ControllerAnalogActionData_t arr[], unsigned int size) {
+static void push_SteamInputDeviceConnected_t_array(lua_State* L, SteamInputDeviceConnected_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_ControllerAnalogActionData_t(L, arr[i]);
+		push_SteamInputDeviceConnected_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
-static void push_ControllerDigitalActionData_t(lua_State* L, ControllerDigitalActionData_t s) {
+static void push_SteamInputDeviceDisconnected_t(lua_State* L, SteamInputDeviceDisconnected_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "bState");
-	push_bool(L, s.bState);
-	lua_settable(L, -3);
-	lua_pushstring(L, "bActive");
-	push_bool(L, s.bActive);
+	lua_pushstring(L, "m_ulDisconnectedDeviceHandle");
+	push_InputHandle_t(L, s.m_ulDisconnectedDeviceHandle);
 	lua_settable(L, -3);
 }
-static void push_ControllerDigitalActionData_t_array(lua_State* L, ControllerDigitalActionData_t arr[], unsigned int size) {
+static void push_SteamInputDeviceDisconnected_t_array(lua_State* L, SteamInputDeviceDisconnected_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_ControllerDigitalActionData_t(L, arr[i]);
+		push_SteamInputDeviceDisconnected_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
-static void push_ControllerMotionData_t(lua_State* L, ControllerMotionData_t s) {
+static void push_SteamInputConfigurationLoaded_t(lua_State* L, SteamInputConfigurationLoaded_t s) {
 	lua_newtable(L);
-	lua_pushstring(L, "rotQuatX");
-	push_float(L, s.rotQuatX);
+	lua_pushstring(L, "m_unAppID");
+	push_AppId_t(L, s.m_unAppID);
 	lua_settable(L, -3);
-	lua_pushstring(L, "rotQuatY");
-	push_float(L, s.rotQuatY);
+	lua_pushstring(L, "m_ulDeviceHandle");
+	push_InputHandle_t(L, s.m_ulDeviceHandle);
 	lua_settable(L, -3);
-	lua_pushstring(L, "rotQuatZ");
-	push_float(L, s.rotQuatZ);
+	lua_pushstring(L, "m_ulMappingCreator");
+	push_CSteamID(L, s.m_ulMappingCreator);
 	lua_settable(L, -3);
-	lua_pushstring(L, "rotQuatW");
-	push_float(L, s.rotQuatW);
+	lua_pushstring(L, "m_unMajorRevision");
+	push_uint32(L, s.m_unMajorRevision);
 	lua_settable(L, -3);
-	lua_pushstring(L, "posAccelX");
-	push_float(L, s.posAccelX);
+	lua_pushstring(L, "m_unMinorRevision");
+	push_uint32(L, s.m_unMinorRevision);
 	lua_settable(L, -3);
-	lua_pushstring(L, "posAccelY");
-	push_float(L, s.posAccelY);
+	lua_pushstring(L, "m_bUsesSteamInputAPI");
+	push_bool(L, s.m_bUsesSteamInputAPI);
 	lua_settable(L, -3);
-	lua_pushstring(L, "posAccelZ");
-	push_float(L, s.posAccelZ);
-	lua_settable(L, -3);
-	lua_pushstring(L, "rotVelX");
-	push_float(L, s.rotVelX);
-	lua_settable(L, -3);
-	lua_pushstring(L, "rotVelY");
-	push_float(L, s.rotVelY);
-	lua_settable(L, -3);
-	lua_pushstring(L, "rotVelZ");
-	push_float(L, s.rotVelZ);
+	lua_pushstring(L, "m_bUsesGamepadAPI");
+	push_bool(L, s.m_bUsesGamepadAPI);
 	lua_settable(L, -3);
 }
-static void push_ControllerMotionData_t_array(lua_State* L, ControllerMotionData_t arr[], unsigned int size) {
+static void push_SteamInputConfigurationLoaded_t_array(lua_State* L, SteamInputConfigurationLoaded_t arr[], unsigned int size) {
 	lua_newtable(L);
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
-		push_ControllerMotionData_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
-static void push_SteamUGCDetails_t(lua_State* L, SteamUGCDetails_t s) {
-	lua_newtable(L);
-	lua_pushstring(L, "m_nPublishedFileId");
-	push_PublishedFileId_t(L, s.m_nPublishedFileId);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_eResult");
-	push_EResult(L, s.m_eResult);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_eFileType");
-	push_EWorkshopFileType(L, s.m_eFileType);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nCreatorAppID");
-	push_AppId_t(L, s.m_nCreatorAppID);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nConsumerAppID");
-	push_AppId_t(L, s.m_nConsumerAppID);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_rgchTitle");
-	push_char_array(L, s.m_rgchTitle, 129);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_rgchDescription");
-	push_char_array(L, s.m_rgchDescription, 8000);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_ulSteamIDOwner");
-	push_uint64(L, s.m_ulSteamIDOwner);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_rtimeCreated");
-	push_uint32(L, s.m_rtimeCreated);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_rtimeUpdated");
-	push_uint32(L, s.m_rtimeUpdated);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_rtimeAddedToUserList");
-	push_uint32(L, s.m_rtimeAddedToUserList);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_eVisibility");
-	push_ERemoteStoragePublishedFileVisibility(L, s.m_eVisibility);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_bBanned");
-	push_bool(L, s.m_bBanned);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_bAcceptedForUse");
-	push_bool(L, s.m_bAcceptedForUse);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_bTagsTruncated");
-	push_bool(L, s.m_bTagsTruncated);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_rgchTags");
-	push_char_array(L, s.m_rgchTags, 1025);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_hFile");
-	push_UGCHandle_t(L, s.m_hFile);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_hPreviewFile");
-	push_UGCHandle_t(L, s.m_hPreviewFile);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_pchFileName");
-	push_char_array(L, s.m_pchFileName, 260);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nFileSize");
-	push_int32(L, s.m_nFileSize);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_nPreviewFileSize");
-	push_int32(L, s.m_nPreviewFileSize);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_rgchURL");
-	push_char_array(L, s.m_rgchURL, 256);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_unVotesUp");
-	push_uint32(L, s.m_unVotesUp);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_unVotesDown");
-	push_uint32(L, s.m_unVotesDown);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_flScore");
-	push_float(L, s.m_flScore);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_unNumChildren");
-	push_uint32(L, s.m_unNumChildren);
-	lua_settable(L, -3);
-}
-static void push_SteamUGCDetails_t_array(lua_State* L, SteamUGCDetails_t arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_SteamUGCDetails_t(L, arr[i]);
+		push_SteamInputConfigurationLoaded_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -2827,6 +4311,9 @@ static void push_SteamUGCQueryCompleted_t(lua_State* L, SteamUGCQueryCompleted_t
 	lua_settable(L, -3);
 	lua_pushstring(L, "m_bCachedData");
 	push_bool(L, s.m_bCachedData);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rgchNextCursor");
+	push_char_array(L, s.m_rgchNextCursor, 256);
 	lua_settable(L, -3);
 }
 static void push_SteamUGCQueryCompleted_t_array(lua_State* L, SteamUGCQueryCompleted_t arr[], unsigned int size) {
@@ -2891,6 +4378,23 @@ static void push_SubmitItemUpdateResult_t_array(lua_State* L, SubmitItemUpdateRe
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_SubmitItemUpdateResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_ItemInstalled_t(lua_State* L, ItemInstalled_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_unAppID");
+	push_AppId_t(L, s.m_unAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nPublishedFileId");
+	push_PublishedFileId_t(L, s.m_nPublishedFileId);
+	lua_settable(L, -3);
+}
+static void push_ItemInstalled_t_array(lua_State* L, ItemInstalled_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_ItemInstalled_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -3131,10 +4635,56 @@ static void push_DeleteItemResult_t_array(lua_State* L, DeleteItemResult_t arr[]
 		lua_settable(L, -3);
 	}
 }
+static void push_UserSubscribedItemsListChanged_t(lua_State* L, UserSubscribedItemsListChanged_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+}
+static void push_UserSubscribedItemsListChanged_t_array(lua_State* L, UserSubscribedItemsListChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_UserSubscribedItemsListChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_WorkshopEULAStatus_t(lua_State* L, WorkshopEULAStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eResult");
+	push_EResult(L, s.m_eResult);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_nAppID");
+	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_unVersion");
+	push_uint32(L, s.m_unVersion);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_rtAction");
+	push_RTime32(L, s.m_rtAction);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bAccepted");
+	push_bool(L, s.m_bAccepted);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bNeedsAction");
+	push_bool(L, s.m_bNeedsAction);
+	lua_settable(L, -3);
+}
+static void push_WorkshopEULAStatus_t_array(lua_State* L, WorkshopEULAStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_WorkshopEULAStatus_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
 static void push_SteamAppInstalled_t(lua_State* L, SteamAppInstalled_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_nAppID");
 	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iInstallFolderIndex");
+	push_int(L, s.m_iInstallFolderIndex);
 	lua_settable(L, -3);
 }
 static void push_SteamAppInstalled_t_array(lua_State* L, SteamAppInstalled_t arr[], unsigned int size) {
@@ -3149,6 +4699,9 @@ static void push_SteamAppUninstalled_t(lua_State* L, SteamAppUninstalled_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_nAppID");
 	push_AppId_t(L, s.m_nAppID);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_iInstallFolderIndex");
+	push_int(L, s.m_iInstallFolderIndex);
 	lua_settable(L, -3);
 }
 static void push_SteamAppUninstalled_t_array(lua_State* L, SteamAppUninstalled_t arr[], unsigned int size) {
@@ -3544,8 +5097,8 @@ static void push_HTML_NewWindow_t(lua_State* L, HTML_NewWindow_t s) {
 	lua_pushstring(L, "unTall");
 	push_uint32(L, s.unTall);
 	lua_settable(L, -3);
-	lua_pushstring(L, "unNewWindow_BrowserHandle");
-	push_HHTMLBrowser(L, s.unNewWindow_BrowserHandle);
+	lua_pushstring(L, "unNewWindow_BrowserHandle_IGNORE");
+	push_HHTMLBrowser(L, s.unNewWindow_BrowserHandle_IGNORE);
 	lua_settable(L, -3);
 }
 static void push_HTML_NewWindow_t_array(lua_State* L, HTML_NewWindow_t arr[], unsigned int size) {
@@ -3655,29 +5208,6 @@ static void push_HTML_BrowserRestarted_t_array(lua_State* L, HTML_BrowserRestart
 		lua_settable(L, -3);
 	}
 }
-static void push_SteamItemDetails_t(lua_State* L, SteamItemDetails_t s) {
-	lua_newtable(L);
-	lua_pushstring(L, "m_itemId");
-	push_SteamItemInstanceID_t(L, s.m_itemId);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_iDefinition");
-	push_SteamItemDef_t(L, s.m_iDefinition);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_unQuantity");
-	push_uint16(L, s.m_unQuantity);
-	lua_settable(L, -3);
-	lua_pushstring(L, "m_unFlags");
-	push_uint16(L, s.m_unFlags);
-	lua_settable(L, -3);
-}
-static void push_SteamItemDetails_t_array(lua_State* L, SteamItemDetails_t arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_SteamItemDetails_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
 static void push_SteamInventoryResultReady_t(lua_State* L, SteamInventoryResultReady_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_handle");
@@ -3706,6 +5236,17 @@ static void push_SteamInventoryFullUpdate_t_array(lua_State* L, SteamInventoryFu
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_SteamInventoryFullUpdate_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamInventoryDefinitionUpdate_t(lua_State* L, SteamInventoryDefinitionUpdate_t s) {
+	lua_newtable(L);
+}
+static void push_SteamInventoryDefinitionUpdate_t_array(lua_State* L, SteamInventoryDefinitionUpdate_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamInventoryDefinitionUpdate_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -3769,20 +5310,6 @@ static void push_SteamInventoryRequestPricesResult_t_array(lua_State* L, SteamIn
 		lua_settable(L, -3);
 	}
 }
-static void push_BroadcastUploadStop_t(lua_State* L, BroadcastUploadStop_t s) {
-	lua_newtable(L);
-	lua_pushstring(L, "m_eResult");
-	push_EBroadcastUploadResult(L, s.m_eResult);
-	lua_settable(L, -3);
-}
-static void push_BroadcastUploadStop_t_array(lua_State* L, BroadcastUploadStop_t arr[], unsigned int size) {
-	lua_newtable(L);
-	for(int i=1; i <= size; i++) {
-		lua_pushnumber(L, i);
-		push_BroadcastUploadStop_t(L, arr[i]);
-		lua_settable(L, -3);
-	}
-}
 static void push_GetVideoURLResult_t(lua_State* L, GetVideoURLResult_t s) {
 	lua_newtable(L);
 	lua_pushstring(L, "m_eResult");
@@ -3817,6 +5344,136 @@ static void push_GetOPFSettingsResult_t_array(lua_State* L, GetOPFSettingsResult
 	for(int i=1; i <= size; i++) {
 		lua_pushnumber(L, i);
 		push_GetOPFSettingsResult_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamParentalSettingsChanged_t(lua_State* L, SteamParentalSettingsChanged_t s) {
+	lua_newtable(L);
+}
+static void push_SteamParentalSettingsChanged_t_array(lua_State* L, SteamParentalSettingsChanged_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamParentalSettingsChanged_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamRemotePlaySessionConnected_t(lua_State* L, SteamRemotePlaySessionConnected_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_unSessionID");
+	push_RemotePlaySessionID_t(L, s.m_unSessionID);
+	lua_settable(L, -3);
+}
+static void push_SteamRemotePlaySessionConnected_t_array(lua_State* L, SteamRemotePlaySessionConnected_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamRemotePlaySessionConnected_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamRemotePlaySessionDisconnected_t(lua_State* L, SteamRemotePlaySessionDisconnected_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_unSessionID");
+	push_RemotePlaySessionID_t(L, s.m_unSessionID);
+	lua_settable(L, -3);
+}
+static void push_SteamRemotePlaySessionDisconnected_t_array(lua_State* L, SteamRemotePlaySessionDisconnected_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamRemotePlaySessionDisconnected_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetworkingMessagesSessionRequest_t(lua_State* L, SteamNetworkingMessagesSessionRequest_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_identityRemote");
+	push_SteamNetworkingIdentity(L, s.m_identityRemote);
+	lua_settable(L, -3);
+}
+static void push_SteamNetworkingMessagesSessionRequest_t_array(lua_State* L, SteamNetworkingMessagesSessionRequest_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetworkingMessagesSessionRequest_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetworkingMessagesSessionFailed_t(lua_State* L, SteamNetworkingMessagesSessionFailed_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_info");
+	push_SteamNetConnectionInfo_t(L, s.m_info);
+	lua_settable(L, -3);
+}
+static void push_SteamNetworkingMessagesSessionFailed_t_array(lua_State* L, SteamNetworkingMessagesSessionFailed_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetworkingMessagesSessionFailed_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetConnectionStatusChangedCallback_t(lua_State* L, SteamNetConnectionStatusChangedCallback_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_hConn");
+	push_HSteamNetConnection(L, s.m_hConn);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_info");
+	push_SteamNetConnectionInfo_t(L, s.m_info);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eOldState");
+	push_ESteamNetworkingConnectionState(L, s.m_eOldState);
+	lua_settable(L, -3);
+}
+static void push_SteamNetConnectionStatusChangedCallback_t_array(lua_State* L, SteamNetConnectionStatusChangedCallback_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetConnectionStatusChangedCallback_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamNetAuthenticationStatus_t(lua_State* L, SteamNetAuthenticationStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eAvail");
+	push_ESteamNetworkingAvailability(L, s.m_eAvail);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_debugMsg");
+	push_char_array(L, s.m_debugMsg, 256);
+	lua_settable(L, -3);
+}
+static void push_SteamNetAuthenticationStatus_t_array(lua_State* L, SteamNetAuthenticationStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamNetAuthenticationStatus_t(L, arr[i]);
+		lua_settable(L, -3);
+	}
+}
+static void push_SteamRelayNetworkStatus_t(lua_State* L, SteamRelayNetworkStatus_t s) {
+	lua_newtable(L);
+	lua_pushstring(L, "m_eAvail");
+	push_ESteamNetworkingAvailability(L, s.m_eAvail);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_bPingMeasurementInProgress");
+	push_int(L, s.m_bPingMeasurementInProgress);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eAvailNetworkConfig");
+	push_ESteamNetworkingAvailability(L, s.m_eAvailNetworkConfig);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_eAvailAnyRelay");
+	push_ESteamNetworkingAvailability(L, s.m_eAvailAnyRelay);
+	lua_settable(L, -3);
+	lua_pushstring(L, "m_debugMsg");
+	push_char_array(L, s.m_debugMsg, 256);
+	lua_settable(L, -3);
+}
+static void push_SteamRelayNetworkStatus_t_array(lua_State* L, SteamRelayNetworkStatus_t arr[], unsigned int size) {
+	lua_newtable(L);
+	for(int i=1; i <= size; i++) {
+		lua_pushnumber(L, i);
+		push_SteamRelayNetworkStatus_t(L, arr[i]);
 		lua_settable(L, -3);
 	}
 }
@@ -4277,58 +5934,6 @@ static void check_uint32_array(lua_State* L, int index, uint32 * arr, unsigned i
 		arr[i] = check_uint32(L, -1);
 	}
 }
-static PackageId_t check_PackageId_t(lua_State* L, int index) {
-	if(lua_isnumber(L, index)) {
-		return (PackageId_t)luaL_checknumber(L, index);
-	}
-	return (PackageId_t)0;
-}
-static void check_PackageId_t_array(lua_State* L, int index, PackageId_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_PackageId_t(L, -1);
-	}
-}
-static BundleId_t check_BundleId_t(lua_State* L, int index) {
-	if(lua_isnumber(L, index)) {
-		return (BundleId_t)luaL_checknumber(L, index);
-	}
-	return (BundleId_t)0;
-}
-static void check_BundleId_t_array(lua_State* L, int index, BundleId_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_BundleId_t(L, -1);
-	}
-}
 static AppId_t check_AppId_t(lua_State* L, int index) {
 	if(lua_isnumber(L, index)) {
 		return (AppId_t)luaL_checknumber(L, index);
@@ -4353,32 +5958,6 @@ static void check_AppId_t_array(lua_State* L, int index, AppId_t * arr, unsigned
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		arr[i] = check_AppId_t(L, -1);
-	}
-}
-static PhysicalItemId_t check_PhysicalItemId_t(lua_State* L, int index) {
-	if(lua_isnumber(L, index)) {
-		return (PhysicalItemId_t)luaL_checknumber(L, index);
-	}
-	return (PhysicalItemId_t)0;
-}
-static void check_PhysicalItemId_t_array(lua_State* L, int index, PhysicalItemId_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_PhysicalItemId_t(L, -1);
 	}
 }
 static DepotId_t check_DepotId_t(lua_State* L, int index) {
@@ -4433,32 +6012,6 @@ static void check_RTime32_array(lua_State* L, int index, RTime32 * arr, unsigned
 		arr[i] = check_RTime32(L, -1);
 	}
 }
-static CellID_t check_CellID_t(lua_State* L, int index) {
-	if(lua_isnumber(L, index)) {
-		return (CellID_t)luaL_checknumber(L, index);
-	}
-	return (CellID_t)0;
-}
-static void check_CellID_t_array(lua_State* L, int index, CellID_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_CellID_t(L, -1);
-	}
-}
 static AccountID_t check_AccountID_t(lua_State* L, int index) {
 	if(lua_isnumber(L, index)) {
 		return (AccountID_t)luaL_checknumber(L, index);
@@ -4483,32 +6036,6 @@ static void check_AccountID_t_array(lua_State* L, int index, AccountID_t * arr, 
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		arr[i] = check_AccountID_t(L, -1);
-	}
-}
-static PartnerId_t check_PartnerId_t(lua_State* L, int index) {
-	if(lua_isnumber(L, index)) {
-		return (PartnerId_t)luaL_checknumber(L, index);
-	}
-	return (PartnerId_t)0;
-}
-static void check_PartnerId_t_array(lua_State* L, int index, PartnerId_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_PartnerId_t(L, -1);
 	}
 }
 static HAuthTicket check_HAuthTicket(lua_State* L, int index) {
@@ -4849,6 +6376,136 @@ static void check_SteamInventoryResult_t_array(lua_State* L, int index, SteamInv
 		arr[i] = check_SteamInventoryResult_t(L, -1);
 	}
 }
+static RemotePlaySessionID_t check_RemotePlaySessionID_t(lua_State* L, int index) {
+	if(lua_isnumber(L, index)) {
+		return (RemotePlaySessionID_t)luaL_checknumber(L, index);
+	}
+	return (RemotePlaySessionID_t)0;
+}
+static void check_RemotePlaySessionID_t_array(lua_State* L, int index, RemotePlaySessionID_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_RemotePlaySessionID_t(L, -1);
+	}
+}
+static HSteamNetConnection check_HSteamNetConnection(lua_State* L, int index) {
+	if(lua_isnumber(L, index)) {
+		return (HSteamNetConnection)luaL_checknumber(L, index);
+	}
+	return (HSteamNetConnection)0;
+}
+static void check_HSteamNetConnection_array(lua_State* L, int index, HSteamNetConnection * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HSteamNetConnection(L, -1);
+	}
+}
+static HSteamListenSocket check_HSteamListenSocket(lua_State* L, int index) {
+	if(lua_isnumber(L, index)) {
+		return (HSteamListenSocket)luaL_checknumber(L, index);
+	}
+	return (HSteamListenSocket)0;
+}
+static void check_HSteamListenSocket_array(lua_State* L, int index, HSteamListenSocket * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HSteamListenSocket(L, -1);
+	}
+}
+static HSteamNetPollGroup check_HSteamNetPollGroup(lua_State* L, int index) {
+	if(lua_isnumber(L, index)) {
+		return (HSteamNetPollGroup)luaL_checknumber(L, index);
+	}
+	return (HSteamNetPollGroup)0;
+}
+static void check_HSteamNetPollGroup_array(lua_State* L, int index, HSteamNetPollGroup * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_HSteamNetPollGroup(L, -1);
+	}
+}
+static SteamNetworkingPOPID check_SteamNetworkingPOPID(lua_State* L, int index) {
+	if(lua_isnumber(L, index)) {
+		return (SteamNetworkingPOPID)luaL_checknumber(L, index);
+	}
+	return (SteamNetworkingPOPID)0;
+}
+static void check_SteamNetworkingPOPID_array(lua_State* L, int index, SteamNetworkingPOPID * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamNetworkingPOPID(L, -1);
+	}
+}
 
 /*****************************
 * CHECK strings
@@ -4878,6 +6535,13 @@ static uint64 check_uint64(lua_State* L, int index) {
 	if(lua_isstring(L, index)) {
 		const char * s = luaL_checkstring(L, index);
 		return strtoull(s, NULL, 10);
+	}
+	return 0;
+}
+static int64_t check_int64_t(lua_State* L, int index) {
+	if(lua_isstring(L, index)) {
+		const char * s = luaL_checkstring(L, index);
+		return strtoll(s, NULL, 10);
 	}
 	return 0;
 }
@@ -4931,10 +6595,10 @@ static void check_ulint64_array(lua_State* L, int index, ulint64 * arr, unsigned
 		arr[i] = check_ulint64(L, -1);
 	}
 }
-static GID_t check_GID_t(lua_State* L, int index) {
-	return (GID_t)check_uint64(L, index);
+static uintp check_uintp(lua_State* L, int index) {
+	return (uintp)check_uint64(L, index);
 }
-static void check_GID_t_array(lua_State* L, int index, GID_t * arr, unsigned int size) {
+static void check_uintp_array(lua_State* L, int index, uintp * arr, unsigned int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -4951,53 +6615,7 @@ static void check_GID_t_array(lua_State* L, int index, GID_t * arr, unsigned int
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		arr[i] = check_GID_t(L, -1);
-	}
-}
-static JobID_t check_JobID_t(lua_State* L, int index) {
-	return (JobID_t)check_uint64(L, index);
-}
-static void check_JobID_t_array(lua_State* L, int index, JobID_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_JobID_t(L, -1);
-	}
-}
-static AssetClassId_t check_AssetClassId_t(lua_State* L, int index) {
-	return (AssetClassId_t)check_uint64(L, index);
-}
-static void check_AssetClassId_t_array(lua_State* L, int index, AssetClassId_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_AssetClassId_t(L, -1);
+		arr[i] = check_uintp(L, -1);
 	}
 }
 static SteamAPICall_t check_SteamAPICall_t(lua_State* L, int index) {
@@ -5023,10 +6641,10 @@ static void check_SteamAPICall_t_array(lua_State* L, int index, SteamAPICall_t *
 		arr[i] = check_SteamAPICall_t(L, -1);
 	}
 }
-static ManifestId_t check_ManifestId_t(lua_State* L, int index) {
-	return (ManifestId_t)check_uint64(L, index);
+static PartyBeaconID_t check_PartyBeaconID_t(lua_State* L, int index) {
+	return (PartyBeaconID_t)check_uint64(L, index);
 }
-static void check_ManifestId_t_array(lua_State* L, int index, ManifestId_t * arr, unsigned int size) {
+static void check_PartyBeaconID_t_array(lua_State* L, int index, PartyBeaconID_t * arr, unsigned int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -5043,30 +6661,7 @@ static void check_ManifestId_t_array(lua_State* L, int index, ManifestId_t * arr
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		arr[i] = check_ManifestId_t(L, -1);
-	}
-}
-static SiteId_t check_SiteId_t(lua_State* L, int index) {
-	return (SiteId_t)check_uint64(L, index);
-}
-static void check_SiteId_t_array(lua_State* L, int index, SiteId_t * arr, unsigned int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		arr[i] = check_SiteId_t(L, -1);
+		arr[i] = check_PartyBeaconID_t(L, -1);
 	}
 }
 static UGCHandle_t check_UGCHandle_t(lua_State* L, int index) {
@@ -5205,6 +6800,98 @@ static void check_SteamLeaderboardEntries_t_array(lua_State* L, int index, Steam
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		arr[i] = check_SteamLeaderboardEntries_t(L, -1);
+	}
+}
+static InputHandle_t check_InputHandle_t(lua_State* L, int index) {
+	return (InputHandle_t)check_uint64(L, index);
+}
+static void check_InputHandle_t_array(lua_State* L, int index, InputHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_InputHandle_t(L, -1);
+	}
+}
+static InputActionSetHandle_t check_InputActionSetHandle_t(lua_State* L, int index) {
+	return (InputActionSetHandle_t)check_uint64(L, index);
+}
+static void check_InputActionSetHandle_t_array(lua_State* L, int index, InputActionSetHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_InputActionSetHandle_t(L, -1);
+	}
+}
+static InputDigitalActionHandle_t check_InputDigitalActionHandle_t(lua_State* L, int index) {
+	return (InputDigitalActionHandle_t)check_uint64(L, index);
+}
+static void check_InputDigitalActionHandle_t_array(lua_State* L, int index, InputDigitalActionHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_InputDigitalActionHandle_t(L, -1);
+	}
+}
+static InputAnalogActionHandle_t check_InputAnalogActionHandle_t(lua_State* L, int index) {
+	return (InputAnalogActionHandle_t)check_uint64(L, index);
+}
+static void check_InputAnalogActionHandle_t_array(lua_State* L, int index, InputAnalogActionHandle_t * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_InputAnalogActionHandle_t(L, -1);
 	}
 }
 static ControllerHandle_t check_ControllerHandle_t(lua_State* L, int index) {
@@ -5414,10 +7101,59 @@ static void check_lint64_array(lua_State* L, int index, lint64 * arr, unsigned i
 		arr[i] = check_lint64(L, -1);
 	}
 }
+static intp check_intp(lua_State* L, int index) {
+	return (intp)check_int64(L, index);
+}
+static void check_intp_array(lua_State* L, int index, intp * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_intp(L, -1);
+	}
+}
+static SteamNetworkingMicroseconds check_SteamNetworkingMicroseconds(lua_State* L, int index) {
+	return (SteamNetworkingMicroseconds)check_int64(L, index);
+}
+static void check_SteamNetworkingMicroseconds_array(lua_State* L, int index, SteamNetworkingMicroseconds * arr, unsigned int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		arr[i] = check_SteamNetworkingMicroseconds(L, -1);
+	}
+}
 
 /*****************************
 * CHECK enums
 ******************************/
+static ESteamIPType check_ESteamIPType(lua_State* L, int index) {
+	return ESteamIPType(luaL_checkinteger(L, index));
+}
 static EUniverse check_EUniverse(lua_State* L, int index) {
 	return EUniverse(luaL_checkinteger(L, index));
 }
@@ -5442,18 +7178,6 @@ static EUserHasLicenseForAppResult check_EUserHasLicenseForAppResult(lua_State* 
 static EAccountType check_EAccountType(lua_State* L, int index) {
 	return EAccountType(luaL_checkinteger(L, index));
 }
-static EAppReleaseState check_EAppReleaseState(lua_State* L, int index) {
-	return EAppReleaseState(luaL_checkinteger(L, index));
-}
-static EAppOwnershipFlags check_EAppOwnershipFlags(lua_State* L, int index) {
-	return EAppOwnershipFlags(luaL_checkinteger(L, index));
-}
-static EAppType check_EAppType(lua_State* L, int index) {
-	return EAppType(luaL_checkinteger(L, index));
-}
-static ESteamUserStatType check_ESteamUserStatType(lua_State* L, int index) {
-	return ESteamUserStatType(luaL_checkinteger(L, index));
-}
 static EChatEntryType check_EChatEntryType(lua_State* L, int index) {
 	return EChatEntryType(luaL_checkinteger(L, index));
 }
@@ -5463,20 +7187,35 @@ static EChatRoomEnterResponse check_EChatRoomEnterResponse(lua_State* L, int ind
 static EChatSteamIDInstanceFlags check_EChatSteamIDInstanceFlags(lua_State* L, int index) {
 	return EChatSteamIDInstanceFlags(luaL_checkinteger(L, index));
 }
-static EMarketingMessageFlags check_EMarketingMessageFlags(lua_State* L, int index) {
-	return EMarketingMessageFlags(luaL_checkinteger(L, index));
-}
 static ENotificationPosition check_ENotificationPosition(lua_State* L, int index) {
 	return ENotificationPosition(luaL_checkinteger(L, index));
 }
 static EBroadcastUploadResult check_EBroadcastUploadResult(lua_State* L, int index) {
 	return EBroadcastUploadResult(luaL_checkinteger(L, index));
 }
-static ELaunchOptionType check_ELaunchOptionType(lua_State* L, int index) {
-	return ELaunchOptionType(luaL_checkinteger(L, index));
+static EMarketNotAllowedReasonFlags check_EMarketNotAllowedReasonFlags(lua_State* L, int index) {
+	return EMarketNotAllowedReasonFlags(luaL_checkinteger(L, index));
 }
-static EVRHMDType check_EVRHMDType(lua_State* L, int index) {
-	return EVRHMDType(luaL_checkinteger(L, index));
+static EDurationControlProgress check_EDurationControlProgress(lua_State* L, int index) {
+	return EDurationControlProgress(luaL_checkinteger(L, index));
+}
+static EDurationControlNotification check_EDurationControlNotification(lua_State* L, int index) {
+	return EDurationControlNotification(luaL_checkinteger(L, index));
+}
+static EDurationControlOnlineState check_EDurationControlOnlineState(lua_State* L, int index) {
+	return EDurationControlOnlineState(luaL_checkinteger(L, index));
+}
+static EGameSearchErrorCode_t check_EGameSearchErrorCode_t(lua_State* L, int index) {
+	return EGameSearchErrorCode_t(luaL_checkinteger(L, index));
+}
+static EPlayerResult_t check_EPlayerResult_t(lua_State* L, int index) {
+	return EPlayerResult_t(luaL_checkinteger(L, index));
+}
+static ESteamIPv6ConnectivityProtocol check_ESteamIPv6ConnectivityProtocol(lua_State* L, int index) {
+	return ESteamIPv6ConnectivityProtocol(luaL_checkinteger(L, index));
+}
+static ESteamIPv6ConnectivityState check_ESteamIPv6ConnectivityState(lua_State* L, int index) {
+	return ESteamIPv6ConnectivityState(luaL_checkinteger(L, index));
 }
 static EFriendRelationship check_EFriendRelationship(lua_State* L, int index) {
 	return EFriendRelationship(luaL_checkinteger(L, index));
@@ -5493,6 +7232,15 @@ static EUserRestriction check_EUserRestriction(lua_State* L, int index) {
 static EOverlayToStoreFlag check_EOverlayToStoreFlag(lua_State* L, int index) {
 	return EOverlayToStoreFlag(luaL_checkinteger(L, index));
 }
+static EActivateGameOverlayToWebPageMode check_EActivateGameOverlayToWebPageMode(lua_State* L, int index) {
+	return EActivateGameOverlayToWebPageMode(luaL_checkinteger(L, index));
+}
+static ECommunityProfileItemType check_ECommunityProfileItemType(lua_State* L, int index) {
+	return ECommunityProfileItemType(luaL_checkinteger(L, index));
+}
+static ECommunityProfileItemProperty check_ECommunityProfileItemProperty(lua_State* L, int index) {
+	return ECommunityProfileItemProperty(luaL_checkinteger(L, index));
+}
 static EPersonaChange check_EPersonaChange(lua_State* L, int index) {
 	return EPersonaChange(luaL_checkinteger(L, index));
 }
@@ -5504,6 +7252,12 @@ static EGamepadTextInputMode check_EGamepadTextInputMode(lua_State* L, int index
 }
 static EGamepadTextInputLineMode check_EGamepadTextInputLineMode(lua_State* L, int index) {
 	return EGamepadTextInputLineMode(luaL_checkinteger(L, index));
+}
+static EFloatingGamepadTextInputMode check_EFloatingGamepadTextInputMode(lua_State* L, int index) {
+	return EFloatingGamepadTextInputMode(luaL_checkinteger(L, index));
+}
+static ETextFilteringContext check_ETextFilteringContext(lua_State* L, int index) {
+	return ETextFilteringContext(luaL_checkinteger(L, index));
 }
 static ECheckFileSignature check_ECheckFileSignature(lua_State* L, int index) {
 	return ECheckFileSignature(luaL_checkinteger(L, index));
@@ -5523,6 +7277,12 @@ static ELobbyDistanceFilter check_ELobbyDistanceFilter(lua_State* L, int index) 
 static EChatMemberStateChange check_EChatMemberStateChange(lua_State* L, int index) {
 	return EChatMemberStateChange(luaL_checkinteger(L, index));
 }
+static ESteamPartyBeaconLocationType check_ESteamPartyBeaconLocationType(lua_State* L, int index) {
+	return ESteamPartyBeaconLocationType(luaL_checkinteger(L, index));
+}
+static ESteamPartyBeaconLocationData check_ESteamPartyBeaconLocationData(lua_State* L, int index) {
+	return ESteamPartyBeaconLocationData(luaL_checkinteger(L, index));
+}
 static ERemoteStoragePlatform check_ERemoteStoragePlatform(lua_State* L, int index) {
 	return ERemoteStoragePlatform(luaL_checkinteger(L, index));
 }
@@ -5532,8 +7292,26 @@ static ERemoteStoragePublishedFileVisibility check_ERemoteStoragePublishedFileVi
 static EWorkshopFileType check_EWorkshopFileType(lua_State* L, int index) {
 	return EWorkshopFileType(luaL_checkinteger(L, index));
 }
+static EWorkshopVote check_EWorkshopVote(lua_State* L, int index) {
+	return EWorkshopVote(luaL_checkinteger(L, index));
+}
+static EWorkshopFileAction check_EWorkshopFileAction(lua_State* L, int index) {
+	return EWorkshopFileAction(luaL_checkinteger(L, index));
+}
+static EWorkshopEnumerationType check_EWorkshopEnumerationType(lua_State* L, int index) {
+	return EWorkshopEnumerationType(luaL_checkinteger(L, index));
+}
+static EWorkshopVideoProvider check_EWorkshopVideoProvider(lua_State* L, int index) {
+	return EWorkshopVideoProvider(luaL_checkinteger(L, index));
+}
 static EUGCReadAction check_EUGCReadAction(lua_State* L, int index) {
 	return EUGCReadAction(luaL_checkinteger(L, index));
+}
+static ERemoteStorageLocalFileChange check_ERemoteStorageLocalFileChange(lua_State* L, int index) {
+	return ERemoteStorageLocalFileChange(luaL_checkinteger(L, index));
+}
+static ERemoteStorageFilePathType check_ERemoteStorageFilePathType(lua_State* L, int index) {
+	return ERemoteStorageFilePathType(luaL_checkinteger(L, index));
 }
 static ELeaderboardDataRequest check_ELeaderboardDataRequest(lua_State* L, int index) {
 	return ELeaderboardDataRequest(luaL_checkinteger(L, index));
@@ -5574,23 +7352,47 @@ static EHTTPMethod check_EHTTPMethod(lua_State* L, int index) {
 static EHTTPStatusCode check_EHTTPStatusCode(lua_State* L, int index) {
 	return EHTTPStatusCode(luaL_checkinteger(L, index));
 }
+static EInputSourceMode check_EInputSourceMode(lua_State* L, int index) {
+	return EInputSourceMode(luaL_checkinteger(L, index));
+}
+static EInputActionOrigin check_EInputActionOrigin(lua_State* L, int index) {
+	return EInputActionOrigin(luaL_checkinteger(L, index));
+}
+static EXboxOrigin check_EXboxOrigin(lua_State* L, int index) {
+	return EXboxOrigin(luaL_checkinteger(L, index));
+}
 static ESteamControllerPad check_ESteamControllerPad(lua_State* L, int index) {
 	return ESteamControllerPad(luaL_checkinteger(L, index));
 }
-static EControllerSource check_EControllerSource(lua_State* L, int index) {
-	return EControllerSource(luaL_checkinteger(L, index));
+static EControllerHapticLocation check_EControllerHapticLocation(lua_State* L, int index) {
+	return EControllerHapticLocation(luaL_checkinteger(L, index));
 }
-static EControllerSourceMode check_EControllerSourceMode(lua_State* L, int index) {
-	return EControllerSourceMode(luaL_checkinteger(L, index));
+static EControllerHapticType check_EControllerHapticType(lua_State* L, int index) {
+	return EControllerHapticType(luaL_checkinteger(L, index));
+}
+static ESteamInputType check_ESteamInputType(lua_State* L, int index) {
+	return ESteamInputType(luaL_checkinteger(L, index));
+}
+static ESteamInputConfigurationEnableType check_ESteamInputConfigurationEnableType(lua_State* L, int index) {
+	return ESteamInputConfigurationEnableType(luaL_checkinteger(L, index));
+}
+static ESteamInputLEDFlag check_ESteamInputLEDFlag(lua_State* L, int index) {
+	return ESteamInputLEDFlag(luaL_checkinteger(L, index));
+}
+static ESteamInputGlyphSize check_ESteamInputGlyphSize(lua_State* L, int index) {
+	return ESteamInputGlyphSize(luaL_checkinteger(L, index));
+}
+static ESteamInputGlyphStyle check_ESteamInputGlyphStyle(lua_State* L, int index) {
+	return ESteamInputGlyphStyle(luaL_checkinteger(L, index));
+}
+static ESteamInputActionEventType check_ESteamInputActionEventType(lua_State* L, int index) {
+	return ESteamInputActionEventType(luaL_checkinteger(L, index));
 }
 static EControllerActionOrigin check_EControllerActionOrigin(lua_State* L, int index) {
 	return EControllerActionOrigin(luaL_checkinteger(L, index));
 }
 static ESteamControllerLEDFlag check_ESteamControllerLEDFlag(lua_State* L, int index) {
 	return ESteamControllerLEDFlag(luaL_checkinteger(L, index));
-}
-static ESteamInputType check_ESteamInputType(lua_State* L, int index) {
-	return ESteamInputType(luaL_checkinteger(L, index));
 }
 static EUGCMatchingUGCType check_EUGCMatchingUGCType(lua_State* L, int index) {
 	return EUGCMatchingUGCType(luaL_checkinteger(L, index));
@@ -5621,6 +7423,48 @@ static ESteamItemFlags check_ESteamItemFlags(lua_State* L, int index) {
 }
 static EParentalFeature check_EParentalFeature(lua_State* L, int index) {
 	return EParentalFeature(luaL_checkinteger(L, index));
+}
+static ESteamDeviceFormFactor check_ESteamDeviceFormFactor(lua_State* L, int index) {
+	return ESteamDeviceFormFactor(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingAvailability check_ESteamNetworkingAvailability(lua_State* L, int index) {
+	return ESteamNetworkingAvailability(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingIdentityType check_ESteamNetworkingIdentityType(lua_State* L, int index) {
+	return ESteamNetworkingIdentityType(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingFakeIPType check_ESteamNetworkingFakeIPType(lua_State* L, int index) {
+	return ESteamNetworkingFakeIPType(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingConnectionState check_ESteamNetworkingConnectionState(lua_State* L, int index) {
+	return ESteamNetworkingConnectionState(luaL_checkinteger(L, index));
+}
+static ESteamNetConnectionEnd check_ESteamNetConnectionEnd(lua_State* L, int index) {
+	return ESteamNetConnectionEnd(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingConfigScope check_ESteamNetworkingConfigScope(lua_State* L, int index) {
+	return ESteamNetworkingConfigScope(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingConfigDataType check_ESteamNetworkingConfigDataType(lua_State* L, int index) {
+	return ESteamNetworkingConfigDataType(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingConfigValue check_ESteamNetworkingConfigValue(lua_State* L, int index) {
+	return ESteamNetworkingConfigValue(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingGetConfigValueResult check_ESteamNetworkingGetConfigValueResult(lua_State* L, int index) {
+	return ESteamNetworkingGetConfigValueResult(luaL_checkinteger(L, index));
+}
+static ESteamNetworkingSocketsDebugOutputType check_ESteamNetworkingSocketsDebugOutputType(lua_State* L, int index) {
+	return ESteamNetworkingSocketsDebugOutputType(luaL_checkinteger(L, index));
+}
+static EServerMode check_EServerMode(lua_State* L, int index) {
+	return EServerMode(luaL_checkinteger(L, index));
+}
+static IPCFailure_t::EFailureType check_EFailureType(lua_State* L, int index) {
+	return IPCFailure_t::EFailureType(luaL_checkinteger(L, index));
+}
+static RequestPlayersForGameResultCallback_t::PlayerAcceptState_t check_PlayerAcceptState_t(lua_State* L, int index) {
+	return RequestPlayersForGameResultCallback_t::PlayerAcceptState_t(luaL_checkinteger(L, index));
 }
 
 /*****************************
@@ -5696,7 +7540,7 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
-static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_State* L, int index) {
+static SteamParamStringArray_t check_SteamParamStringArray_t(lua_State* L, int index) {
 	SteamParamStringArray_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		s.m_nNumStrings = 0;
@@ -5718,30 +7562,24 @@ static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_St
 	}
 	return s;
 }
-static ValvePackingSentinel_t check_ValvePackingSentinel_t(lua_State* L, int index) {
-	ValvePackingSentinel_t s;
+static SteamIPAddress_t check_SteamIPAddress_t(lua_State* L, int index) {
+	SteamIPAddress_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "m_u32");
+	lua_pushstring(L, "m_rgubIPv6");
 	lua_gettable(L, index);
-	s.m_u32 = check_uint32(L, -1);
-	lua_pushstring(L, "m_u64");
+	check_uint8_array(L, -1, s.m_rgubIPv6, 16);
+	lua_pushstring(L, "m_eType");
 	lua_gettable(L, index);
-	s.m_u64 = check_uint64(L, -1);
-	lua_pushstring(L, "m_u16");
-	lua_gettable(L, index);
-	s.m_u16 = check_uint16(L, -1);
-	lua_pushstring(L, "m_d");
-	lua_gettable(L, index);
-	s.m_d = check_double(L, -1);
+	s.m_eType = check_ESteamIPType(L, -1);
 	return s;
 }
 
-static void check_ValvePackingSentinel_t_array(lua_State* L, int index, ValvePackingSentinel_t *s, int size) {
+static void check_SteamIPAddress_t_array(lua_State* L, int index, SteamIPAddress_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -5758,7 +7596,855 @@ static void check_ValvePackingSentinel_t_array(lua_State* L, int index, ValvePac
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_ValvePackingSentinel_t(L, -1);
+		s[i] = check_SteamIPAddress_t(L, -1);
+	}
+}
+static FriendGameInfo_t check_FriendGameInfo_t(lua_State* L, int index) {
+	FriendGameInfo_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_gameID");
+	lua_gettable(L, index);
+	s.m_gameID = check_CGameID(L, -1);
+	lua_pushstring(L, "m_unGameIP");
+	lua_gettable(L, index);
+	s.m_unGameIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_usGamePort");
+	lua_gettable(L, index);
+	s.m_usGamePort = check_uint16(L, -1);
+	lua_pushstring(L, "m_usQueryPort");
+	lua_gettable(L, index);
+	s.m_usQueryPort = check_uint16(L, -1);
+	lua_pushstring(L, "m_steamIDLobby");
+	lua_gettable(L, index);
+	s.m_steamIDLobby = check_CSteamID(L, -1);
+	return s;
+}
+
+static void check_FriendGameInfo_t_array(lua_State* L, int index, FriendGameInfo_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FriendGameInfo_t(L, -1);
+	}
+}
+static MatchMakingKeyValuePair_t check_MatchMakingKeyValuePair_t(lua_State* L, int index) {
+	MatchMakingKeyValuePair_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_szKey");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szKey, 256);
+	lua_pushstring(L, "m_szValue");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szValue, 256);
+	return s;
+}
+
+static void check_MatchMakingKeyValuePair_t_array(lua_State* L, int index, MatchMakingKeyValuePair_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MatchMakingKeyValuePair_t(L, -1);
+	}
+}
+static SteamPartyBeaconLocation_t check_SteamPartyBeaconLocation_t(lua_State* L, int index) {
+	SteamPartyBeaconLocation_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eType");
+	lua_gettable(L, index);
+	s.m_eType = check_ESteamPartyBeaconLocationType(L, -1);
+	lua_pushstring(L, "m_ulLocationID");
+	lua_gettable(L, index);
+	s.m_ulLocationID = check_uint64(L, -1);
+	return s;
+}
+
+static void check_SteamPartyBeaconLocation_t_array(lua_State* L, int index, SteamPartyBeaconLocation_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamPartyBeaconLocation_t(L, -1);
+	}
+}
+static LeaderboardEntry_t check_LeaderboardEntry_t(lua_State* L, int index) {
+	LeaderboardEntry_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_steamIDUser");
+	lua_gettable(L, index);
+	s.m_steamIDUser = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_nGlobalRank");
+	lua_gettable(L, index);
+	s.m_nGlobalRank = check_int32(L, -1);
+	lua_pushstring(L, "m_nScore");
+	lua_gettable(L, index);
+	s.m_nScore = check_int32(L, -1);
+	lua_pushstring(L, "m_cDetails");
+	lua_gettable(L, index);
+	s.m_cDetails = check_int32(L, -1);
+	lua_pushstring(L, "m_hUGC");
+	lua_gettable(L, index);
+	s.m_hUGC = check_UGCHandle_t(L, -1);
+	return s;
+}
+
+static void check_LeaderboardEntry_t_array(lua_State* L, int index, LeaderboardEntry_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LeaderboardEntry_t(L, -1);
+	}
+}
+static P2PSessionState_t check_P2PSessionState_t(lua_State* L, int index) {
+	P2PSessionState_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_bConnectionActive");
+	lua_gettable(L, index);
+	s.m_bConnectionActive = check_uint8(L, -1);
+	lua_pushstring(L, "m_bConnecting");
+	lua_gettable(L, index);
+	s.m_bConnecting = check_uint8(L, -1);
+	lua_pushstring(L, "m_eP2PSessionError");
+	lua_gettable(L, index);
+	s.m_eP2PSessionError = check_uint8(L, -1);
+	lua_pushstring(L, "m_bUsingRelay");
+	lua_gettable(L, index);
+	s.m_bUsingRelay = check_uint8(L, -1);
+	lua_pushstring(L, "m_nBytesQueuedForSend");
+	lua_gettable(L, index);
+	s.m_nBytesQueuedForSend = check_int32(L, -1);
+	lua_pushstring(L, "m_nPacketsQueuedForSend");
+	lua_gettable(L, index);
+	s.m_nPacketsQueuedForSend = check_int32(L, -1);
+	lua_pushstring(L, "m_nRemoteIP");
+	lua_gettable(L, index);
+	s.m_nRemoteIP = check_uint32(L, -1);
+	lua_pushstring(L, "m_nRemotePort");
+	lua_gettable(L, index);
+	s.m_nRemotePort = check_uint16(L, -1);
+	return s;
+}
+
+static void check_P2PSessionState_t_array(lua_State* L, int index, P2PSessionState_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_P2PSessionState_t(L, -1);
+	}
+}
+static InputAnalogActionData_t check_InputAnalogActionData_t(lua_State* L, int index) {
+	InputAnalogActionData_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "eMode");
+	lua_gettable(L, index);
+	s.eMode = check_EInputSourceMode(L, -1);
+	lua_pushstring(L, "x");
+	lua_gettable(L, index);
+	s.x = check_float(L, -1);
+	lua_pushstring(L, "y");
+	lua_gettable(L, index);
+	s.y = check_float(L, -1);
+	lua_pushstring(L, "bActive");
+	lua_gettable(L, index);
+	s.bActive = check_bool(L, -1);
+	return s;
+}
+
+static void check_InputAnalogActionData_t_array(lua_State* L, int index, InputAnalogActionData_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_InputAnalogActionData_t(L, -1);
+	}
+}
+static InputDigitalActionData_t check_InputDigitalActionData_t(lua_State* L, int index) {
+	InputDigitalActionData_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "bState");
+	lua_gettable(L, index);
+	s.bState = check_bool(L, -1);
+	lua_pushstring(L, "bActive");
+	lua_gettable(L, index);
+	s.bActive = check_bool(L, -1);
+	return s;
+}
+
+static void check_InputDigitalActionData_t_array(lua_State* L, int index, InputDigitalActionData_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_InputDigitalActionData_t(L, -1);
+	}
+}
+static InputMotionData_t check_InputMotionData_t(lua_State* L, int index) {
+	InputMotionData_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "rotQuatX");
+	lua_gettable(L, index);
+	s.rotQuatX = check_float(L, -1);
+	lua_pushstring(L, "rotQuatY");
+	lua_gettable(L, index);
+	s.rotQuatY = check_float(L, -1);
+	lua_pushstring(L, "rotQuatZ");
+	lua_gettable(L, index);
+	s.rotQuatZ = check_float(L, -1);
+	lua_pushstring(L, "rotQuatW");
+	lua_gettable(L, index);
+	s.rotQuatW = check_float(L, -1);
+	lua_pushstring(L, "posAccelX");
+	lua_gettable(L, index);
+	s.posAccelX = check_float(L, -1);
+	lua_pushstring(L, "posAccelY");
+	lua_gettable(L, index);
+	s.posAccelY = check_float(L, -1);
+	lua_pushstring(L, "posAccelZ");
+	lua_gettable(L, index);
+	s.posAccelZ = check_float(L, -1);
+	lua_pushstring(L, "rotVelX");
+	lua_gettable(L, index);
+	s.rotVelX = check_float(L, -1);
+	lua_pushstring(L, "rotVelY");
+	lua_gettable(L, index);
+	s.rotVelY = check_float(L, -1);
+	lua_pushstring(L, "rotVelZ");
+	lua_gettable(L, index);
+	s.rotVelZ = check_float(L, -1);
+	return s;
+}
+
+static void check_InputMotionData_t_array(lua_State* L, int index, InputMotionData_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_InputMotionData_t(L, -1);
+	}
+}
+static SteamUGCDetails_t check_SteamUGCDetails_t(lua_State* L, int index) {
+	SteamUGCDetails_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_eFileType");
+	lua_gettable(L, index);
+	s.m_eFileType = check_EWorkshopFileType(L, -1);
+	lua_pushstring(L, "m_nCreatorAppID");
+	lua_gettable(L, index);
+	s.m_nCreatorAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_nConsumerAppID");
+	lua_gettable(L, index);
+	s.m_nConsumerAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_rgchTitle");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTitle, 129);
+	lua_pushstring(L, "m_rgchDescription");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchDescription, 8000);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	lua_gettable(L, index);
+	s.m_ulSteamIDOwner = check_uint64(L, -1);
+	lua_pushstring(L, "m_rtimeCreated");
+	lua_gettable(L, index);
+	s.m_rtimeCreated = check_uint32(L, -1);
+	lua_pushstring(L, "m_rtimeUpdated");
+	lua_gettable(L, index);
+	s.m_rtimeUpdated = check_uint32(L, -1);
+	lua_pushstring(L, "m_rtimeAddedToUserList");
+	lua_gettable(L, index);
+	s.m_rtimeAddedToUserList = check_uint32(L, -1);
+	lua_pushstring(L, "m_eVisibility");
+	lua_gettable(L, index);
+	s.m_eVisibility = check_ERemoteStoragePublishedFileVisibility(L, -1);
+	lua_pushstring(L, "m_bBanned");
+	lua_gettable(L, index);
+	s.m_bBanned = check_bool(L, -1);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	lua_gettable(L, index);
+	s.m_bAcceptedForUse = check_bool(L, -1);
+	lua_pushstring(L, "m_bTagsTruncated");
+	lua_gettable(L, index);
+	s.m_bTagsTruncated = check_bool(L, -1);
+	lua_pushstring(L, "m_rgchTags");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTags, 1025);
+	lua_pushstring(L, "m_hFile");
+	lua_gettable(L, index);
+	s.m_hFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_hPreviewFile");
+	lua_gettable(L, index);
+	s.m_hPreviewFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_pchFileName");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_pchFileName, 260);
+	lua_pushstring(L, "m_nFileSize");
+	lua_gettable(L, index);
+	s.m_nFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	lua_gettable(L, index);
+	s.m_nPreviewFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_rgchURL");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchURL, 256);
+	lua_pushstring(L, "m_unVotesUp");
+	lua_gettable(L, index);
+	s.m_unVotesUp = check_uint32(L, -1);
+	lua_pushstring(L, "m_unVotesDown");
+	lua_gettable(L, index);
+	s.m_unVotesDown = check_uint32(L, -1);
+	lua_pushstring(L, "m_flScore");
+	lua_gettable(L, index);
+	s.m_flScore = check_float(L, -1);
+	lua_pushstring(L, "m_unNumChildren");
+	lua_gettable(L, index);
+	s.m_unNumChildren = check_uint32(L, -1);
+	return s;
+}
+
+static void check_SteamUGCDetails_t_array(lua_State* L, int index, SteamUGCDetails_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamUGCDetails_t(L, -1);
+	}
+}
+static SteamItemDetails_t check_SteamItemDetails_t(lua_State* L, int index) {
+	SteamItemDetails_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_itemId");
+	lua_gettable(L, index);
+	s.m_itemId = check_SteamItemInstanceID_t(L, -1);
+	lua_pushstring(L, "m_iDefinition");
+	lua_gettable(L, index);
+	s.m_iDefinition = check_SteamItemDef_t(L, -1);
+	lua_pushstring(L, "m_unQuantity");
+	lua_gettable(L, index);
+	s.m_unQuantity = check_uint16(L, -1);
+	lua_pushstring(L, "m_unFlags");
+	lua_gettable(L, index);
+	s.m_unFlags = check_uint16(L, -1);
+	return s;
+}
+
+static void check_SteamItemDetails_t_array(lua_State* L, int index, SteamItemDetails_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamItemDetails_t(L, -1);
+	}
+}
+static SteamNetworkingIPAddr check_SteamNetworkingIPAddr(lua_State* L, int index) {
+	SteamNetworkingIPAddr s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_ipv6");
+	lua_gettable(L, index);
+	check_uint8_array(L, -1, s.m_ipv6, 16);
+	lua_pushstring(L, "m_port");
+	lua_gettable(L, index);
+	s.m_port = check_uint16(L, -1);
+	return s;
+}
+
+static void check_SteamNetworkingIPAddr_array(lua_State* L, int index, SteamNetworkingIPAddr *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetworkingIPAddr(L, -1);
+	}
+}
+static SteamNetworkingIdentity check_SteamNetworkingIdentity(lua_State* L, int index) {
+	SteamNetworkingIdentity s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eType");
+	lua_gettable(L, index);
+	s.m_eType = check_ESteamNetworkingIdentityType(L, -1);
+	lua_pushstring(L, "m_cbSize");
+	lua_gettable(L, index);
+	s.m_cbSize = check_int(L, -1);
+	lua_pushstring(L, "m_szUnknownRawString");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szUnknownRawString, 128);
+	return s;
+}
+
+static void check_SteamNetworkingIdentity_array(lua_State* L, int index, SteamNetworkingIdentity *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetworkingIdentity(L, -1);
+	}
+}
+static SteamNetConnectionInfo_t check_SteamNetConnectionInfo_t(lua_State* L, int index) {
+	SteamNetConnectionInfo_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_identityRemote");
+	lua_gettable(L, index);
+	s.m_identityRemote = check_SteamNetworkingIdentity(L, -1);
+	lua_pushstring(L, "m_nUserData");
+	lua_gettable(L, index);
+	s.m_nUserData = check_int64(L, -1);
+	lua_pushstring(L, "m_hListenSocket");
+	lua_gettable(L, index);
+	s.m_hListenSocket = check_HSteamListenSocket(L, -1);
+	lua_pushstring(L, "m_addrRemote");
+	lua_gettable(L, index);
+	s.m_addrRemote = check_SteamNetworkingIPAddr(L, -1);
+	lua_pushstring(L, "m__pad1");
+	lua_gettable(L, index);
+	s.m__pad1 = check_uint16(L, -1);
+	lua_pushstring(L, "m_idPOPRemote");
+	lua_gettable(L, index);
+	s.m_idPOPRemote = check_SteamNetworkingPOPID(L, -1);
+	lua_pushstring(L, "m_idPOPRelay");
+	lua_gettable(L, index);
+	s.m_idPOPRelay = check_SteamNetworkingPOPID(L, -1);
+	lua_pushstring(L, "m_eState");
+	lua_gettable(L, index);
+	s.m_eState = check_ESteamNetworkingConnectionState(L, -1);
+	lua_pushstring(L, "m_eEndReason");
+	lua_gettable(L, index);
+	s.m_eEndReason = check_int(L, -1);
+	lua_pushstring(L, "m_szEndDebug");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szEndDebug, 128);
+	lua_pushstring(L, "m_szConnectionDescription");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_szConnectionDescription, 128);
+	lua_pushstring(L, "m_nFlags");
+	lua_gettable(L, index);
+	s.m_nFlags = check_int(L, -1);
+	lua_pushstring(L, "reserved");
+	lua_gettable(L, index);
+	check_uint32_array(L, -1, s.reserved, 63);
+	return s;
+}
+
+static void check_SteamNetConnectionInfo_t_array(lua_State* L, int index, SteamNetConnectionInfo_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetConnectionInfo_t(L, -1);
+	}
+}
+static SteamNetConnectionRealTimeStatus_t check_SteamNetConnectionRealTimeStatus_t(lua_State* L, int index) {
+	SteamNetConnectionRealTimeStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eState");
+	lua_gettable(L, index);
+	s.m_eState = check_ESteamNetworkingConnectionState(L, -1);
+	lua_pushstring(L, "m_nPing");
+	lua_gettable(L, index);
+	s.m_nPing = check_int(L, -1);
+	lua_pushstring(L, "m_flConnectionQualityLocal");
+	lua_gettable(L, index);
+	s.m_flConnectionQualityLocal = check_float(L, -1);
+	lua_pushstring(L, "m_flConnectionQualityRemote");
+	lua_gettable(L, index);
+	s.m_flConnectionQualityRemote = check_float(L, -1);
+	lua_pushstring(L, "m_flOutPacketsPerSec");
+	lua_gettable(L, index);
+	s.m_flOutPacketsPerSec = check_float(L, -1);
+	lua_pushstring(L, "m_flOutBytesPerSec");
+	lua_gettable(L, index);
+	s.m_flOutBytesPerSec = check_float(L, -1);
+	lua_pushstring(L, "m_flInPacketsPerSec");
+	lua_gettable(L, index);
+	s.m_flInPacketsPerSec = check_float(L, -1);
+	lua_pushstring(L, "m_flInBytesPerSec");
+	lua_gettable(L, index);
+	s.m_flInBytesPerSec = check_float(L, -1);
+	lua_pushstring(L, "m_nSendRateBytesPerSecond");
+	lua_gettable(L, index);
+	s.m_nSendRateBytesPerSecond = check_int(L, -1);
+	lua_pushstring(L, "m_cbPendingUnreliable");
+	lua_gettable(L, index);
+	s.m_cbPendingUnreliable = check_int(L, -1);
+	lua_pushstring(L, "m_cbPendingReliable");
+	lua_gettable(L, index);
+	s.m_cbPendingReliable = check_int(L, -1);
+	lua_pushstring(L, "m_cbSentUnackedReliable");
+	lua_gettable(L, index);
+	s.m_cbSentUnackedReliable = check_int(L, -1);
+	lua_pushstring(L, "m_usecQueueTime");
+	lua_gettable(L, index);
+	s.m_usecQueueTime = check_SteamNetworkingMicroseconds(L, -1);
+	lua_pushstring(L, "reserved");
+	lua_gettable(L, index);
+	check_uint32_array(L, -1, s.reserved, 16);
+	return s;
+}
+
+static void check_SteamNetConnectionRealTimeStatus_t_array(lua_State* L, int index, SteamNetConnectionRealTimeStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetConnectionRealTimeStatus_t(L, -1);
+	}
+}
+static SteamNetConnectionRealTimeLaneStatus_t check_SteamNetConnectionRealTimeLaneStatus_t(lua_State* L, int index) {
+	SteamNetConnectionRealTimeLaneStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_cbPendingUnreliable");
+	lua_gettable(L, index);
+	s.m_cbPendingUnreliable = check_int(L, -1);
+	lua_pushstring(L, "m_cbPendingReliable");
+	lua_gettable(L, index);
+	s.m_cbPendingReliable = check_int(L, -1);
+	lua_pushstring(L, "m_cbSentUnackedReliable");
+	lua_gettable(L, index);
+	s.m_cbSentUnackedReliable = check_int(L, -1);
+	lua_pushstring(L, "_reservePad1");
+	lua_gettable(L, index);
+	s._reservePad1 = check_int(L, -1);
+	lua_pushstring(L, "m_usecQueueTime");
+	lua_gettable(L, index);
+	s.m_usecQueueTime = check_SteamNetworkingMicroseconds(L, -1);
+	lua_pushstring(L, "reserved");
+	lua_gettable(L, index);
+	check_uint32_array(L, -1, s.reserved, 10);
+	return s;
+}
+
+static void check_SteamNetConnectionRealTimeLaneStatus_t_array(lua_State* L, int index, SteamNetConnectionRealTimeLaneStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetConnectionRealTimeLaneStatus_t(L, -1);
+	}
+}
+static SteamNetworkPingLocation_t check_SteamNetworkPingLocation_t(lua_State* L, int index) {
+	SteamNetworkPingLocation_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_data");
+	lua_gettable(L, index);
+	check_uint8_array(L, -1, s.m_data, 512);
+	return s;
+}
+
+static void check_SteamNetworkPingLocation_t_array(lua_State* L, int index, SteamNetworkPingLocation_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetworkPingLocation_t(L, -1);
+	}
+}
+static SteamServersConnected_t check_SteamServersConnected_t(lua_State* L, int index) {
+	SteamServersConnected_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_SteamServersConnected_t_array(lua_State* L, int index, SteamServersConnected_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamServersConnected_t(L, -1);
 	}
 }
 static SteamServerConnectFailure_t check_SteamServerConnectFailure_t(lua_State* L, int index) {
@@ -5876,6 +8562,71 @@ static void check_ClientGameServerDeny_t_array(lua_State* L, int index, ClientGa
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		s[i] = check_ClientGameServerDeny_t(L, -1);
+	}
+}
+static IPCFailure_t check_IPCFailure_t(lua_State* L, int index) {
+	IPCFailure_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eFailureType");
+	lua_gettable(L, index);
+	s.m_eFailureType = check_uint8(L, -1);
+	return s;
+}
+
+static void check_IPCFailure_t_array(lua_State* L, int index, IPCFailure_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_IPCFailure_t(L, -1);
+	}
+}
+static LicensesUpdated_t check_LicensesUpdated_t(lua_State* L, int index) {
+	LicensesUpdated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_LicensesUpdated_t_array(lua_State* L, int index, LicensesUpdated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_LicensesUpdated_t(L, -1);
 	}
 }
 static ValidateAuthTicketResponse_t check_ValidateAuthTicketResponse_t(lua_State* L, int index) {
@@ -6097,33 +8848,33 @@ static void check_StoreAuthURLResponse_t_array(lua_State* L, int index, StoreAut
 		s[i] = check_StoreAuthURLResponse_t(L, -1);
 	}
 }
-static FriendGameInfo_t check_FriendGameInfo_t(lua_State* L, int index) {
-	FriendGameInfo_t s;
+static MarketEligibilityResponse_t check_MarketEligibilityResponse_t(lua_State* L, int index) {
+	MarketEligibilityResponse_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "m_gameID");
+	lua_pushstring(L, "m_bAllowed");
 	lua_gettable(L, index);
-	s.m_gameID = check_CGameID(L, -1);
-	lua_pushstring(L, "m_unGameIP");
+	s.m_bAllowed = check_bool(L, -1);
+	lua_pushstring(L, "m_eNotAllowedReason");
 	lua_gettable(L, index);
-	s.m_unGameIP = check_uint32(L, -1);
-	lua_pushstring(L, "m_usGamePort");
+	s.m_eNotAllowedReason = check_EMarketNotAllowedReasonFlags(L, -1);
+	lua_pushstring(L, "m_rtAllowedAtTime");
 	lua_gettable(L, index);
-	s.m_usGamePort = check_uint16(L, -1);
-	lua_pushstring(L, "m_usQueryPort");
+	s.m_rtAllowedAtTime = check_RTime32(L, -1);
+	lua_pushstring(L, "m_cdaySteamGuardRequiredDays");
 	lua_gettable(L, index);
-	s.m_usQueryPort = check_uint16(L, -1);
-	lua_pushstring(L, "m_steamIDLobby");
+	s.m_cdaySteamGuardRequiredDays = check_int(L, -1);
+	lua_pushstring(L, "m_cdayNewDeviceCooldown");
 	lua_gettable(L, index);
-	s.m_steamIDLobby = check_CSteamID(L, -1);
+	s.m_cdayNewDeviceCooldown = check_int(L, -1);
 	return s;
 }
 
-static void check_FriendGameInfo_t_array(lua_State* L, int index, FriendGameInfo_t *s, int size) {
+static void check_MarketEligibilityResponse_t_array(lua_State* L, int index, MarketEligibilityResponse_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -6140,27 +8891,45 @@ static void check_FriendGameInfo_t_array(lua_State* L, int index, FriendGameInfo
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_FriendGameInfo_t(L, -1);
+		s[i] = check_MarketEligibilityResponse_t(L, -1);
 	}
 }
-static FriendSessionStateInfo_t check_FriendSessionStateInfo_t(lua_State* L, int index) {
-	FriendSessionStateInfo_t s;
+static DurationControl_t check_DurationControl_t(lua_State* L, int index) {
+	DurationControl_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "m_uiOnlineSessionInstances");
+	lua_pushstring(L, "m_eResult");
 	lua_gettable(L, index);
-	s.m_uiOnlineSessionInstances = check_uint32(L, -1);
-	lua_pushstring(L, "m_uiPublishedToFriendsSessionInstance");
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_appid");
 	lua_gettable(L, index);
-	s.m_uiPublishedToFriendsSessionInstance = check_uint8(L, -1);
+	s.m_appid = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_bApplicable");
+	lua_gettable(L, index);
+	s.m_bApplicable = check_bool(L, -1);
+	lua_pushstring(L, "m_csecsLast5h");
+	lua_gettable(L, index);
+	s.m_csecsLast5h = check_int32(L, -1);
+	lua_pushstring(L, "m_progress");
+	lua_gettable(L, index);
+	s.m_progress = check_EDurationControlProgress(L, -1);
+	lua_pushstring(L, "m_notification");
+	lua_gettable(L, index);
+	s.m_notification = check_EDurationControlNotification(L, -1);
+	lua_pushstring(L, "m_csecsToday");
+	lua_gettable(L, index);
+	s.m_csecsToday = check_int32(L, -1);
+	lua_pushstring(L, "m_csecsRemaining");
+	lua_gettable(L, index);
+	s.m_csecsRemaining = check_int32(L, -1);
 	return s;
 }
 
-static void check_FriendSessionStateInfo_t_array(lua_State* L, int index, FriendSessionStateInfo_t *s, int size) {
+static void check_DurationControl_t_array(lua_State* L, int index, DurationControl_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -6177,7 +8946,7 @@ static void check_FriendSessionStateInfo_t_array(lua_State* L, int index, Friend
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_FriendSessionStateInfo_t(L, -1);
+		s[i] = check_DurationControl_t(L, -1);
 	}
 }
 static PersonaStateChange_t check_PersonaStateChange_t(lua_State* L, int index) {
@@ -6873,6 +9642,188 @@ static void check_SetPersonaNameResponse_t_array(lua_State* L, int index, SetPer
 		s[i] = check_SetPersonaNameResponse_t(L, -1);
 	}
 }
+static UnreadChatMessagesChanged_t check_UnreadChatMessagesChanged_t(lua_State* L, int index) {
+	UnreadChatMessagesChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_UnreadChatMessagesChanged_t_array(lua_State* L, int index, UnreadChatMessagesChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UnreadChatMessagesChanged_t(L, -1);
+	}
+}
+static OverlayBrowserProtocolNavigation_t check_OverlayBrowserProtocolNavigation_t(lua_State* L, int index) {
+	OverlayBrowserProtocolNavigation_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "rgchURI");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.rgchURI, 1024);
+	return s;
+}
+
+static void check_OverlayBrowserProtocolNavigation_t_array(lua_State* L, int index, OverlayBrowserProtocolNavigation_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_OverlayBrowserProtocolNavigation_t(L, -1);
+	}
+}
+static EquippedProfileItemsChanged_t check_EquippedProfileItemsChanged_t(lua_State* L, int index) {
+	EquippedProfileItemsChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_steamID");
+	lua_gettable(L, index);
+	s.m_steamID = check_CSteamID(L, -1);
+	return s;
+}
+
+static void check_EquippedProfileItemsChanged_t_array(lua_State* L, int index, EquippedProfileItemsChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_EquippedProfileItemsChanged_t(L, -1);
+	}
+}
+static EquippedProfileItems_t check_EquippedProfileItems_t(lua_State* L, int index) {
+	EquippedProfileItems_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_steamID");
+	lua_gettable(L, index);
+	s.m_steamID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_bHasAnimatedAvatar");
+	lua_gettable(L, index);
+	s.m_bHasAnimatedAvatar = check_bool(L, -1);
+	lua_pushstring(L, "m_bHasAvatarFrame");
+	lua_gettable(L, index);
+	s.m_bHasAvatarFrame = check_bool(L, -1);
+	lua_pushstring(L, "m_bHasProfileModifier");
+	lua_gettable(L, index);
+	s.m_bHasProfileModifier = check_bool(L, -1);
+	lua_pushstring(L, "m_bHasProfileBackground");
+	lua_gettable(L, index);
+	s.m_bHasProfileBackground = check_bool(L, -1);
+	lua_pushstring(L, "m_bHasMiniProfileBackground");
+	lua_gettable(L, index);
+	s.m_bHasMiniProfileBackground = check_bool(L, -1);
+	return s;
+}
+
+static void check_EquippedProfileItems_t_array(lua_State* L, int index, EquippedProfileItems_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_EquippedProfileItems_t(L, -1);
+	}
+}
+static IPCountry_t check_IPCountry_t(lua_State* L, int index) {
+	IPCountry_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_IPCountry_t_array(lua_State* L, int index, IPCountry_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_IPCountry_t(L, -1);
+	}
+}
 static LowBatteryPower_t check_LowBatteryPower_t(lua_State* L, int index) {
 	LowBatteryPower_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -6947,6 +9898,37 @@ static void check_SteamAPICallCompleted_t_array(lua_State* L, int index, SteamAP
 		s[i] = check_SteamAPICallCompleted_t(L, -1);
 	}
 }
+static SteamShutdown_t check_SteamShutdown_t(lua_State* L, int index) {
+	SteamShutdown_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_SteamShutdown_t_array(lua_State* L, int index, SteamShutdown_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamShutdown_t(L, -1);
+	}
+}
 static CheckFileSignature_t check_CheckFileSignature_t(lua_State* L, int index) {
 	CheckFileSignature_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -7018,24 +10000,18 @@ static void check_GamepadTextInputDismissed_t_array(lua_State* L, int index, Gam
 		s[i] = check_GamepadTextInputDismissed_t(L, -1);
 	}
 }
-static MatchMakingKeyValuePair_t check_MatchMakingKeyValuePair_t(lua_State* L, int index) {
-	MatchMakingKeyValuePair_t s;
+static AppResumingFromSuspend_t check_AppResumingFromSuspend_t(lua_State* L, int index) {
+	AppResumingFromSuspend_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "m_szKey");
-	lua_gettable(L, index);
-	check_char_array(L, -1, s.m_szKey, 256);
-	lua_pushstring(L, "m_szValue");
-	lua_gettable(L, index);
-	check_char_array(L, -1, s.m_szValue, 256);
 	return s;
 }
 
-static void check_MatchMakingKeyValuePair_t_array(lua_State* L, int index, MatchMakingKeyValuePair_t *s, int size) {
+static void check_AppResumingFromSuspend_t_array(lua_State* L, int index, AppResumingFromSuspend_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -7052,7 +10028,38 @@ static void check_MatchMakingKeyValuePair_t_array(lua_State* L, int index, Match
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_MatchMakingKeyValuePair_t(L, -1);
+		s[i] = check_AppResumingFromSuspend_t(L, -1);
+	}
+}
+static FloatingGamepadTextInputDismissed_t check_FloatingGamepadTextInputDismissed_t(lua_State* L, int index) {
+	FloatingGamepadTextInputDismissed_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_FloatingGamepadTextInputDismissed_t_array(lua_State* L, int index, FloatingGamepadTextInputDismissed_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_FloatingGamepadTextInputDismissed_t(L, -1);
 	}
 }
 static FavoritesListChanged_t check_FavoritesListChanged_t(lua_State* L, int index) {
@@ -7541,6 +10548,532 @@ static void check_FavoritesListAccountsUpdated_t_array(lua_State* L, int index, 
 		s[i] = check_FavoritesListAccountsUpdated_t(L, -1);
 	}
 }
+static SearchForGameProgressCallback_t check_SearchForGameProgressCallback_t(lua_State* L, int index) {
+	SearchForGameProgressCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_ullSearchID");
+	lua_gettable(L, index);
+	s.m_ullSearchID = check_uint64(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_lobbyID");
+	lua_gettable(L, index);
+	s.m_lobbyID = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_steamIDEndedSearch");
+	lua_gettable(L, index);
+	s.m_steamIDEndedSearch = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_nSecondsRemainingEstimate");
+	lua_gettable(L, index);
+	s.m_nSecondsRemainingEstimate = check_int32(L, -1);
+	lua_pushstring(L, "m_cPlayersSearching");
+	lua_gettable(L, index);
+	s.m_cPlayersSearching = check_int32(L, -1);
+	return s;
+}
+
+static void check_SearchForGameProgressCallback_t_array(lua_State* L, int index, SearchForGameProgressCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SearchForGameProgressCallback_t(L, -1);
+	}
+}
+static SearchForGameResultCallback_t check_SearchForGameResultCallback_t(lua_State* L, int index) {
+	SearchForGameResultCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_ullSearchID");
+	lua_gettable(L, index);
+	s.m_ullSearchID = check_uint64(L, -1);
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nCountPlayersInGame");
+	lua_gettable(L, index);
+	s.m_nCountPlayersInGame = check_int32(L, -1);
+	lua_pushstring(L, "m_nCountAcceptedGame");
+	lua_gettable(L, index);
+	s.m_nCountAcceptedGame = check_int32(L, -1);
+	lua_pushstring(L, "m_steamIDHost");
+	lua_gettable(L, index);
+	s.m_steamIDHost = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_bFinalCallback");
+	lua_gettable(L, index);
+	s.m_bFinalCallback = check_bool(L, -1);
+	return s;
+}
+
+static void check_SearchForGameResultCallback_t_array(lua_State* L, int index, SearchForGameResultCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SearchForGameResultCallback_t(L, -1);
+	}
+}
+static RequestPlayersForGameProgressCallback_t check_RequestPlayersForGameProgressCallback_t(lua_State* L, int index) {
+	RequestPlayersForGameProgressCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ullSearchID");
+	lua_gettable(L, index);
+	s.m_ullSearchID = check_uint64(L, -1);
+	return s;
+}
+
+static void check_RequestPlayersForGameProgressCallback_t_array(lua_State* L, int index, RequestPlayersForGameProgressCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RequestPlayersForGameProgressCallback_t(L, -1);
+	}
+}
+static RequestPlayersForGameResultCallback_t check_RequestPlayersForGameResultCallback_t(lua_State* L, int index) {
+	RequestPlayersForGameResultCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ullSearchID");
+	lua_gettable(L, index);
+	s.m_ullSearchID = check_uint64(L, -1);
+	lua_pushstring(L, "m_SteamIDPlayerFound");
+	lua_gettable(L, index);
+	s.m_SteamIDPlayerFound = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_SteamIDLobby");
+	lua_gettable(L, index);
+	s.m_SteamIDLobby = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_ePlayerAcceptState");
+	lua_gettable(L, index);
+	s.m_ePlayerAcceptState = check_PlayerAcceptState_t(L, -1);
+	lua_pushstring(L, "m_nPlayerIndex");
+	lua_gettable(L, index);
+	s.m_nPlayerIndex = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalPlayersFound");
+	lua_gettable(L, index);
+	s.m_nTotalPlayersFound = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalPlayersAcceptedGame");
+	lua_gettable(L, index);
+	s.m_nTotalPlayersAcceptedGame = check_int32(L, -1);
+	lua_pushstring(L, "m_nSuggestedTeamIndex");
+	lua_gettable(L, index);
+	s.m_nSuggestedTeamIndex = check_int32(L, -1);
+	lua_pushstring(L, "m_ullUniqueGameID");
+	lua_gettable(L, index);
+	s.m_ullUniqueGameID = check_uint64(L, -1);
+	return s;
+}
+
+static void check_RequestPlayersForGameResultCallback_t_array(lua_State* L, int index, RequestPlayersForGameResultCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RequestPlayersForGameResultCallback_t(L, -1);
+	}
+}
+static RequestPlayersForGameFinalResultCallback_t check_RequestPlayersForGameFinalResultCallback_t(lua_State* L, int index) {
+	RequestPlayersForGameFinalResultCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ullSearchID");
+	lua_gettable(L, index);
+	s.m_ullSearchID = check_uint64(L, -1);
+	lua_pushstring(L, "m_ullUniqueGameID");
+	lua_gettable(L, index);
+	s.m_ullUniqueGameID = check_uint64(L, -1);
+	return s;
+}
+
+static void check_RequestPlayersForGameFinalResultCallback_t_array(lua_State* L, int index, RequestPlayersForGameFinalResultCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RequestPlayersForGameFinalResultCallback_t(L, -1);
+	}
+}
+static SubmitPlayerResultResultCallback_t check_SubmitPlayerResultResultCallback_t(lua_State* L, int index) {
+	SubmitPlayerResultResultCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "ullUniqueGameID");
+	lua_gettable(L, index);
+	s.ullUniqueGameID = check_uint64(L, -1);
+	lua_pushstring(L, "steamIDPlayer");
+	lua_gettable(L, index);
+	s.steamIDPlayer = check_CSteamID(L, -1);
+	return s;
+}
+
+static void check_SubmitPlayerResultResultCallback_t_array(lua_State* L, int index, SubmitPlayerResultResultCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SubmitPlayerResultResultCallback_t(L, -1);
+	}
+}
+static EndGameResultCallback_t check_EndGameResultCallback_t(lua_State* L, int index) {
+	EndGameResultCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "ullUniqueGameID");
+	lua_gettable(L, index);
+	s.ullUniqueGameID = check_uint64(L, -1);
+	return s;
+}
+
+static void check_EndGameResultCallback_t_array(lua_State* L, int index, EndGameResultCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_EndGameResultCallback_t(L, -1);
+	}
+}
+static JoinPartyCallback_t check_JoinPartyCallback_t(lua_State* L, int index) {
+	JoinPartyCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ulBeaconID");
+	lua_gettable(L, index);
+	s.m_ulBeaconID = check_PartyBeaconID_t(L, -1);
+	lua_pushstring(L, "m_SteamIDBeaconOwner");
+	lua_gettable(L, index);
+	s.m_SteamIDBeaconOwner = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_rgchConnectString");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchConnectString, 256);
+	return s;
+}
+
+static void check_JoinPartyCallback_t_array(lua_State* L, int index, JoinPartyCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_JoinPartyCallback_t(L, -1);
+	}
+}
+static CreateBeaconCallback_t check_CreateBeaconCallback_t(lua_State* L, int index) {
+	CreateBeaconCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_ulBeaconID");
+	lua_gettable(L, index);
+	s.m_ulBeaconID = check_PartyBeaconID_t(L, -1);
+	return s;
+}
+
+static void check_CreateBeaconCallback_t_array(lua_State* L, int index, CreateBeaconCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_CreateBeaconCallback_t(L, -1);
+	}
+}
+static ReservationNotificationCallback_t check_ReservationNotificationCallback_t(lua_State* L, int index) {
+	ReservationNotificationCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_ulBeaconID");
+	lua_gettable(L, index);
+	s.m_ulBeaconID = check_PartyBeaconID_t(L, -1);
+	lua_pushstring(L, "m_steamIDJoiner");
+	lua_gettable(L, index);
+	s.m_steamIDJoiner = check_CSteamID(L, -1);
+	return s;
+}
+
+static void check_ReservationNotificationCallback_t_array(lua_State* L, int index, ReservationNotificationCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ReservationNotificationCallback_t(L, -1);
+	}
+}
+static ChangeNumOpenSlotsCallback_t check_ChangeNumOpenSlotsCallback_t(lua_State* L, int index) {
+	ChangeNumOpenSlotsCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	return s;
+}
+
+static void check_ChangeNumOpenSlotsCallback_t_array(lua_State* L, int index, ChangeNumOpenSlotsCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ChangeNumOpenSlotsCallback_t(L, -1);
+	}
+}
+static AvailableBeaconLocationsUpdated_t check_AvailableBeaconLocationsUpdated_t(lua_State* L, int index) {
+	AvailableBeaconLocationsUpdated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_AvailableBeaconLocationsUpdated_t_array(lua_State* L, int index, AvailableBeaconLocationsUpdated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_AvailableBeaconLocationsUpdated_t(L, -1);
+	}
+}
+static ActiveBeaconsUpdated_t check_ActiveBeaconsUpdated_t(lua_State* L, int index) {
+	ActiveBeaconsUpdated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_ActiveBeaconsUpdated_t_array(lua_State* L, int index, ActiveBeaconsUpdated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ActiveBeaconsUpdated_t(L, -1);
+	}
+}
 static RemoteStorageFileShareResult_t check_RemoteStorageFileShareResult_t(lua_State* L, int index) {
 	RemoteStorageFileShareResult_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -7581,6 +11114,126 @@ static void check_RemoteStorageFileShareResult_t_array(lua_State* L, int index, 
 		s[i] = check_RemoteStorageFileShareResult_t(L, -1);
 	}
 }
+static RemoteStoragePublishFileResult_t check_RemoteStoragePublishFileResult_t(lua_State* L, int index) {
+	RemoteStoragePublishFileResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	lua_gettable(L, index);
+	s.m_bUserNeedsToAcceptWorkshopLegalAgreement = check_bool(L, -1);
+	return s;
+}
+
+static void check_RemoteStoragePublishFileResult_t_array(lua_State* L, int index, RemoteStoragePublishFileResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStoragePublishFileResult_t(L, -1);
+	}
+}
+static RemoteStorageDeletePublishedFileResult_t check_RemoteStorageDeletePublishedFileResult_t(lua_State* L, int index) {
+	RemoteStorageDeletePublishedFileResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageDeletePublishedFileResult_t_array(lua_State* L, int index, RemoteStorageDeletePublishedFileResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageDeletePublishedFileResult_t(L, -1);
+	}
+}
+static RemoteStorageEnumerateUserPublishedFilesResult_t check_RemoteStorageEnumerateUserPublishedFilesResult_t(lua_State* L, int index) {
+	RemoteStorageEnumerateUserPublishedFilesResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	return s;
+}
+
+static void check_RemoteStorageEnumerateUserPublishedFilesResult_t_array(lua_State* L, int index, RemoteStorageEnumerateUserPublishedFilesResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageEnumerateUserPublishedFilesResult_t(L, -1);
+	}
+}
 static RemoteStorageSubscribePublishedFileResult_t check_RemoteStorageSubscribePublishedFileResult_t(lua_State* L, int index) {
 	RemoteStorageSubscribePublishedFileResult_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -7618,6 +11271,52 @@ static void check_RemoteStorageSubscribePublishedFileResult_t_array(lua_State* L
 		s[i] = check_RemoteStorageSubscribePublishedFileResult_t(L, -1);
 	}
 }
+static RemoteStorageEnumerateUserSubscribedFilesResult_t check_RemoteStorageEnumerateUserSubscribedFilesResult_t(lua_State* L, int index) {
+	RemoteStorageEnumerateUserSubscribedFilesResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	lua_pushstring(L, "m_rgRTimeSubscribed");
+	lua_gettable(L, index);
+	check_uint32_array(L, -1, s.m_rgRTimeSubscribed, 50);
+	return s;
+}
+
+static void check_RemoteStorageEnumerateUserSubscribedFilesResult_t_array(lua_State* L, int index, RemoteStorageEnumerateUserSubscribedFilesResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageEnumerateUserSubscribedFilesResult_t(L, -1);
+	}
+}
 static RemoteStorageUnsubscribePublishedFileResult_t check_RemoteStorageUnsubscribePublishedFileResult_t(lua_State* L, int index) {
 	RemoteStorageUnsubscribePublishedFileResult_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -7653,6 +11352,46 @@ static void check_RemoteStorageUnsubscribePublishedFileResult_t_array(lua_State*
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		s[i] = check_RemoteStorageUnsubscribePublishedFileResult_t(L, -1);
+	}
+}
+static RemoteStorageUpdatePublishedFileResult_t check_RemoteStorageUpdatePublishedFileResult_t(lua_State* L, int index) {
+	RemoteStorageUpdatePublishedFileResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_bUserNeedsToAcceptWorkshopLegalAgreement");
+	lua_gettable(L, index);
+	s.m_bUserNeedsToAcceptWorkshopLegalAgreement = check_bool(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageUpdatePublishedFileResult_t_array(lua_State* L, int index, RemoteStorageUpdatePublishedFileResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageUpdatePublishedFileResult_t(L, -1);
 	}
 }
 static RemoteStorageDownloadUGCResult_t check_RemoteStorageDownloadUGCResult_t(lua_State* L, int index) {
@@ -7702,6 +11441,598 @@ static void check_RemoteStorageDownloadUGCResult_t_array(lua_State* L, int index
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		s[i] = check_RemoteStorageDownloadUGCResult_t(L, -1);
+	}
+}
+static RemoteStorageGetPublishedFileDetailsResult_t check_RemoteStorageGetPublishedFileDetailsResult_t(lua_State* L, int index) {
+	RemoteStorageGetPublishedFileDetailsResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nCreatorAppID");
+	lua_gettable(L, index);
+	s.m_nCreatorAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_nConsumerAppID");
+	lua_gettable(L, index);
+	s.m_nConsumerAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_rgchTitle");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTitle, 129);
+	lua_pushstring(L, "m_rgchDescription");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchDescription, 8000);
+	lua_pushstring(L, "m_hFile");
+	lua_gettable(L, index);
+	s.m_hFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_hPreviewFile");
+	lua_gettable(L, index);
+	s.m_hPreviewFile = check_UGCHandle_t(L, -1);
+	lua_pushstring(L, "m_ulSteamIDOwner");
+	lua_gettable(L, index);
+	s.m_ulSteamIDOwner = check_uint64(L, -1);
+	lua_pushstring(L, "m_rtimeCreated");
+	lua_gettable(L, index);
+	s.m_rtimeCreated = check_uint32(L, -1);
+	lua_pushstring(L, "m_rtimeUpdated");
+	lua_gettable(L, index);
+	s.m_rtimeUpdated = check_uint32(L, -1);
+	lua_pushstring(L, "m_eVisibility");
+	lua_gettable(L, index);
+	s.m_eVisibility = check_ERemoteStoragePublishedFileVisibility(L, -1);
+	lua_pushstring(L, "m_bBanned");
+	lua_gettable(L, index);
+	s.m_bBanned = check_bool(L, -1);
+	lua_pushstring(L, "m_rgchTags");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchTags, 1025);
+	lua_pushstring(L, "m_bTagsTruncated");
+	lua_gettable(L, index);
+	s.m_bTagsTruncated = check_bool(L, -1);
+	lua_pushstring(L, "m_pchFileName");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_pchFileName, 260);
+	lua_pushstring(L, "m_nFileSize");
+	lua_gettable(L, index);
+	s.m_nFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_nPreviewFileSize");
+	lua_gettable(L, index);
+	s.m_nPreviewFileSize = check_int32(L, -1);
+	lua_pushstring(L, "m_rgchURL");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchURL, 256);
+	lua_pushstring(L, "m_eFileType");
+	lua_gettable(L, index);
+	s.m_eFileType = check_EWorkshopFileType(L, -1);
+	lua_pushstring(L, "m_bAcceptedForUse");
+	lua_gettable(L, index);
+	s.m_bAcceptedForUse = check_bool(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageGetPublishedFileDetailsResult_t_array(lua_State* L, int index, RemoteStorageGetPublishedFileDetailsResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageGetPublishedFileDetailsResult_t(L, -1);
+	}
+}
+static RemoteStorageEnumerateWorkshopFilesResult_t check_RemoteStorageEnumerateWorkshopFilesResult_t(lua_State* L, int index) {
+	RemoteStorageEnumerateWorkshopFilesResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	lua_pushstring(L, "m_rgScore");
+	lua_gettable(L, index);
+	check_float_array(L, -1, s.m_rgScore, 50);
+	lua_pushstring(L, "m_nAppId");
+	lua_gettable(L, index);
+	s.m_nAppId = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_unStartIndex");
+	lua_gettable(L, index);
+	s.m_unStartIndex = check_uint32(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageEnumerateWorkshopFilesResult_t_array(lua_State* L, int index, RemoteStorageEnumerateWorkshopFilesResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageEnumerateWorkshopFilesResult_t(L, -1);
+	}
+}
+static RemoteStorageGetPublishedItemVoteDetailsResult_t check_RemoteStorageGetPublishedItemVoteDetailsResult_t(lua_State* L, int index) {
+	RemoteStorageGetPublishedItemVoteDetailsResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_unPublishedFileId");
+	lua_gettable(L, index);
+	s.m_unPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nVotesFor");
+	lua_gettable(L, index);
+	s.m_nVotesFor = check_int32(L, -1);
+	lua_pushstring(L, "m_nVotesAgainst");
+	lua_gettable(L, index);
+	s.m_nVotesAgainst = check_int32(L, -1);
+	lua_pushstring(L, "m_nReports");
+	lua_gettable(L, index);
+	s.m_nReports = check_int32(L, -1);
+	lua_pushstring(L, "m_fScore");
+	lua_gettable(L, index);
+	s.m_fScore = check_float(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageGetPublishedItemVoteDetailsResult_t_array(lua_State* L, int index, RemoteStorageGetPublishedItemVoteDetailsResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageGetPublishedItemVoteDetailsResult_t(L, -1);
+	}
+}
+static RemoteStoragePublishedFileSubscribed_t check_RemoteStoragePublishedFileSubscribed_t(lua_State* L, int index) {
+	RemoteStoragePublishedFileSubscribed_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static void check_RemoteStoragePublishedFileSubscribed_t_array(lua_State* L, int index, RemoteStoragePublishedFileSubscribed_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStoragePublishedFileSubscribed_t(L, -1);
+	}
+}
+static RemoteStoragePublishedFileUnsubscribed_t check_RemoteStoragePublishedFileUnsubscribed_t(lua_State* L, int index) {
+	RemoteStoragePublishedFileUnsubscribed_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static void check_RemoteStoragePublishedFileUnsubscribed_t_array(lua_State* L, int index, RemoteStoragePublishedFileUnsubscribed_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStoragePublishedFileUnsubscribed_t(L, -1);
+	}
+}
+static RemoteStoragePublishedFileDeleted_t check_RemoteStoragePublishedFileDeleted_t(lua_State* L, int index) {
+	RemoteStoragePublishedFileDeleted_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static void check_RemoteStoragePublishedFileDeleted_t_array(lua_State* L, int index, RemoteStoragePublishedFileDeleted_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStoragePublishedFileDeleted_t(L, -1);
+	}
+}
+static RemoteStorageUpdateUserPublishedItemVoteResult_t check_RemoteStorageUpdateUserPublishedItemVoteResult_t(lua_State* L, int index) {
+	RemoteStorageUpdateUserPublishedItemVoteResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageUpdateUserPublishedItemVoteResult_t_array(lua_State* L, int index, RemoteStorageUpdateUserPublishedItemVoteResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageUpdateUserPublishedItemVoteResult_t(L, -1);
+	}
+}
+static RemoteStorageUserVoteDetails_t check_RemoteStorageUserVoteDetails_t(lua_State* L, int index) {
+	RemoteStorageUserVoteDetails_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eVote");
+	lua_gettable(L, index);
+	s.m_eVote = check_EWorkshopVote(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageUserVoteDetails_t_array(lua_State* L, int index, RemoteStorageUserVoteDetails_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageUserVoteDetails_t(L, -1);
+	}
+}
+static RemoteStorageEnumerateUserSharedWorkshopFilesResult_t check_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t(lua_State* L, int index) {
+	RemoteStorageEnumerateUserSharedWorkshopFilesResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	return s;
+}
+
+static void check_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t_array(lua_State* L, int index, RemoteStorageEnumerateUserSharedWorkshopFilesResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageEnumerateUserSharedWorkshopFilesResult_t(L, -1);
+	}
+}
+static RemoteStorageSetUserPublishedFileActionResult_t check_RemoteStorageSetUserPublishedFileActionResult_t(lua_State* L, int index) {
+	RemoteStorageSetUserPublishedFileActionResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_eAction");
+	lua_gettable(L, index);
+	s.m_eAction = check_EWorkshopFileAction(L, -1);
+	return s;
+}
+
+static void check_RemoteStorageSetUserPublishedFileActionResult_t_array(lua_State* L, int index, RemoteStorageSetUserPublishedFileActionResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageSetUserPublishedFileActionResult_t(L, -1);
+	}
+}
+static RemoteStorageEnumeratePublishedFilesByUserActionResult_t check_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(lua_State* L, int index) {
+	RemoteStorageEnumeratePublishedFilesByUserActionResult_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_eAction");
+	lua_gettable(L, index);
+	s.m_eAction = check_EWorkshopFileAction(L, -1);
+	lua_pushstring(L, "m_nResultsReturned");
+	lua_gettable(L, index);
+	s.m_nResultsReturned = check_int32(L, -1);
+	lua_pushstring(L, "m_nTotalResultCount");
+	lua_gettable(L, index);
+	s.m_nTotalResultCount = check_int32(L, -1);
+	lua_pushstring(L, "m_rgPublishedFileId");
+	lua_gettable(L, index);
+	check_PublishedFileId_t_array(L, -1, s.m_rgPublishedFileId, 50);
+	lua_pushstring(L, "m_rgRTimeUpdated");
+	lua_gettable(L, index);
+	check_uint32_array(L, -1, s.m_rgRTimeUpdated, 50);
+	return s;
+}
+
+static void check_RemoteStorageEnumeratePublishedFilesByUserActionResult_t_array(lua_State* L, int index, RemoteStorageEnumeratePublishedFilesByUserActionResult_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(L, -1);
+	}
+}
+static RemoteStoragePublishFileProgress_t check_RemoteStoragePublishFileProgress_t(lua_State* L, int index) {
+	RemoteStoragePublishFileProgress_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_dPercentFile");
+	lua_gettable(L, index);
+	s.m_dPercentFile = check_double(L, -1);
+	lua_pushstring(L, "m_bPreview");
+	lua_gettable(L, index);
+	s.m_bPreview = check_bool(L, -1);
+	return s;
+}
+
+static void check_RemoteStoragePublishFileProgress_t_array(lua_State* L, int index, RemoteStoragePublishFileProgress_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStoragePublishFileProgress_t(L, -1);
+	}
+}
+static RemoteStoragePublishedFileUpdated_t check_RemoteStoragePublishedFileUpdated_t(lua_State* L, int index) {
+	RemoteStoragePublishedFileUpdated_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_ulUnused");
+	lua_gettable(L, index);
+	s.m_ulUnused = check_uint64(L, -1);
+	return s;
+}
+
+static void check_RemoteStoragePublishedFileUpdated_t_array(lua_State* L, int index, RemoteStoragePublishedFileUpdated_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_RemoteStoragePublishedFileUpdated_t(L, -1);
 	}
 }
 static RemoteStorageFileWriteAsyncComplete_t check_RemoteStorageFileWriteAsyncComplete_t(lua_State* L, int index) {
@@ -7781,33 +12112,18 @@ static void check_RemoteStorageFileReadAsyncComplete_t_array(lua_State* L, int i
 		s[i] = check_RemoteStorageFileReadAsyncComplete_t(L, -1);
 	}
 }
-static LeaderboardEntry_t check_LeaderboardEntry_t(lua_State* L, int index) {
-	LeaderboardEntry_t s;
+static RemoteStorageLocalFileChange_t check_RemoteStorageLocalFileChange_t(lua_State* L, int index) {
+	RemoteStorageLocalFileChange_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "m_steamIDUser");
-	lua_gettable(L, index);
-	s.m_steamIDUser = check_CSteamID(L, -1);
-	lua_pushstring(L, "m_nGlobalRank");
-	lua_gettable(L, index);
-	s.m_nGlobalRank = check_int32(L, -1);
-	lua_pushstring(L, "m_nScore");
-	lua_gettable(L, index);
-	s.m_nScore = check_int32(L, -1);
-	lua_pushstring(L, "m_cDetails");
-	lua_gettable(L, index);
-	s.m_cDetails = check_int32(L, -1);
-	lua_pushstring(L, "m_hUGC");
-	lua_gettable(L, index);
-	s.m_hUGC = check_UGCHandle_t(L, -1);
 	return s;
 }
 
-static void check_LeaderboardEntry_t_array(lua_State* L, int index, LeaderboardEntry_t *s, int size) {
+static void check_RemoteStorageLocalFileChange_t_array(lua_State* L, int index, RemoteStorageLocalFileChange_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -7824,7 +12140,7 @@ static void check_LeaderboardEntry_t_array(lua_State* L, int index, LeaderboardE
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_LeaderboardEntry_t(L, -1);
+		s[i] = check_RemoteStorageLocalFileChange_t(L, -1);
 	}
 }
 static UserStatsReceived_t check_UserStatsReceived_t(lua_State* L, int index) {
@@ -8412,6 +12728,37 @@ static void check_RegisterActivationCodeResponse_t_array(lua_State* L, int index
 		s[i] = check_RegisterActivationCodeResponse_t(L, -1);
 	}
 }
+static NewUrlLaunchParameters_t check_NewUrlLaunchParameters_t(lua_State* L, int index) {
+	NewUrlLaunchParameters_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_NewUrlLaunchParameters_t_array(lua_State* L, int index, NewUrlLaunchParameters_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_NewUrlLaunchParameters_t(L, -1);
+	}
+}
 static AppProofOfPurchaseKeyResponse_t check_AppProofOfPurchaseKeyResponse_t(lua_State* L, int index) {
 	AppProofOfPurchaseKeyResponse_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -8498,42 +12845,30 @@ static void check_FileDetailsResult_t_array(lua_State* L, int index, FileDetails
 		s[i] = check_FileDetailsResult_t(L, -1);
 	}
 }
-static P2PSessionState_t check_P2PSessionState_t(lua_State* L, int index) {
-	P2PSessionState_t s;
+static TimedTrialStatus_t check_TimedTrialStatus_t(lua_State* L, int index) {
+	TimedTrialStatus_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "m_bConnectionActive");
+	lua_pushstring(L, "m_unAppID");
 	lua_gettable(L, index);
-	s.m_bConnectionActive = check_uint8(L, -1);
-	lua_pushstring(L, "m_bConnecting");
+	s.m_unAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_bIsOffline");
 	lua_gettable(L, index);
-	s.m_bConnecting = check_uint8(L, -1);
-	lua_pushstring(L, "m_eP2PSessionError");
+	s.m_bIsOffline = check_bool(L, -1);
+	lua_pushstring(L, "m_unSecondsAllowed");
 	lua_gettable(L, index);
-	s.m_eP2PSessionError = check_uint8(L, -1);
-	lua_pushstring(L, "m_bUsingRelay");
+	s.m_unSecondsAllowed = check_uint32(L, -1);
+	lua_pushstring(L, "m_unSecondsPlayed");
 	lua_gettable(L, index);
-	s.m_bUsingRelay = check_uint8(L, -1);
-	lua_pushstring(L, "m_nBytesQueuedForSend");
-	lua_gettable(L, index);
-	s.m_nBytesQueuedForSend = check_int32(L, -1);
-	lua_pushstring(L, "m_nPacketsQueuedForSend");
-	lua_gettable(L, index);
-	s.m_nPacketsQueuedForSend = check_int32(L, -1);
-	lua_pushstring(L, "m_nRemoteIP");
-	lua_gettable(L, index);
-	s.m_nRemoteIP = check_uint32(L, -1);
-	lua_pushstring(L, "m_nRemotePort");
-	lua_gettable(L, index);
-	s.m_nRemotePort = check_uint16(L, -1);
+	s.m_unSecondsPlayed = check_uint32(L, -1);
 	return s;
 }
 
-static void check_P2PSessionState_t_array(lua_State* L, int index, P2PSessionState_t *s, int size) {
+static void check_TimedTrialStatus_t_array(lua_State* L, int index, TimedTrialStatus_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -8550,7 +12885,7 @@ static void check_P2PSessionState_t_array(lua_State* L, int index, P2PSessionSta
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_P2PSessionState_t(L, -1);
+		s[i] = check_TimedTrialStatus_t(L, -1);
 	}
 }
 static P2PSessionRequest_t check_P2PSessionRequest_t(lua_State* L, int index) {
@@ -8704,6 +13039,68 @@ static void check_ScreenshotReady_t_array(lua_State* L, int index, ScreenshotRea
 		s[i] = check_ScreenshotReady_t(L, -1);
 	}
 }
+static ScreenshotRequested_t check_ScreenshotRequested_t(lua_State* L, int index) {
+	ScreenshotRequested_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_ScreenshotRequested_t_array(lua_State* L, int index, ScreenshotRequested_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ScreenshotRequested_t(L, -1);
+	}
+}
+static PlaybackStatusHasChanged_t check_PlaybackStatusHasChanged_t(lua_State* L, int index) {
+	PlaybackStatusHasChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_PlaybackStatusHasChanged_t_array(lua_State* L, int index, PlaybackStatusHasChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_PlaybackStatusHasChanged_t(L, -1);
+	}
+}
 static VolumeHasChanged_t check_VolumeHasChanged_t(lua_State* L, int index) {
 	VolumeHasChanged_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -8736,6 +13133,254 @@ static void check_VolumeHasChanged_t_array(lua_State* L, int index, VolumeHasCha
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		s[i] = check_VolumeHasChanged_t(L, -1);
+	}
+}
+static MusicPlayerRemoteWillActivate_t check_MusicPlayerRemoteWillActivate_t(lua_State* L, int index) {
+	MusicPlayerRemoteWillActivate_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerRemoteWillActivate_t_array(lua_State* L, int index, MusicPlayerRemoteWillActivate_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerRemoteWillActivate_t(L, -1);
+	}
+}
+static MusicPlayerRemoteWillDeactivate_t check_MusicPlayerRemoteWillDeactivate_t(lua_State* L, int index) {
+	MusicPlayerRemoteWillDeactivate_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerRemoteWillDeactivate_t_array(lua_State* L, int index, MusicPlayerRemoteWillDeactivate_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerRemoteWillDeactivate_t(L, -1);
+	}
+}
+static MusicPlayerRemoteToFront_t check_MusicPlayerRemoteToFront_t(lua_State* L, int index) {
+	MusicPlayerRemoteToFront_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerRemoteToFront_t_array(lua_State* L, int index, MusicPlayerRemoteToFront_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerRemoteToFront_t(L, -1);
+	}
+}
+static MusicPlayerWillQuit_t check_MusicPlayerWillQuit_t(lua_State* L, int index) {
+	MusicPlayerWillQuit_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerWillQuit_t_array(lua_State* L, int index, MusicPlayerWillQuit_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWillQuit_t(L, -1);
+	}
+}
+static MusicPlayerWantsPlay_t check_MusicPlayerWantsPlay_t(lua_State* L, int index) {
+	MusicPlayerWantsPlay_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerWantsPlay_t_array(lua_State* L, int index, MusicPlayerWantsPlay_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsPlay_t(L, -1);
+	}
+}
+static MusicPlayerWantsPause_t check_MusicPlayerWantsPause_t(lua_State* L, int index) {
+	MusicPlayerWantsPause_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerWantsPause_t_array(lua_State* L, int index, MusicPlayerWantsPause_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsPause_t(L, -1);
+	}
+}
+static MusicPlayerWantsPlayPrevious_t check_MusicPlayerWantsPlayPrevious_t(lua_State* L, int index) {
+	MusicPlayerWantsPlayPrevious_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerWantsPlayPrevious_t_array(lua_State* L, int index, MusicPlayerWantsPlayPrevious_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsPlayPrevious_t(L, -1);
+	}
+}
+static MusicPlayerWantsPlayNext_t check_MusicPlayerWantsPlayNext_t(lua_State* L, int index) {
+	MusicPlayerWantsPlayNext_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_MusicPlayerWantsPlayNext_t_array(lua_State* L, int index, MusicPlayerWantsPlayNext_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_MusicPlayerWantsPlayNext_t(L, -1);
 	}
 }
 static MusicPlayerWantsShuffled_t check_MusicPlayerWantsShuffled_t(lua_State* L, int index) {
@@ -9068,30 +13713,21 @@ static void check_HTTPRequestDataReceived_t_array(lua_State* L, int index, HTTPR
 		s[i] = check_HTTPRequestDataReceived_t(L, -1);
 	}
 }
-static ControllerAnalogActionData_t check_ControllerAnalogActionData_t(lua_State* L, int index) {
-	ControllerAnalogActionData_t s;
+static SteamInputDeviceConnected_t check_SteamInputDeviceConnected_t(lua_State* L, int index) {
+	SteamInputDeviceConnected_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "eMode");
+	lua_pushstring(L, "m_ulConnectedDeviceHandle");
 	lua_gettable(L, index);
-	s.eMode = check_EControllerSourceMode(L, -1);
-	lua_pushstring(L, "x");
-	lua_gettable(L, index);
-	s.x = check_float(L, -1);
-	lua_pushstring(L, "y");
-	lua_gettable(L, index);
-	s.y = check_float(L, -1);
-	lua_pushstring(L, "bActive");
-	lua_gettable(L, index);
-	s.bActive = check_bool(L, -1);
+	s.m_ulConnectedDeviceHandle = check_InputHandle_t(L, -1);
 	return s;
 }
 
-static void check_ControllerAnalogActionData_t_array(lua_State* L, int index, ControllerAnalogActionData_t *s, int size) {
+static void check_SteamInputDeviceConnected_t_array(lua_State* L, int index, SteamInputDeviceConnected_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -9108,27 +13744,24 @@ static void check_ControllerAnalogActionData_t_array(lua_State* L, int index, Co
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_ControllerAnalogActionData_t(L, -1);
+		s[i] = check_SteamInputDeviceConnected_t(L, -1);
 	}
 }
-static ControllerDigitalActionData_t check_ControllerDigitalActionData_t(lua_State* L, int index) {
-	ControllerDigitalActionData_t s;
+static SteamInputDeviceDisconnected_t check_SteamInputDeviceDisconnected_t(lua_State* L, int index) {
+	SteamInputDeviceDisconnected_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "bState");
+	lua_pushstring(L, "m_ulDisconnectedDeviceHandle");
 	lua_gettable(L, index);
-	s.bState = check_bool(L, -1);
-	lua_pushstring(L, "bActive");
-	lua_gettable(L, index);
-	s.bActive = check_bool(L, -1);
+	s.m_ulDisconnectedDeviceHandle = check_InputHandle_t(L, -1);
 	return s;
 }
 
-static void check_ControllerDigitalActionData_t_array(lua_State* L, int index, ControllerDigitalActionData_t *s, int size) {
+static void check_SteamInputDeviceDisconnected_t_array(lua_State* L, int index, SteamInputDeviceDisconnected_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -9145,51 +13778,42 @@ static void check_ControllerDigitalActionData_t_array(lua_State* L, int index, C
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_ControllerDigitalActionData_t(L, -1);
+		s[i] = check_SteamInputDeviceDisconnected_t(L, -1);
 	}
 }
-static ControllerMotionData_t check_ControllerMotionData_t(lua_State* L, int index) {
-	ControllerMotionData_t s;
+static SteamInputConfigurationLoaded_t check_SteamInputConfigurationLoaded_t(lua_State* L, int index) {
+	SteamInputConfigurationLoaded_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		return s;
 	}
 	if(!lua_istable(L, index)) {
 		luaL_error(L, "Not a table");
 	}
-	lua_pushstring(L, "rotQuatX");
+	lua_pushstring(L, "m_unAppID");
 	lua_gettable(L, index);
-	s.rotQuatX = check_float(L, -1);
-	lua_pushstring(L, "rotQuatY");
+	s.m_unAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_ulDeviceHandle");
 	lua_gettable(L, index);
-	s.rotQuatY = check_float(L, -1);
-	lua_pushstring(L, "rotQuatZ");
+	s.m_ulDeviceHandle = check_InputHandle_t(L, -1);
+	lua_pushstring(L, "m_ulMappingCreator");
 	lua_gettable(L, index);
-	s.rotQuatZ = check_float(L, -1);
-	lua_pushstring(L, "rotQuatW");
+	s.m_ulMappingCreator = check_CSteamID(L, -1);
+	lua_pushstring(L, "m_unMajorRevision");
 	lua_gettable(L, index);
-	s.rotQuatW = check_float(L, -1);
-	lua_pushstring(L, "posAccelX");
+	s.m_unMajorRevision = check_uint32(L, -1);
+	lua_pushstring(L, "m_unMinorRevision");
 	lua_gettable(L, index);
-	s.posAccelX = check_float(L, -1);
-	lua_pushstring(L, "posAccelY");
+	s.m_unMinorRevision = check_uint32(L, -1);
+	lua_pushstring(L, "m_bUsesSteamInputAPI");
 	lua_gettable(L, index);
-	s.posAccelY = check_float(L, -1);
-	lua_pushstring(L, "posAccelZ");
+	s.m_bUsesSteamInputAPI = check_bool(L, -1);
+	lua_pushstring(L, "m_bUsesGamepadAPI");
 	lua_gettable(L, index);
-	s.posAccelZ = check_float(L, -1);
-	lua_pushstring(L, "rotVelX");
-	lua_gettable(L, index);
-	s.rotVelX = check_float(L, -1);
-	lua_pushstring(L, "rotVelY");
-	lua_gettable(L, index);
-	s.rotVelY = check_float(L, -1);
-	lua_pushstring(L, "rotVelZ");
-	lua_gettable(L, index);
-	s.rotVelZ = check_float(L, -1);
+	s.m_bUsesGamepadAPI = check_bool(L, -1);
 	return s;
 }
 
-static void check_ControllerMotionData_t_array(lua_State* L, int index, ControllerMotionData_t *s, int size) {
+static void check_SteamInputConfigurationLoaded_t_array(lua_State* L, int index, SteamInputConfigurationLoaded_t *s, int size) {
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		if(size > 0) {
 			luaL_error(L, "Size > 0 but no table provided");
@@ -9206,116 +13830,7 @@ static void check_ControllerMotionData_t_array(lua_State* L, int index, Controll
 	for(int i=1; i<=table_size; i++) {
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
-		s[i] = check_ControllerMotionData_t(L, -1);
-	}
-}
-static SteamUGCDetails_t check_SteamUGCDetails_t(lua_State* L, int index) {
-	SteamUGCDetails_t s;
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		return s;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	lua_pushstring(L, "m_nPublishedFileId");
-	lua_gettable(L, index);
-	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
-	lua_pushstring(L, "m_eResult");
-	lua_gettable(L, index);
-	s.m_eResult = check_EResult(L, -1);
-	lua_pushstring(L, "m_eFileType");
-	lua_gettable(L, index);
-	s.m_eFileType = check_EWorkshopFileType(L, -1);
-	lua_pushstring(L, "m_nCreatorAppID");
-	lua_gettable(L, index);
-	s.m_nCreatorAppID = check_AppId_t(L, -1);
-	lua_pushstring(L, "m_nConsumerAppID");
-	lua_gettable(L, index);
-	s.m_nConsumerAppID = check_AppId_t(L, -1);
-	lua_pushstring(L, "m_rgchTitle");
-	lua_gettable(L, index);
-	check_char_array(L, -1, s.m_rgchTitle, 129);
-	lua_pushstring(L, "m_rgchDescription");
-	lua_gettable(L, index);
-	check_char_array(L, -1, s.m_rgchDescription, 8000);
-	lua_pushstring(L, "m_ulSteamIDOwner");
-	lua_gettable(L, index);
-	s.m_ulSteamIDOwner = check_uint64(L, -1);
-	lua_pushstring(L, "m_rtimeCreated");
-	lua_gettable(L, index);
-	s.m_rtimeCreated = check_uint32(L, -1);
-	lua_pushstring(L, "m_rtimeUpdated");
-	lua_gettable(L, index);
-	s.m_rtimeUpdated = check_uint32(L, -1);
-	lua_pushstring(L, "m_rtimeAddedToUserList");
-	lua_gettable(L, index);
-	s.m_rtimeAddedToUserList = check_uint32(L, -1);
-	lua_pushstring(L, "m_eVisibility");
-	lua_gettable(L, index);
-	s.m_eVisibility = check_ERemoteStoragePublishedFileVisibility(L, -1);
-	lua_pushstring(L, "m_bBanned");
-	lua_gettable(L, index);
-	s.m_bBanned = check_bool(L, -1);
-	lua_pushstring(L, "m_bAcceptedForUse");
-	lua_gettable(L, index);
-	s.m_bAcceptedForUse = check_bool(L, -1);
-	lua_pushstring(L, "m_bTagsTruncated");
-	lua_gettable(L, index);
-	s.m_bTagsTruncated = check_bool(L, -1);
-	lua_pushstring(L, "m_rgchTags");
-	lua_gettable(L, index);
-	check_char_array(L, -1, s.m_rgchTags, 1025);
-	lua_pushstring(L, "m_hFile");
-	lua_gettable(L, index);
-	s.m_hFile = check_UGCHandle_t(L, -1);
-	lua_pushstring(L, "m_hPreviewFile");
-	lua_gettable(L, index);
-	s.m_hPreviewFile = check_UGCHandle_t(L, -1);
-	lua_pushstring(L, "m_pchFileName");
-	lua_gettable(L, index);
-	check_char_array(L, -1, s.m_pchFileName, 260);
-	lua_pushstring(L, "m_nFileSize");
-	lua_gettable(L, index);
-	s.m_nFileSize = check_int32(L, -1);
-	lua_pushstring(L, "m_nPreviewFileSize");
-	lua_gettable(L, index);
-	s.m_nPreviewFileSize = check_int32(L, -1);
-	lua_pushstring(L, "m_rgchURL");
-	lua_gettable(L, index);
-	check_char_array(L, -1, s.m_rgchURL, 256);
-	lua_pushstring(L, "m_unVotesUp");
-	lua_gettable(L, index);
-	s.m_unVotesUp = check_uint32(L, -1);
-	lua_pushstring(L, "m_unVotesDown");
-	lua_gettable(L, index);
-	s.m_unVotesDown = check_uint32(L, -1);
-	lua_pushstring(L, "m_flScore");
-	lua_gettable(L, index);
-	s.m_flScore = check_float(L, -1);
-	lua_pushstring(L, "m_unNumChildren");
-	lua_gettable(L, index);
-	s.m_unNumChildren = check_uint32(L, -1);
-	return s;
-}
-
-static void check_SteamUGCDetails_t_array(lua_State* L, int index, SteamUGCDetails_t *s, int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		s[i] = check_SteamUGCDetails_t(L, -1);
+		s[i] = check_SteamInputConfigurationLoaded_t(L, -1);
 	}
 }
 static SteamUGCQueryCompleted_t check_SteamUGCQueryCompleted_t(lua_State* L, int index) {
@@ -9341,6 +13856,9 @@ static SteamUGCQueryCompleted_t check_SteamUGCQueryCompleted_t(lua_State* L, int
 	lua_pushstring(L, "m_bCachedData");
 	lua_gettable(L, index);
 	s.m_bCachedData = check_bool(L, -1);
+	lua_pushstring(L, "m_rgchNextCursor");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_rgchNextCursor, 256);
 	return s;
 }
 
@@ -9479,6 +13997,43 @@ static void check_SubmitItemUpdateResult_t_array(lua_State* L, int index, Submit
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		s[i] = check_SubmitItemUpdateResult_t(L, -1);
+	}
+}
+static ItemInstalled_t check_ItemInstalled_t(lua_State* L, int index) {
+	ItemInstalled_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_unAppID");
+	lua_gettable(L, index);
+	s.m_unAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_nPublishedFileId");
+	lua_gettable(L, index);
+	s.m_nPublishedFileId = check_PublishedFileId_t(L, -1);
+	return s;
+}
+
+static void check_ItemInstalled_t_array(lua_State* L, int index, ItemInstalled_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_ItemInstalled_t(L, -1);
 	}
 }
 static DownloadItemResult_t check_DownloadItemResult_t(lua_State* L, int index) {
@@ -9958,6 +14513,89 @@ static void check_DeleteItemResult_t_array(lua_State* L, int index, DeleteItemRe
 		s[i] = check_DeleteItemResult_t(L, -1);
 	}
 }
+static UserSubscribedItemsListChanged_t check_UserSubscribedItemsListChanged_t(lua_State* L, int index) {
+	UserSubscribedItemsListChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	return s;
+}
+
+static void check_UserSubscribedItemsListChanged_t_array(lua_State* L, int index, UserSubscribedItemsListChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_UserSubscribedItemsListChanged_t(L, -1);
+	}
+}
+static WorkshopEULAStatus_t check_WorkshopEULAStatus_t(lua_State* L, int index) {
+	WorkshopEULAStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eResult");
+	lua_gettable(L, index);
+	s.m_eResult = check_EResult(L, -1);
+	lua_pushstring(L, "m_nAppID");
+	lua_gettable(L, index);
+	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_unVersion");
+	lua_gettable(L, index);
+	s.m_unVersion = check_uint32(L, -1);
+	lua_pushstring(L, "m_rtAction");
+	lua_gettable(L, index);
+	s.m_rtAction = check_RTime32(L, -1);
+	lua_pushstring(L, "m_bAccepted");
+	lua_gettable(L, index);
+	s.m_bAccepted = check_bool(L, -1);
+	lua_pushstring(L, "m_bNeedsAction");
+	lua_gettable(L, index);
+	s.m_bNeedsAction = check_bool(L, -1);
+	return s;
+}
+
+static void check_WorkshopEULAStatus_t_array(lua_State* L, int index, WorkshopEULAStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_WorkshopEULAStatus_t(L, -1);
+	}
+}
 static SteamAppInstalled_t check_SteamAppInstalled_t(lua_State* L, int index) {
 	SteamAppInstalled_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -9969,6 +14607,9 @@ static SteamAppInstalled_t check_SteamAppInstalled_t(lua_State* L, int index) {
 	lua_pushstring(L, "m_nAppID");
 	lua_gettable(L, index);
 	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_iInstallFolderIndex");
+	lua_gettable(L, index);
+	s.m_iInstallFolderIndex = check_int(L, -1);
 	return s;
 }
 
@@ -10003,6 +14644,9 @@ static SteamAppUninstalled_t check_SteamAppUninstalled_t(lua_State* L, int index
 	lua_pushstring(L, "m_nAppID");
 	lua_gettable(L, index);
 	s.m_nAppID = check_AppId_t(L, -1);
+	lua_pushstring(L, "m_iInstallFolderIndex");
+	lua_gettable(L, index);
+	s.m_iInstallFolderIndex = check_int(L, -1);
 	return s;
 }
 
@@ -10737,9 +15381,9 @@ static HTML_NewWindow_t check_HTML_NewWindow_t(lua_State* L, int index) {
 	lua_pushstring(L, "unTall");
 	lua_gettable(L, index);
 	s.unTall = check_uint32(L, -1);
-	lua_pushstring(L, "unNewWindow_BrowserHandle");
+	lua_pushstring(L, "unNewWindow_BrowserHandle_IGNORE");
 	lua_gettable(L, index);
-	s.unNewWindow_BrowserHandle = check_HHTMLBrowser(L, -1);
+	s.unNewWindow_BrowserHandle_IGNORE = check_HHTMLBrowser(L, -1);
 	return s;
 }
 
@@ -10982,49 +15626,6 @@ static void check_HTML_BrowserRestarted_t_array(lua_State* L, int index, HTML_Br
 		s[i] = check_HTML_BrowserRestarted_t(L, -1);
 	}
 }
-static SteamItemDetails_t check_SteamItemDetails_t(lua_State* L, int index) {
-	SteamItemDetails_t s;
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		return s;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	lua_pushstring(L, "m_itemId");
-	lua_gettable(L, index);
-	s.m_itemId = check_SteamItemInstanceID_t(L, -1);
-	lua_pushstring(L, "m_iDefinition");
-	lua_gettable(L, index);
-	s.m_iDefinition = check_SteamItemDef_t(L, -1);
-	lua_pushstring(L, "m_unQuantity");
-	lua_gettable(L, index);
-	s.m_unQuantity = check_uint16(L, -1);
-	lua_pushstring(L, "m_unFlags");
-	lua_gettable(L, index);
-	s.m_unFlags = check_uint16(L, -1);
-	return s;
-}
-
-static void check_SteamItemDetails_t_array(lua_State* L, int index, SteamItemDetails_t *s, int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		s[i] = check_SteamItemDetails_t(L, -1);
-	}
-}
 static SteamInventoryResultReady_t check_SteamInventoryResultReady_t(lua_State* L, int index) {
 	SteamInventoryResultReady_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -11094,6 +15695,37 @@ static void check_SteamInventoryFullUpdate_t_array(lua_State* L, int index, Stea
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		s[i] = check_SteamInventoryFullUpdate_t(L, -1);
+	}
+}
+static SteamInventoryDefinitionUpdate_t check_SteamInventoryDefinitionUpdate_t(lua_State* L, int index) {
+	SteamInventoryDefinitionUpdate_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_SteamInventoryDefinitionUpdate_t_array(lua_State* L, int index, SteamInventoryDefinitionUpdate_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamInventoryDefinitionUpdate_t(L, -1);
 	}
 }
 static SteamInventoryEligiblePromoItemDefIDs_t check_SteamInventoryEligiblePromoItemDefIDs_t(lua_State* L, int index) {
@@ -11216,40 +15848,6 @@ static void check_SteamInventoryRequestPricesResult_t_array(lua_State* L, int in
 		s[i] = check_SteamInventoryRequestPricesResult_t(L, -1);
 	}
 }
-static BroadcastUploadStop_t check_BroadcastUploadStop_t(lua_State* L, int index) {
-	BroadcastUploadStop_t s;
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		return s;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	lua_pushstring(L, "m_eResult");
-	lua_gettable(L, index);
-	s.m_eResult = check_EBroadcastUploadResult(L, -1);
-	return s;
-}
-
-static void check_BroadcastUploadStop_t_array(lua_State* L, int index, BroadcastUploadStop_t *s, int size) {
-	if(lua_isnil(L, index) || lua_isnone(L, index)) {
-		if(size > 0) {
-			luaL_error(L, "Size > 0 but no table provided");
-		}
-		return;
-	}
-	if(!lua_istable(L, index)) {
-		luaL_error(L, "Not a table");
-	}
-	int table_size = lua_objlen(L, index);
-	if(table_size > size) {
-		table_size = size;
-	}
-	for(int i=1; i<=table_size; i++) {
-		lua_pushnumber(L, i);
-		lua_gettable(L, index);
-		s[i] = check_BroadcastUploadStop_t(L, -1);
-	}
-}
 static GetVideoURLResult_t check_GetVideoURLResult_t(lua_State* L, int index) {
 	GetVideoURLResult_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
@@ -11325,6 +15923,296 @@ static void check_GetOPFSettingsResult_t_array(lua_State* L, int index, GetOPFSe
 		lua_pushnumber(L, i);
 		lua_gettable(L, index);
 		s[i] = check_GetOPFSettingsResult_t(L, -1);
+	}
+}
+static SteamParentalSettingsChanged_t check_SteamParentalSettingsChanged_t(lua_State* L, int index) {
+	SteamParentalSettingsChanged_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	return s;
+}
+
+static void check_SteamParentalSettingsChanged_t_array(lua_State* L, int index, SteamParentalSettingsChanged_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamParentalSettingsChanged_t(L, -1);
+	}
+}
+static SteamRemotePlaySessionConnected_t check_SteamRemotePlaySessionConnected_t(lua_State* L, int index) {
+	SteamRemotePlaySessionConnected_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_unSessionID");
+	lua_gettable(L, index);
+	s.m_unSessionID = check_RemotePlaySessionID_t(L, -1);
+	return s;
+}
+
+static void check_SteamRemotePlaySessionConnected_t_array(lua_State* L, int index, SteamRemotePlaySessionConnected_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamRemotePlaySessionConnected_t(L, -1);
+	}
+}
+static SteamRemotePlaySessionDisconnected_t check_SteamRemotePlaySessionDisconnected_t(lua_State* L, int index) {
+	SteamRemotePlaySessionDisconnected_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_unSessionID");
+	lua_gettable(L, index);
+	s.m_unSessionID = check_RemotePlaySessionID_t(L, -1);
+	return s;
+}
+
+static void check_SteamRemotePlaySessionDisconnected_t_array(lua_State* L, int index, SteamRemotePlaySessionDisconnected_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamRemotePlaySessionDisconnected_t(L, -1);
+	}
+}
+static SteamNetworkingMessagesSessionRequest_t check_SteamNetworkingMessagesSessionRequest_t(lua_State* L, int index) {
+	SteamNetworkingMessagesSessionRequest_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_identityRemote");
+	lua_gettable(L, index);
+	s.m_identityRemote = check_SteamNetworkingIdentity(L, -1);
+	return s;
+}
+
+static void check_SteamNetworkingMessagesSessionRequest_t_array(lua_State* L, int index, SteamNetworkingMessagesSessionRequest_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetworkingMessagesSessionRequest_t(L, -1);
+	}
+}
+static SteamNetworkingMessagesSessionFailed_t check_SteamNetworkingMessagesSessionFailed_t(lua_State* L, int index) {
+	SteamNetworkingMessagesSessionFailed_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_info");
+	lua_gettable(L, index);
+	s.m_info = check_SteamNetConnectionInfo_t(L, -1);
+	return s;
+}
+
+static void check_SteamNetworkingMessagesSessionFailed_t_array(lua_State* L, int index, SteamNetworkingMessagesSessionFailed_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetworkingMessagesSessionFailed_t(L, -1);
+	}
+}
+static SteamNetConnectionStatusChangedCallback_t check_SteamNetConnectionStatusChangedCallback_t(lua_State* L, int index) {
+	SteamNetConnectionStatusChangedCallback_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_hConn");
+	lua_gettable(L, index);
+	s.m_hConn = check_HSteamNetConnection(L, -1);
+	lua_pushstring(L, "m_info");
+	lua_gettable(L, index);
+	s.m_info = check_SteamNetConnectionInfo_t(L, -1);
+	lua_pushstring(L, "m_eOldState");
+	lua_gettable(L, index);
+	s.m_eOldState = check_ESteamNetworkingConnectionState(L, -1);
+	return s;
+}
+
+static void check_SteamNetConnectionStatusChangedCallback_t_array(lua_State* L, int index, SteamNetConnectionStatusChangedCallback_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetConnectionStatusChangedCallback_t(L, -1);
+	}
+}
+static SteamNetAuthenticationStatus_t check_SteamNetAuthenticationStatus_t(lua_State* L, int index) {
+	SteamNetAuthenticationStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eAvail");
+	lua_gettable(L, index);
+	s.m_eAvail = check_ESteamNetworkingAvailability(L, -1);
+	lua_pushstring(L, "m_debugMsg");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_debugMsg, 256);
+	return s;
+}
+
+static void check_SteamNetAuthenticationStatus_t_array(lua_State* L, int index, SteamNetAuthenticationStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamNetAuthenticationStatus_t(L, -1);
+	}
+}
+static SteamRelayNetworkStatus_t check_SteamRelayNetworkStatus_t(lua_State* L, int index) {
+	SteamRelayNetworkStatus_t s;
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		return s;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	lua_pushstring(L, "m_eAvail");
+	lua_gettable(L, index);
+	s.m_eAvail = check_ESteamNetworkingAvailability(L, -1);
+	lua_pushstring(L, "m_bPingMeasurementInProgress");
+	lua_gettable(L, index);
+	s.m_bPingMeasurementInProgress = check_int(L, -1);
+	lua_pushstring(L, "m_eAvailNetworkConfig");
+	lua_gettable(L, index);
+	s.m_eAvailNetworkConfig = check_ESteamNetworkingAvailability(L, -1);
+	lua_pushstring(L, "m_eAvailAnyRelay");
+	lua_gettable(L, index);
+	s.m_eAvailAnyRelay = check_ESteamNetworkingAvailability(L, -1);
+	lua_pushstring(L, "m_debugMsg");
+	lua_gettable(L, index);
+	check_char_array(L, -1, s.m_debugMsg, 256);
+	return s;
+}
+
+static void check_SteamRelayNetworkStatus_t_array(lua_State* L, int index, SteamRelayNetworkStatus_t *s, int size) {
+	if(lua_isnil(L, index) || lua_isnone(L, index)) {
+		if(size > 0) {
+			luaL_error(L, "Size > 0 but no table provided");
+		}
+		return;
+	}
+	if(!lua_istable(L, index)) {
+		luaL_error(L, "Not a table");
+	}
+	int table_size = lua_objlen(L, index);
+	if(table_size > size) {
+		table_size = size;
+	}
+	for(int i=1; i<=table_size; i++) {
+		lua_pushnumber(L, i);
+		lua_gettable(L, index);
+		s[i] = check_SteamRelayNetworkStatus_t(L, -1);
 	}
 }
 static GSClientApprove_t check_GSClientApprove_t(lua_State* L, int index) {
@@ -11908,6 +16796,54 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, MarketEligibilityResponse_t> m_CallResultMarketEligibilityResponse_t;
+		void TrackSteamAPICallMarketEligibilityResponse_t(SteamAPICall_t steamAPICall) {
+			m_CallResultMarketEligibilityResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnMarketEligibilityResponse_t);
+		}
+		void OnMarketEligibilityResponse_t(MarketEligibilityResponse_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnMarketEligibilityResponse_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "MarketEligibilityResponse_t");
+			push_MarketEligibilityResponse_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnMarketEligibilityResponse_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, DurationControl_t> m_CallResultDurationControl_t;
+		void TrackSteamAPICallDurationControl_t(SteamAPICall_t steamAPICall) {
+			m_CallResultDurationControl_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnDurationControl_t);
+		}
+		void OnDurationControl_t(DurationControl_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnDurationControl_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "DurationControl_t");
+			push_DurationControl_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnDurationControl_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, ClanOfficerListResponse_t> m_CallResultClanOfficerListResponse_t;
 		void TrackSteamAPICallClanOfficerListResponse_t(SteamAPICall_t steamAPICall) {
 			m_CallResultClanOfficerListResponse_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnClanOfficerListResponse_t);
@@ -12076,6 +17012,30 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, EquippedProfileItems_t> m_CallResultEquippedProfileItems_t;
+		void TrackSteamAPICallEquippedProfileItems_t(SteamAPICall_t steamAPICall) {
+			m_CallResultEquippedProfileItems_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnEquippedProfileItems_t);
+		}
+		void OnEquippedProfileItems_t(EquippedProfileItems_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnEquippedProfileItems_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "EquippedProfileItems_t");
+			push_EquippedProfileItems_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnEquippedProfileItems_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, CheckFileSignature_t> m_CallResultCheckFileSignature_t;
 		void TrackSteamAPICallCheckFileSignature_t(SteamAPICall_t steamAPICall) {
 			m_CallResultCheckFileSignature_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnCheckFileSignature_t);
@@ -12172,6 +17132,78 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, JoinPartyCallback_t> m_CallResultJoinPartyCallback_t;
+		void TrackSteamAPICallJoinPartyCallback_t(SteamAPICall_t steamAPICall) {
+			m_CallResultJoinPartyCallback_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnJoinPartyCallback_t);
+		}
+		void OnJoinPartyCallback_t(JoinPartyCallback_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnJoinPartyCallback_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "JoinPartyCallback_t");
+			push_JoinPartyCallback_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnJoinPartyCallback_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, CreateBeaconCallback_t> m_CallResultCreateBeaconCallback_t;
+		void TrackSteamAPICallCreateBeaconCallback_t(SteamAPICall_t steamAPICall) {
+			m_CallResultCreateBeaconCallback_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnCreateBeaconCallback_t);
+		}
+		void OnCreateBeaconCallback_t(CreateBeaconCallback_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnCreateBeaconCallback_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "CreateBeaconCallback_t");
+			push_CreateBeaconCallback_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnCreateBeaconCallback_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, ChangeNumOpenSlotsCallback_t> m_CallResultChangeNumOpenSlotsCallback_t;
+		void TrackSteamAPICallChangeNumOpenSlotsCallback_t(SteamAPICall_t steamAPICall) {
+			m_CallResultChangeNumOpenSlotsCallback_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnChangeNumOpenSlotsCallback_t);
+		}
+		void OnChangeNumOpenSlotsCallback_t(ChangeNumOpenSlotsCallback_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnChangeNumOpenSlotsCallback_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "ChangeNumOpenSlotsCallback_t");
+			push_ChangeNumOpenSlotsCallback_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnChangeNumOpenSlotsCallback_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, RemoteStorageFileShareResult_t> m_CallResultRemoteStorageFileShareResult_t;
 		void TrackSteamAPICallRemoteStorageFileShareResult_t(SteamAPICall_t steamAPICall) {
 			m_CallResultRemoteStorageFileShareResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageFileShareResult_t);
@@ -12191,6 +17223,54 @@ class SteamCallbackWrapper {
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
 				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageFileShareResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageDeletePublishedFileResult_t> m_CallResultRemoteStorageDeletePublishedFileResult_t;
+		void TrackSteamAPICallRemoteStorageDeletePublishedFileResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageDeletePublishedFileResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageDeletePublishedFileResult_t);
+		}
+		void OnRemoteStorageDeletePublishedFileResult_t(RemoteStorageDeletePublishedFileResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageDeletePublishedFileResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageDeletePublishedFileResult_t");
+			push_RemoteStorageDeletePublishedFileResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageDeletePublishedFileResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageEnumerateUserPublishedFilesResult_t> m_CallResultRemoteStorageEnumerateUserPublishedFilesResult_t;
+		void TrackSteamAPICallRemoteStorageEnumerateUserPublishedFilesResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageEnumerateUserPublishedFilesResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageEnumerateUserPublishedFilesResult_t);
+		}
+		void OnRemoteStorageEnumerateUserPublishedFilesResult_t(RemoteStorageEnumerateUserPublishedFilesResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumerateUserPublishedFilesResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageEnumerateUserPublishedFilesResult_t");
+			push_RemoteStorageEnumerateUserPublishedFilesResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumerateUserPublishedFilesResult_t error: %s\n", lua_tostring(L, -1));
 				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
@@ -12220,6 +17300,30 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, RemoteStorageEnumerateUserSubscribedFilesResult_t> m_CallResultRemoteStorageEnumerateUserSubscribedFilesResult_t;
+		void TrackSteamAPICallRemoteStorageEnumerateUserSubscribedFilesResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageEnumerateUserSubscribedFilesResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageEnumerateUserSubscribedFilesResult_t);
+		}
+		void OnRemoteStorageEnumerateUserSubscribedFilesResult_t(RemoteStorageEnumerateUserSubscribedFilesResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumerateUserSubscribedFilesResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageEnumerateUserSubscribedFilesResult_t");
+			push_RemoteStorageEnumerateUserSubscribedFilesResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumerateUserSubscribedFilesResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, RemoteStorageUnsubscribePublishedFileResult_t> m_CallResultRemoteStorageUnsubscribePublishedFileResult_t;
 		void TrackSteamAPICallRemoteStorageUnsubscribePublishedFileResult_t(SteamAPICall_t steamAPICall) {
 			m_CallResultRemoteStorageUnsubscribePublishedFileResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageUnsubscribePublishedFileResult_t);
@@ -12244,6 +17348,30 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, RemoteStorageUpdatePublishedFileResult_t> m_CallResultRemoteStorageUpdatePublishedFileResult_t;
+		void TrackSteamAPICallRemoteStorageUpdatePublishedFileResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageUpdatePublishedFileResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageUpdatePublishedFileResult_t);
+		}
+		void OnRemoteStorageUpdatePublishedFileResult_t(RemoteStorageUpdatePublishedFileResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageUpdatePublishedFileResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageUpdatePublishedFileResult_t");
+			push_RemoteStorageUpdatePublishedFileResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageUpdatePublishedFileResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, RemoteStorageDownloadUGCResult_t> m_CallResultRemoteStorageDownloadUGCResult_t;
 		void TrackSteamAPICallRemoteStorageDownloadUGCResult_t(SteamAPICall_t steamAPICall) {
 			m_CallResultRemoteStorageDownloadUGCResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageDownloadUGCResult_t);
@@ -12263,6 +17391,174 @@ class SteamCallbackWrapper {
 			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 			if (ret != 0) {
 				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageDownloadUGCResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageGetPublishedFileDetailsResult_t> m_CallResultRemoteStorageGetPublishedFileDetailsResult_t;
+		void TrackSteamAPICallRemoteStorageGetPublishedFileDetailsResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageGetPublishedFileDetailsResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageGetPublishedFileDetailsResult_t);
+		}
+		void OnRemoteStorageGetPublishedFileDetailsResult_t(RemoteStorageGetPublishedFileDetailsResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageGetPublishedFileDetailsResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageGetPublishedFileDetailsResult_t");
+			push_RemoteStorageGetPublishedFileDetailsResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageGetPublishedFileDetailsResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageEnumerateWorkshopFilesResult_t> m_CallResultRemoteStorageEnumerateWorkshopFilesResult_t;
+		void TrackSteamAPICallRemoteStorageEnumerateWorkshopFilesResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageEnumerateWorkshopFilesResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageEnumerateWorkshopFilesResult_t);
+		}
+		void OnRemoteStorageEnumerateWorkshopFilesResult_t(RemoteStorageEnumerateWorkshopFilesResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumerateWorkshopFilesResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageEnumerateWorkshopFilesResult_t");
+			push_RemoteStorageEnumerateWorkshopFilesResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumerateWorkshopFilesResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageGetPublishedItemVoteDetailsResult_t> m_CallResultRemoteStorageGetPublishedItemVoteDetailsResult_t;
+		void TrackSteamAPICallRemoteStorageGetPublishedItemVoteDetailsResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageGetPublishedItemVoteDetailsResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageGetPublishedItemVoteDetailsResult_t);
+		}
+		void OnRemoteStorageGetPublishedItemVoteDetailsResult_t(RemoteStorageGetPublishedItemVoteDetailsResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageGetPublishedItemVoteDetailsResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageGetPublishedItemVoteDetailsResult_t");
+			push_RemoteStorageGetPublishedItemVoteDetailsResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageGetPublishedItemVoteDetailsResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageUpdateUserPublishedItemVoteResult_t> m_CallResultRemoteStorageUpdateUserPublishedItemVoteResult_t;
+		void TrackSteamAPICallRemoteStorageUpdateUserPublishedItemVoteResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageUpdateUserPublishedItemVoteResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageUpdateUserPublishedItemVoteResult_t);
+		}
+		void OnRemoteStorageUpdateUserPublishedItemVoteResult_t(RemoteStorageUpdateUserPublishedItemVoteResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageUpdateUserPublishedItemVoteResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageUpdateUserPublishedItemVoteResult_t");
+			push_RemoteStorageUpdateUserPublishedItemVoteResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageUpdateUserPublishedItemVoteResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageSetUserPublishedFileActionResult_t> m_CallResultRemoteStorageSetUserPublishedFileActionResult_t;
+		void TrackSteamAPICallRemoteStorageSetUserPublishedFileActionResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageSetUserPublishedFileActionResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageSetUserPublishedFileActionResult_t);
+		}
+		void OnRemoteStorageSetUserPublishedFileActionResult_t(RemoteStorageSetUserPublishedFileActionResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageSetUserPublishedFileActionResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageSetUserPublishedFileActionResult_t");
+			push_RemoteStorageSetUserPublishedFileActionResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageSetUserPublishedFileActionResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStorageEnumeratePublishedFilesByUserActionResult_t> m_CallResultRemoteStorageEnumeratePublishedFilesByUserActionResult_t;
+		void TrackSteamAPICallRemoteStorageEnumeratePublishedFilesByUserActionResult_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStorageEnumeratePublishedFilesByUserActionResult_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStorageEnumeratePublishedFilesByUserActionResult_t);
+		}
+		void OnRemoteStorageEnumeratePublishedFilesByUserActionResult_t(RemoteStorageEnumeratePublishedFilesByUserActionResult_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumeratePublishedFilesByUserActionResult_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStorageEnumeratePublishedFilesByUserActionResult_t");
+			push_RemoteStorageEnumeratePublishedFilesByUserActionResult_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStorageEnumeratePublishedFilesByUserActionResult_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
+		CCallResult<SteamCallbackWrapper, RemoteStoragePublishFileProgress_t> m_CallResultRemoteStoragePublishFileProgress_t;
+		void TrackSteamAPICallRemoteStoragePublishFileProgress_t(SteamAPICall_t steamAPICall) {
+			m_CallResultRemoteStoragePublishFileProgress_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnRemoteStoragePublishFileProgress_t);
+		}
+		void OnRemoteStoragePublishFileProgress_t(RemoteStoragePublishFileProgress_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnRemoteStoragePublishFileProgress_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "RemoteStoragePublishFileProgress_t");
+			push_RemoteStoragePublishFileProgress_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnRemoteStoragePublishFileProgress_t error: %s\n", lua_tostring(L, -1));
 				lua_pop(L, 1);
 			}
 			assert(top == lua_gettop(L));
@@ -12892,6 +18188,30 @@ class SteamCallbackWrapper {
 			assert(top == lua_gettop(L));
 		}
 		
+		CCallResult<SteamCallbackWrapper, WorkshopEULAStatus_t> m_CallResultWorkshopEULAStatus_t;
+		void TrackSteamAPICallWorkshopEULAStatus_t(SteamAPICall_t steamAPICall) {
+			m_CallResultWorkshopEULAStatus_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnWorkshopEULAStatus_t);
+		}
+		void OnWorkshopEULAStatus_t(WorkshopEULAStatus_t *pResult, bool bIOFailure) {
+			dmLogInfo("SteamCallbackWrapper::OnWorkshopEULAStatus_t\n");
+			lua_State* L = steamworksListener.m_L;
+			if (!L) {
+				dmLogInfo("no lua state\n");
+				return;
+			}
+			int top = lua_gettop(L);
+			lua_pushlistener(L, steamworksListener);
+
+			lua_pushstring(L, "WorkshopEULAStatus_t");
+			push_WorkshopEULAStatus_t(L, *pResult);
+			int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+			if (ret != 0) {
+				dmLogInfo("SteamCallbackWrapper::OnWorkshopEULAStatus_t error: %s\n", lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+			assert(top == lua_gettop(L));
+		}
+		
 		CCallResult<SteamCallbackWrapper, SteamInventoryEligiblePromoItemDefIDs_t> m_CallResultSteamInventoryEligiblePromoItemDefIDs_t;
 		void TrackSteamAPICallSteamInventoryEligiblePromoItemDefIDs_t(SteamAPICall_t steamAPICall) {
 			m_CallResultSteamInventoryEligiblePromoItemDefIDs_t.Set(steamAPICall, this, &SteamCallbackWrapper::OnSteamInventoryEligiblePromoItemDefIDs_t);
@@ -13065,21 +18385,37 @@ static int ISteamUser_BLoggedOn(lua_State* L) {
 static int ISteamUser_GetSteamID(lua_State* L) {
 	int top = lua_gettop(L);
 
-	class CSteamID r = user->GetSteamID();
-	push_class_CSteamID(L, r);
+	CSteamID r = user->GetSteamID();
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
 }
 
-static int ISteamUser_TerminateGameConnection(lua_State* L) {
+static int ISteamUser_TrackAppUsageEvent(lua_State* L) {
 	int top = lua_gettop(L);
-	uint16 usPortServer = check_uint16(L, 2); /*normal*/
-	uint32 unIPServer = check_uint32(L, 1); /*normal*/
+	const char * pchExtraInfo = check_const_char_ptr(L, 3); /*normal*/
+	int eAppUsageEvent = check_int(L, 2); /*normal*/
+	CGameID gameID = check_CGameID(L, 1); /*normal*/
 
-	user->TerminateGameConnection(unIPServer, usPortServer);
+	user->TrackAppUsageEvent(gameID, eAppUsageEvent, pchExtraInfo);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
+}
+
+static int ISteamUser_GetUserDataFolder(lua_State* L) {
+	int top = lua_gettop(L);
+	int cubBuffer = check_int(L, 2); /*normal*/
+	dmScript::LuaHBuffer * pchBuffer_buffer = check_buffer(L, 1); /*buffer_param*/
+	char * pchBuffer = 0x0;
+	uint32_t pchBuffer_buffersize = 0;
+	dmBuffer::Result pchBuffer_buffer_result = dmBuffer::GetBytes(pchBuffer_buffer->m_Buffer, (void**)&pchBuffer, &pchBuffer_buffersize);
+
+	bool r = user->GetUserDataFolder(pchBuffer, cubBuffer);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUser_GetAuthSessionTicket(lua_State* L) {
@@ -13101,7 +18437,7 @@ static int ISteamUser_GetAuthSessionTicket(lua_State* L) {
 
 static int ISteamUser_BeginAuthSession(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamID = check_class_CSteamID(L, 3); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 3); /*normal*/
 	int cbAuthTicket = check_int(L, 2); /*normal*/
 	const void * pAuthTicket = check_const_void_ptr(L, 1); /*normal*/
 
@@ -13114,7 +18450,7 @@ static int ISteamUser_BeginAuthSession(lua_State* L) {
 
 static int ISteamUser_EndAuthSession(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
 
 	user->EndAuthSession(steamID);
 	assert(top + 0 == lua_gettop(L));
@@ -13133,7 +18469,7 @@ static int ISteamUser_CancelAuthTicket(lua_State* L) {
 static int ISteamUser_UserHasLicenseForApp(lua_State* L) {
 	int top = lua_gettop(L);
 	AppId_t appID = check_AppId_t(L, 2); /*normal*/
-	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
 
 	EUserHasLicenseForAppResult r = user->UserHasLicenseForApp(steamID, appID);
 	push_EUserHasLicenseForAppResult(L, r);
@@ -13156,7 +18492,7 @@ static int ISteamUser_AdvertiseGame(lua_State* L) {
 	int top = lua_gettop(L);
 	uint16 usPortServer = check_uint16(L, 3); /*normal*/
 	uint32 unIPServer = check_uint32(L, 2); /*normal*/
-	class CSteamID steamIDGameServer = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDGameServer = check_CSteamID(L, 1); /*normal*/
 
 	user->AdvertiseGame(steamIDGameServer, unIPServer, usPortServer);
 	assert(top + 0 == lua_gettop(L));
@@ -13266,6 +18602,35 @@ static int ISteamUser_BIsPhoneRequiringVerification(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamUser_GetMarketEligibility(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = user->GetMarketEligibility();
+	steamCallbackWrapper->TrackSteamAPICallMarketEligibilityResponse_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUser_GetDurationControl(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = user->GetDurationControl();
+	steamCallbackWrapper->TrackSteamAPICallDurationControl_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUser_BSetDurationControlOnlineState(lua_State* L) {
+	int top = lua_gettop(L);
+	EDurationControlOnlineState eNewState = check_EDurationControlOnlineState(L, 1); /*normal*/
+
+	bool r = user->BSetDurationControlOnlineState(eNewState);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamFriends_GetPersonaName(lua_State* L) {
 	int top = lua_gettop(L);
 
@@ -13312,8 +18677,8 @@ static int ISteamFriends_GetFriendByIndex(lua_State* L) {
 	int iFriendFlags = check_int(L, 2); /*normal*/
 	int iFriend = check_int(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetFriendByIndex(iFriend, iFriendFlags);
-	push_class_CSteamID(L, r);
+	CSteamID r = friends->GetFriendByIndex(iFriend, iFriendFlags);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13321,7 +18686,7 @@ static int ISteamFriends_GetFriendByIndex(lua_State* L) {
 
 static int ISteamFriends_GetFriendRelationship(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	EFriendRelationship r = friends->GetFriendRelationship(steamIDFriend);
 	push_EFriendRelationship(L, r);
@@ -13332,7 +18697,7 @@ static int ISteamFriends_GetFriendRelationship(lua_State* L) {
 
 static int ISteamFriends_GetFriendPersonaState(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	EPersonaState r = friends->GetFriendPersonaState(steamIDFriend);
 	push_EPersonaState(L, r);
@@ -13343,7 +18708,7 @@ static int ISteamFriends_GetFriendPersonaState(lua_State* L) {
 
 static int ISteamFriends_GetFriendPersonaName(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = friends->GetFriendPersonaName(steamIDFriend);
 	push_const_char_ptr(L, r);
@@ -13354,8 +18719,8 @@ static int ISteamFriends_GetFriendPersonaName(lua_State* L) {
 
 static int ISteamFriends_GetFriendGamePlayed(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
-	struct FriendGameInfo_t pFriendGameInfo; /*out_struct*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
+	FriendGameInfo_t pFriendGameInfo; /*out_struct*/
 
 	bool r = friends->GetFriendGamePlayed(steamIDFriend, &pFriendGameInfo);
 	push_bool(L, r);
@@ -13367,7 +18732,7 @@ static int ISteamFriends_GetFriendGamePlayed(lua_State* L) {
 static int ISteamFriends_GetFriendPersonaNameHistory(lua_State* L) {
 	int top = lua_gettop(L);
 	int iPersonaName = check_int(L, 2); /*normal*/
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = friends->GetFriendPersonaNameHistory(steamIDFriend, iPersonaName);
 	push_const_char_ptr(L, r);
@@ -13378,7 +18743,7 @@ static int ISteamFriends_GetFriendPersonaNameHistory(lua_State* L) {
 
 static int ISteamFriends_GetFriendSteamLevel(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetFriendSteamLevel(steamIDFriend);
 	push_int(L, r);
@@ -13389,7 +18754,7 @@ static int ISteamFriends_GetFriendSteamLevel(lua_State* L) {
 
 static int ISteamFriends_GetPlayerNickname(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDPlayer = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDPlayer = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = friends->GetPlayerNickname(steamIDPlayer);
 	push_const_char_ptr(L, r);
@@ -13456,7 +18821,7 @@ static int ISteamFriends_GetFriendsGroupMembersList(lua_State* L) {
 static int ISteamFriends_HasFriend(lua_State* L) {
 	int top = lua_gettop(L);
 	int iFriendFlags = check_int(L, 2); /*normal*/
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->HasFriend(steamIDFriend, iFriendFlags);
 	push_bool(L, r);
@@ -13479,8 +18844,8 @@ static int ISteamFriends_GetClanByIndex(lua_State* L) {
 	int top = lua_gettop(L);
 	int iClan = check_int(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetClanByIndex(iClan);
-	push_class_CSteamID(L, r);
+	CSteamID r = friends->GetClanByIndex(iClan);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13488,7 +18853,7 @@ static int ISteamFriends_GetClanByIndex(lua_State* L) {
 
 static int ISteamFriends_GetClanName(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = friends->GetClanName(steamIDClan);
 	push_const_char_ptr(L, r);
@@ -13499,7 +18864,7 @@ static int ISteamFriends_GetClanName(lua_State* L) {
 
 static int ISteamFriends_GetClanTag(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = friends->GetClanTag(steamIDClan);
 	push_const_char_ptr(L, r);
@@ -13513,7 +18878,7 @@ static int ISteamFriends_GetClanActivityCounts(lua_State* L) {
 	int pnChatting = check_int(L, 4); /*out_param*/
 	int pnInGame = check_int(L, 3); /*out_param*/
 	int pnOnline = check_int(L, 2); /*out_param*/
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->GetClanActivityCounts(steamIDClan, &pnOnline, &pnInGame, &pnChatting);
 	push_bool(L, r);
@@ -13544,7 +18909,7 @@ static int ISteamFriends_DownloadClanActivityCounts(lua_State* L) {
 
 static int ISteamFriends_GetFriendCountFromSource(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDSource = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDSource = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetFriendCountFromSource(steamIDSource);
 	push_int(L, r);
@@ -13556,10 +18921,10 @@ static int ISteamFriends_GetFriendCountFromSource(lua_State* L) {
 static int ISteamFriends_GetFriendFromSourceByIndex(lua_State* L) {
 	int top = lua_gettop(L);
 	int iFriend = check_int(L, 2); /*normal*/
-	class CSteamID steamIDSource = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDSource = check_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetFriendFromSourceByIndex(steamIDSource, iFriend);
-	push_class_CSteamID(L, r);
+	CSteamID r = friends->GetFriendFromSourceByIndex(steamIDSource, iFriend);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13567,8 +18932,8 @@ static int ISteamFriends_GetFriendFromSourceByIndex(lua_State* L) {
 
 static int ISteamFriends_IsUserInSource(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDSource = check_class_CSteamID(L, 2); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDSource = check_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->IsUserInSource(steamIDUser, steamIDSource);
 	push_bool(L, r);
@@ -13580,7 +18945,7 @@ static int ISteamFriends_IsUserInSource(lua_State* L) {
 static int ISteamFriends_SetInGameVoiceSpeaking(lua_State* L) {
 	int top = lua_gettop(L);
 	bool bSpeaking = check_bool(L, 2); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	friends->SetInGameVoiceSpeaking(steamIDUser, bSpeaking);
 	assert(top + 0 == lua_gettop(L));
@@ -13598,7 +18963,7 @@ static int ISteamFriends_ActivateGameOverlay(lua_State* L) {
 
 static int ISteamFriends_ActivateGameOverlayToUser(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamID = check_class_CSteamID(L, 2); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 2); /*normal*/
 	const char * pchDialog = check_const_char_ptr(L, 1); /*normal*/
 
 	friends->ActivateGameOverlayToUser(pchDialog, steamID);
@@ -13608,9 +18973,10 @@ static int ISteamFriends_ActivateGameOverlayToUser(lua_State* L) {
 
 static int ISteamFriends_ActivateGameOverlayToWebPage(lua_State* L) {
 	int top = lua_gettop(L);
+	EActivateGameOverlayToWebPageMode eMode = check_EActivateGameOverlayToWebPageMode(L, 2); /*normal*/
 	const char * pchURL = check_const_char_ptr(L, 1); /*normal*/
 
-	friends->ActivateGameOverlayToWebPage(pchURL);
+	friends->ActivateGameOverlayToWebPage(pchURL, eMode);
 	assert(top + 0 == lua_gettop(L));
 	return 0;
 }
@@ -13627,7 +18993,7 @@ static int ISteamFriends_ActivateGameOverlayToStore(lua_State* L) {
 
 static int ISteamFriends_SetPlayedWith(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDUserPlayedWith = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUserPlayedWith = check_CSteamID(L, 1); /*normal*/
 
 	friends->SetPlayedWith(steamIDUserPlayedWith);
 	assert(top + 0 == lua_gettop(L));
@@ -13636,7 +19002,7 @@ static int ISteamFriends_SetPlayedWith(lua_State* L) {
 
 static int ISteamFriends_ActivateGameOverlayInviteDialog(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	friends->ActivateGameOverlayInviteDialog(steamIDLobby);
 	assert(top + 0 == lua_gettop(L));
@@ -13645,7 +19011,7 @@ static int ISteamFriends_ActivateGameOverlayInviteDialog(lua_State* L) {
 
 static int ISteamFriends_GetSmallFriendAvatar(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetSmallFriendAvatar(steamIDFriend);
 	push_int(L, r);
@@ -13656,7 +19022,7 @@ static int ISteamFriends_GetSmallFriendAvatar(lua_State* L) {
 
 static int ISteamFriends_GetMediumFriendAvatar(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetMediumFriendAvatar(steamIDFriend);
 	push_int(L, r);
@@ -13667,7 +19033,7 @@ static int ISteamFriends_GetMediumFriendAvatar(lua_State* L) {
 
 static int ISteamFriends_GetLargeFriendAvatar(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetLargeFriendAvatar(steamIDFriend);
 	push_int(L, r);
@@ -13679,7 +19045,7 @@ static int ISteamFriends_GetLargeFriendAvatar(lua_State* L) {
 static int ISteamFriends_RequestUserInformation(lua_State* L) {
 	int top = lua_gettop(L);
 	bool bRequireNameOnly = check_bool(L, 2); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->RequestUserInformation(steamIDUser, bRequireNameOnly);
 	push_bool(L, r);
@@ -13690,7 +19056,7 @@ static int ISteamFriends_RequestUserInformation(lua_State* L) {
 
 static int ISteamFriends_RequestClanOfficerList(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->RequestClanOfficerList(steamIDClan);
 	steamCallbackWrapper->TrackSteamAPICallClanOfficerListResponse_t(r);
@@ -13700,10 +19066,10 @@ static int ISteamFriends_RequestClanOfficerList(lua_State* L) {
 
 static int ISteamFriends_GetClanOwner(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetClanOwner(steamIDClan);
-	push_class_CSteamID(L, r);
+	CSteamID r = friends->GetClanOwner(steamIDClan);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13711,7 +19077,7 @@ static int ISteamFriends_GetClanOwner(lua_State* L) {
 
 static int ISteamFriends_GetClanOfficerCount(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetClanOfficerCount(steamIDClan);
 	push_int(L, r);
@@ -13723,10 +19089,10 @@ static int ISteamFriends_GetClanOfficerCount(lua_State* L) {
 static int ISteamFriends_GetClanOfficerByIndex(lua_State* L) {
 	int top = lua_gettop(L);
 	int iOfficer = check_int(L, 2); /*normal*/
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetClanOfficerByIndex(steamIDClan, iOfficer);
-	push_class_CSteamID(L, r);
+	CSteamID r = friends->GetClanOfficerByIndex(steamIDClan, iOfficer);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13765,7 +19131,7 @@ static int ISteamFriends_ClearRichPresence(lua_State* L) {
 static int ISteamFriends_GetFriendRichPresence(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = friends->GetFriendRichPresence(steamIDFriend, pchKey);
 	push_const_char_ptr(L, r);
@@ -13776,7 +19142,7 @@ static int ISteamFriends_GetFriendRichPresence(lua_State* L) {
 
 static int ISteamFriends_GetFriendRichPresenceKeyCount(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetFriendRichPresenceKeyCount(steamIDFriend);
 	push_int(L, r);
@@ -13788,7 +19154,7 @@ static int ISteamFriends_GetFriendRichPresenceKeyCount(lua_State* L) {
 static int ISteamFriends_GetFriendRichPresenceKeyByIndex(lua_State* L) {
 	int top = lua_gettop(L);
 	int iKey = check_int(L, 2); /*normal*/
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = friends->GetFriendRichPresenceKeyByIndex(steamIDFriend, iKey);
 	push_const_char_ptr(L, r);
@@ -13799,7 +19165,7 @@ static int ISteamFriends_GetFriendRichPresenceKeyByIndex(lua_State* L) {
 
 static int ISteamFriends_RequestFriendRichPresence(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	friends->RequestFriendRichPresence(steamIDFriend);
 	assert(top + 0 == lua_gettop(L));
@@ -13809,7 +19175,7 @@ static int ISteamFriends_RequestFriendRichPresence(lua_State* L) {
 static int ISteamFriends_InviteUserToGame(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchConnectString = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->InviteUserToGame(steamIDFriend, pchConnectString);
 	push_bool(L, r);
@@ -13832,8 +19198,8 @@ static int ISteamFriends_GetCoplayFriend(lua_State* L) {
 	int top = lua_gettop(L);
 	int iCoplayFriend = check_int(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetCoplayFriend(iCoplayFriend);
-	push_class_CSteamID(L, r);
+	CSteamID r = friends->GetCoplayFriend(iCoplayFriend);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13841,7 +19207,7 @@ static int ISteamFriends_GetCoplayFriend(lua_State* L) {
 
 static int ISteamFriends_GetFriendCoplayTime(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetFriendCoplayTime(steamIDFriend);
 	push_int(L, r);
@@ -13852,7 +19218,7 @@ static int ISteamFriends_GetFriendCoplayTime(lua_State* L) {
 
 static int ISteamFriends_GetFriendCoplayGame(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	AppId_t r = friends->GetFriendCoplayGame(steamIDFriend);
 	push_AppId_t(L, r);
@@ -13863,7 +19229,7 @@ static int ISteamFriends_GetFriendCoplayGame(lua_State* L) {
 
 static int ISteamFriends_JoinClanChatRoom(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->JoinClanChatRoom(steamIDClan);
 	steamCallbackWrapper->TrackSteamAPICallJoinClanChatRoomCompletionResult_t(r);
@@ -13873,7 +19239,7 @@ static int ISteamFriends_JoinClanChatRoom(lua_State* L) {
 
 static int ISteamFriends_LeaveClanChatRoom(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->LeaveClanChatRoom(steamIDClan);
 	push_bool(L, r);
@@ -13884,7 +19250,7 @@ static int ISteamFriends_LeaveClanChatRoom(lua_State* L) {
 
 static int ISteamFriends_GetClanChatMemberCount(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetClanChatMemberCount(steamIDClan);
 	push_int(L, r);
@@ -13896,10 +19262,10 @@ static int ISteamFriends_GetClanChatMemberCount(lua_State* L) {
 static int ISteamFriends_GetChatMemberByIndex(lua_State* L) {
 	int top = lua_gettop(L);
 	int iUser = check_int(L, 2); /*normal*/
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = friends->GetChatMemberByIndex(steamIDClan, iUser);
-	push_class_CSteamID(L, r);
+	CSteamID r = friends->GetChatMemberByIndex(steamIDClan, iUser);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -13908,7 +19274,7 @@ static int ISteamFriends_GetChatMemberByIndex(lua_State* L) {
 static int ISteamFriends_SendClanChatMessage(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchText = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClanChat = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->SendClanChatMessage(steamIDClanChat, pchText);
 	push_bool(L, r);
@@ -13926,8 +19292,8 @@ static int ISteamFriends_GetClanChatMessage(lua_State* L) {
 	uint32_t prgchText_buffersize = 0;
 	dmBuffer::Result prgchText_buffer_result = dmBuffer::GetBytes(prgchText_buffer->m_Buffer, (void**)&prgchText, &prgchText_buffersize);
 	int iMessage = check_int(L, 2); /*normal*/
-	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
-	class CSteamID psteamidChatter; /*out_struct*/
+	CSteamID steamIDClanChat = check_CSteamID(L, 1); /*normal*/
+	CSteamID psteamidChatter; /*out_struct*/
 
 	int r = friends->GetClanChatMessage(steamIDClanChat, iMessage, prgchText, cchTextMax, &peChatEntryType, &psteamidChatter);
 	push_int(L, r);
@@ -13939,8 +19305,8 @@ static int ISteamFriends_GetClanChatMessage(lua_State* L) {
 
 static int ISteamFriends_IsClanChatAdmin(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDUser = check_class_CSteamID(L, 2); /*normal*/
-	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDClanChat = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->IsClanChatAdmin(steamIDClanChat, steamIDUser);
 	push_bool(L, r);
@@ -13951,7 +19317,7 @@ static int ISteamFriends_IsClanChatAdmin(lua_State* L) {
 
 static int ISteamFriends_IsClanChatWindowOpenInSteam(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClanChat = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->IsClanChatWindowOpenInSteam(steamIDClanChat);
 	push_bool(L, r);
@@ -13962,7 +19328,7 @@ static int ISteamFriends_IsClanChatWindowOpenInSteam(lua_State* L) {
 
 static int ISteamFriends_OpenClanChatWindowInSteam(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClanChat = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->OpenClanChatWindowInSteam(steamIDClanChat);
 	push_bool(L, r);
@@ -13973,7 +19339,7 @@ static int ISteamFriends_OpenClanChatWindowInSteam(lua_State* L) {
 
 static int ISteamFriends_CloseClanChatWindowInSteam(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClanChat = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClanChat = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->CloseClanChatWindowInSteam(steamIDClanChat);
 	push_bool(L, r);
@@ -13996,7 +19362,7 @@ static int ISteamFriends_SetListenForFriendsMessages(lua_State* L) {
 static int ISteamFriends_ReplyToFriendMessage(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchMsgToSend = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->ReplyToFriendMessage(steamIDFriend, pchMsgToSend);
 	push_bool(L, r);
@@ -14014,7 +19380,7 @@ static int ISteamFriends_GetFriendMessage(lua_State* L) {
 	uint32_t pvData_buffersize = 0;
 	dmBuffer::Result pvData_buffer_result = dmBuffer::GetBytes(pvData_buffer->m_Buffer, (void**)&pvData, &pvData_buffersize);
 	int iMessageID = check_int(L, 2); /*normal*/
-	class CSteamID steamIDFriend = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDFriend = check_CSteamID(L, 1); /*normal*/
 
 	int r = friends->GetFriendMessage(steamIDFriend, iMessageID, pvData, cubData, &peChatEntryType);
 	push_int(L, r);
@@ -14026,7 +19392,7 @@ static int ISteamFriends_GetFriendMessage(lua_State* L) {
 
 static int ISteamFriends_GetFollowerCount(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->GetFollowerCount(steamID);
 	steamCallbackWrapper->TrackSteamAPICallFriendsGetFollowerCount_t(r);
@@ -14036,7 +19402,7 @@ static int ISteamFriends_GetFollowerCount(lua_State* L) {
 
 static int ISteamFriends_IsFollowing(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = friends->IsFollowing(steamID);
 	steamCallbackWrapper->TrackSteamAPICallFriendsIsFollowing_t(r);
@@ -14056,7 +19422,7 @@ static int ISteamFriends_EnumerateFollowingList(lua_State* L) {
 
 static int ISteamFriends_IsClanPublic(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->IsClanPublic(steamIDClan);
 	push_bool(L, r);
@@ -14067,10 +19433,97 @@ static int ISteamFriends_IsClanPublic(lua_State* L) {
 
 static int ISteamFriends_IsClanOfficialGameGroup(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDClan = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDClan = check_CSteamID(L, 1); /*normal*/
 
 	bool r = friends->IsClanOfficialGameGroup(steamIDClan);
 	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamFriends_GetNumChatsWithUnreadPriorityMessages(lua_State* L) {
+	int top = lua_gettop(L);
+
+	int r = friends->GetNumChatsWithUnreadPriorityMessages();
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog(lua_State* L) {
+	int top = lua_gettop(L);
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
+
+	friends->ActivateGameOverlayRemotePlayTogetherInviteDialog(steamIDLobby);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamFriends_RegisterProtocolInOverlayBrowser(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchProtocol = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = friends->RegisterProtocolInOverlayBrowser(pchProtocol);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamFriends_ActivateGameOverlayInviteDialogConnectString(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchConnectString = check_const_char_ptr(L, 1); /*normal*/
+
+	friends->ActivateGameOverlayInviteDialogConnectString(pchConnectString);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamFriends_RequestEquippedProfileItems(lua_State* L) {
+	int top = lua_gettop(L);
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
+
+	SteamAPICall_t r = friends->RequestEquippedProfileItems(steamID);
+	steamCallbackWrapper->TrackSteamAPICallEquippedProfileItems_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamFriends_BHasEquippedProfileItem(lua_State* L) {
+	int top = lua_gettop(L);
+	ECommunityProfileItemType itemType = check_ECommunityProfileItemType(L, 2); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
+
+	bool r = friends->BHasEquippedProfileItem(steamID, itemType);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamFriends_GetProfileItemPropertyString(lua_State* L) {
+	int top = lua_gettop(L);
+	ECommunityProfileItemProperty prop = check_ECommunityProfileItemProperty(L, 3); /*normal*/
+	ECommunityProfileItemType itemType = check_ECommunityProfileItemType(L, 2); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
+
+	const char * r = friends->GetProfileItemPropertyString(steamID, itemType, prop);
+	push_const_char_ptr(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamFriends_GetProfileItemPropertyUint(lua_State* L) {
+	int top = lua_gettop(L);
+	ECommunityProfileItemProperty prop = check_ECommunityProfileItemProperty(L, 3); /*normal*/
+	ECommunityProfileItemType itemType = check_ECommunityProfileItemType(L, 2); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
+
+	uint32 r = friends->GetProfileItemPropertyUint(steamID, itemType, prop);
+	push_uint32(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -14155,20 +19608,6 @@ static int ISteamUtils_GetImageRGBA(lua_State* L) {
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
-}
-
-static int ISteamUtils_GetCSERIPPort(lua_State* L) {
-	int top = lua_gettop(L);
-	uint16 usPort = check_uint16(L, 2); /*out_param*/
-	uint32 unIP = check_uint32(L, 1); /*out_param*/
-
-	bool r = utils->GetCSERIPPort(&unIP, &usPort);
-	push_bool(L, r);
-	push_uint16(L, usPort); /*out_param*/
-	push_uint32(L, unIP); /*out_param*/
-	
-	assert(top + 1 + 2 == lua_gettop(L));
-	return 1 + 2;
 }
 
 static int ISteamUtils_GetCurrentBatteryPower(lua_State* L) {
@@ -14390,6 +19829,100 @@ static int ISteamUtils_SetVRHeadsetStreamingEnabled(lua_State* L) {
 	return 0;
 }
 
+static int ISteamUtils_IsSteamChinaLauncher(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->IsSteamChinaLauncher();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUtils_InitFilterText(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unFilterOptions = check_uint32(L, 1); /*normal*/
+
+	bool r = utils->InitFilterText(unFilterOptions);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUtils_FilterText(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 nByteSizeOutFilteredText = check_uint32(L, 5); /*normal*/
+	dmScript::LuaHBuffer * pchOutFilteredText_buffer = check_buffer(L, 4); /*buffer_param*/
+	char * pchOutFilteredText = 0x0;
+	uint32_t pchOutFilteredText_buffersize = 0;
+	dmBuffer::Result pchOutFilteredText_buffer_result = dmBuffer::GetBytes(pchOutFilteredText_buffer->m_Buffer, (void**)&pchOutFilteredText, &pchOutFilteredText_buffersize);
+	const char * pchInputMessage = check_const_char_ptr(L, 3); /*normal*/
+	CSteamID sourceSteamID = check_CSteamID(L, 2); /*normal*/
+	ETextFilteringContext eContext = check_ETextFilteringContext(L, 1); /*normal*/
+
+	int r = utils->FilterText(eContext, sourceSteamID, pchInputMessage, pchOutFilteredText, nByteSizeOutFilteredText);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUtils_GetIPv6ConnectivityState(lua_State* L) {
+	int top = lua_gettop(L);
+	ESteamIPv6ConnectivityProtocol eProtocol = check_ESteamIPv6ConnectivityProtocol(L, 1); /*normal*/
+
+	ESteamIPv6ConnectivityState r = utils->GetIPv6ConnectivityState(eProtocol);
+	push_ESteamIPv6ConnectivityState(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUtils_IsSteamRunningOnSteamDeck(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->IsSteamRunningOnSteamDeck();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUtils_ShowFloatingGamepadTextInput(lua_State* L) {
+	int top = lua_gettop(L);
+	int nTextFieldHeight = check_int(L, 5); /*normal*/
+	int nTextFieldWidth = check_int(L, 4); /*normal*/
+	int nTextFieldYPosition = check_int(L, 3); /*normal*/
+	int nTextFieldXPosition = check_int(L, 2); /*normal*/
+	EFloatingGamepadTextInputMode eKeyboardMode = check_EFloatingGamepadTextInputMode(L, 1); /*normal*/
+
+	bool r = utils->ShowFloatingGamepadTextInput(eKeyboardMode, nTextFieldXPosition, nTextFieldYPosition, nTextFieldWidth, nTextFieldHeight);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUtils_SetGameLauncherMode(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bLauncherMode = check_bool(L, 1); /*normal*/
+
+	utils->SetGameLauncherMode(bLauncherMode);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamUtils_DismissFloatingGamepadTextInput(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = utils->DismissFloatingGamepadTextInput();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamMatchmaking_GetFavoriteGameCount(lua_State* L) {
 	int top = lua_gettop(L);
 
@@ -14524,7 +20057,7 @@ static int ISteamMatchmaking_AddRequestLobbyListResultCountFilter(lua_State* L) 
 
 static int ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	matchmaking->AddRequestLobbyListCompatibleMembersFilter(steamIDLobby);
 	assert(top + 0 == lua_gettop(L));
@@ -14535,8 +20068,8 @@ static int ISteamMatchmaking_GetLobbyByIndex(lua_State* L) {
 	int top = lua_gettop(L);
 	int iLobby = check_int(L, 1); /*normal*/
 
-	class CSteamID r = matchmaking->GetLobbyByIndex(iLobby);
-	push_class_CSteamID(L, r);
+	CSteamID r = matchmaking->GetLobbyByIndex(iLobby);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -14555,7 +20088,7 @@ static int ISteamMatchmaking_CreateLobby(lua_State* L) {
 
 static int ISteamMatchmaking_JoinLobby(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = matchmaking->JoinLobby(steamIDLobby);
 	steamCallbackWrapper->TrackSteamAPICallLobbyEnter_t(r);
@@ -14565,7 +20098,7 @@ static int ISteamMatchmaking_JoinLobby(lua_State* L) {
 
 static int ISteamMatchmaking_LeaveLobby(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	matchmaking->LeaveLobby(steamIDLobby);
 	assert(top + 0 == lua_gettop(L));
@@ -14574,8 +20107,8 @@ static int ISteamMatchmaking_LeaveLobby(lua_State* L) {
 
 static int ISteamMatchmaking_InviteUserToLobby(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDInvitee = check_class_CSteamID(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDInvitee = check_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->InviteUserToLobby(steamIDLobby, steamIDInvitee);
 	push_bool(L, r);
@@ -14586,7 +20119,7 @@ static int ISteamMatchmaking_InviteUserToLobby(lua_State* L) {
 
 static int ISteamMatchmaking_GetNumLobbyMembers(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	int r = matchmaking->GetNumLobbyMembers(steamIDLobby);
 	push_int(L, r);
@@ -14598,10 +20131,10 @@ static int ISteamMatchmaking_GetNumLobbyMembers(lua_State* L) {
 static int ISteamMatchmaking_GetLobbyMemberByIndex(lua_State* L) {
 	int top = lua_gettop(L);
 	int iMember = check_int(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = matchmaking->GetLobbyMemberByIndex(steamIDLobby, iMember);
-	push_class_CSteamID(L, r);
+	CSteamID r = matchmaking->GetLobbyMemberByIndex(steamIDLobby, iMember);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -14610,7 +20143,7 @@ static int ISteamMatchmaking_GetLobbyMemberByIndex(lua_State* L) {
 static int ISteamMatchmaking_GetLobbyData(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = matchmaking->GetLobbyData(steamIDLobby, pchKey);
 	push_const_char_ptr(L, r);
@@ -14623,7 +20156,7 @@ static int ISteamMatchmaking_SetLobbyData(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchValue = check_const_char_ptr(L, 3); /*normal*/
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->SetLobbyData(steamIDLobby, pchKey, pchValue);
 	push_bool(L, r);
@@ -14634,7 +20167,7 @@ static int ISteamMatchmaking_SetLobbyData(lua_State* L) {
 
 static int ISteamMatchmaking_GetLobbyDataCount(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	int r = matchmaking->GetLobbyDataCount(steamIDLobby);
 	push_int(L, r);
@@ -14656,7 +20189,7 @@ static int ISteamMatchmaking_GetLobbyDataByIndex(lua_State* L) {
 	uint32_t pchKey_buffersize = 0;
 	dmBuffer::Result pchKey_buffer_result = dmBuffer::GetBytes(pchKey_buffer->m_Buffer, (void**)&pchKey, &pchKey_buffersize);
 	int iLobbyData = check_int(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->GetLobbyDataByIndex(steamIDLobby, iLobbyData, pchKey, cchKeyBufferSize, pchValue, cchValueBufferSize);
 	push_bool(L, r);
@@ -14668,7 +20201,7 @@ static int ISteamMatchmaking_GetLobbyDataByIndex(lua_State* L) {
 static int ISteamMatchmaking_DeleteLobbyData(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->DeleteLobbyData(steamIDLobby, pchKey);
 	push_bool(L, r);
@@ -14680,8 +20213,8 @@ static int ISteamMatchmaking_DeleteLobbyData(lua_State* L) {
 static int ISteamMatchmaking_GetLobbyMemberData(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchKey = check_const_char_ptr(L, 3); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	const char * r = matchmaking->GetLobbyMemberData(steamIDLobby, steamIDUser, pchKey);
 	push_const_char_ptr(L, r);
@@ -14694,7 +20227,7 @@ static int ISteamMatchmaking_SetLobbyMemberData(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pchValue = check_const_char_ptr(L, 3); /*normal*/
 	const char * pchKey = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	matchmaking->SetLobbyMemberData(steamIDLobby, pchKey, pchValue);
 	assert(top + 0 == lua_gettop(L));
@@ -14705,7 +20238,7 @@ static int ISteamMatchmaking_SendLobbyChatMsg(lua_State* L) {
 	int top = lua_gettop(L);
 	int cubMsgBody = check_int(L, 3); /*normal*/
 	const void * pvMsgBody = check_const_void_ptr(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->SendLobbyChatMsg(steamIDLobby, pvMsgBody, cubMsgBody);
 	push_bool(L, r);
@@ -14723,8 +20256,8 @@ static int ISteamMatchmaking_GetLobbyChatEntry(lua_State* L) {
 	uint32_t pvData_buffersize = 0;
 	dmBuffer::Result pvData_buffer_result = dmBuffer::GetBytes(pvData_buffer->m_Buffer, (void**)&pvData, &pvData_buffersize);
 	int iChatID = check_int(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
-	class CSteamID pSteamIDUser; /*out_struct*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
+	CSteamID pSteamIDUser; /*out_struct*/
 
 	int r = matchmaking->GetLobbyChatEntry(steamIDLobby, iChatID, &pSteamIDUser, pvData, cubData, &peChatEntryType);
 	push_int(L, r);
@@ -14736,7 +20269,7 @@ static int ISteamMatchmaking_GetLobbyChatEntry(lua_State* L) {
 
 static int ISteamMatchmaking_RequestLobbyData(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->RequestLobbyData(steamIDLobby);
 	push_bool(L, r);
@@ -14747,10 +20280,10 @@ static int ISteamMatchmaking_RequestLobbyData(lua_State* L) {
 
 static int ISteamMatchmaking_SetLobbyGameServer(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDGameServer = check_class_CSteamID(L, 4); /*normal*/
+	CSteamID steamIDGameServer = check_CSteamID(L, 4); /*normal*/
 	uint16 unGameServerPort = check_uint16(L, 3); /*normal*/
 	uint32 unGameServerIP = check_uint32(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	matchmaking->SetLobbyGameServer(steamIDLobby, unGameServerIP, unGameServerPort, steamIDGameServer);
 	assert(top + 0 == lua_gettop(L));
@@ -14761,8 +20294,8 @@ static int ISteamMatchmaking_GetLobbyGameServer(lua_State* L) {
 	int top = lua_gettop(L);
 	uint16 punGameServerPort = check_uint16(L, 3); /*out_param*/
 	uint32 punGameServerIP = check_uint32(L, 2); /*out_param*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
-	class CSteamID psteamIDGameServer; /*out_struct*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
+	CSteamID psteamIDGameServer; /*out_struct*/
 
 	bool r = matchmaking->GetLobbyGameServer(steamIDLobby, &punGameServerIP, &punGameServerPort, &psteamIDGameServer);
 	push_bool(L, r);
@@ -14776,7 +20309,7 @@ static int ISteamMatchmaking_GetLobbyGameServer(lua_State* L) {
 static int ISteamMatchmaking_SetLobbyMemberLimit(lua_State* L) {
 	int top = lua_gettop(L);
 	int cMaxMembers = check_int(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->SetLobbyMemberLimit(steamIDLobby, cMaxMembers);
 	push_bool(L, r);
@@ -14787,7 +20320,7 @@ static int ISteamMatchmaking_SetLobbyMemberLimit(lua_State* L) {
 
 static int ISteamMatchmaking_GetLobbyMemberLimit(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	int r = matchmaking->GetLobbyMemberLimit(steamIDLobby);
 	push_int(L, r);
@@ -14799,7 +20332,7 @@ static int ISteamMatchmaking_GetLobbyMemberLimit(lua_State* L) {
 static int ISteamMatchmaking_SetLobbyType(lua_State* L) {
 	int top = lua_gettop(L);
 	ELobbyType eLobbyType = check_ELobbyType(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->SetLobbyType(steamIDLobby, eLobbyType);
 	push_bool(L, r);
@@ -14811,7 +20344,7 @@ static int ISteamMatchmaking_SetLobbyType(lua_State* L) {
 static int ISteamMatchmaking_SetLobbyJoinable(lua_State* L) {
 	int top = lua_gettop(L);
 	bool bLobbyJoinable = check_bool(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->SetLobbyJoinable(steamIDLobby, bLobbyJoinable);
 	push_bool(L, r);
@@ -14822,10 +20355,10 @@ static int ISteamMatchmaking_SetLobbyJoinable(lua_State* L) {
 
 static int ISteamMatchmaking_GetLobbyOwner(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
-	class CSteamID r = matchmaking->GetLobbyOwner(steamIDLobby);
-	push_class_CSteamID(L, r);
+	CSteamID r = matchmaking->GetLobbyOwner(steamIDLobby);
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -14833,8 +20366,8 @@ static int ISteamMatchmaking_GetLobbyOwner(lua_State* L) {
 
 static int ISteamMatchmaking_SetLobbyOwner(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDNewOwner = check_class_CSteamID(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDNewOwner = check_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->SetLobbyOwner(steamIDLobby, steamIDNewOwner);
 	push_bool(L, r);
@@ -14845,10 +20378,157 @@ static int ISteamMatchmaking_SetLobbyOwner(lua_State* L) {
 
 static int ISteamMatchmaking_SetLinkedLobby(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDLobbyDependent = check_class_CSteamID(L, 2); /*normal*/
-	class CSteamID steamIDLobby = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDLobbyDependent = check_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
 
 	bool r = matchmaking->SetLinkedLobby(steamIDLobby, steamIDLobbyDependent);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamParties_GetNumActiveBeacons(lua_State* L) {
+	int top = lua_gettop(L);
+
+	uint32 r = parties->GetNumActiveBeacons();
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamParties_GetBeaconByIndex(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unIndex = check_uint32(L, 1); /*normal*/
+
+	PartyBeaconID_t r = parties->GetBeaconByIndex(unIndex);
+	push_PartyBeaconID_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamParties_GetBeaconDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	int cchMetadata = check_int(L, 4); /*normal*/
+	dmScript::LuaHBuffer * pchMetadata_buffer = check_buffer(L, 3); /*buffer_param*/
+	char * pchMetadata = 0x0;
+	uint32_t pchMetadata_buffersize = 0;
+	dmBuffer::Result pchMetadata_buffer_result = dmBuffer::GetBytes(pchMetadata_buffer->m_Buffer, (void**)&pchMetadata, &pchMetadata_buffersize);
+	CSteamID pSteamIDBeaconOwner = check_CSteamID(L, 2); /*out_param*/
+	PartyBeaconID_t ulBeaconID = check_PartyBeaconID_t(L, 1); /*normal*/
+	SteamPartyBeaconLocation_t pLocation; /*out_struct*/
+
+	bool r = parties->GetBeaconDetails(ulBeaconID, &pSteamIDBeaconOwner, &pLocation, pchMetadata, cchMetadata);
+	push_bool(L, r);
+	push_CSteamID(L, pSteamIDBeaconOwner); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamParties_JoinParty(lua_State* L) {
+	int top = lua_gettop(L);
+	PartyBeaconID_t ulBeaconID = check_PartyBeaconID_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = parties->JoinParty(ulBeaconID);
+	steamCallbackWrapper->TrackSteamAPICallJoinPartyCallback_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamParties_GetNumAvailableBeaconLocations(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 puNumLocations = check_uint32(L, 1); /*out_param*/
+
+	bool r = parties->GetNumAvailableBeaconLocations(&puNumLocations);
+	push_bool(L, r);
+	push_uint32(L, puNumLocations); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamParties_GetAvailableBeaconLocations(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 uMaxNumLocations = check_uint32(L, 2); /*normal*/
+	SteamPartyBeaconLocation_t pLocationList = check_SteamPartyBeaconLocation_t(L, 1); /*out_param*/
+
+	bool r = parties->GetAvailableBeaconLocations(&pLocationList, uMaxNumLocations);
+	push_bool(L, r);
+	push_SteamPartyBeaconLocation_t(L, pLocationList); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamParties_CreateBeacon(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchMetadata = check_const_char_ptr(L, 4); /*normal*/
+	const char * pchConnectString = check_const_char_ptr(L, 3); /*normal*/
+	SteamPartyBeaconLocation_t pBeaconLocation = check_SteamPartyBeaconLocation_t(L, 2); /*out_param*/
+	uint32 unOpenSlots = check_uint32(L, 1); /*normal*/
+
+	SteamAPICall_t r = parties->CreateBeacon(unOpenSlots, &pBeaconLocation, pchConnectString, pchMetadata);
+	steamCallbackWrapper->TrackSteamAPICallCreateBeaconCallback_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamParties_OnReservationCompleted(lua_State* L) {
+	int top = lua_gettop(L);
+	CSteamID steamIDUser = check_CSteamID(L, 2); /*normal*/
+	PartyBeaconID_t ulBeacon = check_PartyBeaconID_t(L, 1); /*normal*/
+
+	parties->OnReservationCompleted(ulBeacon, steamIDUser);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamParties_CancelReservation(lua_State* L) {
+	int top = lua_gettop(L);
+	CSteamID steamIDUser = check_CSteamID(L, 2); /*normal*/
+	PartyBeaconID_t ulBeacon = check_PartyBeaconID_t(L, 1); /*normal*/
+
+	parties->CancelReservation(ulBeacon, steamIDUser);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamParties_ChangeNumOpenSlots(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unOpenSlots = check_uint32(L, 2); /*normal*/
+	PartyBeaconID_t ulBeacon = check_PartyBeaconID_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = parties->ChangeNumOpenSlots(ulBeacon, unOpenSlots);
+	steamCallbackWrapper->TrackSteamAPICallChangeNumOpenSlotsCallback_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamParties_DestroyBeacon(lua_State* L) {
+	int top = lua_gettop(L);
+	PartyBeaconID_t ulBeacon = check_PartyBeaconID_t(L, 1); /*normal*/
+
+	bool r = parties->DestroyBeacon(ulBeacon);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamParties_GetBeaconLocationData(lua_State* L) {
+	int top = lua_gettop(L);
+	int cchDataStringOut = check_int(L, 4); /*normal*/
+	dmScript::LuaHBuffer * pchDataStringOut_buffer = check_buffer(L, 3); /*buffer_param*/
+	char * pchDataStringOut = 0x0;
+	uint32_t pchDataStringOut_buffersize = 0;
+	dmBuffer::Result pchDataStringOut_buffer_result = dmBuffer::GetBytes(pchDataStringOut_buffer->m_Buffer, (void**)&pchDataStringOut, &pchDataStringOut_buffersize);
+	ESteamPartyBeaconLocationData eData = check_ESteamPartyBeaconLocationData(L, 2); /*normal*/
+	SteamPartyBeaconLocation_t BeaconLocation = check_SteamPartyBeaconLocation_t(L, 1); /*normal*/
+
+	bool r = parties->GetBeaconLocationData(BeaconLocation, eData, pchDataStringOut, cchDataStringOut);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -15167,7 +20847,7 @@ static int ISteamRemoteStorage_GetUGCDetails(lua_State* L) {
 	AppId_t pnAppID = check_AppId_t(L, 2); /*out_param*/
 	UGCHandle_t hContent = check_UGCHandle_t(L, 1); /*normal*/
 	char ** ppchName; /*out_string*/
-	class CSteamID pSteamIDOwner; /*out_struct*/
+	CSteamID pSteamIDOwner; /*out_struct*/
 
 	bool r = remote_storage->GetUGCDetails(hContent, &pnAppID, ppchName, &pnFileSizeInBytes, &pSteamIDOwner);
 	push_bool(L, r);
@@ -15218,6 +20898,289 @@ static int ISteamRemoteStorage_GetCachedUGCHandle(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamRemoteStorage_PublishWorkshopFile(lua_State* L) {
+	int top = lua_gettop(L);
+	EWorkshopFileType eWorkshopFileType = check_EWorkshopFileType(L, 8); /*normal*/
+	SteamParamStringArray_t pTags = check_SteamParamStringArray_t(L, 7); /*out_param*/
+	ERemoteStoragePublishedFileVisibility eVisibility = check_ERemoteStoragePublishedFileVisibility(L, 6); /*normal*/
+	const char * pchDescription = check_const_char_ptr(L, 5); /*normal*/
+	const char * pchTitle = check_const_char_ptr(L, 4); /*normal*/
+	AppId_t nConsumerAppId = check_AppId_t(L, 3); /*normal*/
+	const char * pchPreviewFile = check_const_char_ptr(L, 2); /*normal*/
+	const char * pchFile = check_const_char_ptr(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->PublishWorkshopFile(pchFile, pchPreviewFile, nConsumerAppId, pchTitle, pchDescription, eVisibility, &pTags, eWorkshopFileType);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStoragePublishFileProgress_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_CreatePublishedFileUpdateRequest(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	PublishedFileUpdateHandle_t r = remote_storage->CreatePublishedFileUpdateRequest(unPublishedFileId);
+	push_PublishedFileUpdateHandle_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_UpdatePublishedFileFile(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchFile = check_const_char_ptr(L, 2); /*normal*/
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = remote_storage->UpdatePublishedFileFile(updateHandle, pchFile);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_UpdatePublishedFilePreviewFile(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchPreviewFile = check_const_char_ptr(L, 2); /*normal*/
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = remote_storage->UpdatePublishedFilePreviewFile(updateHandle, pchPreviewFile);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_UpdatePublishedFileTitle(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchTitle = check_const_char_ptr(L, 2); /*normal*/
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = remote_storage->UpdatePublishedFileTitle(updateHandle, pchTitle);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_UpdatePublishedFileDescription(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchDescription = check_const_char_ptr(L, 2); /*normal*/
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = remote_storage->UpdatePublishedFileDescription(updateHandle, pchDescription);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_UpdatePublishedFileVisibility(lua_State* L) {
+	int top = lua_gettop(L);
+	ERemoteStoragePublishedFileVisibility eVisibility = check_ERemoteStoragePublishedFileVisibility(L, 2); /*normal*/
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = remote_storage->UpdatePublishedFileVisibility(updateHandle, eVisibility);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_UpdatePublishedFileTags(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamParamStringArray_t pTags = check_SteamParamStringArray_t(L, 2); /*out_param*/
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = remote_storage->UpdatePublishedFileTags(updateHandle, &pTags);
+	push_bool(L, r);
+	push_SteamParamStringArray_t(L, pTags); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamRemoteStorage_CommitPublishedFileUpdate(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->CommitPublishedFileUpdate(updateHandle);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageUpdatePublishedFileResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_GetPublishedFileDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unMaxSecondsOld = check_uint32(L, 2); /*normal*/
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->GetPublishedFileDetails(unPublishedFileId, unMaxSecondsOld);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageGetPublishedFileDetailsResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_DeletePublishedFile(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->DeletePublishedFile(unPublishedFileId);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageDeletePublishedFileResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_EnumerateUserPublishedFiles(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unStartIndex = check_uint32(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->EnumerateUserPublishedFiles(unStartIndex);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageEnumerateUserPublishedFilesResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_SubscribePublishedFile(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->SubscribePublishedFile(unPublishedFileId);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageSubscribePublishedFileResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_EnumerateUserSubscribedFiles(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unStartIndex = check_uint32(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->EnumerateUserSubscribedFiles(unStartIndex);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageEnumerateUserSubscribedFilesResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_UnsubscribePublishedFile(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->UnsubscribePublishedFile(unPublishedFileId);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageUnsubscribePublishedFileResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_UpdatePublishedFileSetChangeDescription(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchChangeDescription = check_const_char_ptr(L, 2); /*normal*/
+	PublishedFileUpdateHandle_t updateHandle = check_PublishedFileUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = remote_storage->UpdatePublishedFileSetChangeDescription(updateHandle, pchChangeDescription);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_GetPublishedItemVoteDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->GetPublishedItemVoteDetails(unPublishedFileId);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageGetPublishedItemVoteDetailsResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_UpdateUserPublishedItemVote(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bVoteUp = check_bool(L, 2); /*normal*/
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->UpdateUserPublishedItemVote(unPublishedFileId, bVoteUp);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageUpdateUserPublishedItemVoteResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_GetUserPublishedItemVoteDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->GetUserPublishedItemVoteDetails(unPublishedFileId);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageGetPublishedItemVoteDetailsResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_EnumerateUserSharedWorkshopFiles(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamParamStringArray_t pExcludedTags = check_SteamParamStringArray_t(L, 4); /*out_param*/
+	SteamParamStringArray_t pRequiredTags = check_SteamParamStringArray_t(L, 3); /*out_param*/
+	uint32 unStartIndex = check_uint32(L, 2); /*normal*/
+	CSteamID steamId = check_CSteamID(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->EnumerateUserSharedWorkshopFiles(steamId, unStartIndex, &pRequiredTags, &pExcludedTags);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageEnumerateUserPublishedFilesResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_PublishVideo(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamParamStringArray_t pTags = check_SteamParamStringArray_t(L, 9); /*out_param*/
+	ERemoteStoragePublishedFileVisibility eVisibility = check_ERemoteStoragePublishedFileVisibility(L, 8); /*normal*/
+	const char * pchDescription = check_const_char_ptr(L, 7); /*normal*/
+	const char * pchTitle = check_const_char_ptr(L, 6); /*normal*/
+	AppId_t nConsumerAppId = check_AppId_t(L, 5); /*normal*/
+	const char * pchPreviewFile = check_const_char_ptr(L, 4); /*normal*/
+	const char * pchVideoIdentifier = check_const_char_ptr(L, 3); /*normal*/
+	const char * pchVideoAccount = check_const_char_ptr(L, 2); /*normal*/
+	EWorkshopVideoProvider eVideoProvider = check_EWorkshopVideoProvider(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->PublishVideo(eVideoProvider, pchVideoAccount, pchVideoIdentifier, pchPreviewFile, nConsumerAppId, pchTitle, pchDescription, eVisibility, &pTags);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStoragePublishFileProgress_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_SetUserPublishedFileAction(lua_State* L) {
+	int top = lua_gettop(L);
+	EWorkshopFileAction eAction = check_EWorkshopFileAction(L, 2); /*normal*/
+	PublishedFileId_t unPublishedFileId = check_PublishedFileId_t(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->SetUserPublishedFileAction(unPublishedFileId, eAction);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageSetUserPublishedFileActionResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_EnumeratePublishedFilesByUserAction(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 unStartIndex = check_uint32(L, 2); /*normal*/
+	EWorkshopFileAction eAction = check_EWorkshopFileAction(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->EnumeratePublishedFilesByUserAction(eAction, unStartIndex);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageEnumeratePublishedFilesByUserActionResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamRemoteStorage_EnumeratePublishedWorkshopFiles(lua_State* L) {
+	int top = lua_gettop(L);
+	SteamParamStringArray_t pUserTags = check_SteamParamStringArray_t(L, 6); /*out_param*/
+	SteamParamStringArray_t pTags = check_SteamParamStringArray_t(L, 5); /*out_param*/
+	uint32 unDays = check_uint32(L, 4); /*normal*/
+	uint32 unCount = check_uint32(L, 3); /*normal*/
+	uint32 unStartIndex = check_uint32(L, 2); /*normal*/
+	EWorkshopEnumerationType eEnumerationType = check_EWorkshopEnumerationType(L, 1); /*normal*/
+
+	SteamAPICall_t r = remote_storage->EnumeratePublishedWorkshopFiles(eEnumerationType, unStartIndex, unCount, unDays, &pTags, &pUserTags);
+	steamCallbackWrapper->TrackSteamAPICallRemoteStorageEnumerateWorkshopFilesResult_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
 static int ISteamRemoteStorage_UGCDownloadToLocation(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 unPriority = check_uint32(L, 3); /*normal*/
@@ -15230,6 +21193,51 @@ static int ISteamRemoteStorage_UGCDownloadToLocation(lua_State* L) {
 	return 0;
 }
 
+static int ISteamRemoteStorage_GetLocalFileChangeCount(lua_State* L) {
+	int top = lua_gettop(L);
+
+	int32 r = remote_storage->GetLocalFileChangeCount();
+	push_int32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_GetLocalFileChange(lua_State* L) {
+	int top = lua_gettop(L);
+	ERemoteStorageFilePathType pEFilePathType = check_ERemoteStorageFilePathType(L, 3); /*out_param*/
+	ERemoteStorageLocalFileChange pEChangeType = check_ERemoteStorageLocalFileChange(L, 2); /*out_param*/
+	int iFile = check_int(L, 1); /*normal*/
+
+	const char * r = remote_storage->GetLocalFileChange(iFile, &pEChangeType, &pEFilePathType);
+	push_const_char_ptr(L, r);
+	push_ERemoteStorageFilePathType(L, pEFilePathType); /*out_param*/
+	push_ERemoteStorageLocalFileChange(L, pEChangeType); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamRemoteStorage_BeginFileWriteBatch(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = remote_storage->BeginFileWriteBatch();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamRemoteStorage_EndFileWriteBatch(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = remote_storage->EndFileWriteBatch();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamUserStats_RequestCurrentStats(lua_State* L) {
 	int top = lua_gettop(L);
 
@@ -15240,7 +21248,7 @@ static int ISteamUserStats_RequestCurrentStats(lua_State* L) {
 	return 1 + 0;
 }
 
-static int ISteamUserStats_GetStatInt(lua_State* L) {
+static int ISteamUserStats_GetStatInt32(lua_State* L) {
 	int top = lua_gettop(L);
 	int32 pData = check_int32(L, 2); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
@@ -15266,7 +21274,7 @@ static int ISteamUserStats_GetStatFloat(lua_State* L) {
 	return 1 + 1;
 }
 
-static int ISteamUserStats_SetStatInt(lua_State* L) {
+static int ISteamUserStats_SetStatInt32(lua_State* L) {
 	int top = lua_gettop(L);
 	int32 nData = check_int32(L, 2); /*normal*/
 	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
@@ -15422,7 +21430,7 @@ static int ISteamUserStats_GetAchievementName(lua_State* L) {
 
 static int ISteamUserStats_RequestUserStats(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = user_stats->RequestUserStats(steamIDUser);
 	steamCallbackWrapper->TrackSteamAPICallUserStatsReceived_t(r);
@@ -15430,11 +21438,11 @@ static int ISteamUserStats_RequestUserStats(lua_State* L) {
 	return 0;
 }
 
-static int ISteamUserStats_GetUserStatInt(lua_State* L) {
+static int ISteamUserStats_GetUserStatInt32(lua_State* L) {
 	int top = lua_gettop(L);
 	int32 pData = check_int32(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	bool r = user_stats->GetUserStat(steamIDUser, pchName, &pData);
 	push_bool(L, r);
@@ -15448,7 +21456,7 @@ static int ISteamUserStats_GetUserStatFloat(lua_State* L) {
 	int top = lua_gettop(L);
 	float pData = check_float(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	bool r = user_stats->GetUserStat(steamIDUser, pchName, &pData);
 	push_bool(L, r);
@@ -15462,7 +21470,7 @@ static int ISteamUserStats_GetUserAchievement(lua_State* L) {
 	int top = lua_gettop(L);
 	bool pbAchieved = check_bool(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	bool r = user_stats->GetUserAchievement(steamIDUser, pchName, &pbAchieved);
 	push_bool(L, r);
@@ -15477,7 +21485,7 @@ static int ISteamUserStats_GetUserAchievementAndUnlockTime(lua_State* L) {
 	uint32 punUnlockTime = check_uint32(L, 4); /*out_param*/
 	bool pbAchieved = check_bool(L, 3); /*out_param*/
 	const char * pchName = check_const_char_ptr(L, 2); /*normal*/
-	class CSteamID steamIDUser = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamIDUser = check_CSteamID(L, 1); /*normal*/
 
 	bool r = user_stats->GetUserAchievementAndUnlockTime(steamIDUser, pchName, &pbAchieved, &punUnlockTime);
 	push_bool(L, r);
@@ -15599,19 +21607,23 @@ static int ISteamUserStats_DownloadLeaderboardEntriesForUsers(lua_State* L) {
 static int ISteamUserStats_GetDownloadedLeaderboardEntry(lua_State* L) {
 	int top = lua_gettop(L);
 	int cDetailsMax = check_int(L, 5); /*normal*/
-	struct LeaderboardEntry_t pLeaderboardEntry = check_LeaderboardEntry_t(L, 3); /*out_param*/
+	luaL_checktype(L, 4, LUA_TTABLE); /*array_count*/
+	int32 pDetails[cDetailsMax];
+	for(int i=1; i<=cDetailsMax; i++) {
+		lua_rawgeti(L, 4, i);
+		pDetails[i] = check_int32(L, 4 + 1);
+		lua_pop(L, 1);
+	}
+	LeaderboardEntry_t pLeaderboardEntry = check_LeaderboardEntry_t(L, 3); /*out_param*/
 	int index = check_int(L, 2); /*normal*/
 	SteamLeaderboardEntries_t hSteamLeaderboardEntries = check_SteamLeaderboardEntries_t(L, 1); /*normal*/
-	int32 pDetails[cDetailsMax];
-	check_int32_array(L, 4, pDetails, cDetailsMax); /*out_array_count*/
 
 	bool r = user_stats->GetDownloadedLeaderboardEntry(hSteamLeaderboardEntries, index, &pLeaderboardEntry, pDetails, cDetailsMax);
 	push_bool(L, r);
 	push_LeaderboardEntry_t(L, pLeaderboardEntry); /*out_param*/
-	push_int32_array(L, pDetails, cDetailsMax);  /*out_array_count*/
 	
-	assert(top + 1 + 2 == lua_gettop(L));
-	return 1 + 2;
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
 }
 
 static int ISteamUserStats_UploadLeaderboardScore(lua_State* L) {
@@ -15725,7 +21737,7 @@ static int ISteamUserStats_RequestGlobalStats(lua_State* L) {
 	return 0;
 }
 
-static int ISteamUserStats_GetGlobalStatInt(lua_State* L) {
+static int ISteamUserStats_GetGlobalStatInt64(lua_State* L) {
 	int top = lua_gettop(L);
 	int64 pData = check_int64(L, 2); /*out_param*/
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
@@ -15738,7 +21750,7 @@ static int ISteamUserStats_GetGlobalStatInt(lua_State* L) {
 	return 1 + 1;
 }
 
-static int ISteamUserStats_GetGlobalStatFloat(lua_State* L) {
+static int ISteamUserStats_GetGlobalStatDouble(lua_State* L) {
 	int top = lua_gettop(L);
 	double pData = check_double(L, 2); /*out_param*/
 	const char * pchStatName = check_const_char_ptr(L, 1); /*normal*/
@@ -15751,7 +21763,7 @@ static int ISteamUserStats_GetGlobalStatFloat(lua_State* L) {
 	return 1 + 1;
 }
 
-static int ISteamUserStats_GetGlobalStatIntHistory(lua_State* L) {
+static int ISteamUserStats_GetGlobalStatHistoryInt64(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 cubData = check_uint32(L, 3); /*normal*/
 	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
@@ -15770,7 +21782,7 @@ static int ISteamUserStats_GetGlobalStatIntHistory(lua_State* L) {
 	return 1 + 0;
 }
 
-static int ISteamUserStats_GetGlobalStatFloatHistory(lua_State* L) {
+static int ISteamUserStats_GetGlobalStatHistoryDouble(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 cubData = check_uint32(L, 3); /*normal*/
 	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
@@ -15787,6 +21799,36 @@ static int ISteamUserStats_GetGlobalStatFloatHistory(lua_State* L) {
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
+}
+
+static int ISteamUserStats_GetAchievementProgressLimitsInt32(lua_State* L) {
+	int top = lua_gettop(L);
+	int32 pnMaxProgress = check_int32(L, 3); /*out_param*/
+	int32 pnMinProgress = check_int32(L, 2); /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetAchievementProgressLimits(pchName, &pnMinProgress, &pnMaxProgress);
+	push_bool(L, r);
+	push_int32(L, pnMaxProgress); /*out_param*/
+	push_int32(L, pnMinProgress); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamUserStats_GetAchievementProgressLimitsFloat(lua_State* L) {
+	int top = lua_gettop(L);
+	float pfMaxProgress = check_float(L, 3); /*out_param*/
+	float pfMinProgress = check_float(L, 2); /*out_param*/
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = user_stats->GetAchievementProgressLimits(pchName, &pfMinProgress, &pfMaxProgress);
+	push_bool(L, r);
+	push_float(L, pfMaxProgress); /*out_param*/
+	push_float(L, pfMinProgress); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
 }
 
 static int ISteamApps_BIsSubscribed(lua_State* L) {
@@ -16019,8 +22061,8 @@ static int ISteamApps_BIsAppInstalled(lua_State* L) {
 static int ISteamApps_GetAppOwner(lua_State* L) {
 	int top = lua_gettop(L);
 
-	class CSteamID r = apps->GetAppOwner();
-	push_class_CSteamID(L, r);
+	CSteamID r = apps->GetAppOwner();
+	push_CSteamID(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -16080,311 +22122,51 @@ static int ISteamApps_GetFileDetails(lua_State* L) {
 	return 0;
 }
 
-static int ISteamNetworking_SendP2PPacket(lua_State* L) {
+static int ISteamApps_GetLaunchCommandLine(lua_State* L) {
 	int top = lua_gettop(L);
-	int nChannel = check_int(L, 5); /*normal*/
-	EP2PSend eP2PSendType = check_EP2PSend(L, 4); /*normal*/
-	uint32 cubData = check_uint32(L, 3); /*normal*/
-	const void * pubData = check_const_void_ptr(L, 2); /*normal*/
-	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
+	int cubCommandLine = check_int(L, 2); /*normal*/
+	dmScript::LuaHBuffer * pszCommandLine_buffer = check_buffer(L, 1); /*buffer_param*/
+	char * pszCommandLine = 0x0;
+	uint32_t pszCommandLine_buffersize = 0;
+	dmBuffer::Result pszCommandLine_buffer_result = dmBuffer::GetBytes(pszCommandLine_buffer->m_Buffer, (void**)&pszCommandLine, &pszCommandLine_buffersize);
 
-	bool r = networking->SendP2PPacket(steamIDRemote, pubData, cubData, eP2PSendType, nChannel);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_IsP2PPacketAvailable(lua_State* L) {
-	int top = lua_gettop(L);
-	int nChannel = check_int(L, 2); /*normal*/
-	uint32 pcubMsgSize = check_uint32(L, 1); /*out_param*/
-
-	bool r = networking->IsP2PPacketAvailable(&pcubMsgSize, nChannel);
-	push_bool(L, r);
-	push_uint32(L, pcubMsgSize); /*out_param*/
-	
-	assert(top + 1 + 1 == lua_gettop(L));
-	return 1 + 1;
-}
-
-static int ISteamNetworking_ReadP2PPacket(lua_State* L) {
-	int top = lua_gettop(L);
-	int nChannel = check_int(L, 5); /*normal*/
-	CSteamID psteamIDRemote = check_class_CSteamID(L, 4); /*out_param*/
-	uint32 pcubMsgSize = check_uint32(L, 3); /*out_param*/
-	uint32 cubDest = check_uint32(L, 2); /*normal*/
-	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 1); /*buffer_param*/
-	void * pubDest = 0x0;
-	uint32_t pubDest_buffersize = 0;
-	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
-
-	bool r = networking->ReadP2PPacket(pubDest, cubDest, &pcubMsgSize, &psteamIDRemote, nChannel);
-	push_bool(L, r);
-	push_class_CSteamID(L, psteamIDRemote); /*out_param*/
-	push_uint32(L, pcubMsgSize); /*out_param*/
-	
-	assert(top + 1 + 2 == lua_gettop(L));
-	return 1 + 2;
-}
-
-static int ISteamNetworking_AcceptP2PSessionWithUser(lua_State* L) {
-	int top = lua_gettop(L);
-	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
-
-	bool r = networking->AcceptP2PSessionWithUser(steamIDRemote);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_CloseP2PSessionWithUser(lua_State* L) {
-	int top = lua_gettop(L);
-	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
-
-	bool r = networking->CloseP2PSessionWithUser(steamIDRemote);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_CloseP2PChannelWithUser(lua_State* L) {
-	int top = lua_gettop(L);
-	int nChannel = check_int(L, 2); /*normal*/
-	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
-
-	bool r = networking->CloseP2PChannelWithUser(steamIDRemote, nChannel);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_GetP2PSessionState(lua_State* L) {
-	int top = lua_gettop(L);
-	struct P2PSessionState_t pConnectionState = check_P2PSessionState_t(L, 2); /*out_param*/
-	class CSteamID steamIDRemote = check_class_CSteamID(L, 1); /*normal*/
-
-	bool r = networking->GetP2PSessionState(steamIDRemote, &pConnectionState);
-	push_bool(L, r);
-	push_P2PSessionState_t(L, pConnectionState); /*out_param*/
-	
-	assert(top + 1 + 1 == lua_gettop(L));
-	return 1 + 1;
-}
-
-static int ISteamNetworking_AllowP2PPacketRelay(lua_State* L) {
-	int top = lua_gettop(L);
-	bool bAllow = check_bool(L, 1); /*normal*/
-
-	bool r = networking->AllowP2PPacketRelay(bAllow);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_CreateListenSocket(lua_State* L) {
-	int top = lua_gettop(L);
-	bool bAllowUseOfPacketRelay = check_bool(L, 4); /*normal*/
-	uint16 nPort = check_uint16(L, 3); /*normal*/
-	uint32 nIP = check_uint32(L, 2); /*normal*/
-	int nVirtualP2PPort = check_int(L, 1); /*normal*/
-
-	SNetListenSocket_t r = networking->CreateListenSocket(nVirtualP2PPort, nIP, nPort, bAllowUseOfPacketRelay);
-	push_SNetListenSocket_t(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_CreateP2PConnectionSocket(lua_State* L) {
-	int top = lua_gettop(L);
-	bool bAllowUseOfPacketRelay = check_bool(L, 4); /*normal*/
-	int nTimeoutSec = check_int(L, 3); /*normal*/
-	int nVirtualPort = check_int(L, 2); /*normal*/
-	class CSteamID steamIDTarget = check_class_CSteamID(L, 1); /*normal*/
-
-	SNetSocket_t r = networking->CreateP2PConnectionSocket(steamIDTarget, nVirtualPort, nTimeoutSec, bAllowUseOfPacketRelay);
-	push_SNetSocket_t(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_CreateConnectionSocket(lua_State* L) {
-	int top = lua_gettop(L);
-	int nTimeoutSec = check_int(L, 3); /*normal*/
-	uint16 nPort = check_uint16(L, 2); /*normal*/
-	uint32 nIP = check_uint32(L, 1); /*normal*/
-
-	SNetSocket_t r = networking->CreateConnectionSocket(nIP, nPort, nTimeoutSec);
-	push_SNetSocket_t(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_DestroySocket(lua_State* L) {
-	int top = lua_gettop(L);
-	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
-	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
-
-	bool r = networking->DestroySocket(hSocket, bNotifyRemoteEnd);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_DestroyListenSocket(lua_State* L) {
-	int top = lua_gettop(L);
-	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
-	SNetListenSocket_t hSocket = check_SNetListenSocket_t(L, 1); /*normal*/
-
-	bool r = networking->DestroyListenSocket(hSocket, bNotifyRemoteEnd);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_SendDataOnSocket(lua_State* L) {
-	int top = lua_gettop(L);
-	bool bReliable = check_bool(L, 4); /*normal*/
-	uint32 cubData = check_uint32(L, 3); /*normal*/
-	dmScript::LuaHBuffer * pubData_buffer = check_buffer(L, 2); /*buffer_param*/
-	void * pubData = 0x0;
-	uint32_t pubData_buffersize = 0;
-	dmBuffer::Result pubData_buffer_result = dmBuffer::GetBytes(pubData_buffer->m_Buffer, (void**)&pubData, &pubData_buffersize);
-	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
-
-	bool r = networking->SendDataOnSocket(hSocket, pubData, cubData, bReliable);
-	push_bool(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_IsDataAvailableOnSocket(lua_State* L) {
-	int top = lua_gettop(L);
-	uint32 pcubMsgSize = check_uint32(L, 2); /*out_param*/
-	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
-
-	bool r = networking->IsDataAvailableOnSocket(hSocket, &pcubMsgSize);
-	push_bool(L, r);
-	push_uint32(L, pcubMsgSize); /*out_param*/
-	
-	assert(top + 1 + 1 == lua_gettop(L));
-	return 1 + 1;
-}
-
-static int ISteamNetworking_RetrieveDataFromSocket(lua_State* L) {
-	int top = lua_gettop(L);
-	uint32 pcubMsgSize = check_uint32(L, 4); /*out_param*/
-	uint32 cubDest = check_uint32(L, 3); /*normal*/
-	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
-	void * pubDest = 0x0;
-	uint32_t pubDest_buffersize = 0;
-	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
-	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
-
-	bool r = networking->RetrieveDataFromSocket(hSocket, pubDest, cubDest, &pcubMsgSize);
-	push_bool(L, r);
-	push_uint32(L, pcubMsgSize); /*out_param*/
-	
-	assert(top + 1 + 1 == lua_gettop(L));
-	return 1 + 1;
-}
-
-static int ISteamNetworking_IsDataAvailable(lua_State* L) {
-	int top = lua_gettop(L);
-	SNetSocket_t phSocket = check_SNetSocket_t(L, 3); /*out_param*/
-	uint32 pcubMsgSize = check_uint32(L, 2); /*out_param*/
-	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
-
-	bool r = networking->IsDataAvailable(hListenSocket, &pcubMsgSize, &phSocket);
-	push_bool(L, r);
-	push_SNetSocket_t(L, phSocket); /*out_param*/
-	push_uint32(L, pcubMsgSize); /*out_param*/
-	
-	assert(top + 1 + 2 == lua_gettop(L));
-	return 1 + 2;
-}
-
-static int ISteamNetworking_RetrieveData(lua_State* L) {
-	int top = lua_gettop(L);
-	SNetSocket_t phSocket = check_SNetSocket_t(L, 5); /*out_param*/
-	uint32 pcubMsgSize = check_uint32(L, 4); /*out_param*/
-	uint32 cubDest = check_uint32(L, 3); /*normal*/
-	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
-	void * pubDest = 0x0;
-	uint32_t pubDest_buffersize = 0;
-	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
-	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
-
-	bool r = networking->RetrieveData(hListenSocket, pubDest, cubDest, &pcubMsgSize, &phSocket);
-	push_bool(L, r);
-	push_SNetSocket_t(L, phSocket); /*out_param*/
-	push_uint32(L, pcubMsgSize); /*out_param*/
-	
-	assert(top + 1 + 2 == lua_gettop(L));
-	return 1 + 2;
-}
-
-static int ISteamNetworking_GetSocketInfo(lua_State* L) {
-	int top = lua_gettop(L);
-	uint16 punPortRemote = check_uint16(L, 5); /*out_param*/
-	uint32 punIPRemote = check_uint32(L, 4); /*out_param*/
-	int peSocketStatus = check_int(L, 3); /*out_param*/
-	CSteamID pSteamIDRemote = check_class_CSteamID(L, 2); /*out_param*/
-	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
-
-	bool r = networking->GetSocketInfo(hSocket, &pSteamIDRemote, &peSocketStatus, &punIPRemote, &punPortRemote);
-	push_bool(L, r);
-	push_uint16(L, punPortRemote); /*out_param*/
-	push_uint32(L, punIPRemote); /*out_param*/
-	push_int(L, peSocketStatus); /*out_param*/
-	push_class_CSteamID(L, pSteamIDRemote); /*out_param*/
-	
-	assert(top + 1 + 4 == lua_gettop(L));
-	return 1 + 4;
-}
-
-static int ISteamNetworking_GetListenSocketInfo(lua_State* L) {
-	int top = lua_gettop(L);
-	uint16 pnPort = check_uint16(L, 3); /*out_param*/
-	uint32 pnIP = check_uint32(L, 2); /*out_param*/
-	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
-
-	bool r = networking->GetListenSocketInfo(hListenSocket, &pnIP, &pnPort);
-	push_bool(L, r);
-	push_uint16(L, pnPort); /*out_param*/
-	push_uint32(L, pnIP); /*out_param*/
-	
-	assert(top + 1 + 2 == lua_gettop(L));
-	return 1 + 2;
-}
-
-static int ISteamNetworking_GetSocketConnectionType(lua_State* L) {
-	int top = lua_gettop(L);
-	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
-
-	ESNetSocketConnectionType r = networking->GetSocketConnectionType(hSocket);
-	push_ESNetSocketConnectionType(L, r);
-	
-	assert(top + 1 + 0 == lua_gettop(L));
-	return 1 + 0;
-}
-
-static int ISteamNetworking_GetMaxPacketSize(lua_State* L) {
-	int top = lua_gettop(L);
-	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
-
-	int r = networking->GetMaxPacketSize(hSocket);
+	int r = apps->GetLaunchCommandLine(pszCommandLine, cubCommandLine);
 	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsSubscribedFromFamilySharing(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = apps->BIsSubscribedFromFamilySharing();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamApps_BIsTimedTrial(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 punSecondsPlayed = check_uint32(L, 2); /*out_param*/
+	uint32 punSecondsAllowed = check_uint32(L, 1); /*out_param*/
+
+	bool r = apps->BIsTimedTrial(&punSecondsAllowed, &punSecondsPlayed);
+	push_bool(L, r);
+	push_uint32(L, punSecondsPlayed); /*out_param*/
+	push_uint32(L, punSecondsAllowed); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamApps_SetDlcContext(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t nAppID = check_AppId_t(L, 1); /*normal*/
+
+	bool r = apps->SetDlcContext(nAppID);
+	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
 	return 1 + 0;
@@ -16488,7 +22270,7 @@ static int ISteamUGC_CreateQueryUserUGCRequest(lua_State* L) {
 	return 1 + 0;
 }
 
-static int ISteamUGC_CreateQueryAllUGCRequest(lua_State* L) {
+static int ISteamUGC_CreateQueryAllUGCRequestPage(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 unPage = check_uint32(L, 5); /*normal*/
 	AppId_t nConsumerAppID = check_AppId_t(L, 4); /*normal*/
@@ -16497,6 +22279,21 @@ static int ISteamUGC_CreateQueryAllUGCRequest(lua_State* L) {
 	EUGCQuery eQueryType = check_EUGCQuery(L, 1); /*normal*/
 
 	UGCQueryHandle_t r = ugc->CreateQueryAllUGCRequest(eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, unPage);
+	push_UGCQueryHandle_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_CreateQueryAllUGCRequestCursor(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchCursor = check_const_char_ptr(L, 5); /*normal*/
+	AppId_t nConsumerAppID = check_AppId_t(L, 4); /*normal*/
+	AppId_t nCreatorAppID = check_AppId_t(L, 3); /*normal*/
+	EUGCMatchingUGCType eMatchingeMatchingUGCTypeFileType = check_EUGCMatchingUGCType(L, 2); /*normal*/
+	EUGCQuery eQueryType = check_EUGCQuery(L, 1); /*normal*/
+
+	UGCQueryHandle_t r = ugc->CreateQueryAllUGCRequest(eQueryType, eMatchingeMatchingUGCTypeFileType, nCreatorAppID, nConsumerAppID, pchCursor);
 	push_UGCQueryHandle_t(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -16528,7 +22325,7 @@ static int ISteamUGC_SendQueryUGCRequest(lua_State* L) {
 
 static int ISteamUGC_GetQueryUGCResult(lua_State* L) {
 	int top = lua_gettop(L);
-	struct SteamUGCDetails_t pDetails = check_SteamUGCDetails_t(L, 3); /*out_param*/
+	SteamUGCDetails_t pDetails = check_SteamUGCDetails_t(L, 3); /*out_param*/
 	uint32 index = check_uint32(L, 2); /*normal*/
 	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
 
@@ -16538,6 +22335,54 @@ static int ISteamUGC_GetQueryUGCResult(lua_State* L) {
 	
 	assert(top + 1 + 1 == lua_gettop(L));
 	return 1 + 1;
+}
+
+static int ISteamUGC_GetQueryUGCNumTags(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	uint32 r = ugc->GetQueryUGCNumTags(handle, index);
+	push_uint32(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetQueryUGCTag(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchValueSize = check_uint32(L, 5); /*normal*/
+	dmScript::LuaHBuffer * pchValue_buffer = check_buffer(L, 4); /*buffer_param*/
+	char * pchValue = 0x0;
+	uint32_t pchValue_buffersize = 0;
+	dmBuffer::Result pchValue_buffer_result = dmBuffer::GetBytes(pchValue_buffer->m_Buffer, (void**)&pchValue, &pchValue_buffersize);
+	uint32 indexTag = check_uint32(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCTag(handle, index, indexTag, pchValue, cchValueSize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetQueryUGCTagDisplayName(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchValueSize = check_uint32(L, 5); /*normal*/
+	dmScript::LuaHBuffer * pchValue_buffer = check_buffer(L, 4); /*buffer_param*/
+	char * pchValue = 0x0;
+	uint32_t pchValue_buffersize = 0;
+	dmBuffer::Result pchValue_buffer_result = dmBuffer::GetBytes(pchValue_buffer->m_Buffer, (void**)&pchValue, &pchValue_buffersize);
+	uint32 indexTag = check_uint32(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCTagDisplayName(handle, index, indexTag, pchValue, cchValueSize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
 }
 
 static int ISteamUGC_GetQueryUGCPreviewURL(lua_State* L) {
@@ -16676,6 +22521,24 @@ static int ISteamUGC_GetQueryUGCKeyValueTag(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamUGC_GetQueryFirstUGCKeyValueTag(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cchValueSize = check_uint32(L, 5); /*normal*/
+	dmScript::LuaHBuffer * pchValue_buffer = check_buffer(L, 4); /*buffer_param*/
+	char * pchValue = 0x0;
+	uint32_t pchValue_buffersize = 0;
+	dmBuffer::Result pchValue_buffer_result = dmBuffer::GetBytes(pchValue_buffer->m_Buffer, (void**)&pchValue, &pchValue_buffersize);
+	const char * pchKey = check_const_char_ptr(L, 3); /*normal*/
+	uint32 index = check_uint32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->GetQueryUGCKeyValueTag(handle, index, pchKey, pchValue, cchValueSize);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamUGC_ReleaseQueryUGCRequest(lua_State* L) {
 	int top = lua_gettop(L);
 	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
@@ -16693,6 +22556,18 @@ static int ISteamUGC_AddRequiredTag(lua_State* L) {
 	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
 
 	bool r = ugc->AddRequiredTag(handle, pTagName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_AddRequiredTagGroup(lua_State* L) {
+	int top = lua_gettop(L);
+	const SteamParamStringArray_t pTagGroups = check_SteamParamStringArray_t(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->AddRequiredTagGroup(handle, &pTagGroups);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -16879,6 +22754,32 @@ static int ISteamUGC_SetRankedByTrendDays(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamUGC_SetTimeCreatedDateRange(lua_State* L) {
+	int top = lua_gettop(L);
+	RTime32 rtEnd = check_RTime32(L, 3); /*normal*/
+	RTime32 rtStart = check_RTime32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetTimeCreatedDateRange(handle, rtStart, rtEnd);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetTimeUpdatedDateRange(lua_State* L) {
+	int top = lua_gettop(L);
+	RTime32 rtEnd = check_RTime32(L, 3); /*normal*/
+	RTime32 rtStart = check_RTime32(L, 2); /*normal*/
+	UGCQueryHandle_t handle = check_UGCQueryHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetTimeUpdatedDateRange(handle, rtStart, rtEnd);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamUGC_AddRequiredKeyValueTag(lua_State* L) {
 	int top = lua_gettop(L);
 	const char * pValue = check_const_char_ptr(L, 3); /*normal*/
@@ -16988,7 +22889,7 @@ static int ISteamUGC_SetItemVisibility(lua_State* L) {
 
 static int ISteamUGC_SetItemTags(lua_State* L) {
 	int top = lua_gettop(L);
-	const struct SteamParamStringArray_t pTags = check_const_struct_SteamParamStringArray_t(L, 2); /*normal*/
+	const SteamParamStringArray_t pTags = check_SteamParamStringArray_t(L, 2); /*normal*/
 	UGCUpdateHandle_t updateHandle = check_UGCUpdateHandle_t(L, 1); /*normal*/
 
 	bool r = ugc->SetItemTags(updateHandle, &pTags);
@@ -17016,6 +22917,29 @@ static int ISteamUGC_SetItemPreview(lua_State* L) {
 	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
 
 	bool r = ugc->SetItemPreview(handle, pszPreviewFile);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_SetAllowLegacyUpload(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAllowLegacyUpload = check_bool(L, 2); /*normal*/
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->SetAllowLegacyUpload(handle, bAllowLegacyUpload);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_RemoveAllItemKeyValueTags(lua_State* L) {
+	int top = lua_gettop(L);
+	UGCUpdateHandle_t handle = check_UGCUpdateHandle_t(L, 1); /*normal*/
+
+	bool r = ugc->RemoveAllItemKeyValueTags(handle);
 	push_bool(L, r);
 	
 	assert(top + 1 + 0 == lua_gettop(L));
@@ -17396,6 +23320,25 @@ static int ISteamUGC_DeleteItem(lua_State* L) {
 	return 0;
 }
 
+static int ISteamUGC_ShowWorkshopEULA(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = ugc->ShowWorkshopEULA();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamUGC_GetWorkshopEULAStatus(lua_State* L) {
+	int top = lua_gettop(L);
+
+	SteamAPICall_t r = ugc->GetWorkshopEULAStatus();
+	steamCallbackWrapper->TrackSteamAPICallWorkshopEULAStatus_t(r);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
 static int ISteamInventory_GetResultStatus(lua_State* L) {
 	int top = lua_gettop(L);
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
@@ -17411,7 +23354,7 @@ static int ISteamInventory_GetResultItems(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 punOutItemsArraySize = check_uint32(L, 3); /*out_param*/
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
-	struct SteamItemDetails_t pOutItemsArray[punOutItemsArraySize];
+	SteamItemDetails_t pOutItemsArray[punOutItemsArraySize];
 	check_SteamItemDetails_t_array(L, 2, pOutItemsArray, punOutItemsArraySize); /*out_array_count*/
 
 	bool r = inventory->GetResultItems(resultHandle, pOutItemsArray, &punOutItemsArraySize);
@@ -17455,7 +23398,7 @@ static int ISteamInventory_GetResultTimestamp(lua_State* L) {
 
 static int ISteamInventory_CheckResultSteamID(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamIDExpected = check_class_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDExpected = check_CSteamID(L, 2); /*normal*/
 	SteamInventoryResult_t resultHandle = check_SteamInventoryResult_t(L, 1); /*normal*/
 
 	bool r = inventory->CheckResultSteamID(resultHandle, steamIDExpected);
@@ -17734,7 +23677,7 @@ static int ISteamInventory_TradeItems(lua_State* L) {
 		pArrayGive[i] = check_SteamItemInstanceID_t(L, 3 + 1);
 		lua_pop(L, 1);
 	}
-	class CSteamID steamIDTradePartner = check_class_CSteamID(L, 2); /*normal*/
+	CSteamID steamIDTradePartner = check_CSteamID(L, 2); /*normal*/
 	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
 
 	bool r = inventory->TradeItems(&pResultHandle, steamIDTradePartner, pArrayGive, pArrayGiveQuantity, nArrayGiveLength, pArrayGet, pArrayGetQuantity, nArrayGetLength);
@@ -17790,7 +23733,7 @@ static int ISteamInventory_GetItemDefinitionProperty(lua_State* L) {
 
 static int ISteamInventory_RequestEligiblePromoItemDefinitionsIDs(lua_State* L) {
 	int top = lua_gettop(L);
-	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
 
 	SteamAPICall_t r = inventory->RequestEligiblePromoItemDefinitionsIDs(steamID);
 	steamCallbackWrapper->TrackSteamAPICallSteamInventoryEligiblePromoItemDefIDs_t(r);
@@ -17801,7 +23744,7 @@ static int ISteamInventory_RequestEligiblePromoItemDefinitionsIDs(lua_State* L) 
 static int ISteamInventory_GetEligiblePromoItemDefinitionIDs(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 punItemDefIDsArraySize = check_uint32(L, 3); /*out_param*/
-	class CSteamID steamID = check_class_CSteamID(L, 1); /*normal*/
+	CSteamID steamID = check_CSteamID(L, 1); /*normal*/
 	SteamItemDef_t pItemDefIDs[punItemDefIDsArraySize];
 	check_SteamItemDef_t_array(L, 2, pItemDefIDs, punItemDefIDsArraySize); /*out_array_count*/
 
@@ -17859,32 +23802,49 @@ static int ISteamInventory_GetNumItemsWithPrices(lua_State* L) {
 
 static int ISteamInventory_GetItemsWithPrices(lua_State* L) {
 	int top = lua_gettop(L);
-	uint32 unArrayLength = check_uint32(L, 3); /*normal*/
+	uint32 unArrayLength = check_uint32(L, 4); /*normal*/
+	luaL_checktype(L, 1, LUA_TTABLE); /*array_count*/
 	SteamItemDef_t pArrayItemDefs[unArrayLength];
-	check_SteamItemDef_t_array(L, 1, pArrayItemDefs, unArrayLength); /*out_array_count*/
-	uint64 pPrices[unArrayLength];
-	check_uint64_array(L, 2, pPrices, unArrayLength); /*out_array_count*/
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 1, i);
+		pArrayItemDefs[i] = check_SteamItemDef_t(L, 1 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 2, LUA_TTABLE); /*array_count*/
+	uint64 pCurrentPrices[unArrayLength];
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 2, i);
+		pCurrentPrices[i] = check_uint64(L, 2 + 1);
+		lua_pop(L, 1);
+	}
+	luaL_checktype(L, 3, LUA_TTABLE); /*array_count*/
+	uint64 pBasePrices[unArrayLength];
+	for(int i=1; i<=unArrayLength; i++) {
+		lua_rawgeti(L, 3, i);
+		pBasePrices[i] = check_uint64(L, 3 + 1);
+		lua_pop(L, 1);
+	}
 
-	bool r = inventory->GetItemsWithPrices(pArrayItemDefs, pPrices, unArrayLength);
+	bool r = inventory->GetItemsWithPrices(pArrayItemDefs, pCurrentPrices, pBasePrices, unArrayLength);
 	push_bool(L, r);
-	push_SteamItemDef_t_array(L, pArrayItemDefs, unArrayLength);  /*out_array_count*/
-	push_uint64_array(L, pPrices, unArrayLength);  /*out_array_count*/
 	
-	assert(top + 1 + 2 == lua_gettop(L));
-	return 1 + 2;
+	assert(top + 1 + 3 == lua_gettop(L));
+	return 1 + 3;
 }
 
 static int ISteamInventory_GetItemPrice(lua_State* L) {
 	int top = lua_gettop(L);
-	uint64 pPrice = check_uint64(L, 2); /*out_param*/
+	uint64 pBasePrice = check_uint64(L, 3); /*out_param*/
+	uint64 pCurrentPrice = check_uint64(L, 2); /*out_param*/
 	SteamItemDef_t iDefinition = check_SteamItemDef_t(L, 1); /*normal*/
 
-	bool r = inventory->GetItemPrice(iDefinition, &pPrice);
+	bool r = inventory->GetItemPrice(iDefinition, &pCurrentPrice, &pBasePrice);
 	push_bool(L, r);
-	push_uint64(L, pPrice); /*out_param*/
+	push_uint64(L, pBasePrice); /*out_param*/
+	push_uint64(L, pCurrentPrice); /*out_param*/
 	
-	assert(top + 1 + 1 == lua_gettop(L));
-	return 1 + 1;
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
 }
 
 static int ISteamInventory_StartUpdateProperties(lua_State* L) {
@@ -17938,7 +23898,7 @@ static int ISteamInventory_SetPropertyBool(lua_State* L) {
 	return 1 + 0;
 }
 
-static int ISteamInventory_SetPropertyInt(lua_State* L) {
+static int ISteamInventory_SetPropertyInt64(lua_State* L) {
 	int top = lua_gettop(L);
 	int64 nValue = check_int64(L, 4); /*normal*/
 	const char * pchPropertyName = check_const_char_ptr(L, 3); /*normal*/
@@ -17979,6 +23939,19 @@ static int ISteamInventory_SubmitUpdateProperties(lua_State* L) {
 	return 1 + 1;
 }
 
+static int ISteamInventory_InspectItem(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchItemToken = check_const_char_ptr(L, 2); /*normal*/
+	SteamInventoryResult_t pResultHandle = check_SteamInventoryResult_t(L, 1); /*out_param*/
+
+	bool r = inventory->InspectItem(&pResultHandle, pchItemToken);
+	push_bool(L, r);
+	push_SteamInventoryResult_t(L, pResultHandle); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
 
 
 
@@ -18006,13 +23979,14 @@ static int Init(lua_State* L) {
 	inventory = SteamInventory();
 	matchmaking = SteamMatchmaking();
 	music = SteamMusic();
-	networking = SteamNetworking();
 	remote_storage = SteamRemoteStorage();
 	user = SteamUser();
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
 	ugc = SteamUGC();
+	parties = SteamParties();
+	input = SteamInput();
 	return 0;
 }
 
@@ -18050,7 +24024,8 @@ static const luaL_reg Module_methods[] = {
 	{ "user_get_h_steam_user", ISteamUser_GetHSteamUser },
 	{ "user_logged_on", ISteamUser_BLoggedOn },
 	{ "user_get_steam_id", ISteamUser_GetSteamID },
-	{ "user_terminate_game_connection", ISteamUser_TerminateGameConnection },
+	{ "user_track_app_usage_event", ISteamUser_TrackAppUsageEvent },
+	{ "user_get_user_data_folder", ISteamUser_GetUserDataFolder },
 	{ "user_get_auth_session_ticket", ISteamUser_GetAuthSessionTicket },
 	{ "user_begin_auth_session", ISteamUser_BeginAuthSession },
 	{ "user_end_auth_session", ISteamUser_EndAuthSession },
@@ -18067,6 +24042,9 @@ static const luaL_reg Module_methods[] = {
 	{ "user_is_two_factor_enabled", ISteamUser_BIsTwoFactorEnabled },
 	{ "user_is_phone_identifying", ISteamUser_BIsPhoneIdentifying },
 	{ "user_is_phone_requiring_verification", ISteamUser_BIsPhoneRequiringVerification },
+	{ "user_get_market_eligibility", ISteamUser_GetMarketEligibility },
+	{ "user_get_duration_control", ISteamUser_GetDurationControl },
+	{ "user_set_duration_control_online_state", ISteamUser_BSetDurationControlOnlineState },
 	{ "friends_get_persona_name", ISteamFriends_GetPersonaName },
 	{ "friends_set_persona_name", ISteamFriends_SetPersonaName },
 	{ "friends_get_persona_state", ISteamFriends_GetPersonaState },
@@ -18139,6 +24117,14 @@ static const luaL_reg Module_methods[] = {
 	{ "friends_enumerate_following_list", ISteamFriends_EnumerateFollowingList },
 	{ "friends_is_clan_public", ISteamFriends_IsClanPublic },
 	{ "friends_is_clan_official_game_group", ISteamFriends_IsClanOfficialGameGroup },
+	{ "friends_get_num_chats_with_unread_priority_messages", ISteamFriends_GetNumChatsWithUnreadPriorityMessages },
+	{ "friends_activate_game_overlay_remote_play_together_invite_dialog", ISteamFriends_ActivateGameOverlayRemotePlayTogetherInviteDialog },
+	{ "friends_register_protocol_in_overlay_browser", ISteamFriends_RegisterProtocolInOverlayBrowser },
+	{ "friends_activate_game_overlay_invite_dialog_connect_string", ISteamFriends_ActivateGameOverlayInviteDialogConnectString },
+	{ "friends_request_equipped_profile_items", ISteamFriends_RequestEquippedProfileItems },
+	{ "friends_has_equipped_profile_item", ISteamFriends_BHasEquippedProfileItem },
+	{ "friends_get_profile_item_property_string", ISteamFriends_GetProfileItemPropertyString },
+	{ "friends_get_profile_item_property_uint", ISteamFriends_GetProfileItemPropertyUint },
 	{ "utils_get_seconds_since_app_active", ISteamUtils_GetSecondsSinceAppActive },
 	{ "utils_get_seconds_since_computer_active", ISteamUtils_GetSecondsSinceComputerActive },
 	{ "utils_get_connected_universe", ISteamUtils_GetConnectedUniverse },
@@ -18146,7 +24132,6 @@ static const luaL_reg Module_methods[] = {
 	{ "utils_get_ip_country", ISteamUtils_GetIPCountry },
 	{ "utils_get_image_size", ISteamUtils_GetImageSize },
 	{ "utils_get_image_rgba", ISteamUtils_GetImageRGBA },
-	{ "utils_get_cserip_port", ISteamUtils_GetCSERIPPort },
 	{ "utils_get_current_battery_power", ISteamUtils_GetCurrentBatteryPower },
 	{ "utils_get_app_id", ISteamUtils_GetAppID },
 	{ "utils_set_overlay_notification_position", ISteamUtils_SetOverlayNotificationPosition },
@@ -18167,6 +24152,14 @@ static const luaL_reg Module_methods[] = {
 	{ "utils_start_vr_dashboard", ISteamUtils_StartVRDashboard },
 	{ "utils_is_vr_headset_streaming_enabled", ISteamUtils_IsVRHeadsetStreamingEnabled },
 	{ "utils_set_vr_headset_streaming_enabled", ISteamUtils_SetVRHeadsetStreamingEnabled },
+	{ "utils_is_steam_china_launcher", ISteamUtils_IsSteamChinaLauncher },
+	{ "utils_init_filter_text", ISteamUtils_InitFilterText },
+	{ "utils_filter_text", ISteamUtils_FilterText },
+	{ "utils_get_i_pv6_connectivity_state", ISteamUtils_GetIPv6ConnectivityState },
+	{ "utils_is_steam_running_on_steam_deck", ISteamUtils_IsSteamRunningOnSteamDeck },
+	{ "utils_show_floating_gamepad_text_input", ISteamUtils_ShowFloatingGamepadTextInput },
+	{ "utils_set_game_launcher_mode", ISteamUtils_SetGameLauncherMode },
+	{ "utils_dismiss_floating_gamepad_text_input", ISteamUtils_DismissFloatingGamepadTextInput },
 	{ "matchmaking_get_favorite_game_count", ISteamMatchmaking_GetFavoriteGameCount },
 	{ "matchmaking_get_favorite_game", ISteamMatchmaking_GetFavoriteGame },
 	{ "matchmaking_add_favorite_game", ISteamMatchmaking_AddFavoriteGame },
@@ -18205,6 +24198,18 @@ static const luaL_reg Module_methods[] = {
 	{ "matchmaking_get_lobby_owner", ISteamMatchmaking_GetLobbyOwner },
 	{ "matchmaking_set_lobby_owner", ISteamMatchmaking_SetLobbyOwner },
 	{ "matchmaking_set_linked_lobby", ISteamMatchmaking_SetLinkedLobby },
+	{ "parties_get_num_active_beacons", ISteamParties_GetNumActiveBeacons },
+	{ "parties_get_beacon_by_index", ISteamParties_GetBeaconByIndex },
+	{ "parties_get_beacon_details", ISteamParties_GetBeaconDetails },
+	{ "parties_join_party", ISteamParties_JoinParty },
+	{ "parties_get_num_available_beacon_locations", ISteamParties_GetNumAvailableBeaconLocations },
+	{ "parties_get_available_beacon_locations", ISteamParties_GetAvailableBeaconLocations },
+	{ "parties_create_beacon", ISteamParties_CreateBeacon },
+	{ "parties_on_reservation_completed", ISteamParties_OnReservationCompleted },
+	{ "parties_cancel_reservation", ISteamParties_CancelReservation },
+	{ "parties_change_num_open_slots", ISteamParties_ChangeNumOpenSlots },
+	{ "parties_destroy_beacon", ISteamParties_DestroyBeacon },
+	{ "parties_get_beacon_location_data", ISteamParties_GetBeaconLocationData },
 	{ "remote_storage_file_write", ISteamRemoteStorage_FileWrite },
 	{ "remote_storage_file_read", ISteamRemoteStorage_FileRead },
 	{ "remote_storage_file_write_async", ISteamRemoteStorage_FileWriteAsync },
@@ -18235,12 +24240,40 @@ static const luaL_reg Module_methods[] = {
 	{ "remote_storage_ugc_read", ISteamRemoteStorage_UGCRead },
 	{ "remote_storage_get_cached_ugc_count", ISteamRemoteStorage_GetCachedUGCCount },
 	{ "remote_storage_get_cached_ugc_handle", ISteamRemoteStorage_GetCachedUGCHandle },
+	{ "remote_storage_publish_workshop_file", ISteamRemoteStorage_PublishWorkshopFile },
+	{ "remote_storage_create_published_file_update_request", ISteamRemoteStorage_CreatePublishedFileUpdateRequest },
+	{ "remote_storage_update_published_file_file", ISteamRemoteStorage_UpdatePublishedFileFile },
+	{ "remote_storage_update_published_file_preview_file", ISteamRemoteStorage_UpdatePublishedFilePreviewFile },
+	{ "remote_storage_update_published_file_title", ISteamRemoteStorage_UpdatePublishedFileTitle },
+	{ "remote_storage_update_published_file_description", ISteamRemoteStorage_UpdatePublishedFileDescription },
+	{ "remote_storage_update_published_file_visibility", ISteamRemoteStorage_UpdatePublishedFileVisibility },
+	{ "remote_storage_update_published_file_tags", ISteamRemoteStorage_UpdatePublishedFileTags },
+	{ "remote_storage_commit_published_file_update", ISteamRemoteStorage_CommitPublishedFileUpdate },
+	{ "remote_storage_get_published_file_details", ISteamRemoteStorage_GetPublishedFileDetails },
+	{ "remote_storage_delete_published_file", ISteamRemoteStorage_DeletePublishedFile },
+	{ "remote_storage_enumerate_user_published_files", ISteamRemoteStorage_EnumerateUserPublishedFiles },
+	{ "remote_storage_subscribe_published_file", ISteamRemoteStorage_SubscribePublishedFile },
+	{ "remote_storage_enumerate_user_subscribed_files", ISteamRemoteStorage_EnumerateUserSubscribedFiles },
+	{ "remote_storage_unsubscribe_published_file", ISteamRemoteStorage_UnsubscribePublishedFile },
+	{ "remote_storage_update_published_file_set_change_description", ISteamRemoteStorage_UpdatePublishedFileSetChangeDescription },
+	{ "remote_storage_get_published_item_vote_details", ISteamRemoteStorage_GetPublishedItemVoteDetails },
+	{ "remote_storage_update_user_published_item_vote", ISteamRemoteStorage_UpdateUserPublishedItemVote },
+	{ "remote_storage_get_user_published_item_vote_details", ISteamRemoteStorage_GetUserPublishedItemVoteDetails },
+	{ "remote_storage_enumerate_user_shared_workshop_files", ISteamRemoteStorage_EnumerateUserSharedWorkshopFiles },
+	{ "remote_storage_publish_video", ISteamRemoteStorage_PublishVideo },
+	{ "remote_storage_set_user_published_file_action", ISteamRemoteStorage_SetUserPublishedFileAction },
+	{ "remote_storage_enumerate_published_files_by_user_action", ISteamRemoteStorage_EnumeratePublishedFilesByUserAction },
+	{ "remote_storage_enumerate_published_workshop_files", ISteamRemoteStorage_EnumeratePublishedWorkshopFiles },
 	{ "remote_storage_ugc_download_to_location", ISteamRemoteStorage_UGCDownloadToLocation },
+	{ "remote_storage_get_local_file_change_count", ISteamRemoteStorage_GetLocalFileChangeCount },
+	{ "remote_storage_get_local_file_change", ISteamRemoteStorage_GetLocalFileChange },
+	{ "remote_storage_begin_file_write_batch", ISteamRemoteStorage_BeginFileWriteBatch },
+	{ "remote_storage_end_file_write_batch", ISteamRemoteStorage_EndFileWriteBatch },
 	{ "user_stats_request_current_stats", ISteamUserStats_RequestCurrentStats },
-	{ "user_stats_get_stat_int", ISteamUserStats_GetStatInt },
-	{ "user_stats_get_stat_float", ISteamUserStats_GetStatFloat },
-	{ "user_stats_set_stat_int", ISteamUserStats_SetStatInt },
-	{ "user_stats_set_stat_float", ISteamUserStats_SetStatFloat },
+	{ "user_stats_get_stat", ISteamUserStats_GetStatInt32 },
+	{ "user_stats_get_stat", ISteamUserStats_GetStatFloat },
+	{ "user_stats_set_stat", ISteamUserStats_SetStatInt32 },
+	{ "user_stats_set_stat", ISteamUserStats_SetStatFloat },
 	{ "user_stats_update_avg_rate_stat", ISteamUserStats_UpdateAvgRateStat },
 	{ "user_stats_get_achievement", ISteamUserStats_GetAchievement },
 	{ "user_stats_set_achievement", ISteamUserStats_SetAchievement },
@@ -18253,8 +24286,8 @@ static const luaL_reg Module_methods[] = {
 	{ "user_stats_get_num_achievements", ISteamUserStats_GetNumAchievements },
 	{ "user_stats_get_achievement_name", ISteamUserStats_GetAchievementName },
 	{ "user_stats_request_user_stats", ISteamUserStats_RequestUserStats },
-	{ "user_stats_get_user_stat_int", ISteamUserStats_GetUserStatInt },
-	{ "user_stats_get_user_stat_float", ISteamUserStats_GetUserStatFloat },
+	{ "user_stats_get_user_stat", ISteamUserStats_GetUserStatInt32 },
+	{ "user_stats_get_user_stat", ISteamUserStats_GetUserStatFloat },
 	{ "user_stats_get_user_achievement", ISteamUserStats_GetUserAchievement },
 	{ "user_stats_get_user_achievement_and_unlock_time", ISteamUserStats_GetUserAchievementAndUnlockTime },
 	{ "user_stats_reset_all_stats", ISteamUserStats_ResetAllStats },
@@ -18275,10 +24308,12 @@ static const luaL_reg Module_methods[] = {
 	{ "user_stats_get_next_most_achieved_achievement_info", ISteamUserStats_GetNextMostAchievedAchievementInfo },
 	{ "user_stats_get_achievement_achieved_percent", ISteamUserStats_GetAchievementAchievedPercent },
 	{ "user_stats_request_global_stats", ISteamUserStats_RequestGlobalStats },
-	{ "user_stats_get_global_stat_int", ISteamUserStats_GetGlobalStatInt },
-	{ "user_stats_get_global_stat_float", ISteamUserStats_GetGlobalStatFloat },
-	{ "user_stats_get_global_stat_int_history", ISteamUserStats_GetGlobalStatIntHistory },
-	{ "user_stats_get_global_stat_float_history", ISteamUserStats_GetGlobalStatFloatHistory },
+	{ "user_stats_get_global_stat", ISteamUserStats_GetGlobalStatInt64 },
+	{ "user_stats_get_global_stat", ISteamUserStats_GetGlobalStatDouble },
+	{ "user_stats_get_global_stat_history", ISteamUserStats_GetGlobalStatHistoryInt64 },
+	{ "user_stats_get_global_stat_history", ISteamUserStats_GetGlobalStatHistoryDouble },
+	{ "user_stats_get_achievement_progress_limits", ISteamUserStats_GetAchievementProgressLimitsInt32 },
+	{ "user_stats_get_achievement_progress_limits", ISteamUserStats_GetAchievementProgressLimitsFloat },
 	{ "apps_is_subscribed", ISteamApps_BIsSubscribed },
 	{ "apps_is_low_violence", ISteamApps_BIsLowViolence },
 	{ "apps_is_cybercafe", ISteamApps_BIsCybercafe },
@@ -18305,28 +24340,10 @@ static const luaL_reg Module_methods[] = {
 	{ "apps_get_app_build_id", ISteamApps_GetAppBuildId },
 	{ "apps_request_all_proof_of_purchase_keys", ISteamApps_RequestAllProofOfPurchaseKeys },
 	{ "apps_get_file_details", ISteamApps_GetFileDetails },
-	{ "networking_send_p2p_packet", ISteamNetworking_SendP2PPacket },
-	{ "networking_is_p2p_packet_available", ISteamNetworking_IsP2PPacketAvailable },
-	{ "networking_read_p2p_packet", ISteamNetworking_ReadP2PPacket },
-	{ "networking_accept_p2p_session_with_user", ISteamNetworking_AcceptP2PSessionWithUser },
-	{ "networking_close_p2p_session_with_user", ISteamNetworking_CloseP2PSessionWithUser },
-	{ "networking_close_p2p_channel_with_user", ISteamNetworking_CloseP2PChannelWithUser },
-	{ "networking_get_p2p_session_state", ISteamNetworking_GetP2PSessionState },
-	{ "networking_allow_p2p_packet_relay", ISteamNetworking_AllowP2PPacketRelay },
-	{ "networking_create_listen_socket", ISteamNetworking_CreateListenSocket },
-	{ "networking_create_p2p_connection_socket", ISteamNetworking_CreateP2PConnectionSocket },
-	{ "networking_create_connection_socket", ISteamNetworking_CreateConnectionSocket },
-	{ "networking_destroy_socket", ISteamNetworking_DestroySocket },
-	{ "networking_destroy_listen_socket", ISteamNetworking_DestroyListenSocket },
-	{ "networking_send_data_on_socket", ISteamNetworking_SendDataOnSocket },
-	{ "networking_is_data_available_on_socket", ISteamNetworking_IsDataAvailableOnSocket },
-	{ "networking_retrieve_data_from_socket", ISteamNetworking_RetrieveDataFromSocket },
-	{ "networking_is_data_available", ISteamNetworking_IsDataAvailable },
-	{ "networking_retrieve_data", ISteamNetworking_RetrieveData },
-	{ "networking_get_socket_info", ISteamNetworking_GetSocketInfo },
-	{ "networking_get_listen_socket_info", ISteamNetworking_GetListenSocketInfo },
-	{ "networking_get_socket_connection_type", ISteamNetworking_GetSocketConnectionType },
-	{ "networking_get_max_packet_size", ISteamNetworking_GetMaxPacketSize },
+	{ "apps_get_launch_command_line", ISteamApps_GetLaunchCommandLine },
+	{ "apps_is_subscribed_from_family_sharing", ISteamApps_BIsSubscribedFromFamilySharing },
+	{ "apps_is_timed_trial", ISteamApps_BIsTimedTrial },
+	{ "apps_set_dlc_context", ISteamApps_SetDlcContext },
 	{ "music_is_enabled", ISteamMusic_BIsEnabled },
 	{ "music_is_playing", ISteamMusic_BIsPlaying },
 	{ "music_get_playback_status", ISteamMusic_GetPlaybackStatus },
@@ -18337,10 +24354,14 @@ static const luaL_reg Module_methods[] = {
 	{ "music_set_volume", ISteamMusic_SetVolume },
 	{ "music_get_volume", ISteamMusic_GetVolume },
 	{ "ugc_create_query_user_ugc_request", ISteamUGC_CreateQueryUserUGCRequest },
-	{ "ugc_create_query_all_ugc_request", ISteamUGC_CreateQueryAllUGCRequest },
+	{ "ugc_create_query_all_ugc_request", ISteamUGC_CreateQueryAllUGCRequestPage },
+	{ "ugc_create_query_all_ugc_request", ISteamUGC_CreateQueryAllUGCRequestCursor },
 	{ "ugc_create_query_ugc_details_request", ISteamUGC_CreateQueryUGCDetailsRequest },
 	{ "ugc_send_query_ugc_request", ISteamUGC_SendQueryUGCRequest },
 	{ "ugc_get_query_ugc_result", ISteamUGC_GetQueryUGCResult },
+	{ "ugc_get_query_ugc_num_tags", ISteamUGC_GetQueryUGCNumTags },
+	{ "ugc_get_query_ugc_tag", ISteamUGC_GetQueryUGCTag },
+	{ "ugc_get_query_ugc_tag_display_name", ISteamUGC_GetQueryUGCTagDisplayName },
 	{ "ugc_get_query_ugc_preview_url", ISteamUGC_GetQueryUGCPreviewURL },
 	{ "ugc_get_query_ugc_metadata", ISteamUGC_GetQueryUGCMetadata },
 	{ "ugc_get_query_ugc_children", ISteamUGC_GetQueryUGCChildren },
@@ -18349,8 +24370,10 @@ static const luaL_reg Module_methods[] = {
 	{ "ugc_get_query_ugc_additional_preview", ISteamUGC_GetQueryUGCAdditionalPreview },
 	{ "ugc_get_query_ugc_num_key_value_tags", ISteamUGC_GetQueryUGCNumKeyValueTags },
 	{ "ugc_get_query_ugc_key_value_tag", ISteamUGC_GetQueryUGCKeyValueTag },
+	{ "ugc_get_query_ugc_key_value_tag", ISteamUGC_GetQueryFirstUGCKeyValueTag },
 	{ "ugc_release_query_ugc_request", ISteamUGC_ReleaseQueryUGCRequest },
 	{ "ugc_add_required_tag", ISteamUGC_AddRequiredTag },
+	{ "ugc_add_required_tag_group", ISteamUGC_AddRequiredTagGroup },
 	{ "ugc_add_excluded_tag", ISteamUGC_AddExcludedTag },
 	{ "ugc_set_return_only_i_ds", ISteamUGC_SetReturnOnlyIDs },
 	{ "ugc_set_return_key_value_tags", ISteamUGC_SetReturnKeyValueTags },
@@ -18366,6 +24389,8 @@ static const luaL_reg Module_methods[] = {
 	{ "ugc_set_match_any_tag", ISteamUGC_SetMatchAnyTag },
 	{ "ugc_set_search_text", ISteamUGC_SetSearchText },
 	{ "ugc_set_ranked_by_trend_days", ISteamUGC_SetRankedByTrendDays },
+	{ "ugc_set_time_created_date_range", ISteamUGC_SetTimeCreatedDateRange },
+	{ "ugc_set_time_updated_date_range", ISteamUGC_SetTimeUpdatedDateRange },
 	{ "ugc_add_required_key_value_tag", ISteamUGC_AddRequiredKeyValueTag },
 	{ "ugc_request_ugc_details", ISteamUGC_RequestUGCDetails },
 	{ "ugc_create_item", ISteamUGC_CreateItem },
@@ -18378,6 +24403,8 @@ static const luaL_reg Module_methods[] = {
 	{ "ugc_set_item_tags", ISteamUGC_SetItemTags },
 	{ "ugc_set_item_content", ISteamUGC_SetItemContent },
 	{ "ugc_set_item_preview", ISteamUGC_SetItemPreview },
+	{ "ugc_set_allow_legacy_upload", ISteamUGC_SetAllowLegacyUpload },
+	{ "ugc_remove_all_item_key_value_tags", ISteamUGC_RemoveAllItemKeyValueTags },
 	{ "ugc_remove_item_key_value_tags", ISteamUGC_RemoveItemKeyValueTags },
 	{ "ugc_add_item_key_value_tag", ISteamUGC_AddItemKeyValueTag },
 	{ "ugc_add_item_preview_file", ISteamUGC_AddItemPreviewFile },
@@ -18410,6 +24437,8 @@ static const luaL_reg Module_methods[] = {
 	{ "ugc_remove_app_dependency", ISteamUGC_RemoveAppDependency },
 	{ "ugc_get_app_dependencies", ISteamUGC_GetAppDependencies },
 	{ "ugc_delete_item", ISteamUGC_DeleteItem },
+	{ "ugc_show_workshop_eula", ISteamUGC_ShowWorkshopEULA },
+	{ "ugc_get_workshop_eula_status", ISteamUGC_GetWorkshopEULAStatus },
 	{ "inventory_get_result_status", ISteamInventory_GetResultStatus },
 	{ "inventory_get_result_items", ISteamInventory_GetResultItems },
 	{ "inventory_get_result_item_property", ISteamInventory_GetResultItemProperty },
@@ -18442,11 +24471,12 @@ static const luaL_reg Module_methods[] = {
 	{ "inventory_get_item_price", ISteamInventory_GetItemPrice },
 	{ "inventory_start_update_properties", ISteamInventory_StartUpdateProperties },
 	{ "inventory_remove_property", ISteamInventory_RemoveProperty },
-	{ "inventory_set_property_string", ISteamInventory_SetPropertyString },
-	{ "inventory_set_property_bool", ISteamInventory_SetPropertyBool },
-	{ "inventory_set_property_int", ISteamInventory_SetPropertyInt },
-	{ "inventory_set_property_float", ISteamInventory_SetPropertyFloat },
+	{ "inventory_set_property", ISteamInventory_SetPropertyString },
+	{ "inventory_set_property", ISteamInventory_SetPropertyBool },
+	{ "inventory_set_property", ISteamInventory_SetPropertyInt64 },
+	{ "inventory_set_property", ISteamInventory_SetPropertyFloat },
 	{ "inventory_submit_update_properties", ISteamInventory_SubmitUpdateProperties },
+	{ "inventory_inspect_item", ISteamInventory_InspectItem },
 	{ 0, 0 }
 };
 
@@ -18458,6 +24488,9 @@ static void LuaInit(lua_State* L) {
 	lua_pushnumber(L, (lua_Number) val); \
 	lua_setfield(L, -2, #name);
 
+	// ESteamIPType
+	SETCONSTANT(STEAM_IP_TYPE_I_PV4, 0);
+	SETCONSTANT(STEAM_IP_TYPE_I_PV6, 1);
 	// EUniverse
 	SETCONSTANT(UNIVERSE_INVALID, 0);
 	SETCONSTANT(UNIVERSE_PUBLIC, 1);
@@ -18466,6 +24499,7 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(UNIVERSE_DEV, 4);
 	SETCONSTANT(UNIVERSE_MAX, 5);
 	// EResult
+	SETCONSTANT(RESULT_NONE, 0);
 	SETCONSTANT(RESULT_OK, 1);
 	SETCONSTANT(RESULT_FAIL, 2);
 	SETCONSTANT(RESULT_NO_CONNECTION, 3);
@@ -18577,6 +24611,21 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(RESULT_WG_NETWORK_SEND_EXCEEDED, 110);
 	SETCONSTANT(RESULT_ACCOUNT_NOT_FRIENDS, 111);
 	SETCONSTANT(RESULT_LIMITED_USER_ACCOUNT, 112);
+	SETCONSTANT(RESULT_CANT_REMOVE_ITEM, 113);
+	SETCONSTANT(RESULT_ACCOUNT_DELETED, 114);
+	SETCONSTANT(RESULT_EXISTING_USER_CANCELLED_LICENSE, 115);
+	SETCONSTANT(RESULT_COMMUNITY_COOLDOWN, 116);
+	SETCONSTANT(RESULT_NO_LAUNCHER_SPECIFIED, 117);
+	SETCONSTANT(RESULT_MUST_AGREE_TO_SSA, 118);
+	SETCONSTANT(RESULT_LAUNCHER_MIGRATED, 119);
+	SETCONSTANT(RESULT_STEAM_REALM_MISMATCH, 120);
+	SETCONSTANT(RESULT_INVALID_SIGNATURE, 121);
+	SETCONSTANT(RESULT_PARSE_FAILURE, 122);
+	SETCONSTANT(RESULT_NO_VERIFIED_PHONE, 123);
+	SETCONSTANT(RESULT_INSUFFICIENT_BATTERY, 124);
+	SETCONSTANT(RESULT_CHARGER_REQUIRED, 125);
+	SETCONSTANT(RESULT_CACHED_CREDENTIAL_INVALID, 126);
+	SETCONSTANT(K_E_RESULT_PHONE_NUMBER_IS_VOIP, 127);
 	// EVoiceResult
 	SETCONSTANT(VOICE_RESULT_OK, 0);
 	SETCONSTANT(VOICE_RESULT_NOT_INITIALIZED, 1);
@@ -18640,61 +24689,6 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(ACCOUNT_TYPE_CONSOLE_USER, 9);
 	SETCONSTANT(ACCOUNT_TYPE_ANON_USER, 10);
 	SETCONSTANT(ACCOUNT_TYPE_MAX, 11);
-	// EAppReleaseState
-	SETCONSTANT(APP_RELEASE_STATE_UNKNOWN, 0);
-	SETCONSTANT(APP_RELEASE_STATE_UNAVAILABLE, 1);
-	SETCONSTANT(APP_RELEASE_STATE_PRERELEASE, 2);
-	SETCONSTANT(APP_RELEASE_STATE_PRELOAD_ONLY, 3);
-	SETCONSTANT(APP_RELEASE_STATE_RELEASED, 4);
-	// EAppOwnershipFlags
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_NONE, 0);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_OWNS_LICENSE, 1);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_FREE_LICENSE, 2);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_REGION_RESTRICTED, 4);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_LOW_VIOLENCE, 8);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_INVALID_PLATFORM, 16);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_SHARED_LICENSE, 32);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_FREE_WEEKEND, 64);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_RETAIL_LICENSE, 128);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_LOCKED, 256);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_PENDING, 512);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_EXPIRED, 1024);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_PERMANENT, 2048);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_RECURRING, 4096);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_LICENSE_CANCELED, 8192);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_AUTO_GRANT, 16384);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_PENDING_GIFT, 32768);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_RENTAL_NOT_ACTIVATED, 65536);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_RENTAL, 131072);
-	SETCONSTANT(APP_OWNERSHIP_FLAGS_SITE_LICENSE, 262144);
-	// EAppType
-	SETCONSTANT(APP_TYPE_INVALID, 0);
-	SETCONSTANT(APP_TYPE_GAME, 1);
-	SETCONSTANT(APP_TYPE_APPLICATION, 2);
-	SETCONSTANT(APP_TYPE_TOOL, 4);
-	SETCONSTANT(APP_TYPE_DEMO, 8);
-	SETCONSTANT(APP_TYPE_MEDIA_DEPRECATED, 16);
-	SETCONSTANT(APP_TYPE_DLC, 32);
-	SETCONSTANT(APP_TYPE_GUIDE, 64);
-	SETCONSTANT(APP_TYPE_DRIVER, 128);
-	SETCONSTANT(APP_TYPE_CONFIG, 256);
-	SETCONSTANT(APP_TYPE_HARDWARE, 512);
-	SETCONSTANT(APP_TYPE_FRANCHISE, 1024);
-	SETCONSTANT(APP_TYPE_VIDEO, 2048);
-	SETCONSTANT(APP_TYPE_PLUGIN, 4096);
-	SETCONSTANT(APP_TYPE_MUSIC, 8192);
-	SETCONSTANT(APP_TYPE_SERIES, 16384);
-	SETCONSTANT(APP_TYPE_COMIC, 32768);
-	SETCONSTANT(APP_TYPE_SHORTCUT, 1073741824);
-	SETCONSTANT(APP_TYPE_DEPOT_ONLY, -2147483648);
-	// ESteamUserStatType
-	SETCONSTANT(STEAM_USER_STAT_TYPE_INVALID, 0);
-	SETCONSTANT(STEAM_USER_STAT_TYPE_INT, 1);
-	SETCONSTANT(STEAM_USER_STAT_TYPE_FLOAT, 2);
-	SETCONSTANT(STEAM_USER_STAT_TYPE_AVGRATE, 3);
-	SETCONSTANT(STEAM_USER_STAT_TYPE_ACHIEVEMENTS, 4);
-	SETCONSTANT(STEAM_USER_STAT_TYPE_GROUPACHIEVEMENTS, 5);
-	SETCONSTANT(STEAM_USER_STAT_TYPE_MAX, 6);
 	// EChatEntryType
 	SETCONSTANT(CHAT_ENTRY_TYPE_INVALID, 0);
 	SETCONSTANT(CHAT_ENTRY_TYPE_CHAT_MSG, 1);
@@ -18726,13 +24720,6 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(CHAT_INSTANCE_FLAG_CLAN, 524288);
 	SETCONSTANT(CHAT_INSTANCE_FLAG_LOBBY, 262144);
 	SETCONSTANT(CHAT_INSTANCE_FLAG_MMS_LOBBY, 131072);
-	// EMarketingMessageFlags
-	SETCONSTANT(MARKETING_MESSAGE_FLAGS_NONE, 0);
-	SETCONSTANT(MARKETING_MESSAGE_FLAGS_HIGH_PRIORITY, 1);
-	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_WINDOWS, 2);
-	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_MAC, 4);
-	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_LINUX, 8);
-	SETCONSTANT(MARKETING_MESSAGE_FLAGS_PLATFORM_RESTRICTIONS, 14);
 	// ENotificationPosition
 	SETCONSTANT(POSITION_TOP_LEFT, 0);
 	SETCONSTANT(POSITION_TOP_RIGHT, 1);
@@ -18753,47 +24740,79 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(BROADCAST_UPLOAD_RESULT_MISSING_AUDIO, 11);
 	SETCONSTANT(BROADCAST_UPLOAD_RESULT_TOO_FAR_BEHIND, 12);
 	SETCONSTANT(BROADCAST_UPLOAD_RESULT_TRANSCODE_BEHIND, 13);
-	// ELaunchOptionType
-	SETCONSTANT(LAUNCH_OPTION_TYPE_NONE, 0);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_DEFAULT, 1);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_SAFE_MODE, 2);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_MULTIPLAYER, 3);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_CONFIG, 4);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_OPEN_VR, 5);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_SERVER, 6);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_EDITOR, 7);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_MANUAL, 8);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_BENCHMARK, 9);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_OPTION1, 10);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_OPTION2, 11);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_OPTION3, 12);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_OCULUS_VR, 13);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_OPEN_VR_OVERLAY, 14);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_OSVR, 15);
-	SETCONSTANT(LAUNCH_OPTION_TYPE_DIALOG, 1000);
-	// EVRHMDType
-	SETCONSTANT(EVRHMD_TYPE_NONE, -1);
-	SETCONSTANT(EVRHMD_TYPE_UNKNOWN, 0);
-	SETCONSTANT(EVRHMD_TYPE_HTC_DEV, 1);
-	SETCONSTANT(EVRHMD_TYPE_HTC_VIVE_PRE, 2);
-	SETCONSTANT(EVRHMD_TYPE_HTC_VIVE, 3);
-	SETCONSTANT(EVRHMD_TYPE_HTC_UNKNOWN, 20);
-	SETCONSTANT(EVRHMD_TYPE_OCULUS_DK1, 21);
-	SETCONSTANT(EVRHMD_TYPE_OCULUS_DK2, 22);
-	SETCONSTANT(EVRHMD_TYPE_OCULUS_RIFT, 23);
-	SETCONSTANT(EVRHMD_TYPE_OCULUS_UNKNOWN, 40);
-	SETCONSTANT(EVRHMD_TYPE_ACER_UNKNOWN, 50);
-	SETCONSTANT(EVRHMD_TYPE_ACER_WINDOWS_MR, 51);
-	SETCONSTANT(EVRHMD_TYPE_DELL_UNKNOWN, 60);
-	SETCONSTANT(EVRHMD_TYPE_DELL_VISOR, 61);
-	SETCONSTANT(EVRHMD_TYPE_LENOVO_UNKNOWN, 70);
-	SETCONSTANT(EVRHMD_TYPE_LENOVO_EXPLORER, 71);
-	SETCONSTANT(EVRHMD_TYPE_HP_UNKNOWN, 80);
-	SETCONSTANT(EVRHMD_TYPE_HP_WINDOWS_MR, 81);
-	SETCONSTANT(EVRHMD_TYPE_SAMSUNG_UNKNOWN, 90);
-	SETCONSTANT(EVRHMD_TYPE_SAMSUNG_ODYSSEY, 91);
-	SETCONSTANT(EVRHMD_TYPE_UNANNOUNCED_UNKNOWN, 100);
-	SETCONSTANT(EVRHMD_TYPE_UNANNOUNCED_WINDOWS_MR, 101);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_NOT_ALLOWED_TO_PLAY, 14);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_BUSY, 15);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_BANNED, 16);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_ALREADY_ACTIVE, 17);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_FORCED_OFF, 18);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_AUDIO_BEHIND, 19);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_SHUTDOWN, 20);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_DISCONNECT, 21);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_VIDEO_INIT_FAILED, 22);
+	SETCONSTANT(BROADCAST_UPLOAD_RESULT_AUDIO_INIT_FAILED, 23);
+	// EMarketNotAllowedReasonFlags
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_NONE, 0);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_TEMPORARY_FAILURE, 1);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_ACCOUNT_DISABLED, 2);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_ACCOUNT_LOCKED_DOWN, 4);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_ACCOUNT_LIMITED, 8);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_TRADE_BANNED, 16);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_ACCOUNT_NOT_TRUSTED, 32);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_STEAM_GUARD_NOT_ENABLED, 64);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_STEAM_GUARD_ONLY_RECENTLY_ENABLED, 128);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_RECENT_PASSWORD_RESET, 256);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_NEW_PAYMENT_METHOD, 512);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_INVALID_COOKIE, 1024);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_USING_NEW_DEVICE, 2048);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_RECENT_SELF_REFUND, 4096);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_NEW_PAYMENT_METHOD_CANNOT_BE_VERIFIED, 8192);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_NO_RECENT_PURCHASES, 16384);
+	SETCONSTANT(MARKET_NOT_ALLOWED_REASON_ACCEPTED_WALLET_GIFT, 32768);
+	// EDurationControlProgress
+	SETCONSTANT(DURATION_CONTROL_PROGRESS_FULL, 0);
+	SETCONSTANT(DURATION_CONTROL_PROGRESS_HALF, 1);
+	SETCONSTANT(DURATION_CONTROL_PROGRESS_NONE, 2);
+	SETCONSTANT(DURATION_CONTROL_EXIT_SOON_3H, 3);
+	SETCONSTANT(DURATION_CONTROL_EXIT_SOON_5H, 4);
+	SETCONSTANT(DURATION_CONTROL_EXIT_SOON_NIGHT, 5);
+	// EDurationControlNotification
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_NONE, 0);
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_1_HOUR, 1);
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_3_HOURS, 2);
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_HALF_PROGRESS, 3);
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_NO_PROGRESS, 4);
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_EXIT_SOON_3H, 5);
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_EXIT_SOON_5H, 6);
+	SETCONSTANT(DURATION_CONTROL_NOTIFICATION_EXIT_SOON_NIGHT, 7);
+	// EDurationControlOnlineState
+	SETCONSTANT(DURATION_CONTROL_ONLINE_STATE_INVALID, 0);
+	SETCONSTANT(DURATION_CONTROL_ONLINE_STATE_OFFLINE, 1);
+	SETCONSTANT(DURATION_CONTROL_ONLINE_STATE_ONLINE, 2);
+	SETCONSTANT(DURATION_CONTROL_ONLINE_STATE_ONLINE_HIGH_PRI, 3);
+	// EGameSearchErrorCode_t
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_OK, 1);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_SEARCH_ALREADY_IN_PROGRESS, 2);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_NO_SEARCH_IN_PROGRESS, 3);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_NOT_LOBBY_LEADER, 4);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_NO_HOST_AVAILABLE, 5);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_SEARCH_PARAMS_INVALID, 6);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_OFFLINE, 7);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_NOT_AUTHORIZED, 8);
+	SETCONSTANT(GAME_SEARCH_ERROR_CODE_FAILED_UNKNOWN_ERROR, 9);
+	// EPlayerResult_t
+	SETCONSTANT(PLAYER_RESULT_FAILED_TO_CONNECT, 1);
+	SETCONSTANT(PLAYER_RESULT_ABANDONED, 2);
+	SETCONSTANT(PLAYER_RESULT_KICKED, 3);
+	SETCONSTANT(PLAYER_RESULT_INCOMPLETE, 4);
+	SETCONSTANT(PLAYER_RESULT_COMPLETED, 5);
+	// ESteamIPv6ConnectivityProtocol
+	SETCONSTANT(STEAM_I_PV6_CONNECTIVITY_PROTOCOL_INVALID, 0);
+	SETCONSTANT(STEAM_I_PV6_CONNECTIVITY_PROTOCOL_HTTP, 1);
+	SETCONSTANT(STEAM_I_PV6_CONNECTIVITY_PROTOCOL_UDP, 2);
+	// ESteamIPv6ConnectivityState
+	SETCONSTANT(STEAM_I_PV6_CONNECTIVITY_STATE_UNKNOWN, 0);
+	SETCONSTANT(STEAM_I_PV6_CONNECTIVITY_STATE_GOOD, 1);
+	SETCONSTANT(STEAM_I_PV6_CONNECTIVITY_STATE_BAD, 2);
 	// EFriendRelationship
 	SETCONSTANT(FRIEND_RELATIONSHIP_NONE, 0);
 	SETCONSTANT(FRIEND_RELATIONSHIP_BLOCKED, 1);
@@ -18812,7 +24831,8 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(PERSONA_STATE_SNOOZE, 4);
 	SETCONSTANT(PERSONA_STATE_LOOKING_TO_TRADE, 5);
 	SETCONSTANT(PERSONA_STATE_LOOKING_TO_PLAY, 6);
-	SETCONSTANT(PERSONA_STATE_MAX, 7);
+	SETCONSTANT(PERSONA_STATE_INVISIBLE, 7);
+	SETCONSTANT(PERSONA_STATE_MAX, 8);
 	// EFriendFlags
 	SETCONSTANT(FRIEND_FLAG_NONE, 0);
 	SETCONSTANT(FRIEND_FLAG_BLOCKED, 1);
@@ -18839,6 +24859,28 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(OVERLAY_TO_STORE_FLAG_NONE, 0);
 	SETCONSTANT(OVERLAY_TO_STORE_FLAG_ADD_TO_CART, 1);
 	SETCONSTANT(OVERLAY_TO_STORE_FLAG_ADD_TO_CART_AND_SHOW, 2);
+	// EActivateGameOverlayToWebPageMode
+	SETCONSTANT(ACTIVATE_GAME_OVERLAY_TO_WEB_PAGE_MODE_DEFAULT, 0);
+	SETCONSTANT(ACTIVATE_GAME_OVERLAY_TO_WEB_PAGE_MODE_MODAL, 1);
+	// ECommunityProfileItemType
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_TYPE_ANIMATED_AVATAR, 0);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_TYPE_AVATAR_FRAME, 1);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_TYPE_PROFILE_MODIFIER, 2);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_TYPE_PROFILE_BACKGROUND, 3);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_TYPE_MINI_PROFILE_BACKGROUND, 4);
+	// ECommunityProfileItemProperty
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_IMAGE_SMALL, 0);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_IMAGE_LARGE, 1);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_INTERNAL_NAME, 2);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_TITLE, 3);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_DESCRIPTION, 4);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_APP_ID, 5);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_TYPE_ID, 6);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_CLASS, 7);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_WEB_M, 8);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_MP4, 9);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_WEB_M_SMALL, 10);
+	SETCONSTANT(COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_MP4_SMALL, 11);
 	// EPersonaChange
 	SETCONSTANT(PERSONA_CHANGE_NAME, 1);
 	SETCONSTANT(PERSONA_CHANGE_STATUS, 2);
@@ -18851,9 +24893,10 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(PERSONA_CHANGE_LEFT_SOURCE, 256);
 	SETCONSTANT(PERSONA_CHANGE_RELATIONSHIP_CHANGED, 512);
 	SETCONSTANT(PERSONA_CHANGE_NAME_FIRST_SET, 1024);
-	SETCONSTANT(PERSONA_CHANGE_FACEBOOK_INFO, 2048);
+	SETCONSTANT(PERSONA_CHANGE_BROADCAST, 2048);
 	SETCONSTANT(PERSONA_CHANGE_NICKNAME, 4096);
 	SETCONSTANT(PERSONA_CHANGE_STEAM_LEVEL, 8192);
+	SETCONSTANT(PERSONA_CHANGE_RICH_PRESENCE, 16384);
 	// ESteamAPICallFailure
 	SETCONSTANT(STEAM_API_CALL_FAILURE_NONE, -1);
 	SETCONSTANT(STEAM_API_CALL_FAILURE_STEAM_GONE, 0);
@@ -18866,6 +24909,16 @@ static void LuaInit(lua_State* L) {
 	// EGamepadTextInputLineMode
 	SETCONSTANT(GAMEPAD_TEXT_INPUT_LINE_MODE_SINGLE_LINE, 0);
 	SETCONSTANT(GAMEPAD_TEXT_INPUT_LINE_MODE_MULTIPLE_LINES, 1);
+	// EFloatingGamepadTextInputMode
+	SETCONSTANT(FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_SINGLE_LINE, 0);
+	SETCONSTANT(FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_MULTIPLE_LINES, 1);
+	SETCONSTANT(FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_EMAIL, 2);
+	SETCONSTANT(FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_NUMERIC, 3);
+	// ETextFilteringContext
+	SETCONSTANT(TEXT_FILTERING_CONTEXT_UNKNOWN, 0);
+	SETCONSTANT(TEXT_FILTERING_CONTEXT_GAME_CONTENT, 1);
+	SETCONSTANT(TEXT_FILTERING_CONTEXT_CHAT, 2);
+	SETCONSTANT(TEXT_FILTERING_CONTEXT_NAME, 3);
 	// ECheckFileSignature
 	SETCONSTANT(CHECK_FILE_SIGNATURE_INVALID_SIGNATURE, 0);
 	SETCONSTANT(CHECK_FILE_SIGNATURE_VALID_SIGNATURE, 1);
@@ -18881,6 +24934,7 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(LOBBY_TYPE_FRIENDS_ONLY, 1);
 	SETCONSTANT(LOBBY_TYPE_PUBLIC, 2);
 	SETCONSTANT(LOBBY_TYPE_INVISIBLE, 3);
+	SETCONSTANT(LOBBY_TYPE_PRIVATE_UNIQUE, 4);
 	// ELobbyComparison
 	SETCONSTANT(LOBBY_COMPARISON_EQUAL_TO_OR_LESS_THAN, -2);
 	SETCONSTANT(LOBBY_COMPARISON_LESS_THAN, -1);
@@ -18899,18 +24953,31 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_DISCONNECTED, 4);
 	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_KICKED, 8);
 	SETCONSTANT(CHAT_MEMBER_STATE_CHANGE_BANNED, 16);
+	// ESteamPartyBeaconLocationType
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_TYPE_INVALID, 0);
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_TYPE_CHAT_GROUP, 1);
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_TYPE_MAX, 2);
+	// ESteamPartyBeaconLocationData
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_DATA_INVALID, 0);
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_DATA_NAME, 1);
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_DATA_ICON_URL_SMALL, 2);
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_DATA_ICON_URL_MEDIUM, 3);
+	SETCONSTANT(STEAM_PARTY_BEACON_LOCATION_DATA_ICON_URL_LARGE, 4);
 	// ERemoteStoragePlatform
 	SETCONSTANT(REMOTE_STORAGE_PLATFORM_NONE, 0);
 	SETCONSTANT(REMOTE_STORAGE_PLATFORM_WINDOWS, 1);
 	SETCONSTANT(REMOTE_STORAGE_PLATFORM_OSX, 2);
 	SETCONSTANT(REMOTE_STORAGE_PLATFORM_PS3, 4);
 	SETCONSTANT(REMOTE_STORAGE_PLATFORM_LINUX, 8);
-	SETCONSTANT(REMOTE_STORAGE_PLATFORM_RESERVED2, 16);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_SWITCH, 16);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_ANDROID, 32);
+	SETCONSTANT(REMOTE_STORAGE_PLATFORM_IOS, 64);
 	SETCONSTANT(REMOTE_STORAGE_PLATFORM_ALL, -1);
 	// ERemoteStoragePublishedFileVisibility
 	SETCONSTANT(REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_PUBLIC, 0);
 	SETCONSTANT(REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_FRIENDS_ONLY, 1);
 	SETCONSTANT(REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_PRIVATE, 2);
+	SETCONSTANT(REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_UNLISTED, 3);
 	// EWorkshopFileType
 	SETCONSTANT(WORKSHOP_FILE_TYPE_FIRST, 0);
 	SETCONSTANT(WORKSHOP_FILE_TYPE_COMMUNITY, 0);
@@ -18930,10 +24997,37 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(WORKSHOP_FILE_TYPE_STEAM_VIDEO, 14);
 	SETCONSTANT(WORKSHOP_FILE_TYPE_GAME_MANAGED_ITEM, 15);
 	SETCONSTANT(WORKSHOP_FILE_TYPE_MAX, 16);
+	// EWorkshopVote
+	SETCONSTANT(WORKSHOP_VOTE_UNVOTED, 0);
+	SETCONSTANT(WORKSHOP_VOTE_FOR, 1);
+	SETCONSTANT(WORKSHOP_VOTE_AGAINST, 2);
+	SETCONSTANT(WORKSHOP_VOTE_LATER, 3);
+	// EWorkshopFileAction
+	SETCONSTANT(WORKSHOP_FILE_ACTION_PLAYED, 0);
+	SETCONSTANT(WORKSHOP_FILE_ACTION_COMPLETED, 1);
+	// EWorkshopEnumerationType
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_RANKED_BY_VOTE, 0);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_RECENT, 1);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_TRENDING, 2);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_FAVORITES_OF_FRIENDS, 3);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_VOTED_BY_FRIENDS, 4);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_CONTENT_BY_FRIENDS, 5);
+	SETCONSTANT(WORKSHOP_ENUMERATION_TYPE_RECENT_FROM_FOLLOWED_USERS, 6);
+	// EWorkshopVideoProvider
+	SETCONSTANT(WORKSHOP_VIDEO_PROVIDER_NONE, 0);
+	SETCONSTANT(WORKSHOP_VIDEO_PROVIDER_YOUTUBE, 1);
 	// EUGCReadAction
 	SETCONSTANT(UGC_READ_CONTINUE_READING_UNTIL_FINISHED, 0);
 	SETCONSTANT(UGC_READ_CONTINUE_READING, 1);
 	SETCONSTANT(UGC_READ_CLOSE, 2);
+	// ERemoteStorageLocalFileChange
+	SETCONSTANT(REMOTE_STORAGE_LOCAL_FILE_CHANGE_INVALID, 0);
+	SETCONSTANT(REMOTE_STORAGE_LOCAL_FILE_CHANGE_FILE_UPDATED, 1);
+	SETCONSTANT(REMOTE_STORAGE_LOCAL_FILE_CHANGE_FILE_DELETED, 2);
+	// ERemoteStorageFilePathType
+	SETCONSTANT(REMOTE_STORAGE_FILE_PATH_TYPE_INVALID, 0);
+	SETCONSTANT(REMOTE_STORAGE_FILE_PATH_TYPE_ABSOLUTE, 1);
+	SETCONSTANT(REMOTE_STORAGE_FILE_PATH_TYPE_API_FILENAME, 2);
 	// ELeaderboardDataRequest
 	SETCONSTANT(LEADERBOARD_DATA_REQUEST_GLOBAL, 0);
 	SETCONSTANT(LEADERBOARD_DATA_REQUEST_GLOBAL_AROUND_USER, 1);
@@ -18960,10 +25054,10 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(REGISTER_ACTIVATION_CODE_ALREADY_OWNED, 4);
 	// EP2PSessionError
 	SETCONSTANT(P2P_SESSION_ERROR_NONE, 0);
-	SETCONSTANT(P2P_SESSION_ERROR_NOT_RUNNING_APP, 1);
 	SETCONSTANT(P2P_SESSION_ERROR_NO_RIGHTS_TO_APP, 2);
-	SETCONSTANT(P2P_SESSION_ERROR_DESTINATION_NOT_LOGGED_IN, 3);
 	SETCONSTANT(P2P_SESSION_ERROR_TIMEOUT, 4);
+	SETCONSTANT(P2P_SESSION_ERROR_NOT_RUNNING_APP_DELETED, 1);
+	SETCONSTANT(P2P_SESSION_ERROR_DESTINATION_NOT_LOGGED_IN_DELETED, 3);
 	SETCONSTANT(P2P_SESSION_ERROR_MAX, 5);
 	// EP2PSend
 	SETCONSTANT(P2P_SEND_UNRELIABLE, 0);
@@ -19045,6 +25139,7 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(HTTP_STATUS_CODE417_EXPECTATION_FAILED, 417);
 	SETCONSTANT(HTTP_STATUS_CODE4XX_UNKNOWN, 418);
 	SETCONSTANT(HTTP_STATUS_CODE429_TOO_MANY_REQUESTS, 429);
+	SETCONSTANT(HTTP_STATUS_CODE444_CONNECTION_CLOSED, 444);
 	SETCONSTANT(HTTP_STATUS_CODE500_INTERNAL_SERVER_ERROR, 500);
 	SETCONSTANT(HTTP_STATUS_CODE501_NOT_IMPLEMENTED, 501);
 	SETCONSTANT(HTTP_STATUS_CODE502_BAD_GATEWAY, 502);
@@ -19052,43 +25147,515 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(HTTP_STATUS_CODE504_GATEWAY_TIMEOUT, 504);
 	SETCONSTANT(HTTP_STATUS_CODE505HTTP_VERSION_NOT_SUPPORTED, 505);
 	SETCONSTANT(HTTP_STATUS_CODE5XX_UNKNOWN, 599);
+	// EInputSourceMode
+	SETCONSTANT(INPUT_SOURCE_MODE_NONE, 0);
+	SETCONSTANT(INPUT_SOURCE_MODE_DPAD, 1);
+	SETCONSTANT(INPUT_SOURCE_MODE_BUTTONS, 2);
+	SETCONSTANT(INPUT_SOURCE_MODE_FOUR_BUTTONS, 3);
+	SETCONSTANT(INPUT_SOURCE_MODE_ABSOLUTE_MOUSE, 4);
+	SETCONSTANT(INPUT_SOURCE_MODE_RELATIVE_MOUSE, 5);
+	SETCONSTANT(INPUT_SOURCE_MODE_JOYSTICK_MOVE, 6);
+	SETCONSTANT(INPUT_SOURCE_MODE_JOYSTICK_MOUSE, 7);
+	SETCONSTANT(INPUT_SOURCE_MODE_JOYSTICK_CAMERA, 8);
+	SETCONSTANT(INPUT_SOURCE_MODE_SCROLL_WHEEL, 9);
+	SETCONSTANT(INPUT_SOURCE_MODE_TRIGGER, 10);
+	SETCONSTANT(INPUT_SOURCE_MODE_TOUCH_MENU, 11);
+	SETCONSTANT(INPUT_SOURCE_MODE_MOUSE_JOYSTICK, 12);
+	SETCONSTANT(INPUT_SOURCE_MODE_MOUSE_REGION, 13);
+	SETCONSTANT(INPUT_SOURCE_MODE_RADIAL_MENU, 14);
+	SETCONSTANT(INPUT_SOURCE_MODE_SINGLE_BUTTON, 15);
+	SETCONSTANT(INPUT_SOURCE_MODE_SWITCHES, 16);
+	// EInputActionOrigin
+	SETCONSTANT(INPUT_ACTION_ORIGIN_NONE, 0);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_A, 1);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_B, 2);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_X, 3);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_Y, 4);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_BUMPER, 5);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_BUMPER, 6);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_GRIP, 7);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_GRIP, 8);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_START, 9);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_BACK, 10);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_TOUCH, 11);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_SWIPE, 12);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_CLICK, 13);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_NORTH, 14);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_SOUTH, 15);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_WEST, 16);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_EAST, 17);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_TOUCH, 18);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_SWIPE, 19);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_CLICK, 20);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_NORTH, 21);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_SOUTH, 22);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_WEST, 23);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_EAST, 24);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_TRIGGER_PULL, 25);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_TRIGGER_CLICK, 26);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_TRIGGER_PULL, 27);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_TRIGGER_CLICK, 28);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_MOVE, 29);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_CLICK, 30);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_NORTH, 31);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_SOUTH, 32);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_WEST, 33);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_EAST, 34);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_MOVE, 35);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_PITCH, 36);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_YAW, 37);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_ROLL, 38);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED0, 39);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED1, 40);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED2, 41);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED3, 42);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED4, 43);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED5, 44);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED6, 45);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED7, 46);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED8, 47);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED9, 48);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED10, 49);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_X, 50);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CIRCLE, 51);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_TRIANGLE, 52);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_SQUARE, 53);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_BUMPER, 54);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_BUMPER, 55);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_OPTIONS, 56);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_SHARE, 57);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_TOUCH, 58);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_SWIPE, 59);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_CLICK, 60);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_NORTH, 61);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_SOUTH, 62);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_WEST, 63);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_EAST, 64);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_TOUCH, 65);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_SWIPE, 66);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_CLICK, 67);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_NORTH, 68);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_SOUTH, 69);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_WEST, 70);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_EAST, 71);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_TOUCH, 72);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_SWIPE, 73);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_CLICK, 74);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_NORTH, 75);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_SOUTH, 76);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_WEST, 77);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_EAST, 78);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_TRIGGER_PULL, 79);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_TRIGGER_CLICK, 80);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_TRIGGER_PULL, 81);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_TRIGGER_CLICK, 82);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_MOVE, 83);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_CLICK, 84);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_NORTH, 85);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_SOUTH, 86);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_WEST, 87);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_EAST, 88);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_MOVE, 89);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_CLICK, 90);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_NORTH, 91);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_SOUTH, 92);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_WEST, 93);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_EAST, 94);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_D_PAD_NORTH, 95);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_D_PAD_SOUTH, 96);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_D_PAD_WEST, 97);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_D_PAD_EAST, 98);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_GYRO_MOVE, 99);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_GYRO_PITCH, 100);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_GYRO_YAW, 101);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_GYRO_ROLL, 102);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_D_PAD_MOVE, 103);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED1, 104);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED2, 105);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED3, 106);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED4, 107);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED5, 108);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED6, 109);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED7, 110);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED8, 111);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED9, 112);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS4_RESERVED10, 113);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_A, 114);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_B, 115);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_X, 116);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_Y, 117);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_BUMPER, 118);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_BUMPER, 119);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_MENU, 120);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_VIEW, 121);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_TRIGGER_PULL, 122);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_TRIGGER_CLICK, 123);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_TRIGGER_PULL, 124);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_TRIGGER_CLICK, 125);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_MOVE, 126);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_CLICK, 127);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_NORTH, 128);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_SOUTH, 129);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_WEST, 130);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_EAST, 131);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_MOVE, 132);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_CLICK, 133);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_NORTH, 134);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_SOUTH, 135);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_WEST, 136);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_EAST, 137);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_NORTH, 138);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_SOUTH, 139);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_WEST, 140);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_EAST, 141);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_MOVE, 142);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_LOWER, 143);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_UPPER, 144);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_LOWER, 145);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_UPPER, 146);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_SHARE, 147);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED6, 148);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED7, 149);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED8, 150);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED9, 151);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED10, 152);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_A, 153);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_B, 154);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_X, 155);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_Y, 156);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_BUMPER, 157);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_BUMPER, 158);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_START, 159);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_BACK, 160);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_TRIGGER_PULL, 161);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_TRIGGER_CLICK, 162);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_TRIGGER_PULL, 163);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_TRIGGER_CLICK, 164);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_MOVE, 165);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_CLICK, 166);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_NORTH, 167);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_SOUTH, 168);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_WEST, 169);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_EAST, 170);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_MOVE, 171);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_CLICK, 172);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_NORTH, 173);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_SOUTH, 174);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_WEST, 175);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_EAST, 176);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_NORTH, 177);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_SOUTH, 178);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_WEST, 179);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_EAST, 180);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_MOVE, 181);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED1, 182);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED2, 183);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED3, 184);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED4, 185);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED5, 186);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED6, 187);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED7, 188);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED8, 189);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED9, 190);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_X_BOX360_RESERVED10, 191);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_A, 192);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_B, 193);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_X, 194);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_Y, 195);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_BUMPER, 196);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_BUMPER, 197);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_PLUS, 198);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_MINUS, 199);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_CAPTURE, 200);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_PULL, 201);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_CLICK, 202);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_PULL, 203);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_CLICK, 204);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_MOVE, 205);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_CLICK, 206);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_NORTH, 207);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_SOUTH, 208);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_WEST, 209);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_EAST, 210);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_MOVE, 211);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_CLICK, 212);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_NORTH, 213);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_SOUTH, 214);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_WEST, 215);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_EAST, 216);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_D_PAD_NORTH, 217);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_D_PAD_SOUTH, 218);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_D_PAD_WEST, 219);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_D_PAD_EAST, 220);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_MOVE, 221);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_PITCH, 222);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_YAW, 223);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_ROLL, 224);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_D_PAD_MOVE, 225);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED1, 226);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED2, 227);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED3, 228);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED4, 229);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED5, 230);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED6, 231);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED7, 232);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED8, 233);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED9, 234);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED10, 235);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_MOVE, 236);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_PITCH, 237);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_YAW, 238);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_ROLL, 239);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_MOVE, 240);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_PITCH, 241);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_YAW, 242);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_ROLL, 243);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_GRIP_LOWER, 244);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_LEFT_GRIP_UPPER, 245);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_LOWER, 246);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_UPPER, 247);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED11, 248);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED12, 249);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED13, 250);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED14, 251);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED15, 252);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED16, 253);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED17, 254);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED18, 255);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED19, 256);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_SWITCH_RESERVED20, 257);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_X, 258);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CIRCLE, 259);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_TRIANGLE, 260);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_SQUARE, 261);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_BUMPER, 262);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_BUMPER, 263);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_OPTION, 264);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CREATE, 265);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_MUTE, 266);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_TOUCH, 267);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_SWIPE, 268);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_CLICK, 269);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_NORTH, 270);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_SOUTH, 271);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_WEST, 272);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_EAST, 273);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_TOUCH, 274);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_SWIPE, 275);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_CLICK, 276);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_NORTH, 277);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_SOUTH, 278);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_WEST, 279);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_EAST, 280);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_TOUCH, 281);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_SWIPE, 282);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_CLICK, 283);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_NORTH, 284);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_SOUTH, 285);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_WEST, 286);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_EAST, 287);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_TRIGGER_PULL, 288);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_TRIGGER_CLICK, 289);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_PULL, 290);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_CLICK, 291);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_MOVE, 292);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_CLICK, 293);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_NORTH, 294);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_SOUTH, 295);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_WEST, 296);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_EAST, 297);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_MOVE, 298);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_CLICK, 299);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_NORTH, 300);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_SOUTH, 301);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_WEST, 302);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_EAST, 303);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_D_PAD_NORTH, 304);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_D_PAD_SOUTH, 305);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_D_PAD_WEST, 306);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_D_PAD_EAST, 307);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_GYRO_MOVE, 308);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_GYRO_PITCH, 309);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_GYRO_YAW, 310);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_GYRO_ROLL, 311);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_D_PAD_MOVE, 312);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED1, 313);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED2, 314);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED3, 315);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED4, 316);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED5, 317);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED6, 318);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED7, 319);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED8, 320);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED9, 321);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED10, 322);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED11, 323);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED12, 324);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED13, 325);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED14, 326);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED15, 327);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED16, 328);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED17, 329);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED18, 330);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED19, 331);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_PS5_RESERVED20, 332);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_A, 333);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_B, 334);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_X, 335);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_Y, 336);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_L1, 337);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_R1, 338);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_MENU, 339);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_VIEW, 340);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_TOUCH, 341);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_SWIPE, 342);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_CLICK, 343);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_NORTH, 344);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_SOUTH, 345);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_WEST, 346);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_EAST, 347);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_TOUCH, 348);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_SWIPE, 349);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_CLICK, 350);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_NORTH, 351);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_SOUTH, 352);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_WEST, 353);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_EAST, 354);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_L2_SOFT_PULL, 355);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_L2, 356);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_R2_SOFT_PULL, 357);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_R2, 358);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_MOVE, 359);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_L3, 360);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_NORTH, 361);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_SOUTH, 362);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_WEST, 363);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_EAST, 364);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_TOUCH, 365);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_MOVE, 366);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_R3, 367);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_NORTH, 368);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_SOUTH, 369);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_WEST, 370);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_EAST, 371);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_TOUCH, 372);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_L4, 373);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_R4, 374);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_L5, 375);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_R5, 376);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_MOVE, 377);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_NORTH, 378);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_SOUTH, 379);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_WEST, 380);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_EAST, 381);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_MOVE, 382);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_PITCH, 383);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_YAW, 384);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_ROLL, 385);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED1, 386);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED2, 387);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED3, 388);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED4, 389);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED5, 390);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED6, 391);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED7, 392);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED8, 393);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED9, 394);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED10, 395);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED11, 396);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED12, 397);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED13, 398);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED14, 399);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED15, 400);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED16, 401);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED17, 402);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED18, 403);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED19, 404);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED20, 405);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_COUNT, 406);
+	SETCONSTANT(INPUT_ACTION_ORIGIN_MAXIMUM_POSSIBLE_VALUE, 32767);
+	// EXboxOrigin
+	SETCONSTANT(XBOX_ORIGIN_A, 0);
+	SETCONSTANT(XBOX_ORIGIN_B, 1);
+	SETCONSTANT(XBOX_ORIGIN_X, 2);
+	SETCONSTANT(XBOX_ORIGIN_Y, 3);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_BUMPER, 4);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_BUMPER, 5);
+	SETCONSTANT(XBOX_ORIGIN_MENU, 6);
+	SETCONSTANT(XBOX_ORIGIN_VIEW, 7);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_TRIGGER_PULL, 8);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_TRIGGER_CLICK, 9);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_TRIGGER_PULL, 10);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_TRIGGER_CLICK, 11);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_STICK_MOVE, 12);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_STICK_CLICK, 13);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_STICK_D_PAD_NORTH, 14);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_STICK_D_PAD_SOUTH, 15);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_STICK_D_PAD_WEST, 16);
+	SETCONSTANT(XBOX_ORIGIN_LEFT_STICK_D_PAD_EAST, 17);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_STICK_MOVE, 18);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_STICK_CLICK, 19);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_STICK_D_PAD_NORTH, 20);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_STICK_D_PAD_SOUTH, 21);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_STICK_D_PAD_WEST, 22);
+	SETCONSTANT(XBOX_ORIGIN_RIGHT_STICK_D_PAD_EAST, 23);
+	SETCONSTANT(XBOX_ORIGIN_D_PAD_NORTH, 24);
+	SETCONSTANT(XBOX_ORIGIN_D_PAD_SOUTH, 25);
+	SETCONSTANT(XBOX_ORIGIN_D_PAD_WEST, 26);
+	SETCONSTANT(XBOX_ORIGIN_D_PAD_EAST, 27);
+	SETCONSTANT(XBOX_ORIGIN_COUNT, 28);
 	// ESteamControllerPad
 	SETCONSTANT(STEAM_CONTROLLER_PAD_LEFT, 0);
 	SETCONSTANT(STEAM_CONTROLLER_PAD_RIGHT, 1);
-	// EControllerSource
-	SETCONSTANT(CONTROLLER_SOURCE_NONE, 0);
-	SETCONSTANT(CONTROLLER_SOURCE_LEFT_TRACKPAD, 1);
-	SETCONSTANT(CONTROLLER_SOURCE_RIGHT_TRACKPAD, 2);
-	SETCONSTANT(CONTROLLER_SOURCE_JOYSTICK, 3);
-	SETCONSTANT(CONTROLLER_SOURCE_ABXY, 4);
-	SETCONSTANT(CONTROLLER_SOURCE_SWITCH, 5);
-	SETCONSTANT(CONTROLLER_SOURCE_LEFT_TRIGGER, 6);
-	SETCONSTANT(CONTROLLER_SOURCE_RIGHT_TRIGGER, 7);
-	SETCONSTANT(CONTROLLER_SOURCE_GYRO, 8);
-	SETCONSTANT(CONTROLLER_SOURCE_CENTER_TRACKPAD, 9);
-	SETCONSTANT(CONTROLLER_SOURCE_RIGHT_JOYSTICK, 10);
-	SETCONSTANT(CONTROLLER_SOURCE_D_PAD, 11);
-	SETCONSTANT(CONTROLLER_SOURCE_KEY, 12);
-	SETCONSTANT(CONTROLLER_SOURCE_MOUSE, 13);
-	SETCONSTANT(CONTROLLER_SOURCE_COUNT, 14);
-	// EControllerSourceMode
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_NONE, 0);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_DPAD, 1);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_BUTTONS, 2);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_FOUR_BUTTONS, 3);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_ABSOLUTE_MOUSE, 4);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_RELATIVE_MOUSE, 5);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_JOYSTICK_MOVE, 6);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_JOYSTICK_MOUSE, 7);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_JOYSTICK_CAMERA, 8);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_SCROLL_WHEEL, 9);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_TRIGGER, 10);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_TOUCH_MENU, 11);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_MOUSE_JOYSTICK, 12);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_MOUSE_REGION, 13);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_RADIAL_MENU, 14);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_SINGLE_BUTTON, 15);
-	SETCONSTANT(CONTROLLER_SOURCE_MODE_SWITCHES, 16);
+	// EControllerHapticLocation
+	SETCONSTANT(CONTROLLER_HAPTIC_LOCATION_LEFT, 1);
+	SETCONSTANT(CONTROLLER_HAPTIC_LOCATION_RIGHT, 2);
+	SETCONSTANT(CONTROLLER_HAPTIC_LOCATION_BOTH, 3);
+	// EControllerHapticType
+	SETCONSTANT(CONTROLLER_HAPTIC_TYPE_OFF, 0);
+	SETCONSTANT(CONTROLLER_HAPTIC_TYPE_TICK, 1);
+	SETCONSTANT(CONTROLLER_HAPTIC_TYPE_CLICK, 2);
+	// ESteamInputType
+	SETCONSTANT(STEAM_INPUT_TYPE_UNKNOWN, 0);
+	SETCONSTANT(STEAM_INPUT_TYPE_STEAM_CONTROLLER, 1);
+	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX360_CONTROLLER, 2);
+	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX_ONE_CONTROLLER, 3);
+	SETCONSTANT(STEAM_INPUT_TYPE_GENERIC_GAMEPAD, 4);
+	SETCONSTANT(STEAM_INPUT_TYPE_PS4_CONTROLLER, 5);
+	SETCONSTANT(STEAM_INPUT_TYPE_APPLE_M_FI_CONTROLLER, 6);
+	SETCONSTANT(STEAM_INPUT_TYPE_ANDROID_CONTROLLER, 7);
+	SETCONSTANT(STEAM_INPUT_TYPE_SWITCH_JOY_CON_PAIR, 8);
+	SETCONSTANT(STEAM_INPUT_TYPE_SWITCH_JOY_CON_SINGLE, 9);
+	SETCONSTANT(STEAM_INPUT_TYPE_SWITCH_PRO_CONTROLLER, 10);
+	SETCONSTANT(STEAM_INPUT_TYPE_MOBILE_TOUCH, 11);
+	SETCONSTANT(STEAM_INPUT_TYPE_PS3_CONTROLLER, 12);
+	SETCONSTANT(STEAM_INPUT_TYPE_PS5_CONTROLLER, 13);
+	SETCONSTANT(STEAM_INPUT_TYPE_STEAM_DECK_CONTROLLER, 14);
+	SETCONSTANT(STEAM_INPUT_TYPE_COUNT, 15);
+	SETCONSTANT(STEAM_INPUT_TYPE_MAXIMUM_POSSIBLE_VALUE, 255);
+	// ESteamInputConfigurationEnableType
+	SETCONSTANT(STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_NONE, 0);
+	SETCONSTANT(STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_PLAYSTATION, 1);
+	SETCONSTANT(STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_XBOX, 2);
+	SETCONSTANT(STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_GENERIC, 4);
+	SETCONSTANT(STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_SWITCH, 8);
+	// ESteamInputLEDFlag
+	SETCONSTANT(STEAM_INPUT_LED_FLAG_SET_COLOR, 0);
+	SETCONSTANT(STEAM_INPUT_LED_FLAG_RESTORE_USER_DEFAULT, 1);
+	// ESteamInputGlyphSize
+	SETCONSTANT(STEAM_INPUT_GLYPH_SIZE_SMALL, 0);
+	SETCONSTANT(STEAM_INPUT_GLYPH_SIZE_MEDIUM, 1);
+	SETCONSTANT(STEAM_INPUT_GLYPH_SIZE_LARGE, 2);
+	SETCONSTANT(STEAM_INPUT_GLYPH_SIZE_COUNT, 3);
+	// ESteamInputGlyphStyle
+	SETCONSTANT(E_STEAM_INPUT_GLYPH_STYLE_KNOCKOUT, 0);
+	SETCONSTANT(E_STEAM_INPUT_GLYPH_STYLE_LIGHT, 1);
+	SETCONSTANT(E_STEAM_INPUT_GLYPH_STYLE_DARK, 2);
+	SETCONSTANT(E_STEAM_INPUT_GLYPH_STYLE_NEUTRAL_COLOR_ABXY, 16);
+	SETCONSTANT(E_STEAM_INPUT_GLYPH_STYLE_SOLID_ABXY, 32);
+	// ESteamInputActionEventType
+	SETCONSTANT(E_STEAM_INPUT_ACTION_EVENT_TYPE_DIGITAL_ACTION, 0);
+	SETCONSTANT(E_STEAM_INPUT_ACTION_EVENT_TYPE_ANALOG_ACTION, 1);
 	// EControllerActionOrigin
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_NONE, 0);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_A, 1);
@@ -19244,9 +25811,9 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_Y, 151);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_BUMPER, 152);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_BUMPER, 153);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP, 154);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP, 155);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_UPPER, 156);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_LOWER, 154);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_UPPER, 155);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP_LOWER, 156);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP_UPPER, 157);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_BUMPER_PRESSURE, 158);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_BUMPER_PRESSURE, 159);
@@ -19286,17 +25853,193 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_PITCH, 193);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_YAW, 194);
 	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_ROLL, 195);
-	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_COUNT, 196);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_A, 196);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_B, 197);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_X, 198);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_Y, 199);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_BUMPER, 200);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_BUMPER, 201);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_PLUS, 202);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_MINUS, 203);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_CAPTURE, 204);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_PULL, 205);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_CLICK, 206);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_PULL, 207);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_CLICK, 208);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_MOVE, 209);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_CLICK, 210);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_NORTH, 211);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_SOUTH, 212);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_WEST, 213);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_EAST, 214);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_MOVE, 215);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_CLICK, 216);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_NORTH, 217);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_SOUTH, 218);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_WEST, 219);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_EAST, 220);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_NORTH, 221);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_SOUTH, 222);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_WEST, 223);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_EAST, 224);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_MOVE, 225);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_PITCH, 226);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_YAW, 227);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_ROLL, 228);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_MOVE, 229);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_PITCH, 230);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_YAW, 231);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_ROLL, 232);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_MOVE, 233);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_PITCH, 234);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_YAW, 235);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_ROLL, 236);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GRIP_LOWER, 237);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GRIP_UPPER, 238);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_LOWER, 239);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_UPPER, 240);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS4_D_PAD_MOVE, 241);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD_MOVE, 242);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD_MOVE, 243);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_MOVE, 244);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_X, 245);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CIRCLE, 246);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_TRIANGLE, 247);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_SQUARE, 248);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_BUMPER, 249);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_BUMPER, 250);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_OPTION, 251);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CREATE, 252);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_MUTE, 253);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_TOUCH, 254);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_SWIPE, 255);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_CLICK, 256);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_NORTH, 257);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_SOUTH, 258);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_WEST, 259);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_EAST, 260);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_TOUCH, 261);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_SWIPE, 262);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_CLICK, 263);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_NORTH, 264);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_SOUTH, 265);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_WEST, 266);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_EAST, 267);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_TOUCH, 268);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_SWIPE, 269);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_CLICK, 270);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_NORTH, 271);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_SOUTH, 272);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_WEST, 273);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_EAST, 274);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_TRIGGER_PULL, 275);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_TRIGGER_CLICK, 276);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_PULL, 277);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_CLICK, 278);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_MOVE, 279);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_CLICK, 280);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_NORTH, 281);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_SOUTH, 282);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_WEST, 283);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_EAST, 284);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_MOVE, 285);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_CLICK, 286);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_NORTH, 287);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_SOUTH, 288);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_WEST, 289);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_EAST, 290);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_MOVE, 291);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_NORTH, 292);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_SOUTH, 293);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_WEST, 294);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_EAST, 295);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_GYRO_MOVE, 296);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_GYRO_PITCH, 297);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_GYRO_YAW, 298);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_PS5_GYRO_ROLL, 299);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_LOWER, 300);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_UPPER, 301);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_LOWER, 302);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_UPPER, 303);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_SHARE, 304);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_A, 305);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_B, 306);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_X, 307);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_Y, 308);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L1, 309);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R1, 310);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_MENU, 311);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_VIEW, 312);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_TOUCH, 313);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_SWIPE, 314);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_CLICK, 315);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_NORTH, 316);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_SOUTH, 317);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_WEST, 318);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_EAST, 319);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_TOUCH, 320);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_SWIPE, 321);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_CLICK, 322);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_NORTH, 323);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_SOUTH, 324);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_WEST, 325);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_EAST, 326);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L2_SOFT_PULL, 327);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L2, 328);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R2_SOFT_PULL, 329);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R2, 330);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_MOVE, 331);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L3, 332);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_NORTH, 333);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_SOUTH, 334);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_WEST, 335);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_EAST, 336);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_TOUCH, 337);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_MOVE, 338);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R3, 339);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_NORTH, 340);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_SOUTH, 341);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_WEST, 342);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_EAST, 343);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_TOUCH, 344);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L4, 345);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R4, 346);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L5, 347);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R5, 348);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_MOVE, 349);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_NORTH, 350);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_SOUTH, 351);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_WEST, 352);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_EAST, 353);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_MOVE, 354);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_PITCH, 355);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_YAW, 356);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_ROLL, 357);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED1, 358);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED2, 359);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED3, 360);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED4, 361);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED5, 362);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED6, 363);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED7, 364);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED8, 365);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED9, 366);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED10, 367);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED11, 368);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED12, 369);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED13, 370);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED14, 371);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED15, 372);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED16, 373);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED17, 374);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED18, 375);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED19, 376);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED20, 377);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_COUNT, 378);
+	SETCONSTANT(CONTROLLER_ACTION_ORIGIN_MAXIMUM_POSSIBLE_VALUE, 32767);
 	// ESteamControllerLEDFlag
 	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG_SET_COLOR, 0);
 	SETCONSTANT(STEAM_CONTROLLER_LED_FLAG_RESTORE_USER_DEFAULT, 1);
-	// ESteamInputType
-	SETCONSTANT(STEAM_INPUT_TYPE_UNKNOWN, 0);
-	SETCONSTANT(STEAM_INPUT_TYPE_STEAM_CONTROLLER, 1);
-	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX360_CONTROLLER, 2);
-	SETCONSTANT(STEAM_INPUT_TYPE_X_BOX_ONE_CONTROLLER, 3);
-	SETCONSTANT(STEAM_INPUT_TYPE_GENERIC_X_INPUT, 4);
-	SETCONSTANT(STEAM_INPUT_TYPE_PS4_CONTROLLER, 5);
 	// EUGCMatchingUGCType
 	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ITEMS, 0);
 	SETCONSTANT(UGC_MATCHING_UGC_TYPE_ITEMS_MTX, 1);
@@ -19350,6 +26093,7 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(UGC_QUERY_RANKED_BY_LIFETIME_AVERAGE_PLAYTIME, 16);
 	SETCONSTANT(UGC_QUERY_RANKED_BY_PLAYTIME_SESSIONS_TREND, 17);
 	SETCONSTANT(UGC_QUERY_RANKED_BY_LIFETIME_PLAYTIME_SESSIONS, 18);
+	SETCONSTANT(UGC_QUERY_RANKED_BY_LAST_UPDATED_DATE, 19);
 	// EItemUpdateStatus
 	SETCONSTANT(ITEM_UPDATE_STATUS_INVALID, 0);
 	SETCONSTANT(ITEM_UPDATE_STATUS_PREPARING_CONFIG, 1);
@@ -19404,7 +26148,193 @@ static void LuaInit(lua_State* L) {
 	SETCONSTANT(FEATURE_PARENTAL_SETUP, 10);
 	SETCONSTANT(FEATURE_LIBRARY, 11);
 	SETCONSTANT(FEATURE_TEST, 12);
-	SETCONSTANT(FEATURE_MAX, 13);
+	SETCONSTANT(FEATURE_SITE_LICENSE, 13);
+	SETCONSTANT(FEATURE_MAX, 14);
+	// ESteamDeviceFormFactor
+	SETCONSTANT(STEAM_DEVICE_FORM_FACTOR_UNKNOWN, 0);
+	SETCONSTANT(STEAM_DEVICE_FORM_FACTOR_PHONE, 1);
+	SETCONSTANT(STEAM_DEVICE_FORM_FACTOR_TABLET, 2);
+	SETCONSTANT(STEAM_DEVICE_FORM_FACTOR_COMPUTER, 3);
+	SETCONSTANT(STEAM_DEVICE_FORM_FACTOR_TV, 4);
+	// ESteamNetworkingAvailability
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_CANNOT_TRY, -102);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_FAILED, -101);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_PREVIOUSLY, -100);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_RETRYING, -10);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_NEVER_TRIED, 1);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_WAITING, 2);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_ATTEMPTING, 3);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_CURRENT, 100);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY_UNKNOWN, 0);
+	SETCONSTANT(STEAM_NETWORKING_AVAILABILITY__FORCE32BIT, 2147483647);
+	// ESteamNetworkingIdentityType
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_INVALID, 0);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_STEAM_ID, 16);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_XBOX_PAIRWISE_ID, 17);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_SONY_PSN, 18);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_GOOGLE_STADIA, 19);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_IP_ADDRESS, 1);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_GENERIC_STRING, 2);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_GENERIC_BYTES, 3);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE_UNKNOWN_TYPE, 4);
+	SETCONSTANT(STEAM_NETWORKING_IDENTITY_TYPE__FORCE32BIT, 2147483647);
+	// ESteamNetworkingFakeIPType
+	SETCONSTANT(STEAM_NETWORKING_FAKE_IP_TYPE_INVALID, 0);
+	SETCONSTANT(STEAM_NETWORKING_FAKE_IP_TYPE_NOT_FAKE, 1);
+	SETCONSTANT(STEAM_NETWORKING_FAKE_IP_TYPE_GLOBAL_I_PV4, 2);
+	SETCONSTANT(STEAM_NETWORKING_FAKE_IP_TYPE_LOCAL_I_PV4, 3);
+	SETCONSTANT(STEAM_NETWORKING_FAKE_IP_TYPE__FORCE32_BIT, 2147483647);
+	// ESteamNetworkingConnectionState
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_NONE, 0);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_CONNECTING, 1);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_FINDING_ROUTE, 2);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_CONNECTED, 3);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_CLOSED_BY_PEER, 4);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_PROBLEM_DETECTED_LOCALLY, 5);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_FIN_WAIT, -1);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_LINGER, -2);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE_DEAD, -3);
+	SETCONSTANT(STEAM_NETWORKING_CONNECTION_STATE__FORCE32_BIT, 2147483647);
+	// ESteamNetConnectionEnd
+	SETCONSTANT(STEAM_NET_CONNECTION_END_INVALID, 0);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_APP_MIN, 1000);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_APP_GENERIC, 1000);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_APP_MAX, 1999);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_APP_EXCEPTION_MIN, 2000);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_APP_EXCEPTION_GENERIC, 2000);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_APP_EXCEPTION_MAX, 2999);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_MIN, 3000);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_OFFLINE_MODE, 3001);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_MANY_RELAY_CONNECTIVITY, 3002);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_HOSTED_SERVER_PRIMARY_RELAY, 3003);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_NETWORK_CONFIG, 3004);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_RIGHTS, 3005);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_P2P_ICE_NO_PUBLIC_ADDRESSES, 3006);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_LOCAL_MAX, 3999);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_REMOTE_MIN, 4000);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_REMOTE_TIMEOUT, 4001);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_REMOTE_BAD_CRYPT, 4002);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_REMOTE_BAD_CERT, 4003);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_REMOTE_BAD_PROTOCOL_VERSION, 4006);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_REMOTE_P2P_ICE_NO_PUBLIC_ADDRESSES, 4007);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_REMOTE_MAX, 4999);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_MIN, 5000);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_GENERIC, 5001);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_INTERNAL_ERROR, 5002);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_TIMEOUT, 5003);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_STEAM_CONNECTIVITY, 5005);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_NO_RELAY_SESSIONS_TO_CLIENT, 5006);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_P2P_RENDEZVOUS, 5008);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_P2P_NAT_FIREWALL, 5009);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_PEER_SENT_NO_CONNECTION, 5010);
+	SETCONSTANT(STEAM_NET_CONNECTION_END_MISC_MAX, 5999);
+	SETCONSTANT(STEAM_NET_CONNECTION_END__FORCE32_BIT, 2147483647);
+	// ESteamNetworkingConfigScope
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_GLOBAL, 1);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SOCKETS_INTERFACE, 2);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LISTEN_SOCKET, 3);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CONNECTION, 4);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SCOPE__FORCE32_BIT, 2147483647);
+	// ESteamNetworkingConfigDataType
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_INT32, 1);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_INT64, 2);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FLOAT, 3);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_STRING, 4);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_PTR, 5);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_DATA_TYPE__FORCE32_BIT, 2147483647);
+	// ESteamNetworkingConfigValue
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_INVALID, 0);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_TIMEOUT_INITIAL, 24);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_TIMEOUT_CONNECTED, 25);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SEND_BUFFER_SIZE, 9);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CONNECTION_USER_DATA, 40);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SEND_RATE_MIN, 10);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SEND_RATE_MAX, 11);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_NAGLE_TIME, 12);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_IP_ALLOW_WITHOUT_AUTH, 23);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_MTU_PACKET_SIZE, 32);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_MTU_DATA_SIZE, 33);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_UNENCRYPTED, 34);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SYMMETRIC_CONNECT, 37);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LOCAL_VIRTUAL_PORT, 38);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_DUAL_WIFI_ENABLE, 39);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_ENABLE_DIAGNOSTICS_UI, 46);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_LOSS_SEND, 2);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_LOSS_RECV, 3);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_LAG_SEND, 4);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_LAG_RECV, 5);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_REORDER_SEND, 6);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_REORDER_RECV, 7);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_REORDER_TIME, 8);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_DUP_SEND, 26);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_DUP_RECV, 27);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_PACKET_DUP_TIME_MAX, 28);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_PACKET_TRACE_MAX_BYTES, 41);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_SEND_RATE, 42);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_SEND_BURST, 43);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_RECV_RATE, 44);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_RECV_BURST, 45);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CALLBACK_CONNECTION_STATUS_CHANGED, 201);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CALLBACK_AUTH_STATUS_CHANGED, 202);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CALLBACK_RELAY_NETWORK_STATUS_CHANGED, 203);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CALLBACK_MESSAGES_SESSION_REQUEST, 204);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CALLBACK_MESSAGES_SESSION_FAILED, 205);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CALLBACK_CREATE_CONNECTION_SIGNALING, 206);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_CALLBACK_FAKE_IP_RESULT, 207);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_STUN_SERVER_LIST, 103);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_ICE_ENABLE, 104);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_ICE_PENALTY, 105);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_SDR_PENALTY, 106);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_TURN_SERVER_LIST, 107);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_TURN_USER_LIST, 108);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_TURN_PASS_LIST, 109);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_ICE_IMPLEMENTATION, 110);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_CONSECUTITIVE_PING_TIMEOUTS_FAIL_INITIAL, 19);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_CONSECUTITIVE_PING_TIMEOUTS_FAIL, 20);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_MIN_PINGS_BEFORE_PING_ACCURATE, 21);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_SINGLE_SOCKET, 22);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_FORCE_RELAY_CLUSTER, 29);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_DEBUG_TICKET_ADDRESS, 30);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_FORCE_PROXY_ADDR, 31);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_SDR_CLIENT_FAKE_CLUSTER_PING, 36);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LOG_LEVEL_ACK_RTT, 13);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LOG_LEVEL_PACKET_DECODE, 14);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LOG_LEVEL_MESSAGE, 15);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LOG_LEVEL_PACKET_GAPS, 16);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LOG_LEVEL_P2P_RENDEZVOUS, 17);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_LOG_LEVEL_SDR_RELAY_PINGS, 18);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_DELETED_ENUMERATE_DEV_VARS, 35);
+	SETCONSTANT(STEAM_NETWORKING_CONFIG_VALUE__FORCE32_BIT, 2147483647);
+	// ESteamNetworkingGetConfigValueResult
+	SETCONSTANT(STEAM_NETWORKING_GET_CONFIG_VALUE_BAD_VALUE, -1);
+	SETCONSTANT(STEAM_NETWORKING_GET_CONFIG_VALUE_BAD_SCOPE_OBJ, -2);
+	SETCONSTANT(STEAM_NETWORKING_GET_CONFIG_VALUE_BUFFER_TOO_SMALL, -3);
+	SETCONSTANT(STEAM_NETWORKING_GET_CONFIG_VALUE_OK, 1);
+	SETCONSTANT(STEAM_NETWORKING_GET_CONFIG_VALUE_OK_INHERITED, 2);
+	SETCONSTANT(STEAM_NETWORKING_GET_CONFIG_VALUE_RESULT__FORCE32_BIT, 2147483647);
+	// ESteamNetworkingSocketsDebugOutputType
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_NONE, 0);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_BUG, 1);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_ERROR, 2);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_IMPORTANT, 3);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_WARNING, 4);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_MSG, 5);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_VERBOSE, 6);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_DEBUG, 7);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_EVERYTHING, 8);
+	SETCONSTANT(STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE__FORCE32_BIT, 2147483647);
+	// EServerMode
+	SETCONSTANT(E_SERVER_MODE_INVALID, 0);
+	SETCONSTANT(E_SERVER_MODE_NO_AUTHENTICATION, 1);
+	SETCONSTANT(E_SERVER_MODE_AUTHENTICATION, 2);
+	SETCONSTANT(E_SERVER_MODE_AUTHENTICATION_AND_SECURE, 3);
+	// EFailureType
+	SETCONSTANT(FAILURE_FLUSHED_CALLBACK_QUEUE, 0);
+	SETCONSTANT(FAILURE_PIPE_FAIL, 1);
+	// PlayerAcceptState_t
+	SETCONSTANT(STATE_UNKNOWN, 0);
+	SETCONSTANT(STATE_PLAYER_ACCEPTED, 1);
+	SETCONSTANT(STATE_PLAYER_DECLINED, 2);
 	#undef SETCONSTANT
 
 	lua_pop(L, 1);

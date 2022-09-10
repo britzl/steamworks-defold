@@ -34,14 +34,14 @@ static ISteamApps *apps;
 static ISteamFriends *friends;
 static ISteamMatchmaking *matchmaking;
 static ISteamMusic *music;
-static ISteamNetworking *networking;
 static ISteamUser *user;
 static ISteamUserStats *user_stats;
 static ISteamUtils *utils;
 static ISteamRemoteStorage *remote_storage;
 static ISteamInventory *inventory;
 static ISteamUGC *ugc;
-
+static ISteamParties *parties;
+static ISteamInput *input;
 
 
 /*****************************
@@ -95,6 +95,9 @@ static void push_const_char_ptr(lua_State* L, const char * s) {
 static void push_char_ptr(lua_State* L, char * s) {
 	lua_pushstring(L, s);
 }
+static void push_void_ptr(lua_State* L, void * s) {
+	lua_pushstring(L, (char *)s);
+}
 {{#typedefs.int}}
 static void push_{{typedef}}(lua_State* L, {{type}} n) {
 	lua_pushinteger(L, n);
@@ -112,6 +115,11 @@ static void push_{{typedef}}_array(lua_State* L, {{type}} arr[], unsigned int si
 /*****************************
 * PUSH (u)int64 (to strings)
 ******************************/
+static void push_int64_t(lua_State* L, int64_t n) {
+	char buf[22];
+	snprintf(buf, sizeof(buf), "%lld", n);
+	lua_pushstring(L, buf);
+}
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
 	snprintf(buf, sizeof(buf), "%lld", n);
@@ -170,7 +178,7 @@ static void push_{{typedef}}_array(lua_State* L, {{typedef}} arr[], unsigned int
 * PUSH enums
 ******************************/
 {{#enums}}
-static void push_{{enumname}}(lua_State* L, {{enumname}} n) {
+static void push_{{enumname}}(lua_State* L, {{fqname}} n) {
 	lua_pushinteger(L, n);
 }
 {{/enums}}
@@ -406,6 +414,13 @@ static uint64 check_uint64(lua_State* L, int index) {
 	}
 	return 0;
 }
+static int64_t check_int64_t(lua_State* L, int index) {
+	if(lua_isstring(L, index)) {
+		const char * s = luaL_checkstring(L, index);
+		return strtoll(s, NULL, 10);
+	}
+	return 0;
+}
 static int64 check_int64(lua_State* L, int index) {
 	if(lua_isstring(L, index)) {
 		const char * s = luaL_checkstring(L, index);
@@ -488,8 +503,8 @@ static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, 
 * CHECK enums
 ******************************/
 {{#enums}}
-static {{enumname}} check_{{enumname}}(lua_State* L, int index) {
-	return {{enumname}}(luaL_checkinteger(L, index));
+static {{fqname}} check_{{enumname}}(lua_State* L, int index) {
+	return {{fqname}}(luaL_checkinteger(L, index));
 }
 {{/enums}}
 
@@ -566,7 +581,7 @@ static servernetadr_t check_servernetadr_t(lua_State* L, int index) {
 	s.SetIP(check_uint32(L, -1));
 	return s;
 }
-static SteamParamStringArray_t check_const_struct_SteamParamStringArray_t(lua_State* L, int index) {
+static SteamParamStringArray_t check_SteamParamStringArray_t(lua_State* L, int index) {
 	SteamParamStringArray_t s;
 	if(lua_isnil(L, index) || lua_isnone(L, index)) {
 		s.m_nNumStrings = 0;
@@ -793,13 +808,14 @@ static int Init(lua_State* L) {
 	inventory = SteamInventory();
 	matchmaking = SteamMatchmaking();
 	music = SteamMusic();
-	networking = SteamNetworking();
 	remote_storage = SteamRemoteStorage();
 	user = SteamUser();
 	utils = SteamUtils();
 	utils->SetWarningMessageHook(&SteamAPIDebugTextHook);
 	user_stats = SteamUserStats();
 	ugc = SteamUGC();
+	parties = SteamParties();
+	input = SteamInput();
 	return 0;
 }
 

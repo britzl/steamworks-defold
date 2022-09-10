@@ -7,7 +7,8 @@
     - name: user_get_h_steam_user
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#GetHSteamUser
-
+      parameters:
+      
       returns:
       - name: r
         type: HSteamUser
@@ -16,7 +17,8 @@
     - name: user_logged_on
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#BLoggedOn
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -25,21 +27,38 @@
     - name: user_get_steam_id
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#GetSteamID
-
+      parameters:
+      
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
-    - name: user_terminate_game_connection
+    - name: user_track_app_usage_event
       type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamUser#TerminateGameConnection
+      desc: https://partner.steamgames.com/doc/api/ISteamUser#TrackAppUsageEvent
       parameters:
-      - name: unIPServer
+      - name: gameID
+        type: CGameID
+      - name: eAppUsageEvent
         type: number
-      - name: usPortServer
+      - name: pchExtraInfo
+        type: string
+      
+#***********************************
+
+    - name: user_get_user_data_folder
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUser#GetUserDataFolder
+      parameters:
+      - name: pchBuffer
+        type: buffer
+      - name: cubBuffer
         type: number
       
+      returns:
+      - name: r
+        type: bool
 #***********************************
 
     - name: user_get_auth_session_ticket
@@ -111,7 +130,8 @@
     - name: user_is_behind_nat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#BIsBehindNAT
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -176,7 +196,8 @@
     - name: user_get_player_steam_level
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#GetPlayerSteamLevel
-
+      parameters:
+      
       returns:
       - name: r
         type: int
@@ -194,7 +215,8 @@
     - name: user_is_phone_verified
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneVerified
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -203,7 +225,8 @@
     - name: user_is_two_factor_enabled
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#BIsTwoFactorEnabled
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -212,7 +235,8 @@
     - name: user_is_phone_identifying
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneIdentifying
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -221,7 +245,34 @@
     - name: user_is_phone_requiring_verification
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUser#BIsPhoneRequiringVerification
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
 
+    - name: user_get_market_eligibility
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUser#GetMarketEligibility
+      parameters:
+      
+#***********************************
+
+    - name: user_get_duration_control
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUser#GetDurationControl
+      parameters:
+      
+#***********************************
+
+    - name: user_set_duration_control_online_state
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUser#BSetDurationControlOnlineState
+      parameters:
+      - name: eNewState
+        type: EDurationControlOnlineState
+      
       returns:
       - name: r
         type: bool
@@ -230,7 +281,8 @@
     - name: friends_get_persona_name
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaName
-
+      parameters:
+      
       returns:
       - name: r
         type: const_char_ptr
@@ -248,7 +300,8 @@
     - name: friends_get_persona_state
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetPersonaState
-
+      parameters:
+      
       returns:
       - name: r
         type: EPersonaState
@@ -277,7 +330,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: friends_get_friend_relationship
@@ -369,7 +422,8 @@
     - name: friends_get_friends_group_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetFriendsGroupCount
-
+      parameters:
+      
       returns:
       - name: r
         type: int
@@ -437,7 +491,8 @@
     - name: friends_get_clan_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetClanCount
-
+      parameters:
+      
       returns:
       - name: r
         type: int
@@ -452,7 +507,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: friends_get_clan_name
@@ -537,7 +592,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: friends_is_user_in_source
@@ -591,6 +646,8 @@
       parameters:
       - name: pchURL
         type: string
+      - name: eMode
+        type: EActivateGameOverlayToWebPageMode
       
 #***********************************
 
@@ -691,7 +748,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: friends_get_clan_officer_count
@@ -717,13 +774,14 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: friends_get_user_restrictions
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetUserRestrictions
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -746,7 +804,8 @@
     - name: friends_clear_rich_presence
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#ClearRichPresence
-
+      parameters:
+      
 #***********************************
 
     - name: friends_get_friend_rich_presence
@@ -815,7 +874,8 @@
     - name: friends_get_coplay_friend_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetCoplayFriendCount
-
+      parameters:
+      
       returns:
       - name: r
         type: int
@@ -830,7 +890,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: friends_get_friend_coplay_time
@@ -901,7 +961,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: friends_send_clan_chat_message
@@ -1089,10 +1149,106 @@
         type: bool
 #***********************************
 
+    - name: friends_get_num_chats_with_unread_priority_messages
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetNumChatsWithUnreadPriorityMessages
+      parameters:
+      
+      returns:
+      - name: r
+        type: int
+#***********************************
+
+    - name: friends_activate_game_overlay_remote_play_together_invite_dialog
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayRemotePlayTogetherInviteDialog
+      parameters:
+      - name: steamIDLobby
+        type: string
+      
+#***********************************
+
+    - name: friends_register_protocol_in_overlay_browser
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#RegisterProtocolInOverlayBrowser
+      parameters:
+      - name: pchProtocol
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: friends_activate_game_overlay_invite_dialog_connect_string
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#ActivateGameOverlayInviteDialogConnectString
+      parameters:
+      - name: pchConnectString
+        type: string
+      
+#***********************************
+
+    - name: friends_request_equipped_profile_items
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#RequestEquippedProfileItems
+      parameters:
+      - name: steamID
+        type: string
+      
+#***********************************
+
+    - name: friends_has_equipped_profile_item
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#BHasEquippedProfileItem
+      parameters:
+      - name: steamID
+        type: string
+      - name: itemType
+        type: ECommunityProfileItemType
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: friends_get_profile_item_property_string
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetProfileItemPropertyString
+      parameters:
+      - name: steamID
+        type: string
+      - name: itemType
+        type: ECommunityProfileItemType
+      - name: prop
+        type: ECommunityProfileItemProperty
+      
+      returns:
+      - name: r
+        type: const_char_ptr
+#***********************************
+
+    - name: friends_get_profile_item_property_uint
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamFriends#GetProfileItemPropertyUint
+      parameters:
+      - name: steamID
+        type: string
+      - name: itemType
+        type: ECommunityProfileItemType
+      - name: prop
+        type: ECommunityProfileItemProperty
+      
+      returns:
+      - name: r
+        type: uint32
+#***********************************
+
     - name: utils_get_seconds_since_app_active
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceAppActive
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -1101,7 +1257,8 @@
     - name: utils_get_seconds_since_computer_active
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetSecondsSinceComputerActive
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -1110,7 +1267,8 @@
     - name: utils_get_connected_universe
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetConnectedUniverse
-
+      parameters:
+      
       returns:
       - name: r
         type: EUniverse
@@ -1119,7 +1277,8 @@
     - name: utils_get_server_real_time
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetServerRealTime
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -1128,7 +1287,8 @@
     - name: utils_get_ip_country
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCountry
-
+      parameters:
+      
       returns:
       - name: r
         type: const_char_ptr
@@ -1170,28 +1330,11 @@
         type: bool
 #***********************************
 
-    - name: utils_get_cserip_port
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetCSERIPPort
-      parameters:
-      - name: unIP
-        type: number
-      - name: usPort
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: unIP
-        type: number
-      - name: usPort
-        type: number
-#***********************************
-
     - name: utils_get_current_battery_power
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetCurrentBatteryPower
-
+      parameters:
+      
       returns:
       - name: r
         type: uint8
@@ -1200,7 +1343,8 @@
     - name: utils_get_app_id
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetAppID
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -1268,7 +1412,8 @@
     - name: utils_get_ipc_call_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetIPCCallCount
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -1277,7 +1422,8 @@
     - name: utils_is_overlay_enabled
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#IsOverlayEnabled
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -1286,7 +1432,8 @@
     - name: utils_overlay_needs_present
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#BOverlayNeedsPresent
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -1324,7 +1471,8 @@
     - name: utils_get_entered_gamepad_text_length
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetEnteredGamepadTextLength
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -1347,7 +1495,8 @@
     - name: utils_get_steam_ui_language
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetSteamUILanguage
-
+      parameters:
+      
       returns:
       - name: r
         type: const_char_ptr
@@ -1356,7 +1505,8 @@
     - name: utils_is_steam_running_in_vr
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamRunningInVR
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -1376,7 +1526,8 @@
     - name: utils_is_steam_in_big_picture_mode
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamInBigPictureMode
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -1385,13 +1536,15 @@
     - name: utils_start_vr_dashboard
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#StartVRDashboard
-
+      parameters:
+      
 #***********************************
 
     - name: utils_is_vr_headset_streaming_enabled
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUtils#IsVRHeadsetStreamingEnabled
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -1406,10 +1559,114 @@
       
 #***********************************
 
+    - name: utils_is_steam_china_launcher
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamChinaLauncher
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: utils_init_filter_text
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#InitFilterText
+      parameters:
+      - name: unFilterOptions
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: utils_filter_text
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#FilterText
+      parameters:
+      - name: eContext
+        type: ETextFilteringContext
+      - name: sourceSteamID
+        type: string
+      - name: pchInputMessage
+        type: string
+      - name: pchOutFilteredText
+        type: buffer
+      - name: nByteSizeOutFilteredText
+        type: number
+      
+      returns:
+      - name: r
+        type: int
+#***********************************
+
+    - name: utils_get_i_pv6_connectivity_state
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#GetIPv6ConnectivityState
+      parameters:
+      - name: eProtocol
+        type: ESteamIPv6ConnectivityProtocol
+      
+      returns:
+      - name: r
+        type: ESteamIPv6ConnectivityState
+#***********************************
+
+    - name: utils_is_steam_running_on_steam_deck
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#IsSteamRunningOnSteamDeck
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: utils_show_floating_gamepad_text_input
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#ShowFloatingGamepadTextInput
+      parameters:
+      - name: eKeyboardMode
+        type: EFloatingGamepadTextInputMode
+      - name: nTextFieldXPosition
+        type: number
+      - name: nTextFieldYPosition
+        type: number
+      - name: nTextFieldWidth
+        type: number
+      - name: nTextFieldHeight
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: utils_set_game_launcher_mode
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#SetGameLauncherMode
+      parameters:
+      - name: bLauncherMode
+        type: boolean
+      
+#***********************************
+
+    - name: utils_dismiss_floating_gamepad_text_input
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUtils#DismissFloatingGamepadTextInput
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
     - name: matchmaking_get_favorite_game_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#GetFavoriteGameCount
-
+      parameters:
+      
       returns:
       - name: r
         type: int
@@ -1496,7 +1753,8 @@
     - name: matchmaking_request_lobby_list
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMatchmaking#RequestLobbyList
-
+      parameters:
+      
 #***********************************
 
     - name: matchmaking_add_request_lobby_list_string_filter
@@ -1581,7 +1839,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: matchmaking_create_lobby
@@ -1650,7 +1908,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: matchmaking_get_lobby_data
@@ -1908,7 +2166,7 @@
       
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: matchmaking_set_lobby_owner
@@ -1933,6 +2191,165 @@
         type: string
       - name: steamIDLobbyDependent
         type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: parties_get_num_active_beacons
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#GetNumActiveBeacons
+      parameters:
+      
+      returns:
+      - name: r
+        type: uint32
+#***********************************
+
+    - name: parties_get_beacon_by_index
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#GetBeaconByIndex
+      parameters:
+      - name: unIndex
+        type: number
+      
+      returns:
+      - name: r
+        type: PartyBeaconID_t
+#***********************************
+
+    - name: parties_get_beacon_details
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#GetBeaconDetails
+      parameters:
+      - name: ulBeaconID
+        type: number
+      - name: pSteamIDBeaconOwner
+        type: string
+      - name: pchMetadata
+        type: buffer
+      - name: cchMetadata
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pSteamIDBeaconOwner
+        type: string
+#***********************************
+
+    - name: parties_join_party
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#JoinParty
+      parameters:
+      - name: ulBeaconID
+        type: number
+      
+#***********************************
+
+    - name: parties_get_num_available_beacon_locations
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#GetNumAvailableBeaconLocations
+      parameters:
+      - name: puNumLocations
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: puNumLocations
+        type: number
+#***********************************
+
+    - name: parties_get_available_beacon_locations
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#GetAvailableBeaconLocations
+      parameters:
+      - name: pLocationList
+        type: number
+      - name: uMaxNumLocations
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pLocationList
+        type: number
+#***********************************
+
+    - name: parties_create_beacon
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#CreateBeacon
+      parameters:
+      - name: unOpenSlots
+        type: number
+      - name: pBeaconLocation
+        type: number
+      - name: pchConnectString
+        type: string
+      - name: pchMetadata
+        type: string
+      
+#***********************************
+
+    - name: parties_on_reservation_completed
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#OnReservationCompleted
+      parameters:
+      - name: ulBeacon
+        type: number
+      - name: steamIDUser
+        type: string
+      
+#***********************************
+
+    - name: parties_cancel_reservation
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#CancelReservation
+      parameters:
+      - name: ulBeacon
+        type: number
+      - name: steamIDUser
+        type: string
+      
+#***********************************
+
+    - name: parties_change_num_open_slots
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#ChangeNumOpenSlots
+      parameters:
+      - name: ulBeacon
+        type: number
+      - name: unOpenSlots
+        type: number
+      
+#***********************************
+
+    - name: parties_destroy_beacon
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#DestroyBeacon
+      parameters:
+      - name: ulBeacon
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: parties_get_beacon_location_data
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamParties#GetBeaconLocationData
+      parameters:
+      - name: BeaconLocation
+        type: number
+      - name: eData
+        type: ESteamPartyBeaconLocationData
+      - name: pchDataStringOut
+        type: buffer
+      - name: cchDataStringOut
+        type: number
       
       returns:
       - name: r
@@ -2175,7 +2592,8 @@
     - name: remote_storage_get_file_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetFileCount
-
+      parameters:
+      
       returns:
       - name: r
         type: int32
@@ -2218,7 +2636,8 @@
     - name: remote_storage_is_cloud_enabled_for_account
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForAccount
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -2227,7 +2646,8 @@
     - name: remote_storage_is_cloud_enabled_for_app
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#IsCloudEnabledForApp
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -2318,7 +2738,8 @@
     - name: remote_storage_get_cached_ugc_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetCachedUGCCount
-
+      parameters:
+      
       returns:
       - name: r
         type: int32
@@ -2336,6 +2757,316 @@
         type: UGCHandle_t
 #***********************************
 
+    - name: remote_storage_publish_workshop_file
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#PublishWorkshopFile
+      parameters:
+      - name: pchFile
+        type: string
+      - name: pchPreviewFile
+        type: string
+      - name: nConsumerAppId
+        type: number
+      - name: pchTitle
+        type: string
+      - name: pchDescription
+        type: string
+      - name: eVisibility
+        type: ERemoteStoragePublishedFileVisibility
+      - name: pTags
+        type: number
+      - name: eWorkshopFileType
+        type: EWorkshopFileType
+      
+#***********************************
+
+    - name: remote_storage_create_published_file_update_request
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#CreatePublishedFileUpdateRequest
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      
+      returns:
+      - name: r
+        type: PublishedFileUpdateHandle_t
+#***********************************
+
+    - name: remote_storage_update_published_file_file
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileFile
+      parameters:
+      - name: updateHandle
+        type: number
+      - name: pchFile
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: remote_storage_update_published_file_preview_file
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFilePreviewFile
+      parameters:
+      - name: updateHandle
+        type: number
+      - name: pchPreviewFile
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: remote_storage_update_published_file_title
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileTitle
+      parameters:
+      - name: updateHandle
+        type: number
+      - name: pchTitle
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: remote_storage_update_published_file_description
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileDescription
+      parameters:
+      - name: updateHandle
+        type: number
+      - name: pchDescription
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: remote_storage_update_published_file_visibility
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileVisibility
+      parameters:
+      - name: updateHandle
+        type: number
+      - name: eVisibility
+        type: ERemoteStoragePublishedFileVisibility
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: remote_storage_update_published_file_tags
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileTags
+      parameters:
+      - name: updateHandle
+        type: number
+      - name: pTags
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pTags
+        type: number
+#***********************************
+
+    - name: remote_storage_commit_published_file_update
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#CommitPublishedFileUpdate
+      parameters:
+      - name: updateHandle
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_get_published_file_details
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedFileDetails
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      - name: unMaxSecondsOld
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_delete_published_file
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#DeletePublishedFile
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_enumerate_user_published_files
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserPublishedFiles
+      parameters:
+      - name: unStartIndex
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_subscribe_published_file
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SubscribePublishedFile
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_enumerate_user_subscribed_files
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserSubscribedFiles
+      parameters:
+      - name: unStartIndex
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_unsubscribe_published_file
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UnsubscribePublishedFile
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_update_published_file_set_change_description
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdatePublishedFileSetChangeDescription
+      parameters:
+      - name: updateHandle
+        type: number
+      - name: pchChangeDescription
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: remote_storage_get_published_item_vote_details
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetPublishedItemVoteDetails
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_update_user_published_item_vote
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UpdateUserPublishedItemVote
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      - name: bVoteUp
+        type: boolean
+      
+#***********************************
+
+    - name: remote_storage_get_user_published_item_vote_details
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetUserPublishedItemVoteDetails
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_enumerate_user_shared_workshop_files
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumerateUserSharedWorkshopFiles
+      parameters:
+      - name: steamId
+        type: string
+      - name: unStartIndex
+        type: number
+      - name: pRequiredTags
+        type: number
+      - name: pExcludedTags
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_publish_video
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#PublishVideo
+      parameters:
+      - name: eVideoProvider
+        type: EWorkshopVideoProvider
+      - name: pchVideoAccount
+        type: string
+      - name: pchVideoIdentifier
+        type: string
+      - name: pchPreviewFile
+        type: string
+      - name: nConsumerAppId
+        type: number
+      - name: pchTitle
+        type: string
+      - name: pchDescription
+        type: string
+      - name: eVisibility
+        type: ERemoteStoragePublishedFileVisibility
+      - name: pTags
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_set_user_published_file_action
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#SetUserPublishedFileAction
+      parameters:
+      - name: unPublishedFileId
+        type: number
+      - name: eAction
+        type: EWorkshopFileAction
+      
+#***********************************
+
+    - name: remote_storage_enumerate_published_files_by_user_action
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumeratePublishedFilesByUserAction
+      parameters:
+      - name: eAction
+        type: EWorkshopFileAction
+      - name: unStartIndex
+        type: number
+      
+#***********************************
+
+    - name: remote_storage_enumerate_published_workshop_files
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EnumeratePublishedWorkshopFiles
+      parameters:
+      - name: eEnumerationType
+        type: EWorkshopEnumerationType
+      - name: unStartIndex
+        type: number
+      - name: unCount
+        type: number
+      - name: unDays
+        type: number
+      - name: pTags
+        type: number
+      - name: pUserTags
+        type: number
+      
+#***********************************
+
     - name: remote_storage_ugc_download_to_location
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#UGCDownloadToLocation
@@ -2349,16 +3080,67 @@
       
 #***********************************
 
+    - name: remote_storage_get_local_file_change_count
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetLocalFileChangeCount
+      parameters:
+      
+      returns:
+      - name: r
+        type: int32
+#***********************************
+
+    - name: remote_storage_get_local_file_change
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#GetLocalFileChange
+      parameters:
+      - name: iFile
+        type: number
+      - name: pEChangeType
+        type: ERemoteStorageLocalFileChange
+      - name: pEFilePathType
+        type: ERemoteStorageFilePathType
+      
+      returns:
+      - name: r
+        type: const_char_ptr
+      - name: pEChangeType
+        type: ERemoteStorageLocalFileChange
+      - name: pEFilePathType
+        type: ERemoteStorageFilePathType
+#***********************************
+
+    - name: remote_storage_begin_file_write_batch
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#BeginFileWriteBatch
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: remote_storage_end_file_write_batch
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamRemoteStorage#EndFileWriteBatch
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
     - name: user_stats_request_current_stats
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#RequestCurrentStats
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
 #***********************************
 
-    - name: user_stats_get_stat_int
+    - name: user_stats_get_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat
       parameters:
@@ -2374,7 +3156,7 @@
         type: number
 #***********************************
 
-    - name: user_stats_get_stat_float
+    - name: user_stats_get_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetStat
       parameters:
@@ -2390,7 +3172,7 @@
         type: number
 #***********************************
 
-    - name: user_stats_set_stat_int
+    - name: user_stats_set_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat
       parameters:
@@ -2404,7 +3186,7 @@
         type: bool
 #***********************************
 
-    - name: user_stats_set_stat_float
+    - name: user_stats_set_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#SetStat
       parameters:
@@ -2497,7 +3279,8 @@
     - name: user_stats_store_stats
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#StoreStats
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -2548,7 +3331,8 @@
     - name: user_stats_get_num_achievements
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumAchievements
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -2575,7 +3359,7 @@
       
 #***********************************
 
-    - name: user_stats_get_user_stat_int
+    - name: user_stats_get_user_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
       parameters:
@@ -2593,7 +3377,7 @@
         type: number
 #***********************************
 
-    - name: user_stats_get_user_stat_float
+    - name: user_stats_get_user_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetUserStat
       parameters:
@@ -2770,9 +3554,9 @@
       - name: index
         type: number
       - name: pLeaderboardEntry
-        type: table
-      - name: pDetails
         type: number
+      - name: pDetails
+        type: table (number)
       - name: cDetailsMax
         type: number
       
@@ -2780,10 +3564,7 @@
       - name: r
         type: bool
       - name: pLeaderboardEntry
-        type: table
-      - name: pDetails
-        type: table
-
+        type: number
 #***********************************
 
     - name: user_stats_upload_leaderboard_score
@@ -2817,13 +3598,15 @@
     - name: user_stats_get_number_of_current_players
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetNumberOfCurrentPlayers
-
+      parameters:
+      
 #***********************************
 
     - name: user_stats_request_global_achievement_percentages
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#RequestGlobalAchievementPercentages
-
+      parameters:
+      
 #***********************************
 
     - name: user_stats_get_most_achieved_achievement_info
@@ -2897,7 +3680,7 @@
       
 #***********************************
 
-    - name: user_stats_get_global_stat_int
+    - name: user_stats_get_global_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat
       parameters:
@@ -2913,7 +3696,7 @@
         type: string
 #***********************************
 
-    - name: user_stats_get_global_stat_float
+    - name: user_stats_get_global_stat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStat
       parameters:
@@ -2929,7 +3712,7 @@
         type: double
 #***********************************
 
-    - name: user_stats_get_global_stat_int_history
+    - name: user_stats_get_global_stat_history
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory
       parameters:
@@ -2945,7 +3728,7 @@
         type: int32
 #***********************************
 
-    - name: user_stats_get_global_stat_float_history
+    - name: user_stats_get_global_stat_history
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetGlobalStatHistory
       parameters:
@@ -2961,10 +3744,51 @@
         type: int32
 #***********************************
 
+    - name: user_stats_get_achievement_progress_limits
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementProgressLimits
+      parameters:
+      - name: pchName
+        type: string
+      - name: pnMinProgress
+        type: number
+      - name: pnMaxProgress
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pnMinProgress
+        type: number
+      - name: pnMaxProgress
+        type: number
+#***********************************
+
+    - name: user_stats_get_achievement_progress_limits
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUserStats#GetAchievementProgressLimits
+      parameters:
+      - name: pchName
+        type: string
+      - name: pfMinProgress
+        type: number
+      - name: pfMaxProgress
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pfMinProgress
+        type: number
+      - name: pfMaxProgress
+        type: number
+#***********************************
+
     - name: apps_is_subscribed
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribed
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -2973,7 +3797,8 @@
     - name: apps_is_low_violence
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsLowViolence
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -2982,7 +3807,8 @@
     - name: apps_is_cybercafe
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsCybercafe
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -2991,7 +3817,8 @@
     - name: apps_is_vac_banned
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsVACBanned
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -3000,7 +3827,8 @@
     - name: apps_get_current_game_language
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetCurrentGameLanguage
-
+      parameters:
+      
       returns:
       - name: r
         type: const_char_ptr
@@ -3009,7 +3837,8 @@
     - name: apps_get_available_game_languages
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetAvailableGameLanguages
-
+      parameters:
+      
       returns:
       - name: r
         type: const_char_ptr
@@ -3054,7 +3883,8 @@
     - name: apps_is_subscribed_from_free_weekend
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFreeWeekend
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -3063,7 +3893,8 @@
     - name: apps_get_dlc_count
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetDLCCount
-
+      parameters:
+      
       returns:
       - name: r
         type: int
@@ -3195,10 +4026,11 @@
     - name: apps_get_app_owner
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetAppOwner
-
+      parameters:
+      
       returns:
       - name: r
-        type: class_CSteamID
+        type: CSteamID
 #***********************************
 
     - name: apps_get_launch_query_param
@@ -3236,7 +4068,8 @@
     - name: apps_get_app_build_id
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#GetAppBuildId
-
+      parameters:
+      
       returns:
       - name: r
         type: int
@@ -3245,7 +4078,8 @@
     - name: apps_request_all_proof_of_purchase_keys
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamApps#RequestAllProofOfPurchaseKeys
-
+      parameters:
+      
 #***********************************
 
     - name: apps_get_file_details
@@ -3257,375 +4091,13 @@
       
 #***********************************
 
-    - name: networking_send_p2p_packet
+    - name: apps_get_launch_command_line
       type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket
+      desc: https://partner.steamgames.com/doc/api/ISteamApps#GetLaunchCommandLine
       parameters:
-      - name: steamIDRemote
-        type: string
-      - name: pubData
-        type: string
-      - name: cubData
-        type: number
-      - name: eP2PSendType
-        type: EP2PSend
-      - name: nChannel
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_is_p2p_packet_available
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable
-      parameters:
-      - name: pcubMsgSize
-        type: number
-      - name: nChannel
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pcubMsgSize
-        type: number
-#***********************************
-
-    - name: networking_read_p2p_packet
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket
-      parameters:
-      - name: pubDest
+      - name: pszCommandLine
         type: buffer
-      - name: cubDest
-        type: number
-      - name: pcubMsgSize
-        type: number
-      - name: psteamIDRemote
-        type: string
-      - name: nChannel
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pcubMsgSize
-        type: number
-      - name: psteamIDRemote
-        type: string
-#***********************************
-
-    - name: networking_accept_p2p_session_with_user
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser
-      parameters:
-      - name: steamIDRemote
-        type: string
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_close_p2p_session_with_user
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser
-      parameters:
-      - name: steamIDRemote
-        type: string
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_close_p2p_channel_with_user
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser
-      parameters:
-      - name: steamIDRemote
-        type: string
-      - name: nChannel
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_get_p2p_session_state
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState
-      parameters:
-      - name: steamIDRemote
-        type: string
-      - name: pConnectionState
-        type: table
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pConnectionState
-        type: table
-#***********************************
-
-    - name: networking_allow_p2p_packet_relay
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay
-      parameters:
-      - name: bAllow
-        type: boolean
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_create_listen_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket
-      parameters:
-      - name: nVirtualP2PPort
-        type: number
-      - name: nIP
-        type: number
-      - name: nPort
-        type: number
-      - name: bAllowUseOfPacketRelay
-        type: boolean
-      
-      returns:
-      - name: r
-        type: SNetListenSocket_t
-#***********************************
-
-    - name: networking_create_p2p_connection_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket
-      parameters:
-      - name: steamIDTarget
-        type: string
-      - name: nVirtualPort
-        type: number
-      - name: nTimeoutSec
-        type: number
-      - name: bAllowUseOfPacketRelay
-        type: boolean
-      
-      returns:
-      - name: r
-        type: SNetSocket_t
-#***********************************
-
-    - name: networking_create_connection_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket
-      parameters:
-      - name: nIP
-        type: number
-      - name: nPort
-        type: number
-      - name: nTimeoutSec
-        type: number
-      
-      returns:
-      - name: r
-        type: SNetSocket_t
-#***********************************
-
-    - name: networking_destroy_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket
-      parameters:
-      - name: hSocket
-        type: number
-      - name: bNotifyRemoteEnd
-        type: boolean
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_destroy_listen_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket
-      parameters:
-      - name: hSocket
-        type: number
-      - name: bNotifyRemoteEnd
-        type: boolean
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_send_data_on_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket
-      parameters:
-      - name: hSocket
-        type: number
-      - name: pubData
-        type: buffer
-      - name: cubData
-        type: number
-      - name: bReliable
-        type: boolean
-      
-      returns:
-      - name: r
-        type: bool
-#***********************************
-
-    - name: networking_is_data_available_on_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket
-      parameters:
-      - name: hSocket
-        type: number
-      - name: pcubMsgSize
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pcubMsgSize
-        type: number
-#***********************************
-
-    - name: networking_retrieve_data_from_socket
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket
-      parameters:
-      - name: hSocket
-        type: number
-      - name: pubDest
-        type: buffer
-      - name: cubDest
-        type: number
-      - name: pcubMsgSize
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pcubMsgSize
-        type: number
-#***********************************
-
-    - name: networking_is_data_available
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable
-      parameters:
-      - name: hListenSocket
-        type: number
-      - name: pcubMsgSize
-        type: number
-      - name: phSocket
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pcubMsgSize
-        type: number
-      - name: phSocket
-        type: number
-#***********************************
-
-    - name: networking_retrieve_data
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData
-      parameters:
-      - name: hListenSocket
-        type: number
-      - name: pubDest
-        type: buffer
-      - name: cubDest
-        type: number
-      - name: pcubMsgSize
-        type: number
-      - name: phSocket
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pcubMsgSize
-        type: number
-      - name: phSocket
-        type: number
-#***********************************
-
-    - name: networking_get_socket_info
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo
-      parameters:
-      - name: hSocket
-        type: number
-      - name: pSteamIDRemote
-        type: string
-      - name: peSocketStatus
-        type: number
-      - name: punIPRemote
-        type: number
-      - name: punPortRemote
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pSteamIDRemote
-        type: string
-      - name: peSocketStatus
-        type: number
-      - name: punIPRemote
-        type: number
-      - name: punPortRemote
-        type: number
-#***********************************
-
-    - name: networking_get_listen_socket_info
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo
-      parameters:
-      - name: hListenSocket
-        type: number
-      - name: pnIP
-        type: number
-      - name: pnPort
-        type: number
-      
-      returns:
-      - name: r
-        type: bool
-      - name: pnIP
-        type: number
-      - name: pnPort
-        type: number
-#***********************************
-
-    - name: networking_get_socket_connection_type
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType
-      parameters:
-      - name: hSocket
-        type: number
-      
-      returns:
-      - name: r
-        type: ESNetSocketConnectionType
-#***********************************
-
-    - name: networking_get_max_packet_size
-      type: function
-      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize
-      parameters:
-      - name: hSocket
+      - name: cubCommandLine
         type: number
       
       returns:
@@ -3633,10 +4105,51 @@
         type: int
 #***********************************
 
+    - name: apps_is_subscribed_from_family_sharing
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsSubscribedFromFamilySharing
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: apps_is_timed_trial
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamApps#BIsTimedTrial
+      parameters:
+      - name: punSecondsAllowed
+        type: number
+      - name: punSecondsPlayed
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: punSecondsAllowed
+        type: number
+      - name: punSecondsPlayed
+        type: number
+#***********************************
+
+    - name: apps_set_dlc_context
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamApps#SetDlcContext
+      parameters:
+      - name: nAppID
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
     - name: music_is_enabled
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -3645,7 +4158,8 @@
     - name: music_is_playing
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#BIsPlaying
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -3654,7 +4168,8 @@
     - name: music_get_playback_status
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#GetPlaybackStatus
-
+      parameters:
+      
       returns:
       - name: r
         type: AudioPlayback_Status
@@ -3663,25 +4178,29 @@
     - name: music_play
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#Play
-
+      parameters:
+      
 #***********************************
 
     - name: music_pause
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#Pause
-
+      parameters:
+      
 #***********************************
 
     - name: music_play_previous
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#PlayPrevious
-
+      parameters:
+      
 #***********************************
 
     - name: music_play_next
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#PlayNext
-
+      parameters:
+      
 #***********************************
 
     - name: music_set_volume
@@ -3696,7 +4215,8 @@
     - name: music_get_volume
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#GetVolume
-
+      parameters:
+      
       returns:
       - name: r
         type: float
@@ -3746,6 +4266,26 @@
         type: UGCQueryHandle_t
 #***********************************
 
+    - name: ugc_create_query_all_ugc_request
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryAllUGCRequest
+      parameters:
+      - name: eQueryType
+        type: EUGCQuery
+      - name: eMatchingeMatchingUGCTypeFileType
+        type: EUGCMatchingUGCType
+      - name: nCreatorAppID
+        type: number
+      - name: nConsumerAppID
+        type: number
+      - name: pchCursor
+        type: string
+      
+      returns:
+      - name: r
+        type: UGCQueryHandle_t
+#***********************************
+
     - name: ugc_create_query_ugc_details_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUGCDetailsRequest
@@ -3780,13 +4320,67 @@
       - name: index
         type: number
       - name: pDetails
-        type: table
+        type: number
       
       returns:
       - name: r
         type: bool
       - name: pDetails
-        type: table
+        type: number
+#***********************************
+
+    - name: ugc_get_query_ugc_num_tags
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCNumTags
+      parameters:
+      - name: handle
+        type: number
+      - name: index
+        type: number
+      
+      returns:
+      - name: r
+        type: uint32
+#***********************************
+
+    - name: ugc_get_query_ugc_tag
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCTag
+      parameters:
+      - name: handle
+        type: number
+      - name: index
+        type: number
+      - name: indexTag
+        type: number
+      - name: pchValue
+        type: buffer
+      - name: cchValueSize
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: ugc_get_query_ugc_tag_display_name
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCTagDisplayName
+      parameters:
+      - name: handle
+        type: number
+      - name: index
+        type: number
+      - name: indexTag
+        type: number
+      - name: pchValue
+        type: buffer
+      - name: cchValueSize
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
 #***********************************
 
     - name: ugc_get_query_ugc_preview_url
@@ -3945,6 +4539,26 @@
         type: bool
 #***********************************
 
+    - name: ugc_get_query_ugc_key_value_tag
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetQueryUGCKeyValueTag
+      parameters:
+      - name: handle
+        type: number
+      - name: index
+        type: number
+      - name: pchKey
+        type: string
+      - name: pchValue
+        type: buffer
+      - name: cchValueSize
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
     - name: ugc_release_query_ugc_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#ReleaseQueryUGCRequest
@@ -3965,6 +4579,20 @@
         type: number
       - name: pTagName
         type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: ugc_add_required_tag_group
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredTagGroup
+      parameters:
+      - name: handle
+        type: number
+      - name: pTagGroups
+        type: number
       
       returns:
       - name: r
@@ -4181,6 +4809,38 @@
         type: bool
 #***********************************
 
+    - name: ugc_set_time_created_date_range
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetTimeCreatedDateRange
+      parameters:
+      - name: handle
+        type: number
+      - name: rtStart
+        type: RTime32
+      - name: rtEnd
+        type: RTime32
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: ugc_set_time_updated_date_range
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetTimeUpdatedDateRange
+      parameters:
+      - name: handle
+        type: number
+      - name: rtStart
+        type: RTime32
+      - name: rtEnd
+        type: RTime32
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
     - name: ugc_add_required_key_value_tag
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#AddRequiredKeyValueTag
@@ -4310,7 +4970,7 @@
       - name: updateHandle
         type: number
       - name: pTags
-        type: table
+        type: number
       
       returns:
       - name: r
@@ -4339,6 +4999,32 @@
         type: number
       - name: pszPreviewFile
         type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: ugc_set_allow_legacy_upload
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#SetAllowLegacyUpload
+      parameters:
+      - name: handle
+        type: number
+      - name: bAllowLegacyUpload
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: ugc_remove_all_item_key_value_tags
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#RemoveAllItemKeyValueTags
+      parameters:
+      - name: handle
+        type: number
       
       returns:
       - name: r
@@ -4545,7 +5231,8 @@
     - name: ugc_get_num_subscribed_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetNumSubscribedItems
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -4685,7 +5372,8 @@
     - name: ugc_stop_playtime_tracking_for_all_items
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#StopPlaytimeTrackingForAllItems
-
+      parameters:
+      
 #***********************************
 
     - name: ugc_add_dependency
@@ -4750,6 +5438,23 @@
       
 #***********************************
 
+    - name: ugc_show_workshop_eula
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#ShowWorkshopEULA
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: ugc_get_workshop_eula_status
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamUGC#GetWorkshopEULAStatus
+      parameters:
+      
+#***********************************
+
     - name: inventory_get_result_status
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetResultStatus
@@ -4769,7 +5474,7 @@
       - name: resultHandle
         type: number
       - name: pOutItemsArray
-        type: table
+        type: number
       - name: punOutItemsArraySize
         type: number
       
@@ -5045,7 +5750,8 @@
     - name: inventory_send_item_drop_heartbeat
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SendItemDropHeartbeat
-
+      parameters:
+      
 #***********************************
 
     - name: inventory_trigger_item_drop
@@ -5095,7 +5801,8 @@
     - name: inventory_load_item_definitions
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#LoadItemDefinitions
-
+      parameters:
+      
       returns:
       - name: r
         type: bool
@@ -5186,13 +5893,15 @@
     - name: inventory_request_prices
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#RequestPrices
-
+      parameters:
+      
 #***********************************
 
     - name: inventory_get_num_items_with_prices
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetNumItemsWithPrices
-
+      parameters:
+      
       returns:
       - name: r
         type: uint32
@@ -5203,21 +5912,17 @@
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices
       parameters:
       - name: pArrayItemDefs
-        type: number
-      - name: pPrices
-        type: string
+        type: table (number)
+      - name: pCurrentPrices
+        type: table (string)
+      - name: pBasePrices
+        type: table (string)
       - name: unArrayLength
         type: number
       
       returns:
       - name: r
         type: bool
-      - name: pArrayItemDefs
-        type: table
-
-      - name: pPrices
-        type: table
-
 #***********************************
 
     - name: inventory_get_item_price
@@ -5226,20 +5931,25 @@
       parameters:
       - name: iDefinition
         type: number
-      - name: pPrice
+      - name: pCurrentPrice
+        type: string
+      - name: pBasePrice
         type: string
       
       returns:
       - name: r
         type: bool
-      - name: pPrice
+      - name: pCurrentPrice
+        type: string
+      - name: pBasePrice
         type: string
 #***********************************
 
     - name: inventory_start_update_properties
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#StartUpdateProperties
-
+      parameters:
+      
       returns:
       - name: r
         type: SteamInventoryUpdateHandle_t
@@ -5261,7 +5971,7 @@
         type: bool
 #***********************************
 
-    - name: inventory_set_property_string
+    - name: inventory_set_property
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
@@ -5279,7 +5989,7 @@
         type: bool
 #***********************************
 
-    - name: inventory_set_property_bool
+    - name: inventory_set_property
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
@@ -5297,7 +6007,7 @@
         type: bool
 #***********************************
 
-    - name: inventory_set_property_int
+    - name: inventory_set_property
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
@@ -5315,7 +6025,7 @@
         type: bool
 #***********************************
 
-    - name: inventory_set_property_float
+    - name: inventory_set_property
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#SetProperty
       parameters:
@@ -5349,6 +6059,22 @@
         type: number
 #***********************************
 
+    - name: inventory_inspect_item
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamInventory#InspectItem
+      parameters:
+      - name: pResultHandle
+        type: number
+      - name: pchItemToken
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pResultHandle
+        type: number
+#***********************************
+
 
     - name: PersonaStateChange_t
       type: callback
@@ -5358,6 +6084,12 @@
       type: callback
 
 
+    - name: STEAM_IP_TYPE_I_PV4
+      type: number
+      desc: 0
+    - name: STEAM_IP_TYPE_I_PV6
+      type: number
+      desc: 1
     - name: UNIVERSE_INVALID
       type: number
       desc: 0
@@ -5376,6 +6108,9 @@
     - name: UNIVERSE_MAX
       type: number
       desc: 5
+    - name: RESULT_NONE
+      type: number
+      desc: 0
     - name: RESULT_OK
       type: number
       desc: 1
@@ -5709,6 +6444,51 @@
     - name: RESULT_LIMITED_USER_ACCOUNT
       type: number
       desc: 112
+    - name: RESULT_CANT_REMOVE_ITEM
+      type: number
+      desc: 113
+    - name: RESULT_ACCOUNT_DELETED
+      type: number
+      desc: 114
+    - name: RESULT_EXISTING_USER_CANCELLED_LICENSE
+      type: number
+      desc: 115
+    - name: RESULT_COMMUNITY_COOLDOWN
+      type: number
+      desc: 116
+    - name: RESULT_NO_LAUNCHER_SPECIFIED
+      type: number
+      desc: 117
+    - name: RESULT_MUST_AGREE_TO_SSA
+      type: number
+      desc: 118
+    - name: RESULT_LAUNCHER_MIGRATED
+      type: number
+      desc: 119
+    - name: RESULT_STEAM_REALM_MISMATCH
+      type: number
+      desc: 120
+    - name: RESULT_INVALID_SIGNATURE
+      type: number
+      desc: 121
+    - name: RESULT_PARSE_FAILURE
+      type: number
+      desc: 122
+    - name: RESULT_NO_VERIFIED_PHONE
+      type: number
+      desc: 123
+    - name: RESULT_INSUFFICIENT_BATTERY
+      type: number
+      desc: 124
+    - name: RESULT_CHARGER_REQUIRED
+      type: number
+      desc: 125
+    - name: RESULT_CACHED_CREDENTIAL_INVALID
+      type: number
+      desc: 126
+    - name: K_E_RESULT_PHONE_NUMBER_IS_VOIP
+      type: number
+      desc: 127
     - name: VOICE_RESULT_OK
       type: number
       desc: 0
@@ -5880,159 +6660,6 @@
     - name: ACCOUNT_TYPE_MAX
       type: number
       desc: 11
-    - name: APP_RELEASE_STATE_UNKNOWN
-      type: number
-      desc: 0
-    - name: APP_RELEASE_STATE_UNAVAILABLE
-      type: number
-      desc: 1
-    - name: APP_RELEASE_STATE_PRERELEASE
-      type: number
-      desc: 2
-    - name: APP_RELEASE_STATE_PRELOAD_ONLY
-      type: number
-      desc: 3
-    - name: APP_RELEASE_STATE_RELEASED
-      type: number
-      desc: 4
-    - name: APP_OWNERSHIP_FLAGS_NONE
-      type: number
-      desc: 0
-    - name: APP_OWNERSHIP_FLAGS_OWNS_LICENSE
-      type: number
-      desc: 1
-    - name: APP_OWNERSHIP_FLAGS_FREE_LICENSE
-      type: number
-      desc: 2
-    - name: APP_OWNERSHIP_FLAGS_REGION_RESTRICTED
-      type: number
-      desc: 4
-    - name: APP_OWNERSHIP_FLAGS_LOW_VIOLENCE
-      type: number
-      desc: 8
-    - name: APP_OWNERSHIP_FLAGS_INVALID_PLATFORM
-      type: number
-      desc: 16
-    - name: APP_OWNERSHIP_FLAGS_SHARED_LICENSE
-      type: number
-      desc: 32
-    - name: APP_OWNERSHIP_FLAGS_FREE_WEEKEND
-      type: number
-      desc: 64
-    - name: APP_OWNERSHIP_FLAGS_RETAIL_LICENSE
-      type: number
-      desc: 128
-    - name: APP_OWNERSHIP_FLAGS_LICENSE_LOCKED
-      type: number
-      desc: 256
-    - name: APP_OWNERSHIP_FLAGS_LICENSE_PENDING
-      type: number
-      desc: 512
-    - name: APP_OWNERSHIP_FLAGS_LICENSE_EXPIRED
-      type: number
-      desc: 1024
-    - name: APP_OWNERSHIP_FLAGS_LICENSE_PERMANENT
-      type: number
-      desc: 2048
-    - name: APP_OWNERSHIP_FLAGS_LICENSE_RECURRING
-      type: number
-      desc: 4096
-    - name: APP_OWNERSHIP_FLAGS_LICENSE_CANCELED
-      type: number
-      desc: 8192
-    - name: APP_OWNERSHIP_FLAGS_AUTO_GRANT
-      type: number
-      desc: 16384
-    - name: APP_OWNERSHIP_FLAGS_PENDING_GIFT
-      type: number
-      desc: 32768
-    - name: APP_OWNERSHIP_FLAGS_RENTAL_NOT_ACTIVATED
-      type: number
-      desc: 65536
-    - name: APP_OWNERSHIP_FLAGS_RENTAL
-      type: number
-      desc: 131072
-    - name: APP_OWNERSHIP_FLAGS_SITE_LICENSE
-      type: number
-      desc: 262144
-    - name: APP_TYPE_INVALID
-      type: number
-      desc: 0
-    - name: APP_TYPE_GAME
-      type: number
-      desc: 1
-    - name: APP_TYPE_APPLICATION
-      type: number
-      desc: 2
-    - name: APP_TYPE_TOOL
-      type: number
-      desc: 4
-    - name: APP_TYPE_DEMO
-      type: number
-      desc: 8
-    - name: APP_TYPE_MEDIA_DEPRECATED
-      type: number
-      desc: 16
-    - name: APP_TYPE_DLC
-      type: number
-      desc: 32
-    - name: APP_TYPE_GUIDE
-      type: number
-      desc: 64
-    - name: APP_TYPE_DRIVER
-      type: number
-      desc: 128
-    - name: APP_TYPE_CONFIG
-      type: number
-      desc: 256
-    - name: APP_TYPE_HARDWARE
-      type: number
-      desc: 512
-    - name: APP_TYPE_FRANCHISE
-      type: number
-      desc: 1024
-    - name: APP_TYPE_VIDEO
-      type: number
-      desc: 2048
-    - name: APP_TYPE_PLUGIN
-      type: number
-      desc: 4096
-    - name: APP_TYPE_MUSIC
-      type: number
-      desc: 8192
-    - name: APP_TYPE_SERIES
-      type: number
-      desc: 16384
-    - name: APP_TYPE_COMIC
-      type: number
-      desc: 32768
-    - name: APP_TYPE_SHORTCUT
-      type: number
-      desc: 1073741824
-    - name: APP_TYPE_DEPOT_ONLY
-      type: number
-      desc: -2147483648
-    - name: STEAM_USER_STAT_TYPE_INVALID
-      type: number
-      desc: 0
-    - name: STEAM_USER_STAT_TYPE_INT
-      type: number
-      desc: 1
-    - name: STEAM_USER_STAT_TYPE_FLOAT
-      type: number
-      desc: 2
-    - name: STEAM_USER_STAT_TYPE_AVGRATE
-      type: number
-      desc: 3
-    - name: STEAM_USER_STAT_TYPE_ACHIEVEMENTS
-      type: number
-      desc: 4
-    - name: STEAM_USER_STAT_TYPE_GROUPACHIEVEMENTS
-      type: number
-      desc: 5
-    - name: STEAM_USER_STAT_TYPE_MAX
-      type: number
-      desc: 6
     - name: CHAT_ENTRY_TYPE_INVALID
       type: number
       desc: 0
@@ -6117,24 +6744,6 @@
     - name: CHAT_INSTANCE_FLAG_MMS_LOBBY
       type: number
       desc: 131072
-    - name: MARKETING_MESSAGE_FLAGS_NONE
-      type: number
-      desc: 0
-    - name: MARKETING_MESSAGE_FLAGS_HIGH_PRIORITY
-      type: number
-      desc: 1
-    - name: MARKETING_MESSAGE_FLAGS_PLATFORM_WINDOWS
-      type: number
-      desc: 2
-    - name: MARKETING_MESSAGE_FLAGS_PLATFORM_MAC
-      type: number
-      desc: 4
-    - name: MARKETING_MESSAGE_FLAGS_PLATFORM_LINUX
-      type: number
-      desc: 8
-    - name: MARKETING_MESSAGE_FLAGS_PLATFORM_RESTRICTIONS
-      type: number
-      desc: 14
     - name: POSITION_TOP_LEFT
       type: number
       desc: 0
@@ -6189,123 +6798,201 @@
     - name: BROADCAST_UPLOAD_RESULT_TRANSCODE_BEHIND
       type: number
       desc: 13
-    - name: LAUNCH_OPTION_TYPE_NONE
-      type: number
-      desc: 0
-    - name: LAUNCH_OPTION_TYPE_DEFAULT
-      type: number
-      desc: 1
-    - name: LAUNCH_OPTION_TYPE_SAFE_MODE
-      type: number
-      desc: 2
-    - name: LAUNCH_OPTION_TYPE_MULTIPLAYER
-      type: number
-      desc: 3
-    - name: LAUNCH_OPTION_TYPE_CONFIG
-      type: number
-      desc: 4
-    - name: LAUNCH_OPTION_TYPE_OPEN_VR
-      type: number
-      desc: 5
-    - name: LAUNCH_OPTION_TYPE_SERVER
-      type: number
-      desc: 6
-    - name: LAUNCH_OPTION_TYPE_EDITOR
-      type: number
-      desc: 7
-    - name: LAUNCH_OPTION_TYPE_MANUAL
-      type: number
-      desc: 8
-    - name: LAUNCH_OPTION_TYPE_BENCHMARK
-      type: number
-      desc: 9
-    - name: LAUNCH_OPTION_TYPE_OPTION1
-      type: number
-      desc: 10
-    - name: LAUNCH_OPTION_TYPE_OPTION2
-      type: number
-      desc: 11
-    - name: LAUNCH_OPTION_TYPE_OPTION3
-      type: number
-      desc: 12
-    - name: LAUNCH_OPTION_TYPE_OCULUS_VR
-      type: number
-      desc: 13
-    - name: LAUNCH_OPTION_TYPE_OPEN_VR_OVERLAY
+    - name: BROADCAST_UPLOAD_RESULT_NOT_ALLOWED_TO_PLAY
       type: number
       desc: 14
-    - name: LAUNCH_OPTION_TYPE_OSVR
+    - name: BROADCAST_UPLOAD_RESULT_BUSY
       type: number
       desc: 15
-    - name: LAUNCH_OPTION_TYPE_DIALOG
+    - name: BROADCAST_UPLOAD_RESULT_BANNED
       type: number
-      desc: 1000
-    - name: EVRHMD_TYPE_NONE
+      desc: 16
+    - name: BROADCAST_UPLOAD_RESULT_ALREADY_ACTIVE
       type: number
-      desc: -1
-    - name: EVRHMD_TYPE_UNKNOWN
+      desc: 17
+    - name: BROADCAST_UPLOAD_RESULT_FORCED_OFF
       type: number
-      desc: 0
-    - name: EVRHMD_TYPE_HTC_DEV
+      desc: 18
+    - name: BROADCAST_UPLOAD_RESULT_AUDIO_BEHIND
       type: number
-      desc: 1
-    - name: EVRHMD_TYPE_HTC_VIVE_PRE
-      type: number
-      desc: 2
-    - name: EVRHMD_TYPE_HTC_VIVE
-      type: number
-      desc: 3
-    - name: EVRHMD_TYPE_HTC_UNKNOWN
+      desc: 19
+    - name: BROADCAST_UPLOAD_RESULT_SHUTDOWN
       type: number
       desc: 20
-    - name: EVRHMD_TYPE_OCULUS_DK1
+    - name: BROADCAST_UPLOAD_RESULT_DISCONNECT
       type: number
       desc: 21
-    - name: EVRHMD_TYPE_OCULUS_DK2
+    - name: BROADCAST_UPLOAD_RESULT_VIDEO_INIT_FAILED
       type: number
       desc: 22
-    - name: EVRHMD_TYPE_OCULUS_RIFT
+    - name: BROADCAST_UPLOAD_RESULT_AUDIO_INIT_FAILED
       type: number
       desc: 23
-    - name: EVRHMD_TYPE_OCULUS_UNKNOWN
+    - name: MARKET_NOT_ALLOWED_REASON_NONE
       type: number
-      desc: 40
-    - name: EVRHMD_TYPE_ACER_UNKNOWN
+      desc: 0
+    - name: MARKET_NOT_ALLOWED_REASON_TEMPORARY_FAILURE
       type: number
-      desc: 50
-    - name: EVRHMD_TYPE_ACER_WINDOWS_MR
+      desc: 1
+    - name: MARKET_NOT_ALLOWED_REASON_ACCOUNT_DISABLED
       type: number
-      desc: 51
-    - name: EVRHMD_TYPE_DELL_UNKNOWN
+      desc: 2
+    - name: MARKET_NOT_ALLOWED_REASON_ACCOUNT_LOCKED_DOWN
       type: number
-      desc: 60
-    - name: EVRHMD_TYPE_DELL_VISOR
+      desc: 4
+    - name: MARKET_NOT_ALLOWED_REASON_ACCOUNT_LIMITED
       type: number
-      desc: 61
-    - name: EVRHMD_TYPE_LENOVO_UNKNOWN
+      desc: 8
+    - name: MARKET_NOT_ALLOWED_REASON_TRADE_BANNED
       type: number
-      desc: 70
-    - name: EVRHMD_TYPE_LENOVO_EXPLORER
+      desc: 16
+    - name: MARKET_NOT_ALLOWED_REASON_ACCOUNT_NOT_TRUSTED
       type: number
-      desc: 71
-    - name: EVRHMD_TYPE_HP_UNKNOWN
+      desc: 32
+    - name: MARKET_NOT_ALLOWED_REASON_STEAM_GUARD_NOT_ENABLED
       type: number
-      desc: 80
-    - name: EVRHMD_TYPE_HP_WINDOWS_MR
+      desc: 64
+    - name: MARKET_NOT_ALLOWED_REASON_STEAM_GUARD_ONLY_RECENTLY_ENABLED
       type: number
-      desc: 81
-    - name: EVRHMD_TYPE_SAMSUNG_UNKNOWN
+      desc: 128
+    - name: MARKET_NOT_ALLOWED_REASON_RECENT_PASSWORD_RESET
       type: number
-      desc: 90
-    - name: EVRHMD_TYPE_SAMSUNG_ODYSSEY
+      desc: 256
+    - name: MARKET_NOT_ALLOWED_REASON_NEW_PAYMENT_METHOD
       type: number
-      desc: 91
-    - name: EVRHMD_TYPE_UNANNOUNCED_UNKNOWN
+      desc: 512
+    - name: MARKET_NOT_ALLOWED_REASON_INVALID_COOKIE
       type: number
-      desc: 100
-    - name: EVRHMD_TYPE_UNANNOUNCED_WINDOWS_MR
+      desc: 1024
+    - name: MARKET_NOT_ALLOWED_REASON_USING_NEW_DEVICE
       type: number
-      desc: 101
+      desc: 2048
+    - name: MARKET_NOT_ALLOWED_REASON_RECENT_SELF_REFUND
+      type: number
+      desc: 4096
+    - name: MARKET_NOT_ALLOWED_REASON_NEW_PAYMENT_METHOD_CANNOT_BE_VERIFIED
+      type: number
+      desc: 8192
+    - name: MARKET_NOT_ALLOWED_REASON_NO_RECENT_PURCHASES
+      type: number
+      desc: 16384
+    - name: MARKET_NOT_ALLOWED_REASON_ACCEPTED_WALLET_GIFT
+      type: number
+      desc: 32768
+    - name: DURATION_CONTROL_PROGRESS_FULL
+      type: number
+      desc: 0
+    - name: DURATION_CONTROL_PROGRESS_HALF
+      type: number
+      desc: 1
+    - name: DURATION_CONTROL_PROGRESS_NONE
+      type: number
+      desc: 2
+    - name: DURATION_CONTROL_EXIT_SOON_3H
+      type: number
+      desc: 3
+    - name: DURATION_CONTROL_EXIT_SOON_5H
+      type: number
+      desc: 4
+    - name: DURATION_CONTROL_EXIT_SOON_NIGHT
+      type: number
+      desc: 5
+    - name: DURATION_CONTROL_NOTIFICATION_NONE
+      type: number
+      desc: 0
+    - name: DURATION_CONTROL_NOTIFICATION_1_HOUR
+      type: number
+      desc: 1
+    - name: DURATION_CONTROL_NOTIFICATION_3_HOURS
+      type: number
+      desc: 2
+    - name: DURATION_CONTROL_NOTIFICATION_HALF_PROGRESS
+      type: number
+      desc: 3
+    - name: DURATION_CONTROL_NOTIFICATION_NO_PROGRESS
+      type: number
+      desc: 4
+    - name: DURATION_CONTROL_NOTIFICATION_EXIT_SOON_3H
+      type: number
+      desc: 5
+    - name: DURATION_CONTROL_NOTIFICATION_EXIT_SOON_5H
+      type: number
+      desc: 6
+    - name: DURATION_CONTROL_NOTIFICATION_EXIT_SOON_NIGHT
+      type: number
+      desc: 7
+    - name: DURATION_CONTROL_ONLINE_STATE_INVALID
+      type: number
+      desc: 0
+    - name: DURATION_CONTROL_ONLINE_STATE_OFFLINE
+      type: number
+      desc: 1
+    - name: DURATION_CONTROL_ONLINE_STATE_ONLINE
+      type: number
+      desc: 2
+    - name: DURATION_CONTROL_ONLINE_STATE_ONLINE_HIGH_PRI
+      type: number
+      desc: 3
+    - name: GAME_SEARCH_ERROR_CODE_OK
+      type: number
+      desc: 1
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_SEARCH_ALREADY_IN_PROGRESS
+      type: number
+      desc: 2
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_NO_SEARCH_IN_PROGRESS
+      type: number
+      desc: 3
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_NOT_LOBBY_LEADER
+      type: number
+      desc: 4
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_NO_HOST_AVAILABLE
+      type: number
+      desc: 5
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_SEARCH_PARAMS_INVALID
+      type: number
+      desc: 6
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_OFFLINE
+      type: number
+      desc: 7
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_NOT_AUTHORIZED
+      type: number
+      desc: 8
+    - name: GAME_SEARCH_ERROR_CODE_FAILED_UNKNOWN_ERROR
+      type: number
+      desc: 9
+    - name: PLAYER_RESULT_FAILED_TO_CONNECT
+      type: number
+      desc: 1
+    - name: PLAYER_RESULT_ABANDONED
+      type: number
+      desc: 2
+    - name: PLAYER_RESULT_KICKED
+      type: number
+      desc: 3
+    - name: PLAYER_RESULT_INCOMPLETE
+      type: number
+      desc: 4
+    - name: PLAYER_RESULT_COMPLETED
+      type: number
+      desc: 5
+    - name: STEAM_I_PV6_CONNECTIVITY_PROTOCOL_INVALID
+      type: number
+      desc: 0
+    - name: STEAM_I_PV6_CONNECTIVITY_PROTOCOL_HTTP
+      type: number
+      desc: 1
+    - name: STEAM_I_PV6_CONNECTIVITY_PROTOCOL_UDP
+      type: number
+      desc: 2
+    - name: STEAM_I_PV6_CONNECTIVITY_STATE_UNKNOWN
+      type: number
+      desc: 0
+    - name: STEAM_I_PV6_CONNECTIVITY_STATE_GOOD
+      type: number
+      desc: 1
+    - name: STEAM_I_PV6_CONNECTIVITY_STATE_BAD
+      type: number
+      desc: 2
     - name: FRIEND_RELATIONSHIP_NONE
       type: number
       desc: 0
@@ -6354,9 +7041,12 @@
     - name: PERSONA_STATE_LOOKING_TO_PLAY
       type: number
       desc: 6
-    - name: PERSONA_STATE_MAX
+    - name: PERSONA_STATE_INVISIBLE
       type: number
       desc: 7
+    - name: PERSONA_STATE_MAX
+      type: number
+      desc: 8
     - name: FRIEND_FLAG_NONE
       type: number
       desc: 0
@@ -6426,6 +7116,63 @@
     - name: OVERLAY_TO_STORE_FLAG_ADD_TO_CART_AND_SHOW
       type: number
       desc: 2
+    - name: ACTIVATE_GAME_OVERLAY_TO_WEB_PAGE_MODE_DEFAULT
+      type: number
+      desc: 0
+    - name: ACTIVATE_GAME_OVERLAY_TO_WEB_PAGE_MODE_MODAL
+      type: number
+      desc: 1
+    - name: COMMUNITY_PROFILE_ITEM_TYPE_ANIMATED_AVATAR
+      type: number
+      desc: 0
+    - name: COMMUNITY_PROFILE_ITEM_TYPE_AVATAR_FRAME
+      type: number
+      desc: 1
+    - name: COMMUNITY_PROFILE_ITEM_TYPE_PROFILE_MODIFIER
+      type: number
+      desc: 2
+    - name: COMMUNITY_PROFILE_ITEM_TYPE_PROFILE_BACKGROUND
+      type: number
+      desc: 3
+    - name: COMMUNITY_PROFILE_ITEM_TYPE_MINI_PROFILE_BACKGROUND
+      type: number
+      desc: 4
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_IMAGE_SMALL
+      type: number
+      desc: 0
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_IMAGE_LARGE
+      type: number
+      desc: 1
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_INTERNAL_NAME
+      type: number
+      desc: 2
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_TITLE
+      type: number
+      desc: 3
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_DESCRIPTION
+      type: number
+      desc: 4
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_APP_ID
+      type: number
+      desc: 5
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_TYPE_ID
+      type: number
+      desc: 6
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_CLASS
+      type: number
+      desc: 7
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_WEB_M
+      type: number
+      desc: 8
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_MP4
+      type: number
+      desc: 9
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_WEB_M_SMALL
+      type: number
+      desc: 10
+    - name: COMMUNITY_PROFILE_ITEM_PROPERTY_MOVIE_MP4_SMALL
+      type: number
+      desc: 11
     - name: PERSONA_CHANGE_NAME
       type: number
       desc: 1
@@ -6459,7 +7206,7 @@
     - name: PERSONA_CHANGE_NAME_FIRST_SET
       type: number
       desc: 1024
-    - name: PERSONA_CHANGE_FACEBOOK_INFO
+    - name: PERSONA_CHANGE_BROADCAST
       type: number
       desc: 2048
     - name: PERSONA_CHANGE_NICKNAME
@@ -6468,6 +7215,9 @@
     - name: PERSONA_CHANGE_STEAM_LEVEL
       type: number
       desc: 8192
+    - name: PERSONA_CHANGE_RICH_PRESENCE
+      type: number
+      desc: 16384
     - name: STEAM_API_CALL_FAILURE_NONE
       type: number
       desc: -1
@@ -6495,6 +7245,30 @@
     - name: GAMEPAD_TEXT_INPUT_LINE_MODE_MULTIPLE_LINES
       type: number
       desc: 1
+    - name: FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_SINGLE_LINE
+      type: number
+      desc: 0
+    - name: FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_MULTIPLE_LINES
+      type: number
+      desc: 1
+    - name: FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_EMAIL
+      type: number
+      desc: 2
+    - name: FLOATING_GAMEPAD_TEXT_INPUT_MODE_MODE_NUMERIC
+      type: number
+      desc: 3
+    - name: TEXT_FILTERING_CONTEXT_UNKNOWN
+      type: number
+      desc: 0
+    - name: TEXT_FILTERING_CONTEXT_GAME_CONTENT
+      type: number
+      desc: 1
+    - name: TEXT_FILTERING_CONTEXT_CHAT
+      type: number
+      desc: 2
+    - name: TEXT_FILTERING_CONTEXT_NAME
+      type: number
+      desc: 3
     - name: CHECK_FILE_SIGNATURE_INVALID_SIGNATURE
       type: number
       desc: 0
@@ -6531,6 +7305,9 @@
     - name: LOBBY_TYPE_INVISIBLE
       type: number
       desc: 3
+    - name: LOBBY_TYPE_PRIVATE_UNIQUE
+      type: number
+      desc: 4
     - name: LOBBY_COMPARISON_EQUAL_TO_OR_LESS_THAN
       type: number
       desc: -2
@@ -6576,6 +7353,30 @@
     - name: CHAT_MEMBER_STATE_CHANGE_BANNED
       type: number
       desc: 16
+    - name: STEAM_PARTY_BEACON_LOCATION_TYPE_INVALID
+      type: number
+      desc: 0
+    - name: STEAM_PARTY_BEACON_LOCATION_TYPE_CHAT_GROUP
+      type: number
+      desc: 1
+    - name: STEAM_PARTY_BEACON_LOCATION_TYPE_MAX
+      type: number
+      desc: 2
+    - name: STEAM_PARTY_BEACON_LOCATION_DATA_INVALID
+      type: number
+      desc: 0
+    - name: STEAM_PARTY_BEACON_LOCATION_DATA_NAME
+      type: number
+      desc: 1
+    - name: STEAM_PARTY_BEACON_LOCATION_DATA_ICON_URL_SMALL
+      type: number
+      desc: 2
+    - name: STEAM_PARTY_BEACON_LOCATION_DATA_ICON_URL_MEDIUM
+      type: number
+      desc: 3
+    - name: STEAM_PARTY_BEACON_LOCATION_DATA_ICON_URL_LARGE
+      type: number
+      desc: 4
     - name: REMOTE_STORAGE_PLATFORM_NONE
       type: number
       desc: 0
@@ -6591,9 +7392,15 @@
     - name: REMOTE_STORAGE_PLATFORM_LINUX
       type: number
       desc: 8
-    - name: REMOTE_STORAGE_PLATFORM_RESERVED2
+    - name: REMOTE_STORAGE_PLATFORM_SWITCH
       type: number
       desc: 16
+    - name: REMOTE_STORAGE_PLATFORM_ANDROID
+      type: number
+      desc: 32
+    - name: REMOTE_STORAGE_PLATFORM_IOS
+      type: number
+      desc: 64
     - name: REMOTE_STORAGE_PLATFORM_ALL
       type: number
       desc: -1
@@ -6606,6 +7413,9 @@
     - name: REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_PRIVATE
       type: number
       desc: 2
+    - name: REMOTE_STORAGE_PUBLISHED_FILE_VISIBILITY_UNLISTED
+      type: number
+      desc: 3
     - name: WORKSHOP_FILE_TYPE_FIRST
       type: number
       desc: 0
@@ -6660,6 +7470,51 @@
     - name: WORKSHOP_FILE_TYPE_MAX
       type: number
       desc: 16
+    - name: WORKSHOP_VOTE_UNVOTED
+      type: number
+      desc: 0
+    - name: WORKSHOP_VOTE_FOR
+      type: number
+      desc: 1
+    - name: WORKSHOP_VOTE_AGAINST
+      type: number
+      desc: 2
+    - name: WORKSHOP_VOTE_LATER
+      type: number
+      desc: 3
+    - name: WORKSHOP_FILE_ACTION_PLAYED
+      type: number
+      desc: 0
+    - name: WORKSHOP_FILE_ACTION_COMPLETED
+      type: number
+      desc: 1
+    - name: WORKSHOP_ENUMERATION_TYPE_RANKED_BY_VOTE
+      type: number
+      desc: 0
+    - name: WORKSHOP_ENUMERATION_TYPE_RECENT
+      type: number
+      desc: 1
+    - name: WORKSHOP_ENUMERATION_TYPE_TRENDING
+      type: number
+      desc: 2
+    - name: WORKSHOP_ENUMERATION_TYPE_FAVORITES_OF_FRIENDS
+      type: number
+      desc: 3
+    - name: WORKSHOP_ENUMERATION_TYPE_VOTED_BY_FRIENDS
+      type: number
+      desc: 4
+    - name: WORKSHOP_ENUMERATION_TYPE_CONTENT_BY_FRIENDS
+      type: number
+      desc: 5
+    - name: WORKSHOP_ENUMERATION_TYPE_RECENT_FROM_FOLLOWED_USERS
+      type: number
+      desc: 6
+    - name: WORKSHOP_VIDEO_PROVIDER_NONE
+      type: number
+      desc: 0
+    - name: WORKSHOP_VIDEO_PROVIDER_YOUTUBE
+      type: number
+      desc: 1
     - name: UGC_READ_CONTINUE_READING_UNTIL_FINISHED
       type: number
       desc: 0
@@ -6667,6 +7522,24 @@
       type: number
       desc: 1
     - name: UGC_READ_CLOSE
+      type: number
+      desc: 2
+    - name: REMOTE_STORAGE_LOCAL_FILE_CHANGE_INVALID
+      type: number
+      desc: 0
+    - name: REMOTE_STORAGE_LOCAL_FILE_CHANGE_FILE_UPDATED
+      type: number
+      desc: 1
+    - name: REMOTE_STORAGE_LOCAL_FILE_CHANGE_FILE_DELETED
+      type: number
+      desc: 2
+    - name: REMOTE_STORAGE_FILE_PATH_TYPE_INVALID
+      type: number
+      desc: 0
+    - name: REMOTE_STORAGE_FILE_PATH_TYPE_ABSOLUTE
+      type: number
+      desc: 1
+    - name: REMOTE_STORAGE_FILE_PATH_TYPE_API_FILENAME
       type: number
       desc: 2
     - name: LEADERBOARD_DATA_REQUEST_GLOBAL
@@ -6729,18 +7602,18 @@
     - name: P2P_SESSION_ERROR_NONE
       type: number
       desc: 0
-    - name: P2P_SESSION_ERROR_NOT_RUNNING_APP
-      type: number
-      desc: 1
     - name: P2P_SESSION_ERROR_NO_RIGHTS_TO_APP
       type: number
       desc: 2
-    - name: P2P_SESSION_ERROR_DESTINATION_NOT_LOGGED_IN
-      type: number
-      desc: 3
     - name: P2P_SESSION_ERROR_TIMEOUT
       type: number
       desc: 4
+    - name: P2P_SESSION_ERROR_NOT_RUNNING_APP_DELETED
+      type: number
+      desc: 1
+    - name: P2P_SESSION_ERROR_DESTINATION_NOT_LOGGED_IN_DELETED
+      type: number
+      desc: 3
     - name: P2P_SESSION_ERROR_MAX
       type: number
       desc: 5
@@ -6963,6 +7836,9 @@
     - name: HTTP_STATUS_CODE429_TOO_MANY_REQUESTS
       type: number
       desc: 429
+    - name: HTTP_STATUS_CODE444_CONNECTION_CLOSED
+      type: number
+      desc: 444
     - name: HTTP_STATUS_CODE500_INTERNAL_SERVER_ERROR
       type: number
       desc: 500
@@ -6984,108 +7860,1497 @@
     - name: HTTP_STATUS_CODE5XX_UNKNOWN
       type: number
       desc: 599
+    - name: INPUT_SOURCE_MODE_NONE
+      type: number
+      desc: 0
+    - name: INPUT_SOURCE_MODE_DPAD
+      type: number
+      desc: 1
+    - name: INPUT_SOURCE_MODE_BUTTONS
+      type: number
+      desc: 2
+    - name: INPUT_SOURCE_MODE_FOUR_BUTTONS
+      type: number
+      desc: 3
+    - name: INPUT_SOURCE_MODE_ABSOLUTE_MOUSE
+      type: number
+      desc: 4
+    - name: INPUT_SOURCE_MODE_RELATIVE_MOUSE
+      type: number
+      desc: 5
+    - name: INPUT_SOURCE_MODE_JOYSTICK_MOVE
+      type: number
+      desc: 6
+    - name: INPUT_SOURCE_MODE_JOYSTICK_MOUSE
+      type: number
+      desc: 7
+    - name: INPUT_SOURCE_MODE_JOYSTICK_CAMERA
+      type: number
+      desc: 8
+    - name: INPUT_SOURCE_MODE_SCROLL_WHEEL
+      type: number
+      desc: 9
+    - name: INPUT_SOURCE_MODE_TRIGGER
+      type: number
+      desc: 10
+    - name: INPUT_SOURCE_MODE_TOUCH_MENU
+      type: number
+      desc: 11
+    - name: INPUT_SOURCE_MODE_MOUSE_JOYSTICK
+      type: number
+      desc: 12
+    - name: INPUT_SOURCE_MODE_MOUSE_REGION
+      type: number
+      desc: 13
+    - name: INPUT_SOURCE_MODE_RADIAL_MENU
+      type: number
+      desc: 14
+    - name: INPUT_SOURCE_MODE_SINGLE_BUTTON
+      type: number
+      desc: 15
+    - name: INPUT_SOURCE_MODE_SWITCHES
+      type: number
+      desc: 16
+    - name: INPUT_ACTION_ORIGIN_NONE
+      type: number
+      desc: 0
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_A
+      type: number
+      desc: 1
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_B
+      type: number
+      desc: 2
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_X
+      type: number
+      desc: 3
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_Y
+      type: number
+      desc: 4
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_BUMPER
+      type: number
+      desc: 5
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_BUMPER
+      type: number
+      desc: 6
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_GRIP
+      type: number
+      desc: 7
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_GRIP
+      type: number
+      desc: 8
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_START
+      type: number
+      desc: 9
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_BACK
+      type: number
+      desc: 10
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_TOUCH
+      type: number
+      desc: 11
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_SWIPE
+      type: number
+      desc: 12
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_CLICK
+      type: number
+      desc: 13
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_NORTH
+      type: number
+      desc: 14
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 15
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_WEST
+      type: number
+      desc: 16
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_PAD_D_PAD_EAST
+      type: number
+      desc: 17
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_TOUCH
+      type: number
+      desc: 18
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_SWIPE
+      type: number
+      desc: 19
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_CLICK
+      type: number
+      desc: 20
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_NORTH
+      type: number
+      desc: 21
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 22
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_WEST
+      type: number
+      desc: 23
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_PAD_D_PAD_EAST
+      type: number
+      desc: 24
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_TRIGGER_PULL
+      type: number
+      desc: 25
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 26
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 27
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 28
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_MOVE
+      type: number
+      desc: 29
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_CLICK
+      type: number
+      desc: 30
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 31
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 32
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 33
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 34
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_MOVE
+      type: number
+      desc: 35
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_PITCH
+      type: number
+      desc: 36
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_YAW
+      type: number
+      desc: 37
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_GYRO_ROLL
+      type: number
+      desc: 38
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED0
+      type: number
+      desc: 39
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED1
+      type: number
+      desc: 40
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED2
+      type: number
+      desc: 41
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED3
+      type: number
+      desc: 42
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED4
+      type: number
+      desc: 43
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED5
+      type: number
+      desc: 44
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED6
+      type: number
+      desc: 45
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED7
+      type: number
+      desc: 46
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED8
+      type: number
+      desc: 47
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED9
+      type: number
+      desc: 48
+    - name: INPUT_ACTION_ORIGIN_STEAM_CONTROLLER_RESERVED10
+      type: number
+      desc: 49
+    - name: INPUT_ACTION_ORIGIN_PS4_X
+      type: number
+      desc: 50
+    - name: INPUT_ACTION_ORIGIN_PS4_CIRCLE
+      type: number
+      desc: 51
+    - name: INPUT_ACTION_ORIGIN_PS4_TRIANGLE
+      type: number
+      desc: 52
+    - name: INPUT_ACTION_ORIGIN_PS4_SQUARE
+      type: number
+      desc: 53
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_BUMPER
+      type: number
+      desc: 54
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_BUMPER
+      type: number
+      desc: 55
+    - name: INPUT_ACTION_ORIGIN_PS4_OPTIONS
+      type: number
+      desc: 56
+    - name: INPUT_ACTION_ORIGIN_PS4_SHARE
+      type: number
+      desc: 57
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_TOUCH
+      type: number
+      desc: 58
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_SWIPE
+      type: number
+      desc: 59
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_CLICK
+      type: number
+      desc: 60
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_NORTH
+      type: number
+      desc: 61
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 62
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_WEST
+      type: number
+      desc: 63
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_PAD_D_PAD_EAST
+      type: number
+      desc: 64
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_TOUCH
+      type: number
+      desc: 65
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_SWIPE
+      type: number
+      desc: 66
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_CLICK
+      type: number
+      desc: 67
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_NORTH
+      type: number
+      desc: 68
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 69
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_WEST
+      type: number
+      desc: 70
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_PAD_D_PAD_EAST
+      type: number
+      desc: 71
+    - name: INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_TOUCH
+      type: number
+      desc: 72
+    - name: INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_SWIPE
+      type: number
+      desc: 73
+    - name: INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_CLICK
+      type: number
+      desc: 74
+    - name: INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_NORTH
+      type: number
+      desc: 75
+    - name: INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_SOUTH
+      type: number
+      desc: 76
+    - name: INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_WEST
+      type: number
+      desc: 77
+    - name: INPUT_ACTION_ORIGIN_PS4_CENTER_PAD_D_PAD_EAST
+      type: number
+      desc: 78
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_TRIGGER_PULL
+      type: number
+      desc: 79
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 80
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 81
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 82
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_MOVE
+      type: number
+      desc: 83
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_CLICK
+      type: number
+      desc: 84
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 85
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 86
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 87
+    - name: INPUT_ACTION_ORIGIN_PS4_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 88
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_MOVE
+      type: number
+      desc: 89
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_CLICK
+      type: number
+      desc: 90
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 91
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 92
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 93
+    - name: INPUT_ACTION_ORIGIN_PS4_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 94
+    - name: INPUT_ACTION_ORIGIN_PS4_D_PAD_NORTH
+      type: number
+      desc: 95
+    - name: INPUT_ACTION_ORIGIN_PS4_D_PAD_SOUTH
+      type: number
+      desc: 96
+    - name: INPUT_ACTION_ORIGIN_PS4_D_PAD_WEST
+      type: number
+      desc: 97
+    - name: INPUT_ACTION_ORIGIN_PS4_D_PAD_EAST
+      type: number
+      desc: 98
+    - name: INPUT_ACTION_ORIGIN_PS4_GYRO_MOVE
+      type: number
+      desc: 99
+    - name: INPUT_ACTION_ORIGIN_PS4_GYRO_PITCH
+      type: number
+      desc: 100
+    - name: INPUT_ACTION_ORIGIN_PS4_GYRO_YAW
+      type: number
+      desc: 101
+    - name: INPUT_ACTION_ORIGIN_PS4_GYRO_ROLL
+      type: number
+      desc: 102
+    - name: INPUT_ACTION_ORIGIN_PS4_D_PAD_MOVE
+      type: number
+      desc: 103
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED1
+      type: number
+      desc: 104
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED2
+      type: number
+      desc: 105
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED3
+      type: number
+      desc: 106
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED4
+      type: number
+      desc: 107
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED5
+      type: number
+      desc: 108
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED6
+      type: number
+      desc: 109
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED7
+      type: number
+      desc: 110
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED8
+      type: number
+      desc: 111
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED9
+      type: number
+      desc: 112
+    - name: INPUT_ACTION_ORIGIN_PS4_RESERVED10
+      type: number
+      desc: 113
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_A
+      type: number
+      desc: 114
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_B
+      type: number
+      desc: 115
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_X
+      type: number
+      desc: 116
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_Y
+      type: number
+      desc: 117
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_BUMPER
+      type: number
+      desc: 118
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_BUMPER
+      type: number
+      desc: 119
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_MENU
+      type: number
+      desc: 120
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_VIEW
+      type: number
+      desc: 121
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_TRIGGER_PULL
+      type: number
+      desc: 122
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 123
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 124
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 125
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_MOVE
+      type: number
+      desc: 126
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_CLICK
+      type: number
+      desc: 127
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 128
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 129
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 130
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 131
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_MOVE
+      type: number
+      desc: 132
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_CLICK
+      type: number
+      desc: 133
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 134
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 135
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 136
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 137
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_NORTH
+      type: number
+      desc: 138
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_SOUTH
+      type: number
+      desc: 139
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_WEST
+      type: number
+      desc: 140
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_EAST
+      type: number
+      desc: 141
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_D_PAD_MOVE
+      type: number
+      desc: 142
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_LOWER
+      type: number
+      desc: 143
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_UPPER
+      type: number
+      desc: 144
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_LOWER
+      type: number
+      desc: 145
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_UPPER
+      type: number
+      desc: 146
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_SHARE
+      type: number
+      desc: 147
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED6
+      type: number
+      desc: 148
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED7
+      type: number
+      desc: 149
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED8
+      type: number
+      desc: 150
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED9
+      type: number
+      desc: 151
+    - name: INPUT_ACTION_ORIGIN_X_BOX_ONE_RESERVED10
+      type: number
+      desc: 152
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_A
+      type: number
+      desc: 153
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_B
+      type: number
+      desc: 154
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_X
+      type: number
+      desc: 155
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_Y
+      type: number
+      desc: 156
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_BUMPER
+      type: number
+      desc: 157
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_BUMPER
+      type: number
+      desc: 158
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_START
+      type: number
+      desc: 159
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_BACK
+      type: number
+      desc: 160
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_TRIGGER_PULL
+      type: number
+      desc: 161
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 162
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 163
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 164
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_MOVE
+      type: number
+      desc: 165
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_CLICK
+      type: number
+      desc: 166
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 167
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 168
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 169
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 170
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_MOVE
+      type: number
+      desc: 171
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_CLICK
+      type: number
+      desc: 172
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 173
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 174
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 175
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 176
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_NORTH
+      type: number
+      desc: 177
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_SOUTH
+      type: number
+      desc: 178
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_WEST
+      type: number
+      desc: 179
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_EAST
+      type: number
+      desc: 180
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_D_PAD_MOVE
+      type: number
+      desc: 181
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED1
+      type: number
+      desc: 182
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED2
+      type: number
+      desc: 183
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED3
+      type: number
+      desc: 184
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED4
+      type: number
+      desc: 185
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED5
+      type: number
+      desc: 186
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED6
+      type: number
+      desc: 187
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED7
+      type: number
+      desc: 188
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED8
+      type: number
+      desc: 189
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED9
+      type: number
+      desc: 190
+    - name: INPUT_ACTION_ORIGIN_X_BOX360_RESERVED10
+      type: number
+      desc: 191
+    - name: INPUT_ACTION_ORIGIN_SWITCH_A
+      type: number
+      desc: 192
+    - name: INPUT_ACTION_ORIGIN_SWITCH_B
+      type: number
+      desc: 193
+    - name: INPUT_ACTION_ORIGIN_SWITCH_X
+      type: number
+      desc: 194
+    - name: INPUT_ACTION_ORIGIN_SWITCH_Y
+      type: number
+      desc: 195
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_BUMPER
+      type: number
+      desc: 196
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_BUMPER
+      type: number
+      desc: 197
+    - name: INPUT_ACTION_ORIGIN_SWITCH_PLUS
+      type: number
+      desc: 198
+    - name: INPUT_ACTION_ORIGIN_SWITCH_MINUS
+      type: number
+      desc: 199
+    - name: INPUT_ACTION_ORIGIN_SWITCH_CAPTURE
+      type: number
+      desc: 200
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_PULL
+      type: number
+      desc: 201
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 202
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 203
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 204
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_MOVE
+      type: number
+      desc: 205
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_CLICK
+      type: number
+      desc: 206
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 207
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 208
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 209
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 210
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_MOVE
+      type: number
+      desc: 211
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_CLICK
+      type: number
+      desc: 212
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 213
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 214
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 215
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 216
+    - name: INPUT_ACTION_ORIGIN_SWITCH_D_PAD_NORTH
+      type: number
+      desc: 217
+    - name: INPUT_ACTION_ORIGIN_SWITCH_D_PAD_SOUTH
+      type: number
+      desc: 218
+    - name: INPUT_ACTION_ORIGIN_SWITCH_D_PAD_WEST
+      type: number
+      desc: 219
+    - name: INPUT_ACTION_ORIGIN_SWITCH_D_PAD_EAST
+      type: number
+      desc: 220
+    - name: INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_MOVE
+      type: number
+      desc: 221
+    - name: INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_PITCH
+      type: number
+      desc: 222
+    - name: INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_YAW
+      type: number
+      desc: 223
+    - name: INPUT_ACTION_ORIGIN_SWITCH_PRO_GYRO_ROLL
+      type: number
+      desc: 224
+    - name: INPUT_ACTION_ORIGIN_SWITCH_D_PAD_MOVE
+      type: number
+      desc: 225
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED1
+      type: number
+      desc: 226
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED2
+      type: number
+      desc: 227
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED3
+      type: number
+      desc: 228
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED4
+      type: number
+      desc: 229
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED5
+      type: number
+      desc: 230
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED6
+      type: number
+      desc: 231
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED7
+      type: number
+      desc: 232
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED8
+      type: number
+      desc: 233
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED9
+      type: number
+      desc: 234
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED10
+      type: number
+      desc: 235
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_MOVE
+      type: number
+      desc: 236
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_PITCH
+      type: number
+      desc: 237
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_YAW
+      type: number
+      desc: 238
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_ROLL
+      type: number
+      desc: 239
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_MOVE
+      type: number
+      desc: 240
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_PITCH
+      type: number
+      desc: 241
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_YAW
+      type: number
+      desc: 242
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_GYRO_ROLL
+      type: number
+      desc: 243
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_GRIP_LOWER
+      type: number
+      desc: 244
+    - name: INPUT_ACTION_ORIGIN_SWITCH_LEFT_GRIP_UPPER
+      type: number
+      desc: 245
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_LOWER
+      type: number
+      desc: 246
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_UPPER
+      type: number
+      desc: 247
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED11
+      type: number
+      desc: 248
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED12
+      type: number
+      desc: 249
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED13
+      type: number
+      desc: 250
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED14
+      type: number
+      desc: 251
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED15
+      type: number
+      desc: 252
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED16
+      type: number
+      desc: 253
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED17
+      type: number
+      desc: 254
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED18
+      type: number
+      desc: 255
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED19
+      type: number
+      desc: 256
+    - name: INPUT_ACTION_ORIGIN_SWITCH_RESERVED20
+      type: number
+      desc: 257
+    - name: INPUT_ACTION_ORIGIN_PS5_X
+      type: number
+      desc: 258
+    - name: INPUT_ACTION_ORIGIN_PS5_CIRCLE
+      type: number
+      desc: 259
+    - name: INPUT_ACTION_ORIGIN_PS5_TRIANGLE
+      type: number
+      desc: 260
+    - name: INPUT_ACTION_ORIGIN_PS5_SQUARE
+      type: number
+      desc: 261
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_BUMPER
+      type: number
+      desc: 262
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_BUMPER
+      type: number
+      desc: 263
+    - name: INPUT_ACTION_ORIGIN_PS5_OPTION
+      type: number
+      desc: 264
+    - name: INPUT_ACTION_ORIGIN_PS5_CREATE
+      type: number
+      desc: 265
+    - name: INPUT_ACTION_ORIGIN_PS5_MUTE
+      type: number
+      desc: 266
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_TOUCH
+      type: number
+      desc: 267
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_SWIPE
+      type: number
+      desc: 268
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_CLICK
+      type: number
+      desc: 269
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_NORTH
+      type: number
+      desc: 270
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 271
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_WEST
+      type: number
+      desc: 272
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_EAST
+      type: number
+      desc: 273
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_TOUCH
+      type: number
+      desc: 274
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_SWIPE
+      type: number
+      desc: 275
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_CLICK
+      type: number
+      desc: 276
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_NORTH
+      type: number
+      desc: 277
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 278
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_WEST
+      type: number
+      desc: 279
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_EAST
+      type: number
+      desc: 280
+    - name: INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_TOUCH
+      type: number
+      desc: 281
+    - name: INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_SWIPE
+      type: number
+      desc: 282
+    - name: INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_CLICK
+      type: number
+      desc: 283
+    - name: INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_NORTH
+      type: number
+      desc: 284
+    - name: INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_SOUTH
+      type: number
+      desc: 285
+    - name: INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_WEST
+      type: number
+      desc: 286
+    - name: INPUT_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_EAST
+      type: number
+      desc: 287
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_TRIGGER_PULL
+      type: number
+      desc: 288
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 289
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 290
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 291
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_MOVE
+      type: number
+      desc: 292
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_CLICK
+      type: number
+      desc: 293
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 294
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 295
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 296
+    - name: INPUT_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 297
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_MOVE
+      type: number
+      desc: 298
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_CLICK
+      type: number
+      desc: 299
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 300
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 301
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 302
+    - name: INPUT_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 303
+    - name: INPUT_ACTION_ORIGIN_PS5_D_PAD_NORTH
+      type: number
+      desc: 304
+    - name: INPUT_ACTION_ORIGIN_PS5_D_PAD_SOUTH
+      type: number
+      desc: 305
+    - name: INPUT_ACTION_ORIGIN_PS5_D_PAD_WEST
+      type: number
+      desc: 306
+    - name: INPUT_ACTION_ORIGIN_PS5_D_PAD_EAST
+      type: number
+      desc: 307
+    - name: INPUT_ACTION_ORIGIN_PS5_GYRO_MOVE
+      type: number
+      desc: 308
+    - name: INPUT_ACTION_ORIGIN_PS5_GYRO_PITCH
+      type: number
+      desc: 309
+    - name: INPUT_ACTION_ORIGIN_PS5_GYRO_YAW
+      type: number
+      desc: 310
+    - name: INPUT_ACTION_ORIGIN_PS5_GYRO_ROLL
+      type: number
+      desc: 311
+    - name: INPUT_ACTION_ORIGIN_PS5_D_PAD_MOVE
+      type: number
+      desc: 312
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED1
+      type: number
+      desc: 313
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED2
+      type: number
+      desc: 314
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED3
+      type: number
+      desc: 315
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED4
+      type: number
+      desc: 316
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED5
+      type: number
+      desc: 317
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED6
+      type: number
+      desc: 318
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED7
+      type: number
+      desc: 319
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED8
+      type: number
+      desc: 320
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED9
+      type: number
+      desc: 321
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED10
+      type: number
+      desc: 322
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED11
+      type: number
+      desc: 323
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED12
+      type: number
+      desc: 324
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED13
+      type: number
+      desc: 325
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED14
+      type: number
+      desc: 326
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED15
+      type: number
+      desc: 327
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED16
+      type: number
+      desc: 328
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED17
+      type: number
+      desc: 329
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED18
+      type: number
+      desc: 330
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED19
+      type: number
+      desc: 331
+    - name: INPUT_ACTION_ORIGIN_PS5_RESERVED20
+      type: number
+      desc: 332
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_A
+      type: number
+      desc: 333
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_B
+      type: number
+      desc: 334
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_X
+      type: number
+      desc: 335
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_Y
+      type: number
+      desc: 336
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_L1
+      type: number
+      desc: 337
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_R1
+      type: number
+      desc: 338
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_MENU
+      type: number
+      desc: 339
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_VIEW
+      type: number
+      desc: 340
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_TOUCH
+      type: number
+      desc: 341
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_SWIPE
+      type: number
+      desc: 342
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_CLICK
+      type: number
+      desc: 343
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_NORTH
+      type: number
+      desc: 344
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 345
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_WEST
+      type: number
+      desc: 346
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_EAST
+      type: number
+      desc: 347
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_TOUCH
+      type: number
+      desc: 348
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_SWIPE
+      type: number
+      desc: 349
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_CLICK
+      type: number
+      desc: 350
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_NORTH
+      type: number
+      desc: 351
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 352
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_WEST
+      type: number
+      desc: 353
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_EAST
+      type: number
+      desc: 354
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_L2_SOFT_PULL
+      type: number
+      desc: 355
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_L2
+      type: number
+      desc: 356
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_R2_SOFT_PULL
+      type: number
+      desc: 357
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_R2
+      type: number
+      desc: 358
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_MOVE
+      type: number
+      desc: 359
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_L3
+      type: number
+      desc: 360
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 361
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 362
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 363
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 364
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_TOUCH
+      type: number
+      desc: 365
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_MOVE
+      type: number
+      desc: 366
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_R3
+      type: number
+      desc: 367
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 368
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 369
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 370
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 371
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_TOUCH
+      type: number
+      desc: 372
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_L4
+      type: number
+      desc: 373
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_R4
+      type: number
+      desc: 374
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_L5
+      type: number
+      desc: 375
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_R5
+      type: number
+      desc: 376
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_MOVE
+      type: number
+      desc: 377
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_NORTH
+      type: number
+      desc: 378
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_SOUTH
+      type: number
+      desc: 379
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_WEST
+      type: number
+      desc: 380
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_D_PAD_EAST
+      type: number
+      desc: 381
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_MOVE
+      type: number
+      desc: 382
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_PITCH
+      type: number
+      desc: 383
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_YAW
+      type: number
+      desc: 384
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_GYRO_ROLL
+      type: number
+      desc: 385
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED1
+      type: number
+      desc: 386
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED2
+      type: number
+      desc: 387
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED3
+      type: number
+      desc: 388
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED4
+      type: number
+      desc: 389
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED5
+      type: number
+      desc: 390
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED6
+      type: number
+      desc: 391
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED7
+      type: number
+      desc: 392
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED8
+      type: number
+      desc: 393
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED9
+      type: number
+      desc: 394
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED10
+      type: number
+      desc: 395
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED11
+      type: number
+      desc: 396
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED12
+      type: number
+      desc: 397
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED13
+      type: number
+      desc: 398
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED14
+      type: number
+      desc: 399
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED15
+      type: number
+      desc: 400
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED16
+      type: number
+      desc: 401
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED17
+      type: number
+      desc: 402
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED18
+      type: number
+      desc: 403
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED19
+      type: number
+      desc: 404
+    - name: INPUT_ACTION_ORIGIN_STEAM_DECK_RESERVED20
+      type: number
+      desc: 405
+    - name: INPUT_ACTION_ORIGIN_COUNT
+      type: number
+      desc: 406
+    - name: INPUT_ACTION_ORIGIN_MAXIMUM_POSSIBLE_VALUE
+      type: number
+      desc: 32767
+    - name: XBOX_ORIGIN_A
+      type: number
+      desc: 0
+    - name: XBOX_ORIGIN_B
+      type: number
+      desc: 1
+    - name: XBOX_ORIGIN_X
+      type: number
+      desc: 2
+    - name: XBOX_ORIGIN_Y
+      type: number
+      desc: 3
+    - name: XBOX_ORIGIN_LEFT_BUMPER
+      type: number
+      desc: 4
+    - name: XBOX_ORIGIN_RIGHT_BUMPER
+      type: number
+      desc: 5
+    - name: XBOX_ORIGIN_MENU
+      type: number
+      desc: 6
+    - name: XBOX_ORIGIN_VIEW
+      type: number
+      desc: 7
+    - name: XBOX_ORIGIN_LEFT_TRIGGER_PULL
+      type: number
+      desc: 8
+    - name: XBOX_ORIGIN_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 9
+    - name: XBOX_ORIGIN_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 10
+    - name: XBOX_ORIGIN_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 11
+    - name: XBOX_ORIGIN_LEFT_STICK_MOVE
+      type: number
+      desc: 12
+    - name: XBOX_ORIGIN_LEFT_STICK_CLICK
+      type: number
+      desc: 13
+    - name: XBOX_ORIGIN_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 14
+    - name: XBOX_ORIGIN_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 15
+    - name: XBOX_ORIGIN_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 16
+    - name: XBOX_ORIGIN_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 17
+    - name: XBOX_ORIGIN_RIGHT_STICK_MOVE
+      type: number
+      desc: 18
+    - name: XBOX_ORIGIN_RIGHT_STICK_CLICK
+      type: number
+      desc: 19
+    - name: XBOX_ORIGIN_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 20
+    - name: XBOX_ORIGIN_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 21
+    - name: XBOX_ORIGIN_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 22
+    - name: XBOX_ORIGIN_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 23
+    - name: XBOX_ORIGIN_D_PAD_NORTH
+      type: number
+      desc: 24
+    - name: XBOX_ORIGIN_D_PAD_SOUTH
+      type: number
+      desc: 25
+    - name: XBOX_ORIGIN_D_PAD_WEST
+      type: number
+      desc: 26
+    - name: XBOX_ORIGIN_D_PAD_EAST
+      type: number
+      desc: 27
+    - name: XBOX_ORIGIN_COUNT
+      type: number
+      desc: 28
     - name: STEAM_CONTROLLER_PAD_LEFT
       type: number
       desc: 0
     - name: STEAM_CONTROLLER_PAD_RIGHT
       type: number
       desc: 1
-    - name: CONTROLLER_SOURCE_NONE
-      type: number
-      desc: 0
-    - name: CONTROLLER_SOURCE_LEFT_TRACKPAD
+    - name: CONTROLLER_HAPTIC_LOCATION_LEFT
       type: number
       desc: 1
-    - name: CONTROLLER_SOURCE_RIGHT_TRACKPAD
+    - name: CONTROLLER_HAPTIC_LOCATION_RIGHT
       type: number
       desc: 2
-    - name: CONTROLLER_SOURCE_JOYSTICK
+    - name: CONTROLLER_HAPTIC_LOCATION_BOTH
       type: number
       desc: 3
-    - name: CONTROLLER_SOURCE_ABXY
-      type: number
-      desc: 4
-    - name: CONTROLLER_SOURCE_SWITCH
-      type: number
-      desc: 5
-    - name: CONTROLLER_SOURCE_LEFT_TRIGGER
-      type: number
-      desc: 6
-    - name: CONTROLLER_SOURCE_RIGHT_TRIGGER
-      type: number
-      desc: 7
-    - name: CONTROLLER_SOURCE_GYRO
-      type: number
-      desc: 8
-    - name: CONTROLLER_SOURCE_CENTER_TRACKPAD
-      type: number
-      desc: 9
-    - name: CONTROLLER_SOURCE_RIGHT_JOYSTICK
-      type: number
-      desc: 10
-    - name: CONTROLLER_SOURCE_D_PAD
-      type: number
-      desc: 11
-    - name: CONTROLLER_SOURCE_KEY
-      type: number
-      desc: 12
-    - name: CONTROLLER_SOURCE_MOUSE
-      type: number
-      desc: 13
-    - name: CONTROLLER_SOURCE_COUNT
-      type: number
-      desc: 14
-    - name: CONTROLLER_SOURCE_MODE_NONE
+    - name: CONTROLLER_HAPTIC_TYPE_OFF
       type: number
       desc: 0
-    - name: CONTROLLER_SOURCE_MODE_DPAD
+    - name: CONTROLLER_HAPTIC_TYPE_TICK
       type: number
       desc: 1
-    - name: CONTROLLER_SOURCE_MODE_BUTTONS
+    - name: CONTROLLER_HAPTIC_TYPE_CLICK
       type: number
       desc: 2
-    - name: CONTROLLER_SOURCE_MODE_FOUR_BUTTONS
+    - name: STEAM_INPUT_TYPE_UNKNOWN
+      type: number
+      desc: 0
+    - name: STEAM_INPUT_TYPE_STEAM_CONTROLLER
+      type: number
+      desc: 1
+    - name: STEAM_INPUT_TYPE_X_BOX360_CONTROLLER
+      type: number
+      desc: 2
+    - name: STEAM_INPUT_TYPE_X_BOX_ONE_CONTROLLER
       type: number
       desc: 3
-    - name: CONTROLLER_SOURCE_MODE_ABSOLUTE_MOUSE
+    - name: STEAM_INPUT_TYPE_GENERIC_GAMEPAD
       type: number
       desc: 4
-    - name: CONTROLLER_SOURCE_MODE_RELATIVE_MOUSE
+    - name: STEAM_INPUT_TYPE_PS4_CONTROLLER
       type: number
       desc: 5
-    - name: CONTROLLER_SOURCE_MODE_JOYSTICK_MOVE
+    - name: STEAM_INPUT_TYPE_APPLE_M_FI_CONTROLLER
       type: number
       desc: 6
-    - name: CONTROLLER_SOURCE_MODE_JOYSTICK_MOUSE
+    - name: STEAM_INPUT_TYPE_ANDROID_CONTROLLER
       type: number
       desc: 7
-    - name: CONTROLLER_SOURCE_MODE_JOYSTICK_CAMERA
+    - name: STEAM_INPUT_TYPE_SWITCH_JOY_CON_PAIR
       type: number
       desc: 8
-    - name: CONTROLLER_SOURCE_MODE_SCROLL_WHEEL
+    - name: STEAM_INPUT_TYPE_SWITCH_JOY_CON_SINGLE
       type: number
       desc: 9
-    - name: CONTROLLER_SOURCE_MODE_TRIGGER
+    - name: STEAM_INPUT_TYPE_SWITCH_PRO_CONTROLLER
       type: number
       desc: 10
-    - name: CONTROLLER_SOURCE_MODE_TOUCH_MENU
+    - name: STEAM_INPUT_TYPE_MOBILE_TOUCH
       type: number
       desc: 11
-    - name: CONTROLLER_SOURCE_MODE_MOUSE_JOYSTICK
+    - name: STEAM_INPUT_TYPE_PS3_CONTROLLER
       type: number
       desc: 12
-    - name: CONTROLLER_SOURCE_MODE_MOUSE_REGION
+    - name: STEAM_INPUT_TYPE_PS5_CONTROLLER
       type: number
       desc: 13
-    - name: CONTROLLER_SOURCE_MODE_RADIAL_MENU
+    - name: STEAM_INPUT_TYPE_STEAM_DECK_CONTROLLER
       type: number
       desc: 14
-    - name: CONTROLLER_SOURCE_MODE_SINGLE_BUTTON
+    - name: STEAM_INPUT_TYPE_COUNT
       type: number
       desc: 15
-    - name: CONTROLLER_SOURCE_MODE_SWITCHES
+    - name: STEAM_INPUT_TYPE_MAXIMUM_POSSIBLE_VALUE
+      type: number
+      desc: 255
+    - name: STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_NONE
+      type: number
+      desc: 0
+    - name: STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_PLAYSTATION
+      type: number
+      desc: 1
+    - name: STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_XBOX
+      type: number
+      desc: 2
+    - name: STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_GENERIC
+      type: number
+      desc: 4
+    - name: STEAM_INPUT_CONFIGURATION_ENABLE_TYPE_SWITCH
+      type: number
+      desc: 8
+    - name: STEAM_INPUT_LED_FLAG_SET_COLOR
+      type: number
+      desc: 0
+    - name: STEAM_INPUT_LED_FLAG_RESTORE_USER_DEFAULT
+      type: number
+      desc: 1
+    - name: STEAM_INPUT_GLYPH_SIZE_SMALL
+      type: number
+      desc: 0
+    - name: STEAM_INPUT_GLYPH_SIZE_MEDIUM
+      type: number
+      desc: 1
+    - name: STEAM_INPUT_GLYPH_SIZE_LARGE
+      type: number
+      desc: 2
+    - name: STEAM_INPUT_GLYPH_SIZE_COUNT
+      type: number
+      desc: 3
+    - name: E_STEAM_INPUT_GLYPH_STYLE_KNOCKOUT
+      type: number
+      desc: 0
+    - name: E_STEAM_INPUT_GLYPH_STYLE_LIGHT
+      type: number
+      desc: 1
+    - name: E_STEAM_INPUT_GLYPH_STYLE_DARK
+      type: number
+      desc: 2
+    - name: E_STEAM_INPUT_GLYPH_STYLE_NEUTRAL_COLOR_ABXY
       type: number
       desc: 16
+    - name: E_STEAM_INPUT_GLYPH_STYLE_SOLID_ABXY
+      type: number
+      desc: 32
+    - name: E_STEAM_INPUT_ACTION_EVENT_TYPE_DIGITAL_ACTION
+      type: number
+      desc: 0
+    - name: E_STEAM_INPUT_ACTION_EVENT_TYPE_ANALOG_ACTION
+      type: number
+      desc: 1
     - name: CONTROLLER_ACTION_ORIGIN_NONE
       type: number
       desc: 0
@@ -7548,13 +9813,13 @@
     - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_BUMPER
       type: number
       desc: 153
-    - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_LOWER
       type: number
       desc: 154
-    - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_UPPER
       type: number
       desc: 155
-    - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_LEFT_GRIP_UPPER
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP_LOWER
       type: number
       desc: 156
     - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_RIGHT_GRIP_UPPER
@@ -7674,33 +9939,564 @@
     - name: CONTROLLER_ACTION_ORIGIN_STEAM_V2_GYRO_ROLL
       type: number
       desc: 195
-    - name: CONTROLLER_ACTION_ORIGIN_COUNT
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_A
       type: number
       desc: 196
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_B
+      type: number
+      desc: 197
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_X
+      type: number
+      desc: 198
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_Y
+      type: number
+      desc: 199
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_BUMPER
+      type: number
+      desc: 200
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_BUMPER
+      type: number
+      desc: 201
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_PLUS
+      type: number
+      desc: 202
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_MINUS
+      type: number
+      desc: 203
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_CAPTURE
+      type: number
+      desc: 204
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_PULL
+      type: number
+      desc: 205
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 206
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 207
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 208
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_MOVE
+      type: number
+      desc: 209
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_CLICK
+      type: number
+      desc: 210
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 211
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 212
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 213
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 214
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_MOVE
+      type: number
+      desc: 215
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_CLICK
+      type: number
+      desc: 216
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 217
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 218
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 219
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 220
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_NORTH
+      type: number
+      desc: 221
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_SOUTH
+      type: number
+      desc: 222
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_WEST
+      type: number
+      desc: 223
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_EAST
+      type: number
+      desc: 224
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_MOVE
+      type: number
+      desc: 225
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_PITCH
+      type: number
+      desc: 226
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_YAW
+      type: number
+      desc: 227
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_PRO_GYRO_ROLL
+      type: number
+      desc: 228
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_MOVE
+      type: number
+      desc: 229
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_PITCH
+      type: number
+      desc: 230
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_YAW
+      type: number
+      desc: 231
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GYRO_ROLL
+      type: number
+      desc: 232
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_MOVE
+      type: number
+      desc: 233
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_PITCH
+      type: number
+      desc: 234
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_YAW
+      type: number
+      desc: 235
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GYRO_ROLL
+      type: number
+      desc: 236
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GRIP_LOWER
+      type: number
+      desc: 237
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_LEFT_GRIP_UPPER
+      type: number
+      desc: 238
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_LOWER
+      type: number
+      desc: 239
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_RIGHT_GRIP_UPPER
+      type: number
+      desc: 240
+    - name: CONTROLLER_ACTION_ORIGIN_PS4_D_PAD_MOVE
+      type: number
+      desc: 241
+    - name: CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_D_PAD_MOVE
+      type: number
+      desc: 242
+    - name: CONTROLLER_ACTION_ORIGIN_X_BOX360_D_PAD_MOVE
+      type: number
+      desc: 243
+    - name: CONTROLLER_ACTION_ORIGIN_SWITCH_D_PAD_MOVE
+      type: number
+      desc: 244
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_X
+      type: number
+      desc: 245
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CIRCLE
+      type: number
+      desc: 246
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_TRIANGLE
+      type: number
+      desc: 247
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_SQUARE
+      type: number
+      desc: 248
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_BUMPER
+      type: number
+      desc: 249
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_BUMPER
+      type: number
+      desc: 250
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_OPTION
+      type: number
+      desc: 251
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CREATE
+      type: number
+      desc: 252
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_MUTE
+      type: number
+      desc: 253
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_TOUCH
+      type: number
+      desc: 254
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_SWIPE
+      type: number
+      desc: 255
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_CLICK
+      type: number
+      desc: 256
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_NORTH
+      type: number
+      desc: 257
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 258
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_WEST
+      type: number
+      desc: 259
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_PAD_D_PAD_EAST
+      type: number
+      desc: 260
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_TOUCH
+      type: number
+      desc: 261
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_SWIPE
+      type: number
+      desc: 262
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_CLICK
+      type: number
+      desc: 263
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_NORTH
+      type: number
+      desc: 264
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 265
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_WEST
+      type: number
+      desc: 266
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_PAD_D_PAD_EAST
+      type: number
+      desc: 267
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_TOUCH
+      type: number
+      desc: 268
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_SWIPE
+      type: number
+      desc: 269
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_CLICK
+      type: number
+      desc: 270
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_NORTH
+      type: number
+      desc: 271
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_SOUTH
+      type: number
+      desc: 272
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_WEST
+      type: number
+      desc: 273
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_CENTER_PAD_D_PAD_EAST
+      type: number
+      desc: 274
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_TRIGGER_PULL
+      type: number
+      desc: 275
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_TRIGGER_CLICK
+      type: number
+      desc: 276
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_PULL
+      type: number
+      desc: 277
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_TRIGGER_CLICK
+      type: number
+      desc: 278
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_MOVE
+      type: number
+      desc: 279
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_CLICK
+      type: number
+      desc: 280
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 281
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 282
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 283
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 284
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_MOVE
+      type: number
+      desc: 285
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_CLICK
+      type: number
+      desc: 286
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 287
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 288
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 289
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 290
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_MOVE
+      type: number
+      desc: 291
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_NORTH
+      type: number
+      desc: 292
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_SOUTH
+      type: number
+      desc: 293
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_WEST
+      type: number
+      desc: 294
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_D_PAD_EAST
+      type: number
+      desc: 295
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_GYRO_MOVE
+      type: number
+      desc: 296
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_GYRO_PITCH
+      type: number
+      desc: 297
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_GYRO_YAW
+      type: number
+      desc: 298
+    - name: CONTROLLER_ACTION_ORIGIN_PS5_GYRO_ROLL
+      type: number
+      desc: 299
+    - name: CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_LOWER
+      type: number
+      desc: 300
+    - name: CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_LEFT_GRIP_UPPER
+      type: number
+      desc: 301
+    - name: CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_LOWER
+      type: number
+      desc: 302
+    - name: CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_RIGHT_GRIP_UPPER
+      type: number
+      desc: 303
+    - name: CONTROLLER_ACTION_ORIGIN_X_BOX_ONE_SHARE
+      type: number
+      desc: 304
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_A
+      type: number
+      desc: 305
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_B
+      type: number
+      desc: 306
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_X
+      type: number
+      desc: 307
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_Y
+      type: number
+      desc: 308
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L1
+      type: number
+      desc: 309
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R1
+      type: number
+      desc: 310
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_MENU
+      type: number
+      desc: 311
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_VIEW
+      type: number
+      desc: 312
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_TOUCH
+      type: number
+      desc: 313
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_SWIPE
+      type: number
+      desc: 314
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_CLICK
+      type: number
+      desc: 315
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_NORTH
+      type: number
+      desc: 316
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 317
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_WEST
+      type: number
+      desc: 318
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_PAD_D_PAD_EAST
+      type: number
+      desc: 319
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_TOUCH
+      type: number
+      desc: 320
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_SWIPE
+      type: number
+      desc: 321
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_CLICK
+      type: number
+      desc: 322
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_NORTH
+      type: number
+      desc: 323
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_SOUTH
+      type: number
+      desc: 324
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_WEST
+      type: number
+      desc: 325
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_PAD_D_PAD_EAST
+      type: number
+      desc: 326
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L2_SOFT_PULL
+      type: number
+      desc: 327
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L2
+      type: number
+      desc: 328
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R2_SOFT_PULL
+      type: number
+      desc: 329
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R2
+      type: number
+      desc: 330
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_MOVE
+      type: number
+      desc: 331
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L3
+      type: number
+      desc: 332
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_NORTH
+      type: number
+      desc: 333
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 334
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_WEST
+      type: number
+      desc: 335
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_D_PAD_EAST
+      type: number
+      desc: 336
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_LEFT_STICK_TOUCH
+      type: number
+      desc: 337
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_MOVE
+      type: number
+      desc: 338
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R3
+      type: number
+      desc: 339
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_NORTH
+      type: number
+      desc: 340
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_SOUTH
+      type: number
+      desc: 341
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_WEST
+      type: number
+      desc: 342
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_D_PAD_EAST
+      type: number
+      desc: 343
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RIGHT_STICK_TOUCH
+      type: number
+      desc: 344
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L4
+      type: number
+      desc: 345
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R4
+      type: number
+      desc: 346
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_L5
+      type: number
+      desc: 347
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_R5
+      type: number
+      desc: 348
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_MOVE
+      type: number
+      desc: 349
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_NORTH
+      type: number
+      desc: 350
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_SOUTH
+      type: number
+      desc: 351
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_WEST
+      type: number
+      desc: 352
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_D_PAD_EAST
+      type: number
+      desc: 353
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_MOVE
+      type: number
+      desc: 354
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_PITCH
+      type: number
+      desc: 355
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_YAW
+      type: number
+      desc: 356
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_GYRO_ROLL
+      type: number
+      desc: 357
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED1
+      type: number
+      desc: 358
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED2
+      type: number
+      desc: 359
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED3
+      type: number
+      desc: 360
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED4
+      type: number
+      desc: 361
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED5
+      type: number
+      desc: 362
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED6
+      type: number
+      desc: 363
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED7
+      type: number
+      desc: 364
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED8
+      type: number
+      desc: 365
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED9
+      type: number
+      desc: 366
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED10
+      type: number
+      desc: 367
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED11
+      type: number
+      desc: 368
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED12
+      type: number
+      desc: 369
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED13
+      type: number
+      desc: 370
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED14
+      type: number
+      desc: 371
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED15
+      type: number
+      desc: 372
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED16
+      type: number
+      desc: 373
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED17
+      type: number
+      desc: 374
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED18
+      type: number
+      desc: 375
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED19
+      type: number
+      desc: 376
+    - name: CONTROLLER_ACTION_ORIGIN_STEAM_DECK_RESERVED20
+      type: number
+      desc: 377
+    - name: CONTROLLER_ACTION_ORIGIN_COUNT
+      type: number
+      desc: 378
+    - name: CONTROLLER_ACTION_ORIGIN_MAXIMUM_POSSIBLE_VALUE
+      type: number
+      desc: 32767
     - name: STEAM_CONTROLLER_LED_FLAG_SET_COLOR
       type: number
       desc: 0
     - name: STEAM_CONTROLLER_LED_FLAG_RESTORE_USER_DEFAULT
       type: number
       desc: 1
-    - name: STEAM_INPUT_TYPE_UNKNOWN
-      type: number
-      desc: 0
-    - name: STEAM_INPUT_TYPE_STEAM_CONTROLLER
-      type: number
-      desc: 1
-    - name: STEAM_INPUT_TYPE_X_BOX360_CONTROLLER
-      type: number
-      desc: 2
-    - name: STEAM_INPUT_TYPE_X_BOX_ONE_CONTROLLER
-      type: number
-      desc: 3
-    - name: STEAM_INPUT_TYPE_GENERIC_X_INPUT
-      type: number
-      desc: 4
-    - name: STEAM_INPUT_TYPE_PS4_CONTROLLER
-      type: number
-      desc: 5
     - name: UGC_MATCHING_UGC_TYPE_ITEMS
       type: number
       desc: 0
@@ -7848,6 +10644,9 @@
     - name: UGC_QUERY_RANKED_BY_LIFETIME_PLAYTIME_SESSIONS
       type: number
       desc: 18
+    - name: UGC_QUERY_RANKED_BY_LAST_UPDATED_DATE
+      type: number
+      desc: 19
     - name: ITEM_UPDATE_STATUS_INVALID
       type: number
       desc: 0
@@ -7992,6 +10791,522 @@
     - name: FEATURE_TEST
       type: number
       desc: 12
-    - name: FEATURE_MAX
+    - name: FEATURE_SITE_LICENSE
       type: number
       desc: 13
+    - name: FEATURE_MAX
+      type: number
+      desc: 14
+    - name: STEAM_DEVICE_FORM_FACTOR_UNKNOWN
+      type: number
+      desc: 0
+    - name: STEAM_DEVICE_FORM_FACTOR_PHONE
+      type: number
+      desc: 1
+    - name: STEAM_DEVICE_FORM_FACTOR_TABLET
+      type: number
+      desc: 2
+    - name: STEAM_DEVICE_FORM_FACTOR_COMPUTER
+      type: number
+      desc: 3
+    - name: STEAM_DEVICE_FORM_FACTOR_TV
+      type: number
+      desc: 4
+    - name: STEAM_NETWORKING_AVAILABILITY_CANNOT_TRY
+      type: number
+      desc: -102
+    - name: STEAM_NETWORKING_AVAILABILITY_FAILED
+      type: number
+      desc: -101
+    - name: STEAM_NETWORKING_AVAILABILITY_PREVIOUSLY
+      type: number
+      desc: -100
+    - name: STEAM_NETWORKING_AVAILABILITY_RETRYING
+      type: number
+      desc: -10
+    - name: STEAM_NETWORKING_AVAILABILITY_NEVER_TRIED
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_AVAILABILITY_WAITING
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_AVAILABILITY_ATTEMPTING
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_AVAILABILITY_CURRENT
+      type: number
+      desc: 100
+    - name: STEAM_NETWORKING_AVAILABILITY_UNKNOWN
+      type: number
+      desc: 0
+    - name: STEAM_NETWORKING_AVAILABILITY__FORCE32BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_INVALID
+      type: number
+      desc: 0
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_STEAM_ID
+      type: number
+      desc: 16
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_XBOX_PAIRWISE_ID
+      type: number
+      desc: 17
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_SONY_PSN
+      type: number
+      desc: 18
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_GOOGLE_STADIA
+      type: number
+      desc: 19
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_IP_ADDRESS
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_GENERIC_STRING
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_GENERIC_BYTES
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_IDENTITY_TYPE_UNKNOWN_TYPE
+      type: number
+      desc: 4
+    - name: STEAM_NETWORKING_IDENTITY_TYPE__FORCE32BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_FAKE_IP_TYPE_INVALID
+      type: number
+      desc: 0
+    - name: STEAM_NETWORKING_FAKE_IP_TYPE_NOT_FAKE
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_FAKE_IP_TYPE_GLOBAL_I_PV4
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_FAKE_IP_TYPE_LOCAL_I_PV4
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_FAKE_IP_TYPE__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_CONNECTION_STATE_NONE
+      type: number
+      desc: 0
+    - name: STEAM_NETWORKING_CONNECTION_STATE_CONNECTING
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_CONNECTION_STATE_FINDING_ROUTE
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_CONNECTION_STATE_CONNECTED
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_CONNECTION_STATE_CLOSED_BY_PEER
+      type: number
+      desc: 4
+    - name: STEAM_NETWORKING_CONNECTION_STATE_PROBLEM_DETECTED_LOCALLY
+      type: number
+      desc: 5
+    - name: STEAM_NETWORKING_CONNECTION_STATE_FIN_WAIT
+      type: number
+      desc: -1
+    - name: STEAM_NETWORKING_CONNECTION_STATE_LINGER
+      type: number
+      desc: -2
+    - name: STEAM_NETWORKING_CONNECTION_STATE_DEAD
+      type: number
+      desc: -3
+    - name: STEAM_NETWORKING_CONNECTION_STATE__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NET_CONNECTION_END_INVALID
+      type: number
+      desc: 0
+    - name: STEAM_NET_CONNECTION_END_APP_MIN
+      type: number
+      desc: 1000
+    - name: STEAM_NET_CONNECTION_END_APP_GENERIC
+      type: number
+      desc: 1000
+    - name: STEAM_NET_CONNECTION_END_APP_MAX
+      type: number
+      desc: 1999
+    - name: STEAM_NET_CONNECTION_END_APP_EXCEPTION_MIN
+      type: number
+      desc: 2000
+    - name: STEAM_NET_CONNECTION_END_APP_EXCEPTION_GENERIC
+      type: number
+      desc: 2000
+    - name: STEAM_NET_CONNECTION_END_APP_EXCEPTION_MAX
+      type: number
+      desc: 2999
+    - name: STEAM_NET_CONNECTION_END_LOCAL_MIN
+      type: number
+      desc: 3000
+    - name: STEAM_NET_CONNECTION_END_LOCAL_OFFLINE_MODE
+      type: number
+      desc: 3001
+    - name: STEAM_NET_CONNECTION_END_LOCAL_MANY_RELAY_CONNECTIVITY
+      type: number
+      desc: 3002
+    - name: STEAM_NET_CONNECTION_END_LOCAL_HOSTED_SERVER_PRIMARY_RELAY
+      type: number
+      desc: 3003
+    - name: STEAM_NET_CONNECTION_END_LOCAL_NETWORK_CONFIG
+      type: number
+      desc: 3004
+    - name: STEAM_NET_CONNECTION_END_LOCAL_RIGHTS
+      type: number
+      desc: 3005
+    - name: STEAM_NET_CONNECTION_END_LOCAL_P2P_ICE_NO_PUBLIC_ADDRESSES
+      type: number
+      desc: 3006
+    - name: STEAM_NET_CONNECTION_END_LOCAL_MAX
+      type: number
+      desc: 3999
+    - name: STEAM_NET_CONNECTION_END_REMOTE_MIN
+      type: number
+      desc: 4000
+    - name: STEAM_NET_CONNECTION_END_REMOTE_TIMEOUT
+      type: number
+      desc: 4001
+    - name: STEAM_NET_CONNECTION_END_REMOTE_BAD_CRYPT
+      type: number
+      desc: 4002
+    - name: STEAM_NET_CONNECTION_END_REMOTE_BAD_CERT
+      type: number
+      desc: 4003
+    - name: STEAM_NET_CONNECTION_END_REMOTE_BAD_PROTOCOL_VERSION
+      type: number
+      desc: 4006
+    - name: STEAM_NET_CONNECTION_END_REMOTE_P2P_ICE_NO_PUBLIC_ADDRESSES
+      type: number
+      desc: 4007
+    - name: STEAM_NET_CONNECTION_END_REMOTE_MAX
+      type: number
+      desc: 4999
+    - name: STEAM_NET_CONNECTION_END_MISC_MIN
+      type: number
+      desc: 5000
+    - name: STEAM_NET_CONNECTION_END_MISC_GENERIC
+      type: number
+      desc: 5001
+    - name: STEAM_NET_CONNECTION_END_MISC_INTERNAL_ERROR
+      type: number
+      desc: 5002
+    - name: STEAM_NET_CONNECTION_END_MISC_TIMEOUT
+      type: number
+      desc: 5003
+    - name: STEAM_NET_CONNECTION_END_MISC_STEAM_CONNECTIVITY
+      type: number
+      desc: 5005
+    - name: STEAM_NET_CONNECTION_END_MISC_NO_RELAY_SESSIONS_TO_CLIENT
+      type: number
+      desc: 5006
+    - name: STEAM_NET_CONNECTION_END_MISC_P2P_RENDEZVOUS
+      type: number
+      desc: 5008
+    - name: STEAM_NET_CONNECTION_END_MISC_P2P_NAT_FIREWALL
+      type: number
+      desc: 5009
+    - name: STEAM_NET_CONNECTION_END_MISC_PEER_SENT_NO_CONNECTION
+      type: number
+      desc: 5010
+    - name: STEAM_NET_CONNECTION_END_MISC_MAX
+      type: number
+      desc: 5999
+    - name: STEAM_NET_CONNECTION_END__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_CONFIG_GLOBAL
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_CONFIG_SOCKETS_INTERFACE
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_CONFIG_LISTEN_SOCKET
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_CONFIG_CONNECTION
+      type: number
+      desc: 4
+    - name: STEAM_NETWORKING_CONFIG_SCOPE__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_CONFIG_INT32
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_CONFIG_INT64
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_CONFIG_FLOAT
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_CONFIG_STRING
+      type: number
+      desc: 4
+    - name: STEAM_NETWORKING_CONFIG_PTR
+      type: number
+      desc: 5
+    - name: STEAM_NETWORKING_CONFIG_DATA_TYPE__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_CONFIG_INVALID
+      type: number
+      desc: 0
+    - name: STEAM_NETWORKING_CONFIG_TIMEOUT_INITIAL
+      type: number
+      desc: 24
+    - name: STEAM_NETWORKING_CONFIG_TIMEOUT_CONNECTED
+      type: number
+      desc: 25
+    - name: STEAM_NETWORKING_CONFIG_SEND_BUFFER_SIZE
+      type: number
+      desc: 9
+    - name: STEAM_NETWORKING_CONFIG_CONNECTION_USER_DATA
+      type: number
+      desc: 40
+    - name: STEAM_NETWORKING_CONFIG_SEND_RATE_MIN
+      type: number
+      desc: 10
+    - name: STEAM_NETWORKING_CONFIG_SEND_RATE_MAX
+      type: number
+      desc: 11
+    - name: STEAM_NETWORKING_CONFIG_NAGLE_TIME
+      type: number
+      desc: 12
+    - name: STEAM_NETWORKING_CONFIG_IP_ALLOW_WITHOUT_AUTH
+      type: number
+      desc: 23
+    - name: STEAM_NETWORKING_CONFIG_MTU_PACKET_SIZE
+      type: number
+      desc: 32
+    - name: STEAM_NETWORKING_CONFIG_MTU_DATA_SIZE
+      type: number
+      desc: 33
+    - name: STEAM_NETWORKING_CONFIG_UNENCRYPTED
+      type: number
+      desc: 34
+    - name: STEAM_NETWORKING_CONFIG_SYMMETRIC_CONNECT
+      type: number
+      desc: 37
+    - name: STEAM_NETWORKING_CONFIG_LOCAL_VIRTUAL_PORT
+      type: number
+      desc: 38
+    - name: STEAM_NETWORKING_CONFIG_DUAL_WIFI_ENABLE
+      type: number
+      desc: 39
+    - name: STEAM_NETWORKING_CONFIG_ENABLE_DIAGNOSTICS_UI
+      type: number
+      desc: 46
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_LOSS_SEND
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_LOSS_RECV
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_LAG_SEND
+      type: number
+      desc: 4
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_LAG_RECV
+      type: number
+      desc: 5
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_REORDER_SEND
+      type: number
+      desc: 6
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_REORDER_RECV
+      type: number
+      desc: 7
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_REORDER_TIME
+      type: number
+      desc: 8
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_DUP_SEND
+      type: number
+      desc: 26
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_DUP_RECV
+      type: number
+      desc: 27
+    - name: STEAM_NETWORKING_CONFIG_FAKE_PACKET_DUP_TIME_MAX
+      type: number
+      desc: 28
+    - name: STEAM_NETWORKING_CONFIG_PACKET_TRACE_MAX_BYTES
+      type: number
+      desc: 41
+    - name: STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_SEND_RATE
+      type: number
+      desc: 42
+    - name: STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_SEND_BURST
+      type: number
+      desc: 43
+    - name: STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_RECV_RATE
+      type: number
+      desc: 44
+    - name: STEAM_NETWORKING_CONFIG_FAKE_RATE_LIMIT_RECV_BURST
+      type: number
+      desc: 45
+    - name: STEAM_NETWORKING_CONFIG_CALLBACK_CONNECTION_STATUS_CHANGED
+      type: number
+      desc: 201
+    - name: STEAM_NETWORKING_CONFIG_CALLBACK_AUTH_STATUS_CHANGED
+      type: number
+      desc: 202
+    - name: STEAM_NETWORKING_CONFIG_CALLBACK_RELAY_NETWORK_STATUS_CHANGED
+      type: number
+      desc: 203
+    - name: STEAM_NETWORKING_CONFIG_CALLBACK_MESSAGES_SESSION_REQUEST
+      type: number
+      desc: 204
+    - name: STEAM_NETWORKING_CONFIG_CALLBACK_MESSAGES_SESSION_FAILED
+      type: number
+      desc: 205
+    - name: STEAM_NETWORKING_CONFIG_CALLBACK_CREATE_CONNECTION_SIGNALING
+      type: number
+      desc: 206
+    - name: STEAM_NETWORKING_CONFIG_CALLBACK_FAKE_IP_RESULT
+      type: number
+      desc: 207
+    - name: STEAM_NETWORKING_CONFIG_P2P_STUN_SERVER_LIST
+      type: number
+      desc: 103
+    - name: STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_ICE_ENABLE
+      type: number
+      desc: 104
+    - name: STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_ICE_PENALTY
+      type: number
+      desc: 105
+    - name: STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_SDR_PENALTY
+      type: number
+      desc: 106
+    - name: STEAM_NETWORKING_CONFIG_P2P_TURN_SERVER_LIST
+      type: number
+      desc: 107
+    - name: STEAM_NETWORKING_CONFIG_P2P_TURN_USER_LIST
+      type: number
+      desc: 108
+    - name: STEAM_NETWORKING_CONFIG_P2P_TURN_PASS_LIST
+      type: number
+      desc: 109
+    - name: STEAM_NETWORKING_CONFIG_P2P_TRANSPORT_ICE_IMPLEMENTATION
+      type: number
+      desc: 110
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_CONSECUTITIVE_PING_TIMEOUTS_FAIL_INITIAL
+      type: number
+      desc: 19
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_CONSECUTITIVE_PING_TIMEOUTS_FAIL
+      type: number
+      desc: 20
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_MIN_PINGS_BEFORE_PING_ACCURATE
+      type: number
+      desc: 21
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_SINGLE_SOCKET
+      type: number
+      desc: 22
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_FORCE_RELAY_CLUSTER
+      type: number
+      desc: 29
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_DEBUG_TICKET_ADDRESS
+      type: number
+      desc: 30
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_FORCE_PROXY_ADDR
+      type: number
+      desc: 31
+    - name: STEAM_NETWORKING_CONFIG_SDR_CLIENT_FAKE_CLUSTER_PING
+      type: number
+      desc: 36
+    - name: STEAM_NETWORKING_CONFIG_LOG_LEVEL_ACK_RTT
+      type: number
+      desc: 13
+    - name: STEAM_NETWORKING_CONFIG_LOG_LEVEL_PACKET_DECODE
+      type: number
+      desc: 14
+    - name: STEAM_NETWORKING_CONFIG_LOG_LEVEL_MESSAGE
+      type: number
+      desc: 15
+    - name: STEAM_NETWORKING_CONFIG_LOG_LEVEL_PACKET_GAPS
+      type: number
+      desc: 16
+    - name: STEAM_NETWORKING_CONFIG_LOG_LEVEL_P2P_RENDEZVOUS
+      type: number
+      desc: 17
+    - name: STEAM_NETWORKING_CONFIG_LOG_LEVEL_SDR_RELAY_PINGS
+      type: number
+      desc: 18
+    - name: STEAM_NETWORKING_CONFIG_DELETED_ENUMERATE_DEV_VARS
+      type: number
+      desc: 35
+    - name: STEAM_NETWORKING_CONFIG_VALUE__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_GET_CONFIG_VALUE_BAD_VALUE
+      type: number
+      desc: -1
+    - name: STEAM_NETWORKING_GET_CONFIG_VALUE_BAD_SCOPE_OBJ
+      type: number
+      desc: -2
+    - name: STEAM_NETWORKING_GET_CONFIG_VALUE_BUFFER_TOO_SMALL
+      type: number
+      desc: -3
+    - name: STEAM_NETWORKING_GET_CONFIG_VALUE_OK
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_GET_CONFIG_VALUE_OK_INHERITED
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_GET_CONFIG_VALUE_RESULT__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_NONE
+      type: number
+      desc: 0
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_BUG
+      type: number
+      desc: 1
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_ERROR
+      type: number
+      desc: 2
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_IMPORTANT
+      type: number
+      desc: 3
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_WARNING
+      type: number
+      desc: 4
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_MSG
+      type: number
+      desc: 5
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_VERBOSE
+      type: number
+      desc: 6
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_DEBUG
+      type: number
+      desc: 7
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE_EVERYTHING
+      type: number
+      desc: 8
+    - name: STEAM_NETWORKING_SOCKETS_DEBUG_OUTPUT_TYPE__FORCE32_BIT
+      type: number
+      desc: 2147483647
+    - name: E_SERVER_MODE_INVALID
+      type: number
+      desc: 0
+    - name: E_SERVER_MODE_NO_AUTHENTICATION
+      type: number
+      desc: 1
+    - name: E_SERVER_MODE_AUTHENTICATION
+      type: number
+      desc: 2
+    - name: E_SERVER_MODE_AUTHENTICATION_AND_SECURE
+      type: number
+      desc: 3
+    - name: FAILURE_FLUSHED_CALLBACK_QUEUE
+      type: number
+      desc: 0
+    - name: FAILURE_PIPE_FAIL
+      type: number
+      desc: 1
+    - name: STATE_UNKNOWN
+      type: number
+      desc: 0
+    - name: STATE_PLAYER_ACCEPTED
+      type: number
+      desc: 1
+    - name: STATE_PLAYER_DECLINED
+      type: number
+      desc: 2

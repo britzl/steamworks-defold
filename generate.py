@@ -4,12 +4,13 @@ import pystache
 import re
 import json
 import codecs
-import HTMLParser
+import html
 
 INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
+INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking", "ISteamApps", "ISteamMusic", "ISteamRemoteStorage", "ISteamInventory", "ISteamUGC", "ISteamGameSearch", "ISteamParties", "ISteamInput"]
 
 def to_snake_case(name):
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    s1 = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', str(name))
     return re.sub('([a-z])([A-Z])', r'\1_\2', s1).lower()
 
 
@@ -30,22 +31,47 @@ def paramtype_to_lua(type):
         return type.replace(" *", "")
 
 
-def parse_methods(methods):
-    INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking", "ISteamApps", "ISteamMusic", "ISteamRemoteStorage", "ISteamInventory", "ISteamUGC"]
-    DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection", "CommitPublishedFileUpdate", "CreatePublishedFileUpdateRequest", "DeletePublishedFile", "EnumeratePublishedFilesByUserAction", "EnumeratePublishedWorkshopFiles", "EnumerateUserPublishedFiles", "EnumerateUserSharedWorkshopFiles", "EnumerateUserSubscribedFiles", "FileFetch", "FilePersist", "GetFileListFromServer", "GetPublishedFileDetails", "GetPublishedItemVoteDetails", "GetUserPublishedItemVoteDetails", "PublishVideo", "PublishWorkshopFile", "ResetFileRequestState", "SetUserPublishedFileAction", "SubscribePublishedFile", "SynchronizeToClient", "SynchronizeToServer", "UnsubscribePublishedFile", "UpdatePublishedFileDescription", "UpdatePublishedFileFile", "UpdatePublishedFilePreviewFile", "UpdatePublishedFileSetChangeDescription", "UpdatePublishedFileTags", "UpdatePublishedFileTitle", "UpdatePublishedFileVisibility", "UpdateUserPublishedItemVote"]
+def parse_interfaces(interfaces):
+    i = []
+    for interface in interfaces:
+        classname = interface["classname"]
+        if classname in INCLUDED_CLASSES:
+            i.append(interface)
+        else:
+            print("Skipping class " + classname)
+    return i
+
+
+def parse_methods(interfaces):
+    # DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection", "CommitPublishedFileUpdate", "CreatePublishedFileUpdateRequest", "DeletePublishedFile", "EnumeratePublishedFilesByUserAction", "EnumeratePublishedWorkshopFiles", "EnumerateUserPublishedFiles", "EnumerateUserSharedWorkshopFiles", "EnumerateUserSubscribedFiles", "FileFetch", "FilePersist", "GetFileListFromServer", "GetPublishedFileDetails", "GetPublishedItemVoteDetails", "GetUserPublishedItemVoteDetails", "PublishVideo", "PublishWorkshopFile", "ResetFileRequestState", "SetUserPublishedFileAction", "SubscribePublishedFile", "SynchronizeToClient", "SynchronizeToServer", "UnsubscribePublishedFile", "UpdatePublishedFileDescription", "UpdatePublishedFileFile", "UpdatePublishedFilePreviewFile", "UpdatePublishedFileSetChangeDescription", "UpdatePublishedFileTags", "UpdatePublishedFileTitle", "UpdatePublishedFileVisibility", "UpdateUserPublishedItemVote"]
     SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook"]
+    SKIP_CLASSES = ["ISteamNetworking", "ISteamNetworkingSockets", "ISteamGameSearch", "ISteamInput"]
     m = []
-    for method in methods:
-        classname = method.get("classname")
-        methodname = method.get("methodname")
-        methodalias = method.get("methodalias")
-        methodparams = method.get("params")
-        if classname in INCLUDED_CLASSES and methodname not in DEPRECATED_METHODS and methodname not in SKIP_METHODS:
+    for interface in interfaces:
+        classname = interface["classname"]
+        for method in interface["methods"]:
+            if classname in SKIP_CLASSES:
+                print("Ignoring methods for class " + classname)
+                continue;
+
+            # methodname = method.get("methodname_flat").replace("SteamAPI_", "").replace(classname + "_", "")
+            methodname = method.get("methodname")
+            methodname_flat = method.get("methodname_flat").replace("SteamAPI_", "").replace(classname + "_", "")
+            # if methodname.endswith("_DEPRECATED") or methodname in DEPRECATED_METHODS:
+            if methodname.endswith("_DEPRECATED"):
+                print("Ignoring deprecated method " + methodname + " of class " + classname)
+                continue
+            
+            if methodname in SKIP_METHODS:
+                print("Ignoring skipped method " + methodname + " of class " + classname)
+                continue
+
+            methodparams = method.get("params")
+            method["methodname"] = methodname
+            method["methodalias"] = methodname_flat if methodname_flat != methodname else None
+            method["classname"] = classname
             method["classname_lower"] = to_snake_case(classname.replace("ISteam", "")).lower()
-            if methodalias:
-                method["methodname_lower"] = to_snake_case(methodalias).lower()
-            else:
-                method["methodname_lower"] = to_snake_case(methodname).lower()
+            method["methodname_lower"] = to_snake_case(methodname).lower()
 
             if method["methodname_lower"].startswith("b_"):
                 method["methodname_lower"] = method["methodname_lower"].replace("b_", "")
@@ -67,11 +93,13 @@ def parse_methods(methods):
                     paramtype = param.get("paramtype")
                     # A struct that will be populated with data by the method
                     if param.get("out_struct") is not None:
+                        param["out_struct"] = True
                         param["paramtype"] = paramtype.replace(" *", "")
                         p_api.append(param)
                         method["paramnames"].append("&" + paramname)
                     # A string that will be populated with data by the method
                     elif param.get("out_string") is not None:
+                        param["out_string"] = True
                         param["paramtypestring"] = paramtype.replace(" **", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
                         p_api.append(param)
                         method["paramnames"].append(paramname)
@@ -79,6 +107,8 @@ def parse_methods(methods):
                     # An array that will be populated with data by the method
                     # The size of the array is specified by another parameter
                     elif param.get("out_array_count") is not None:
+                        if param.get("out_array_count") and param.get("array_count"):
+                            param["out_array_count"] = None
                         param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
@@ -99,8 +129,20 @@ def parse_methods(methods):
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
                         p_api.append(param)
                         method["paramnames"].append(paramname)
+
+
+            # {
+            #   "array_count": "unArrayLength",
+            #   "desc": "Items with prices",
+            #   "out_array_count": "pArrayItemDefs",
+            #   "paramname": "pArrayItemDefs",
+            #   "paramtype": "SteamItemDef_t *"
+            # },
+
                     # An array of data with a length specified by another parameter
                     elif param.get("array_count") is not None:
+                        if methodname == "GetItemsWithPrices":
+                            print("GGGGGGGGGGWAGGAGGGG")
                         param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
@@ -164,7 +206,7 @@ def parse_methods(methods):
                         p_api.insert(0, param)
                         if "SteamParamStringArray_t" in paramtype:
                             param["paramtype"] = paramtype.replace(" *", "")
-                            param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
+                            param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "class_").replace("struct ", "struct_")
                             method["paramnames"].append("&" + paramname)
                         else:
                             param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
@@ -189,27 +231,41 @@ def parse_methods(methods):
                 method["returntypestring"] = returntype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_")
                 if returntype == "SteamAPICall_t":
                     method["steamapicall"] = True
+
             m.append(method)
     return m
 
 
-def parse_enums(enums):
-    DEPRECATED_ENUMS = ["EWorkshopEnumerationType", "EWorkshopFileAction", "EWorkshopVideoProvider", "EWorkshopVote"]
+def parse_enums(enums, callback_structs):
+    DEPRECATED_ENUMS = []
     e = []
+    for callback_struct in callback_structs:
+        callback_struct_enums = callback_struct.get("enums")
+        if callback_struct_enums:
+            for callback_struct_enum in callback_struct_enums:
+                enums.append(callback_struct_enum)
+
     for enum in enums:
         enumname = enum.get("enumname")
         if "::" not in enumname and enumname not in DEPRECATED_ENUMS:
             v = []
+            fqname = enum.get("fqname")
+            if fqname:
+                enum["fqname"] = fqname
+            else:
+                enum["fqname"] = enumname
+
             for value in enum.get("values"):
                 value["name"] = to_snake_case(value.get("name").replace("k_E", "").replace("k_e", "").replace("k_n", "")).upper().replace("__", "_")
                 v.append(value)
             enum["values"] = v
             e.append(enum)
+
     return e
 
 
 def parse_typedefs(typedefs):
-    DEPRECATED_TYPEDEFS = ["PublishedFileUpdateHandle_t"]
+    DEPRECATED_TYPEDEFS = [""]
     t = {}
     int = []
     int64 = []
@@ -226,21 +282,25 @@ def parse_typedefs(typedefs):
         if typedef not in DEPRECATED_TYPEDEFS:
             t["types"].append(typedef)
             type = typedef.get("type")
+
             if type in INTEGERS:
                 int.append(typedef)
-            elif type == "uint64" or type == "ulint64":
-                uint64.append(typedef)
-            elif type == "int64":
-                int64.append(typedef)
+            elif type == "ulint64" or type == "unsigned long long":
+                if not typedef.get("typedef") == "uint64":
+                    uint64.append(typedef)
+            elif type == "lint64" or type == "long long":
+                if not typedef.get("typedef") == "int64":
+                    int64.append(typedef)
             elif type.startswith("struct "):
                 struct.append(typedef)
+            else:
+                print("Unkown type " + type + " for typedef " + typedef.get("typedef"))
 
     return t
 
 
 def parse_structs(structs, methods):
-    SKIP_STRUCTS = ["CallbackMsg_t", "CCallbackBase", "CCallResult", "CCallback", "CSteamID", "CSteamAPIContext", "CSteamID::SteamID_t", "CSteamID::SteamID_t::SteamIDComponent_t", "CGameID::GameID_t", "CGameID::(anonymous)", "servernetadr_t", "gameserveritem_t", "SteamParamStringArray_t"]
-    DEPRECATED_STRUCTS = ["RemoteStorageAppSyncedClient_t", "RemoteStorageAppSyncedServer_t", "RemoteStorageAppSyncProgress_t", "RemoteStorageAppSyncStatusCheck_t", "RemoteStorageDeletePublishedFileResult_t", "RemoteStorageEnumeratePublishedFilesByUserActionResult_t", "RemoteStorageEnumerateUserPublishedFilesResult_t", "RemoteStorageEnumerateUserSharedWorkshopFilesResult_t", "RemoteStorageEnumerateUserSubscribedFilesResult_t", "RemoteStorageEnumerateWorkshopFilesResult_t", "RemoteStorageGetPublishedFileDetailsResult_t", "RemoteStorageGetPublishedItemVoteDetailsResult_t", "RemoteStoragePublishedFileDeleted_t", "RemoteStoragePublishedFileSubscribed_t", "RemoteStoragePublishedFileUnsubscribed_t", "RemoteStoragePublishedFileUpdated_t", "RemoteStoragePublishFileProgress_t", "RemoteStoragePublishFileResult_t", "RemoteStorageSetUserPublishedFileActionResult_t", "RemoteStorageUpdatePublishedFileResult_t", "RemoteStorageUpdateUserPublishedItemVoteResult_t", "RemoteStorageUserVoteDetails_t", "SteamParamStringArray_t", ""]
+    SKIP_STRUCTS = ["CallbackMsg_t", "CCallbackBase", "CCallResult", "CCallback", "CSteamID", "CSteamAPIContext", "CSteamID::SteamID_t", "CSteamID::SteamID_t::SteamIDComponent_t", "CGameID::GameID_t", "CGameID::(anonymous)", "servernetadr_t", "gameserveritem_t", "SteamParamStringArray_t", "SteamInputActionEvent_t", "SteamNetworkingMessage_t", "SteamDatagramHostedAddress", "SteamDatagramGameCoordinatorServerLogin", "SteamNetworkingConfigValue_t", "SteamNetworkingFakeIPResult_t"]
     CALLRESULT_STRUCT = []
 
     # Include all structs that are used as a CallResult
@@ -252,22 +312,28 @@ def parse_structs(structs, methods):
     s = []
     for struct in structs:
         structname = struct.get("struct")
-        if structname not in SKIP_STRUCTS and structname not in DEPRECATED_STRUCTS:
-            if structname in CALLRESULT_STRUCT:
-                struct["callresult"] = True
-            struct["name"] = re.sub(".*::", "", structname.replace("::(anonymous)", ""))
-            f = []
-            for field in struct.get("fields"):
-                fieldtype = field.get("fieldtype").replace("_Bool", "bool")
-                # Is this an array of some kind?
-                if " [" in fieldtype:
-                    field["array"] = True
-                    field["arraysize"] = re.match(".*\[(.*)\]", fieldtype).group(1)
+        if structname in SKIP_STRUCTS:
+            print("Skipping struct " + structname)
+            continue
 
-                field["fieldtypestring"] = re.sub("_\[.*\]", "", fieldtype.replace(" *", "_ptr").replace("enum ", "").replace("struct ", "").replace("class ", "").replace("union ", "").replace(" ", "_"))
+        if structname in CALLRESULT_STRUCT:
+            struct["callresult"] = True
+        struct["name"] = re.sub(".*::", "", structname.replace("::(anonymous)", ""))
+        f = []
+        for field in struct.get("fields"):
+            fieldtype = field.get("fieldtype").replace("_Bool", "bool")
+            fieldtype = re.sub(".*::", "", fieldtype)
+            # Is this an array of some kind?
+            if " [" in fieldtype:
+                field["array"] = True
+                field["arraysize"] = re.match(".*\[(.*)\]", fieldtype).group(1)
+            
+            field["fieldtypestring"] = re.sub("_\[.*\]", "", fieldtype.replace(" *", "_ptr").replace("enum ", "").replace("struct ", "").replace("class ", "").replace("union ", "").replace(" ", "_"))
+
+            if "void (*)" not in fieldtype:
                 f.append(field)
-            struct["fields"] = f
-            s.append(struct)
+        struct["fields"] = f
+        s.append(struct)
 
     return s
 
@@ -288,35 +354,36 @@ def parse_callbacks(methods):
 
 def generate():
     j = json.load(open("steamworks/include/steam_api.json"))
-    j["methods"] = parse_methods(j["methods"])
+    j["interfaces"] = parse_interfaces(j["interfaces"])
+    j["methods"] = parse_methods(j["interfaces"])
     j["typedefs"] = parse_typedefs(j["typedefs"])
-    j["structs"] = parse_structs(j["structs"], j["methods"])
-    j["enums"] = parse_enums(j["enums"])
+    j["structs"] = parse_structs(j["structs"], j["methods"]) + parse_structs(j["callback_structs"], j["methods"])
+    j["enums"] = parse_enums(j["enums"], j["callback_structs"])
     j["callbacks"] = parse_callbacks(j["methods"])
 
     with open("steamworks.cpp.mtl", 'r') as f:
         extension_mtl = f.read()
         result = pystache.render(extension_mtl, j)
-        with codecs.open("steamworks/src/steamworks.cpp", 'wb' "utf-8") as f:
-            f.write(HTMLParser.HTMLParser().unescape(result))
+        with codecs.open("steamworks/src/steamworks.cpp", "wb", encoding="utf-8") as f:
+            f.write(html.unescape(result))
 
     with open("steamworks.h.mtl", 'r') as f:
         extension_mtl = f.read()
         result = pystache.render(extension_mtl, j)
-        with codecs.open("steamworks/include/steamworks.h", 'wb' "utf-8") as f:
-            f.write(HTMLParser.HTMLParser().unescape(result))
+        with codecs.open("steamworks/include/steamworks.h", "wb", encoding="utf-8") as f:
+            f.write(html.unescape(result))
 
     with open("api_ref.mtl", 'r') as f:
         docs_mtl = f.read()
         result = pystache.render(docs_mtl, j)
-        with codecs.open("steamworks/api_ref.md", 'wb' "utf-8") as f:
-            f.write(HTMLParser.HTMLParser().unescape(result))
+        with codecs.open("steamworks/api_ref.md", "wb", encoding="utf-8") as f:
+            f.write(html.unescape(result))
 
     with open("script_api.mtl", 'r') as f:
         docs_mtl = f.read()
         result = pystache.render(docs_mtl, j)
-        with codecs.open("steamworks/api/steamworks.script_api", 'wb' "utf-8") as f:
-            f.write(HTMLParser.HTMLParser().unescape(result))
+        with codecs.open("steamworks/api/steamworks.script_api", "wb", encoding="utf-8") as f:
+            f.write(html.unescape(result))
 
 
 if __name__ == "__main__":

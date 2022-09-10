@@ -38,7 +38,7 @@ static void push_uint64_array(lua_State* L, uint64 arr[], unsigned int size);
 static void push_{{typedef}}_array(lua_State* L, {{typedef}} arr[], unsigned int size);
 {{/typedefs.uint64}}
 
-{{#enums}}static void push_{{enumname}}(lua_State* L, {{enumname}} n);
+{{#enums}}static void push_{{enumname}}(lua_State* L, {{fqname}} n);
 {{/enums}}
 
 static void push_CSteamID(lua_State* L, CSteamID steamId);
@@ -81,7 +81,7 @@ static {{typedef}} check_{{typedef}}(lua_State* L, int index);
 static void check_{{typedef}}_array(lua_State* L, int index, {{typedef}} * arr, unsigned int size);
 {{/typedefs.int64}}
 
-{{#enums}}static {{enumname}} check_{{enumname}}(lua_State* L, int index);
+{{#enums}}static {{fqname}} check_{{enumname}}(lua_State* L, int index);
 {{/enums}}
 
 static dmScript::LuaHBuffer * check_buffer(lua_State* L, int index);
