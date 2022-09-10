@@ -107,8 +107,6 @@ def parse_methods(interfaces):
                     # An array that will be populated with data by the method
                     # The size of the array is specified by another parameter
                     elif param.get("out_array_count") is not None:
-                        if param.get("out_array_count") and param.get("array_count"):
-                            param["out_array_count"] = None
                         param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")
@@ -129,20 +127,8 @@ def parse_methods(interfaces):
                         param["paramtype"] = paramtype.replace(" *", "").replace("class ", "")
                         p_api.append(param)
                         method["paramnames"].append(paramname)
-
-
-            # {
-            #   "array_count": "unArrayLength",
-            #   "desc": "Items with prices",
-            #   "out_array_count": "pArrayItemDefs",
-            #   "paramname": "pArrayItemDefs",
-            #   "paramtype": "SteamItemDef_t *"
-            # },
-
                     # An array of data with a length specified by another parameter
                     elif param.get("array_count") is not None:
-                        if methodname == "GetItemsWithPrices":
-                            print("GGGGGGGGGGWAGGAGGGG")
                         param["in_param"] = True
                         param["paramindex"] = len(method["paramnames_in"]) + 1
                         param["paramtype"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "")

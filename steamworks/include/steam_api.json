@@ -11477,21 +11477,21 @@
             {
               "array_count": "unArrayLength",
               "desc": "Items with prices",
-              "out_array_count": "pArrayItemDefs",
+              "out_array_count": "unArrayLength",
               "paramname": "pArrayItemDefs",
               "paramtype": "SteamItemDef_t *"
             },
             {
               "array_count": "unArrayLength",
               "desc": "List of prices for the given item defs",
-              "out_array_count": "pPrices",
+              "out_array_count": "unArrayLength",
               "paramname": "pCurrentPrices",
               "paramtype": "uint64 *"
             },
             {
               "array_count": "unArrayLength",
               "desc": "List of prices for the given item defs",
-              "out_array_count": "pPrices",
+              "out_array_count": "unArrayLength",
               "paramname": "pBasePrices",
               "paramtype": "uint64 *"
             },

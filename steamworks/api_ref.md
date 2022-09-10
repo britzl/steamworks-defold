@@ -4677,13 +4677,19 @@ The extension exports the following functions:
 ### <a name="inventory_get_items_with_prices"></a>steamworks.inventory_get_items_with_prices(pArrayItemDefs, pCurrentPrices, pBasePrices, unArrayLength) - [ISteamInventory#GetItemsWithPrices](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices)
 
 **PARAMS**
+* `pArrayItemDefs` (number)
 * `pArrayItemDefs` (table of number)
+* `pCurrentPrices` (string)
 * `pCurrentPrices` (table of string)
+* `pBasePrices` (string)
 * `pBasePrices` (table of string)
 * `unArrayLength` (number)
 
 **RETURN**
 * `r` (bool)
+* `pArrayItemDefs` (table) unArrayLength
+* `pCurrentPrices` (table) unArrayLength
+* `pBasePrices` (table) unArrayLength
 
 
 ### <a name="inventory_get_item_price"></a>steamworks.inventory_get_item_price(iDefinition, pCurrentPrice, pBasePrice) - [ISteamInventory#GetItemPrice](https://partner.steamgames.com/doc/api/ISteamInventory#GetItemPrice)

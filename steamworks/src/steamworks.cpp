@@ -23827,6 +23827,9 @@ static int ISteamInventory_GetItemsWithPrices(lua_State* L) {
 
 	bool r = inventory->GetItemsWithPrices(pArrayItemDefs, pCurrentPrices, pBasePrices, unArrayLength);
 	push_bool(L, r);
+	push_SteamItemDef_t_array(L, pArrayItemDefs, unArrayLength);  /*out_array_count*/
+	push_uint64_array(L, pCurrentPrices, unArrayLength);  /*out_array_count*/
+	push_uint64_array(L, pBasePrices, unArrayLength);  /*out_array_count*/
 	
 	assert(top + 1 + 3 == lua_gettop(L));
 	return 1 + 3;

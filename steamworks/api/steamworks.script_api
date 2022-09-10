@@ -5912,9 +5912,15 @@
       desc: https://partner.steamgames.com/doc/api/ISteamInventory#GetItemsWithPrices
       parameters:
       - name: pArrayItemDefs
+        type: number
+      - name: pArrayItemDefs
         type: table (number)
       - name: pCurrentPrices
+        type: string
+      - name: pCurrentPrices
         type: table (string)
+      - name: pBasePrices
+        type: string
       - name: pBasePrices
         type: table (string)
       - name: unArrayLength
@@ -5923,6 +5929,15 @@
       returns:
       - name: r
         type: bool
+      - name: pArrayItemDefs
+        type: table
+
+      - name: pCurrentPrices
+        type: table
+
+      - name: pBasePrices
+        type: table
+
 #***********************************
 
     - name: inventory_get_item_price

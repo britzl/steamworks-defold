@@ -738,9 +738,9 @@ static int {{classname}}_{{#methodalias}}{{methodalias}}{{/methodalias}}{{^metho
 {{/out_string}}{{#out_array_call}}	{{out_array_call_counter}} = {{classname_lower}}->{{out_array_call_function}}({{out_array_call_params}});/*out_array_call*/
 	{{paramtype}} {{paramname}}[{{out_array_call_counter}}]; /*out_array_call*/
 {{/out_array_call}}{{#out_array_call_param}}	{{paramtype}} {{paramname}}; /*out_array_call_param*/
-{{/out_array_call_param}}{{#out_array_count}}	{{paramtype}} {{paramname}}[{{out_array_count}}];
+{{/out_array_call_param}}{{^array_count}}{{#out_array_count}}	{{paramtype}} {{paramname}}[{{out_array_count}}];
 	check_{{paramtypestring}}_array(L, {{paramindex}}, {{paramname}}, {{out_array_count}}); /*out_array_count*/
-{{/out_array_count}}{{#out_param}}	{{paramtype}} {{paramname}} = check_{{paramtypestring}}(L, {{paramindex}}); /*out_param*/
+{{/out_array_count}}{{/array_count}}{{#out_param}}	{{paramtype}} {{paramname}} = check_{{paramtypestring}}(L, {{paramindex}}); /*out_param*/
 {{/out_param}}{{#array_count_param}}	{{paramtype}} {{paramname}}; /*array_count_param*/
 {{/array_count_param}}{{#array_count}}	luaL_checktype(L, {{paramindex}}, LUA_TTABLE); /*array_count*/
 	{{paramtype}} {{paramname}}[{{array_count}}];
