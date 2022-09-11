@@ -46,6 +46,7 @@ static ISteamGameSearch *game_search;
 static ISteamNetworking *networking;
 static ISteamVideo *video;
 static ISteamScreenshots *screenshots;
+static ISteamMusicRemote *music_remote;
 
 /*****************************
 * PUSH numbers and other primitive types
@@ -823,6 +824,7 @@ static int Init(lua_State* L) {
 	networking = SteamNetworking();
 	video = SteamVideo();
 	screenshots = SteamScreenshots();
+	music_remote = SteamMusicRemote();
 	return 0;
 }
 

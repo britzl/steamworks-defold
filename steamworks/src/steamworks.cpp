@@ -46,6 +46,7 @@ static ISteamGameSearch *game_search;
 static ISteamNetworking *networking;
 static ISteamVideo *video;
 static ISteamScreenshots *screenshots;
+static ISteamMusicRemote *music_remote;
 
 /*****************************
 * PUSH numbers and other primitive types
@@ -22859,6 +22860,360 @@ static int ISteamMusic_GetVolume(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamMusicRemote_RegisterSteamMusicRemote(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = music_remote->RegisterSteamMusicRemote(pchName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_DeregisterSteamMusicRemote(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->DeregisterSteamMusicRemote();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_BIsCurrentMusicRemote(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->BIsCurrentMusicRemote();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_BActivationSuccess(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->BActivationSuccess(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_SetDisplayName(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchDisplayName = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = music_remote->SetDisplayName(pchDisplayName);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_SetPNGIcon_64x64(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cbBufferLength = check_uint32(L, 2); /*normal*/
+	dmScript::LuaHBuffer * pvBuffer_buffer = check_buffer(L, 1); /*buffer_param*/
+	void * pvBuffer = 0x0;
+	uint32_t pvBuffer_buffersize = 0;
+	dmBuffer::Result pvBuffer_buffer_result = dmBuffer::GetBytes(pvBuffer_buffer->m_Buffer, (void**)&pvBuffer, &pvBuffer_buffersize);
+
+	bool r = music_remote->SetPNGIcon_64x64(pvBuffer, cbBufferLength);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_EnablePlayPrevious(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->EnablePlayPrevious(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_EnablePlayNext(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->EnablePlayNext(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_EnableShuffled(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->EnableShuffled(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_EnableLooped(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->EnableLooped(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_EnableQueue(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->EnableQueue(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_EnablePlaylists(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->EnablePlaylists(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_UpdatePlaybackStatus(lua_State* L) {
+	int top = lua_gettop(L);
+	AudioPlayback_Status nStatus = check_AudioPlayback_Status(L, 1); /*normal*/
+
+	bool r = music_remote->UpdatePlaybackStatus(nStatus);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_UpdateShuffled(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->UpdateShuffled(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_UpdateLooped(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bValue = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->UpdateLooped(bValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_UpdateVolume(lua_State* L) {
+	int top = lua_gettop(L);
+	float flValue = check_float(L, 1); /*normal*/
+
+	bool r = music_remote->UpdateVolume(flValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_CurrentEntryWillChange(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->CurrentEntryWillChange();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_CurrentEntryIsAvailable(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAvailable = check_bool(L, 1); /*normal*/
+
+	bool r = music_remote->CurrentEntryIsAvailable(bAvailable);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_UpdateCurrentEntryText(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchText = check_const_char_ptr(L, 1); /*normal*/
+
+	bool r = music_remote->UpdateCurrentEntryText(pchText);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_UpdateCurrentEntryElapsedSeconds(lua_State* L) {
+	int top = lua_gettop(L);
+	int nValue = check_int(L, 1); /*normal*/
+
+	bool r = music_remote->UpdateCurrentEntryElapsedSeconds(nValue);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_UpdateCurrentEntryCoverArt(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 cbBufferLength = check_uint32(L, 2); /*normal*/
+	dmScript::LuaHBuffer * pvBuffer_buffer = check_buffer(L, 1); /*buffer_param*/
+	void * pvBuffer = 0x0;
+	uint32_t pvBuffer_buffersize = 0;
+	dmBuffer::Result pvBuffer_buffer_result = dmBuffer::GetBytes(pvBuffer_buffer->m_Buffer, (void**)&pvBuffer, &pvBuffer_buffersize);
+
+	bool r = music_remote->UpdateCurrentEntryCoverArt(pvBuffer, cbBufferLength);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_CurrentEntryDidChange(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->CurrentEntryDidChange();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_QueueWillChange(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->QueueWillChange();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_ResetQueueEntries(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->ResetQueueEntries();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_SetQueueEntry(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchEntryText = check_const_char_ptr(L, 3); /*normal*/
+	int nPosition = check_int(L, 2); /*normal*/
+	int nID = check_int(L, 1); /*normal*/
+
+	bool r = music_remote->SetQueueEntry(nID, nPosition, pchEntryText);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_SetCurrentQueueEntry(lua_State* L) {
+	int top = lua_gettop(L);
+	int nID = check_int(L, 1); /*normal*/
+
+	bool r = music_remote->SetCurrentQueueEntry(nID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_QueueDidChange(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->QueueDidChange();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_PlaylistWillChange(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->PlaylistWillChange();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_ResetPlaylistEntries(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->ResetPlaylistEntries();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_SetPlaylistEntry(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchEntryText = check_const_char_ptr(L, 3); /*normal*/
+	int nPosition = check_int(L, 2); /*normal*/
+	int nID = check_int(L, 1); /*normal*/
+
+	bool r = music_remote->SetPlaylistEntry(nID, nPosition, pchEntryText);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_SetCurrentPlaylistEntry(lua_State* L) {
+	int top = lua_gettop(L);
+	int nID = check_int(L, 1); /*normal*/
+
+	bool r = music_remote->SetCurrentPlaylistEntry(nID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamMusicRemote_PlaylistDidChange(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = music_remote->PlaylistDidChange();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamUGC_CreateQueryUserUGCRequest(lua_State* L) {
 	int top = lua_gettop(L);
 	uint32 unPage = check_uint32(L, 7); /*normal*/
@@ -24647,6 +25002,7 @@ static int Init(lua_State* L) {
 	networking = SteamNetworking();
 	video = SteamVideo();
 	screenshots = SteamScreenshots();
+	music_remote = SteamMusicRemote();
 	return 0;
 }
 
@@ -25058,6 +25414,38 @@ static const luaL_reg Module_methods[] = {
 	{ "music_play_next", ISteamMusic_PlayNext },
 	{ "music_set_volume", ISteamMusic_SetVolume },
 	{ "music_get_volume", ISteamMusic_GetVolume },
+	{ "music_remote_register_steam_music_remote", ISteamMusicRemote_RegisterSteamMusicRemote },
+	{ "music_remote_deregister_steam_music_remote", ISteamMusicRemote_DeregisterSteamMusicRemote },
+	{ "music_remote_is_current_music_remote", ISteamMusicRemote_BIsCurrentMusicRemote },
+	{ "music_remote_activation_success", ISteamMusicRemote_BActivationSuccess },
+	{ "music_remote_set_display_name", ISteamMusicRemote_SetDisplayName },
+	{ "music_remote_set_png_icon_64x64", ISteamMusicRemote_SetPNGIcon_64x64 },
+	{ "music_remote_enable_play_previous", ISteamMusicRemote_EnablePlayPrevious },
+	{ "music_remote_enable_play_next", ISteamMusicRemote_EnablePlayNext },
+	{ "music_remote_enable_shuffled", ISteamMusicRemote_EnableShuffled },
+	{ "music_remote_enable_looped", ISteamMusicRemote_EnableLooped },
+	{ "music_remote_enable_queue", ISteamMusicRemote_EnableQueue },
+	{ "music_remote_enable_playlists", ISteamMusicRemote_EnablePlaylists },
+	{ "music_remote_update_playback_status", ISteamMusicRemote_UpdatePlaybackStatus },
+	{ "music_remote_update_shuffled", ISteamMusicRemote_UpdateShuffled },
+	{ "music_remote_update_looped", ISteamMusicRemote_UpdateLooped },
+	{ "music_remote_update_volume", ISteamMusicRemote_UpdateVolume },
+	{ "music_remote_current_entry_will_change", ISteamMusicRemote_CurrentEntryWillChange },
+	{ "music_remote_current_entry_is_available", ISteamMusicRemote_CurrentEntryIsAvailable },
+	{ "music_remote_update_current_entry_text", ISteamMusicRemote_UpdateCurrentEntryText },
+	{ "music_remote_update_current_entry_elapsed_seconds", ISteamMusicRemote_UpdateCurrentEntryElapsedSeconds },
+	{ "music_remote_update_current_entry_cover_art", ISteamMusicRemote_UpdateCurrentEntryCoverArt },
+	{ "music_remote_current_entry_did_change", ISteamMusicRemote_CurrentEntryDidChange },
+	{ "music_remote_queue_will_change", ISteamMusicRemote_QueueWillChange },
+	{ "music_remote_reset_queue_entries", ISteamMusicRemote_ResetQueueEntries },
+	{ "music_remote_set_queue_entry", ISteamMusicRemote_SetQueueEntry },
+	{ "music_remote_set_current_queue_entry", ISteamMusicRemote_SetCurrentQueueEntry },
+	{ "music_remote_queue_did_change", ISteamMusicRemote_QueueDidChange },
+	{ "music_remote_playlist_will_change", ISteamMusicRemote_PlaylistWillChange },
+	{ "music_remote_reset_playlist_entries", ISteamMusicRemote_ResetPlaylistEntries },
+	{ "music_remote_set_playlist_entry", ISteamMusicRemote_SetPlaylistEntry },
+	{ "music_remote_set_current_playlist_entry", ISteamMusicRemote_SetCurrentPlaylistEntry },
+	{ "music_remote_playlist_did_change", ISteamMusicRemote_PlaylistDidChange },
 	{ "ugc_create_query_user_ugc_request", ISteamUGC_CreateQueryUserUGCRequest },
 	{ "ugc_create_query_all_ugc_request", ISteamUGC_CreateQueryAllUGCRequestPage },
 	{ "ugc_create_query_all_ugc_request", ISteamUGC_CreateQueryAllUGCRequestCursor },

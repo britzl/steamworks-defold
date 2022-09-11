@@ -4902,6 +4902,382 @@
         type: float
 #***********************************
 
+    - name: music_remote_register_steam_music_remote
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#RegisterSteamMusicRemote
+      parameters:
+      - name: pchName
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_deregister_steam_music_remote
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#DeregisterSteamMusicRemote
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_is_current_music_remote
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#BIsCurrentMusicRemote
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_activation_success
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#BActivationSuccess
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_set_display_name
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetDisplayName
+      parameters:
+      - name: pchDisplayName
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_set_png_icon_64x64
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetPNGIcon_64x64
+      parameters:
+      - name: pvBuffer
+        type: buffer
+      - name: cbBufferLength
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_enable_play_previous
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnablePlayPrevious
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_enable_play_next
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnablePlayNext
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_enable_shuffled
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnableShuffled
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_enable_looped
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnableLooped
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_enable_queue
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnableQueue
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_enable_playlists
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnablePlaylists
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_update_playback_status
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdatePlaybackStatus
+      parameters:
+      - name: nStatus
+        type: AudioPlayback_Status
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_update_shuffled
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateShuffled
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_update_looped
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateLooped
+      parameters:
+      - name: bValue
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_update_volume
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateVolume
+      parameters:
+      - name: flValue
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_current_entry_will_change
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#CurrentEntryWillChange
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_current_entry_is_available
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#CurrentEntryIsAvailable
+      parameters:
+      - name: bAvailable
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_update_current_entry_text
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateCurrentEntryText
+      parameters:
+      - name: pchText
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_update_current_entry_elapsed_seconds
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateCurrentEntryElapsedSeconds
+      parameters:
+      - name: nValue
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_update_current_entry_cover_art
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateCurrentEntryCoverArt
+      parameters:
+      - name: pvBuffer
+        type: buffer
+      - name: cbBufferLength
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_current_entry_did_change
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#CurrentEntryDidChange
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_queue_will_change
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#QueueWillChange
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_reset_queue_entries
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#ResetQueueEntries
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_set_queue_entry
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetQueueEntry
+      parameters:
+      - name: nID
+        type: number
+      - name: nPosition
+        type: number
+      - name: pchEntryText
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_set_current_queue_entry
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetCurrentQueueEntry
+      parameters:
+      - name: nID
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_queue_did_change
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#QueueDidChange
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_playlist_will_change
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#PlaylistWillChange
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_reset_playlist_entries
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#ResetPlaylistEntries
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_set_playlist_entry
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetPlaylistEntry
+      parameters:
+      - name: nID
+        type: number
+      - name: nPosition
+        type: number
+      - name: pchEntryText
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_set_current_playlist_entry
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetCurrentPlaylistEntry
+      parameters:
+      - name: nID
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: music_remote_playlist_did_change
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamMusicRemote#PlaylistDidChange
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
     - name: ugc_create_query_user_ugc_request
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUserUGCRequest

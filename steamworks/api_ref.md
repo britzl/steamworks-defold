@@ -381,6 +381,38 @@
   * [steamworks.music_play_next](#music_play_next)
   * [steamworks.music_set_volume](#music_set_volume)
   * [steamworks.music_get_volume](#music_get_volume)
+  * [steamworks.music_remote_register_steam_music_remote](#music_remote_register_steam_music_remote)
+  * [steamworks.music_remote_deregister_steam_music_remote](#music_remote_deregister_steam_music_remote)
+  * [steamworks.music_remote_is_current_music_remote](#music_remote_is_current_music_remote)
+  * [steamworks.music_remote_activation_success](#music_remote_activation_success)
+  * [steamworks.music_remote_set_display_name](#music_remote_set_display_name)
+  * [steamworks.music_remote_set_png_icon_64x64](#music_remote_set_png_icon_64x64)
+  * [steamworks.music_remote_enable_play_previous](#music_remote_enable_play_previous)
+  * [steamworks.music_remote_enable_play_next](#music_remote_enable_play_next)
+  * [steamworks.music_remote_enable_shuffled](#music_remote_enable_shuffled)
+  * [steamworks.music_remote_enable_looped](#music_remote_enable_looped)
+  * [steamworks.music_remote_enable_queue](#music_remote_enable_queue)
+  * [steamworks.music_remote_enable_playlists](#music_remote_enable_playlists)
+  * [steamworks.music_remote_update_playback_status](#music_remote_update_playback_status)
+  * [steamworks.music_remote_update_shuffled](#music_remote_update_shuffled)
+  * [steamworks.music_remote_update_looped](#music_remote_update_looped)
+  * [steamworks.music_remote_update_volume](#music_remote_update_volume)
+  * [steamworks.music_remote_current_entry_will_change](#music_remote_current_entry_will_change)
+  * [steamworks.music_remote_current_entry_is_available](#music_remote_current_entry_is_available)
+  * [steamworks.music_remote_update_current_entry_text](#music_remote_update_current_entry_text)
+  * [steamworks.music_remote_update_current_entry_elapsed_seconds](#music_remote_update_current_entry_elapsed_seconds)
+  * [steamworks.music_remote_update_current_entry_cover_art](#music_remote_update_current_entry_cover_art)
+  * [steamworks.music_remote_current_entry_did_change](#music_remote_current_entry_did_change)
+  * [steamworks.music_remote_queue_will_change](#music_remote_queue_will_change)
+  * [steamworks.music_remote_reset_queue_entries](#music_remote_reset_queue_entries)
+  * [steamworks.music_remote_set_queue_entry](#music_remote_set_queue_entry)
+  * [steamworks.music_remote_set_current_queue_entry](#music_remote_set_current_queue_entry)
+  * [steamworks.music_remote_queue_did_change](#music_remote_queue_did_change)
+  * [steamworks.music_remote_playlist_will_change](#music_remote_playlist_will_change)
+  * [steamworks.music_remote_reset_playlist_entries](#music_remote_reset_playlist_entries)
+  * [steamworks.music_remote_set_playlist_entry](#music_remote_set_playlist_entry)
+  * [steamworks.music_remote_set_current_playlist_entry](#music_remote_set_current_playlist_entry)
+  * [steamworks.music_remote_playlist_did_change](#music_remote_playlist_did_change)
   * [steamworks.ugc_create_query_user_ugc_request](#ugc_create_query_user_ugc_request)
   * [steamworks.ugc_create_query_all_ugc_request](#ugc_create_query_all_ugc_request)
   * [steamworks.ugc_create_query_all_ugc_request](#ugc_create_query_all_ugc_request)
@@ -4004,6 +4036,290 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` (float)
+
+
+### <a name="music_remote_register_steam_music_remote"></a>steamworks.music_remote_register_steam_music_remote(pchName) - [ISteamMusicRemote#RegisterSteamMusicRemote](https://partner.steamgames.com/doc/api/ISteamMusicRemote#RegisterSteamMusicRemote)
+
+**PARAMS**
+* `pchName` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_deregister_steam_music_remote"></a>steamworks.music_remote_deregister_steam_music_remote() - [ISteamMusicRemote#DeregisterSteamMusicRemote](https://partner.steamgames.com/doc/api/ISteamMusicRemote#DeregisterSteamMusicRemote)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_is_current_music_remote"></a>steamworks.music_remote_is_current_music_remote() - [ISteamMusicRemote#BIsCurrentMusicRemote](https://partner.steamgames.com/doc/api/ISteamMusicRemote#BIsCurrentMusicRemote)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_activation_success"></a>steamworks.music_remote_activation_success(bValue) - [ISteamMusicRemote#BActivationSuccess](https://partner.steamgames.com/doc/api/ISteamMusicRemote#BActivationSuccess)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_set_display_name"></a>steamworks.music_remote_set_display_name(pchDisplayName) - [ISteamMusicRemote#SetDisplayName](https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetDisplayName)
+
+**PARAMS**
+* `pchDisplayName` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_set_png_icon_64x64"></a>steamworks.music_remote_set_png_icon_64x64(pvBuffer, cbBufferLength) - [ISteamMusicRemote#SetPNGIcon_64x64](https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetPNGIcon_64x64)
+
+**PARAMS**
+* `pvBuffer` (buffer)
+* `cbBufferLength` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_enable_play_previous"></a>steamworks.music_remote_enable_play_previous(bValue) - [ISteamMusicRemote#EnablePlayPrevious](https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnablePlayPrevious)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_enable_play_next"></a>steamworks.music_remote_enable_play_next(bValue) - [ISteamMusicRemote#EnablePlayNext](https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnablePlayNext)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_enable_shuffled"></a>steamworks.music_remote_enable_shuffled(bValue) - [ISteamMusicRemote#EnableShuffled](https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnableShuffled)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_enable_looped"></a>steamworks.music_remote_enable_looped(bValue) - [ISteamMusicRemote#EnableLooped](https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnableLooped)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_enable_queue"></a>steamworks.music_remote_enable_queue(bValue) - [ISteamMusicRemote#EnableQueue](https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnableQueue)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_enable_playlists"></a>steamworks.music_remote_enable_playlists(bValue) - [ISteamMusicRemote#EnablePlaylists](https://partner.steamgames.com/doc/api/ISteamMusicRemote#EnablePlaylists)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_update_playback_status"></a>steamworks.music_remote_update_playback_status(nStatus) - [ISteamMusicRemote#UpdatePlaybackStatus](https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdatePlaybackStatus)
+
+**PARAMS**
+* `nStatus` (AudioPlayback_Status)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_update_shuffled"></a>steamworks.music_remote_update_shuffled(bValue) - [ISteamMusicRemote#UpdateShuffled](https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateShuffled)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_update_looped"></a>steamworks.music_remote_update_looped(bValue) - [ISteamMusicRemote#UpdateLooped](https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateLooped)
+
+**PARAMS**
+* `bValue` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_update_volume"></a>steamworks.music_remote_update_volume(flValue) - [ISteamMusicRemote#UpdateVolume](https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateVolume)
+
+**PARAMS**
+* `flValue` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_current_entry_will_change"></a>steamworks.music_remote_current_entry_will_change() - [ISteamMusicRemote#CurrentEntryWillChange](https://partner.steamgames.com/doc/api/ISteamMusicRemote#CurrentEntryWillChange)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_current_entry_is_available"></a>steamworks.music_remote_current_entry_is_available(bAvailable) - [ISteamMusicRemote#CurrentEntryIsAvailable](https://partner.steamgames.com/doc/api/ISteamMusicRemote#CurrentEntryIsAvailable)
+
+**PARAMS**
+* `bAvailable` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_update_current_entry_text"></a>steamworks.music_remote_update_current_entry_text(pchText) - [ISteamMusicRemote#UpdateCurrentEntryText](https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateCurrentEntryText)
+
+**PARAMS**
+* `pchText` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_update_current_entry_elapsed_seconds"></a>steamworks.music_remote_update_current_entry_elapsed_seconds(nValue) - [ISteamMusicRemote#UpdateCurrentEntryElapsedSeconds](https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateCurrentEntryElapsedSeconds)
+
+**PARAMS**
+* `nValue` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_update_current_entry_cover_art"></a>steamworks.music_remote_update_current_entry_cover_art(pvBuffer, cbBufferLength) - [ISteamMusicRemote#UpdateCurrentEntryCoverArt](https://partner.steamgames.com/doc/api/ISteamMusicRemote#UpdateCurrentEntryCoverArt)
+
+**PARAMS**
+* `pvBuffer` (buffer)
+* `cbBufferLength` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_current_entry_did_change"></a>steamworks.music_remote_current_entry_did_change() - [ISteamMusicRemote#CurrentEntryDidChange](https://partner.steamgames.com/doc/api/ISteamMusicRemote#CurrentEntryDidChange)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_queue_will_change"></a>steamworks.music_remote_queue_will_change() - [ISteamMusicRemote#QueueWillChange](https://partner.steamgames.com/doc/api/ISteamMusicRemote#QueueWillChange)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_reset_queue_entries"></a>steamworks.music_remote_reset_queue_entries() - [ISteamMusicRemote#ResetQueueEntries](https://partner.steamgames.com/doc/api/ISteamMusicRemote#ResetQueueEntries)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_set_queue_entry"></a>steamworks.music_remote_set_queue_entry(nID, nPosition, pchEntryText) - [ISteamMusicRemote#SetQueueEntry](https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetQueueEntry)
+
+**PARAMS**
+* `nID` (number)
+* `nPosition` (number)
+* `pchEntryText` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_set_current_queue_entry"></a>steamworks.music_remote_set_current_queue_entry(nID) - [ISteamMusicRemote#SetCurrentQueueEntry](https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetCurrentQueueEntry)
+
+**PARAMS**
+* `nID` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_queue_did_change"></a>steamworks.music_remote_queue_did_change() - [ISteamMusicRemote#QueueDidChange](https://partner.steamgames.com/doc/api/ISteamMusicRemote#QueueDidChange)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_playlist_will_change"></a>steamworks.music_remote_playlist_will_change() - [ISteamMusicRemote#PlaylistWillChange](https://partner.steamgames.com/doc/api/ISteamMusicRemote#PlaylistWillChange)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_reset_playlist_entries"></a>steamworks.music_remote_reset_playlist_entries() - [ISteamMusicRemote#ResetPlaylistEntries](https://partner.steamgames.com/doc/api/ISteamMusicRemote#ResetPlaylistEntries)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_set_playlist_entry"></a>steamworks.music_remote_set_playlist_entry(nID, nPosition, pchEntryText) - [ISteamMusicRemote#SetPlaylistEntry](https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetPlaylistEntry)
+
+**PARAMS**
+* `nID` (number)
+* `nPosition` (number)
+* `pchEntryText` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_set_current_playlist_entry"></a>steamworks.music_remote_set_current_playlist_entry(nID) - [ISteamMusicRemote#SetCurrentPlaylistEntry](https://partner.steamgames.com/doc/api/ISteamMusicRemote#SetCurrentPlaylistEntry)
+
+**PARAMS**
+* `nID` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="music_remote_playlist_did_change"></a>steamworks.music_remote_playlist_did_change() - [ISteamMusicRemote#PlaylistDidChange](https://partner.steamgames.com/doc/api/ISteamMusicRemote#PlaylistDidChange)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
 
 
 ### <a name="ugc_create_query_user_ugc_request"></a>steamworks.ugc_create_query_user_ugc_request(unAccountID, eListType, eMatchingUGCType, eSortOrder, nCreatorAppID, nConsumerAppID, unPage) - [ISteamUGC#CreateQueryUserUGCRequest](https://partner.steamgames.com/doc/api/ISteamUGC#CreateQueryUserUGCRequest)
