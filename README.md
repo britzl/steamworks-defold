@@ -44,19 +44,22 @@ The Steamworks API will not initialize if it does not know the App ID of your ga
 The extension exposes most of the Steamworks functionality through an auto-generated API. Refer to the [API Overview](steamworks/api_ref.md) for a list of all generated functions, constants and callbacks.
 
 * Supported APIs
-	* ISteamUser
-	* ISteamFriends
-	* ISteamUtils
-	* ISteamMatchmaking
-	* ISteamGameSearch
-	* ISteamParties
-	* ISteamRemoteStorage
-	* ISteamUserStats
-	* ISteamApps
-	* ISteamNetworking
-	* ISteamMusic
-	* ISteamUGC
-	* ISteamInventory
+  * ISteamUser
+  * ISteamFriends
+  * ISteamUtils
+  * ISteamMatchmaking
+  * ISteamGameSearch
+  * ISteamParties
+  * ISteamRemoteStorage
+  * ISteamUserStats
+  * ISteamApps
+  * ISteamNetworking
+  * ISteamScreenshots
+  * ISteamMusic
+  * ISteamMusicRemote
+  * ISteamUGC
+  * ISteamInventory
+  * ISteamVideo
 
 NOTE: Please [create a ticket](https://github.com/britzl/steamworks-defold/issues/new) if there's an unsupported API that you need!
 

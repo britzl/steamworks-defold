@@ -8,7 +8,7 @@ import html
 
 INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
 
-SKIP_CLASSES = ["ISteamClient", "ISteamMatchmakingServerListResponse", "ISteamMatchmakingPingResponse", "ISteamMatchmakingPlayersResponse", "ISteamMatchmakingRulesResponse", "ISteamMatchmakingServers", "ISteamHTTP", "ISteamController", "ISteamAppList", "ISteamHTMLSurface", "ISteamParentalSettings", "ISteamRemotePlay", "ISteamNetworkingMessages", "ISteamNetworkingSockets", "ISteamNetworkingUtils", "ISteamGameServer", "ISteamGameServerStats", "ISteamNetworkingFakeUDPPort", "ISteamInput" ]
+SKIP_CLASSES = ["ISteamClient", "ISteamMatchmakingServerListResponse", "ISteamMatchmakingPingResponse", "ISteamMatchmakingPlayersResponse", "ISteamMatchmakingRulesResponse", "ISteamMatchmakingServers", "ISteamHTTP", "ISteamController", "ISteamAppList", "ISteamParentalSettings", "ISteamRemotePlay", "ISteamNetworkingMessages", "ISteamNetworkingSockets", "ISteamNetworkingUtils", "ISteamGameServer", "ISteamGameServerStats", "ISteamNetworkingFakeUDPPort", "ISteamInput", "ISteamHTMLSurface" ]
 
 
 def to_snake_case(name):
@@ -200,6 +200,7 @@ def parse_methods(interfaces):
                             param["paramtypestring"] = paramtype.replace(" *", "").replace("const ", "").replace("class ", "class_").replace("struct ", "struct_")
                             method["paramnames"].append("&" + paramname)
                         else:
+                            paramtype = re.sub(".*::", "", paramtype)
                             param["paramtypestring"] = paramtype.replace(" *", "_ptr").replace("const ", "const_").replace("class ", "class_").replace("struct ", "struct_")
                             method["paramnames"].append(paramname)
                         method["paramnames_in"].append(paramname)
@@ -227,7 +228,7 @@ def parse_methods(interfaces):
     return m
 
 
-def parse_enums(enums, callback_structs):
+def parse_enums(enums, callback_structs, interfaces):
     DEPRECATED_ENUMS = []
     e = []
     for callback_struct in callback_structs:
@@ -235,6 +236,12 @@ def parse_enums(enums, callback_structs):
         if callback_struct_enums:
             for callback_struct_enum in callback_struct_enums:
                 enums.append(callback_struct_enum)
+
+    for interface in interfaces:
+        interface_enums = interface.get("enums")
+        if interface_enums:
+            for interface_enum in interface_enums:
+                enums.append(interface_enum)
 
     for enum in enums:
         enumname = enum.get("enumname")
@@ -349,7 +356,7 @@ def generate():
     j["methods"] = parse_methods(j["interfaces"])
     j["typedefs"] = parse_typedefs(j["typedefs"])
     j["structs"] = parse_structs(j["structs"], j["methods"]) + parse_structs(j["callback_structs"], j["methods"])
-    j["enums"] = parse_enums(j["enums"], j["callback_structs"])
+    j["enums"] = parse_enums(j["enums"], j["callback_structs"], j["interfaces"])
     j["callbacks"] = parse_callbacks(j["methods"])
 
     with open("steamworks.cpp.mtl", 'r') as f:
