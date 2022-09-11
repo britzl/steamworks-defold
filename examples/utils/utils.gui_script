@@ -5,6 +5,7 @@ local monarch = require "monarch.monarch"
 TEXT = [[INFO
 App active: %d seconds
 App id: %d
+Steam Deck: %s
 ]]
 
 function init(self)
@@ -15,7 +16,8 @@ function init(self)
 
 	local seconds = steamworks.utils_get_seconds_since_app_active()
 	local app_id = steamworks.utils_get_app_id()
-	gui.set_text(gui.get_node("info"), TEXT:format(seconds, app_id))
+	local steam_deck = steamworks.utils_is_steam_running_on_steam_deck() and "true" or "false"
+	gui.set_text(gui.get_node("info"), TEXT:format(seconds, app_id, steam_deck))
 end
 
 function final(self)
