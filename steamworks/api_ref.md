@@ -341,6 +341,28 @@
   * [steamworks.apps_is_subscribed_from_family_sharing](#apps_is_subscribed_from_family_sharing)
   * [steamworks.apps_is_timed_trial](#apps_is_timed_trial)
   * [steamworks.apps_set_dlc_context](#apps_set_dlc_context)
+  * [steamworks.networking_send_p2p_packet](#networking_send_p2p_packet)
+  * [steamworks.networking_is_p2p_packet_available](#networking_is_p2p_packet_available)
+  * [steamworks.networking_read_p2p_packet](#networking_read_p2p_packet)
+  * [steamworks.networking_accept_p2p_session_with_user](#networking_accept_p2p_session_with_user)
+  * [steamworks.networking_close_p2p_session_with_user](#networking_close_p2p_session_with_user)
+  * [steamworks.networking_close_p2p_channel_with_user](#networking_close_p2p_channel_with_user)
+  * [steamworks.networking_get_p2p_session_state](#networking_get_p2p_session_state)
+  * [steamworks.networking_allow_p2p_packet_relay](#networking_allow_p2p_packet_relay)
+  * [steamworks.networking_create_listen_socket](#networking_create_listen_socket)
+  * [steamworks.networking_create_p2p_connection_socket](#networking_create_p2p_connection_socket)
+  * [steamworks.networking_create_connection_socket](#networking_create_connection_socket)
+  * [steamworks.networking_destroy_socket](#networking_destroy_socket)
+  * [steamworks.networking_destroy_listen_socket](#networking_destroy_listen_socket)
+  * [steamworks.networking_send_data_on_socket](#networking_send_data_on_socket)
+  * [steamworks.networking_is_data_available_on_socket](#networking_is_data_available_on_socket)
+  * [steamworks.networking_retrieve_data_from_socket](#networking_retrieve_data_from_socket)
+  * [steamworks.networking_is_data_available](#networking_is_data_available)
+  * [steamworks.networking_retrieve_data](#networking_retrieve_data)
+  * [steamworks.networking_get_socket_info](#networking_get_socket_info)
+  * [steamworks.networking_get_listen_socket_info](#networking_get_listen_socket_info)
+  * [steamworks.networking_get_socket_connection_type](#networking_get_socket_connection_type)
+  * [steamworks.networking_get_max_packet_size](#networking_get_max_packet_size)
   * [steamworks.music_is_enabled](#music_is_enabled)
   * [steamworks.music_is_playing](#music_is_playing)
   * [steamworks.music_get_playback_status](#music_get_playback_status)
@@ -3580,6 +3602,260 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` (bool)
+
+
+### <a name="networking_send_p2p_packet"></a>steamworks.networking_send_p2p_packet(steamIDRemote, pubData, cubData, eP2PSendType, nChannel) - [ISteamNetworking#SendP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket)
+
+**PARAMS**
+* `steamIDRemote` (string)
+* `pubData` (string)
+* `cubData` (number)
+* `eP2PSendType` (EP2PSend)
+* `nChannel` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_is_p2p_packet_available"></a>steamworks.networking_is_p2p_packet_available(pcubMsgSize, nChannel) - [ISteamNetworking#IsP2PPacketAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable)
+
+**PARAMS**
+* `pcubMsgSize` (number)
+* `nChannel` (number)
+
+**RETURN**
+* `r` (bool)
+* `pcubMsgSize` (uint32)
+
+
+### <a name="networking_read_p2p_packet"></a>steamworks.networking_read_p2p_packet(pubDest, cubDest, pcubMsgSize, psteamIDRemote, nChannel) - [ISteamNetworking#ReadP2PPacket](https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket)
+
+**PARAMS**
+* `pubDest` (buffer)
+* `cubDest` (number)
+* `pcubMsgSize` (number)
+* `psteamIDRemote` (string)
+* `nChannel` (number)
+
+**RETURN**
+* `r` (bool)
+* `pcubMsgSize` (uint32)
+* `psteamIDRemote` (CSteamID)
+
+
+### <a name="networking_accept_p2p_session_with_user"></a>steamworks.networking_accept_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#AcceptP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser)
+
+**PARAMS**
+* `steamIDRemote` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_close_p2p_session_with_user"></a>steamworks.networking_close_p2p_session_with_user(steamIDRemote) - [ISteamNetworking#CloseP2PSessionWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser)
+
+**PARAMS**
+* `steamIDRemote` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_close_p2p_channel_with_user"></a>steamworks.networking_close_p2p_channel_with_user(steamIDRemote, nChannel) - [ISteamNetworking#CloseP2PChannelWithUser](https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser)
+
+**PARAMS**
+* `steamIDRemote` (string)
+* `nChannel` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_get_p2p_session_state"></a>steamworks.networking_get_p2p_session_state(steamIDRemote, pConnectionState) - [ISteamNetworking#GetP2PSessionState](https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState)
+
+**PARAMS**
+* `steamIDRemote` (string)
+* `pConnectionState` (number)
+
+**RETURN**
+* `r` (bool)
+* `pConnectionState` (P2PSessionState_t)
+
+
+### <a name="networking_allow_p2p_packet_relay"></a>steamworks.networking_allow_p2p_packet_relay(bAllow) - [ISteamNetworking#AllowP2PPacketRelay](https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay)
+
+**PARAMS**
+* `bAllow` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_create_listen_socket"></a>steamworks.networking_create_listen_socket(nVirtualP2PPort, nIP, nPort, bAllowUseOfPacketRelay) - [ISteamNetworking#CreateListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket)
+
+**PARAMS**
+* `nVirtualP2PPort` (number)
+* `nIP` (number)
+* `nPort` (number)
+* `bAllowUseOfPacketRelay` (boolean)
+
+**RETURN**
+* `r` (SNetListenSocket_t)
+
+
+### <a name="networking_create_p2p_connection_socket"></a>steamworks.networking_create_p2p_connection_socket(steamIDTarget, nVirtualPort, nTimeoutSec, bAllowUseOfPacketRelay) - [ISteamNetworking#CreateP2PConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket)
+
+**PARAMS**
+* `steamIDTarget` (string)
+* `nVirtualPort` (number)
+* `nTimeoutSec` (number)
+* `bAllowUseOfPacketRelay` (boolean)
+
+**RETURN**
+* `r` (SNetSocket_t)
+
+
+### <a name="networking_create_connection_socket"></a>steamworks.networking_create_connection_socket(nIP, nPort, nTimeoutSec) - [ISteamNetworking#CreateConnectionSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket)
+
+**PARAMS**
+* `nIP` (number)
+* `nPort` (number)
+* `nTimeoutSec` (number)
+
+**RETURN**
+* `r` (SNetSocket_t)
+
+
+### <a name="networking_destroy_socket"></a>steamworks.networking_destroy_socket(hSocket, bNotifyRemoteEnd) - [ISteamNetworking#DestroySocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket)
+
+**PARAMS**
+* `hSocket` (number)
+* `bNotifyRemoteEnd` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_destroy_listen_socket"></a>steamworks.networking_destroy_listen_socket(hSocket, bNotifyRemoteEnd) - [ISteamNetworking#DestroyListenSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket)
+
+**PARAMS**
+* `hSocket` (number)
+* `bNotifyRemoteEnd` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_send_data_on_socket"></a>steamworks.networking_send_data_on_socket(hSocket, pubData, cubData, bReliable) - [ISteamNetworking#SendDataOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket)
+
+**PARAMS**
+* `hSocket` (number)
+* `pubData` (buffer)
+* `cubData` (number)
+* `bReliable` (boolean)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="networking_is_data_available_on_socket"></a>steamworks.networking_is_data_available_on_socket(hSocket, pcubMsgSize) - [ISteamNetworking#IsDataAvailableOnSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket)
+
+**PARAMS**
+* `hSocket` (number)
+* `pcubMsgSize` (number)
+
+**RETURN**
+* `r` (bool)
+* `pcubMsgSize` (uint32)
+
+
+### <a name="networking_retrieve_data_from_socket"></a>steamworks.networking_retrieve_data_from_socket(hSocket, pubDest, cubDest, pcubMsgSize) - [ISteamNetworking#RetrieveDataFromSocket](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket)
+
+**PARAMS**
+* `hSocket` (number)
+* `pubDest` (buffer)
+* `cubDest` (number)
+* `pcubMsgSize` (number)
+
+**RETURN**
+* `r` (bool)
+* `pcubMsgSize` (uint32)
+
+
+### <a name="networking_is_data_available"></a>steamworks.networking_is_data_available(hListenSocket, pcubMsgSize, phSocket) - [ISteamNetworking#IsDataAvailable](https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable)
+
+**PARAMS**
+* `hListenSocket` (number)
+* `pcubMsgSize` (number)
+* `phSocket` (number)
+
+**RETURN**
+* `r` (bool)
+* `pcubMsgSize` (uint32)
+* `phSocket` (SNetSocket_t)
+
+
+### <a name="networking_retrieve_data"></a>steamworks.networking_retrieve_data(hListenSocket, pubDest, cubDest, pcubMsgSize, phSocket) - [ISteamNetworking#RetrieveData](https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData)
+
+**PARAMS**
+* `hListenSocket` (number)
+* `pubDest` (buffer)
+* `cubDest` (number)
+* `pcubMsgSize` (number)
+* `phSocket` (number)
+
+**RETURN**
+* `r` (bool)
+* `pcubMsgSize` (uint32)
+* `phSocket` (SNetSocket_t)
+
+
+### <a name="networking_get_socket_info"></a>steamworks.networking_get_socket_info(hSocket, pSteamIDRemote, peSocketStatus, punIPRemote, punPortRemote) - [ISteamNetworking#GetSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo)
+
+**PARAMS**
+* `hSocket` (number)
+* `pSteamIDRemote` (string)
+* `peSocketStatus` (number)
+* `punIPRemote` (number)
+* `punPortRemote` (number)
+
+**RETURN**
+* `r` (bool)
+* `pSteamIDRemote` (CSteamID)
+* `peSocketStatus` (int)
+* `punIPRemote` (SteamIPAddress_t)
+* `punPortRemote` (uint16)
+
+
+### <a name="networking_get_listen_socket_info"></a>steamworks.networking_get_listen_socket_info(hListenSocket, pnIP, pnPort) - [ISteamNetworking#GetListenSocketInfo](https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo)
+
+**PARAMS**
+* `hListenSocket` (number)
+* `pnIP` (number)
+* `pnPort` (number)
+
+**RETURN**
+* `r` (bool)
+* `pnIP` (SteamIPAddress_t)
+* `pnPort` (uint16)
+
+
+### <a name="networking_get_socket_connection_type"></a>steamworks.networking_get_socket_connection_type(hSocket) - [ISteamNetworking#GetSocketConnectionType](https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType)
+
+**PARAMS**
+* `hSocket` (number)
+
+**RETURN**
+* `r` (ESNetSocketConnectionType)
+
+
+### <a name="networking_get_max_packet_size"></a>steamworks.networking_get_max_packet_size(hSocket) - [ISteamNetworking#GetMaxPacketSize](https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize)
+
+**PARAMS**
+* `hSocket` (number)
+
+**RETURN**
+* `r` (int)
 
 
 ### <a name="music_is_enabled"></a>steamworks.music_is_enabled() - [ISteamMusic#BIsEnabled](https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled)

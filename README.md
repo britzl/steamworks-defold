@@ -44,31 +44,19 @@ The Steamworks API will not initialize if it does not know the App ID of your ga
 The extension exposes most of the Steamworks functionality through an auto-generated API. Refer to the [API Overview](steamworks/api_ref.md) for a list of all generated functions, constants and callbacks.
 
 * Supported APIs
-  * [ISteamApps](https://partner.steamgames.com/doc/api/ISteamApps)
-  * [ISteamAppTicket](https://partner.steamgames.com/doc/api/ISteamAppTicket)
-  * [ISteamClient](https://partner.steamgames.com/doc/api/ISteamClient)
-  * [ISteamFriends](https://partner.steamgames.com/doc/api/ISteamFriends)
-  * [ISteamInventory](https://partner.steamgames.com/doc/api/ISteamInventory)
-  * [ISteamMatchmaking](https://partner.steamgames.com/doc/api/ISteamMatchmaking)
-  * [ISteamMusic](https://partner.steamgames.com/doc/api/ISteamMusic)
-  * [ISteamNetworking](https://partner.steamgames.com/doc/api/ISteamNetworking)
-  * [ISteamRemoteStorage](https://partner.steamgames.com/doc/api/ISteamRemoteStorage)
-  * [ISteamUser](https://partner.steamgames.com/doc/api/ISteamUser)
-  * [ISteamUserStats](https://partner.steamgames.com/doc/api/ISteamUserStats)
-  * [ISteamUtils](https://partner.steamgames.com/doc/api/ISteamUtils)
-  * [ISteamUGC](https://partner.steamgames.com/doc/api/ISteamUGC)
-* Unsupported APIs
-  * [ISteamController](https://partner.steamgames.com/doc/api/ISteamController)
-  * [ISteamGameCoordinator](https://partner.steamgames.com/doc/api/ISteamGameCoordinator) (deprecated)
-  * [ISteamGameServer](https://partner.steamgames.com/doc/api/ISteamGameServer) (for game servers, could be supported in the future)
-  * [ISteamGameServerStats](https://partner.steamgames.com/doc/api/ISteamGameServerStats) (for game servers, could be supported in the future)
-  * [ISteamHTMLSurface](https://partner.steamgames.com/doc/api/ISteamHTMLSurface)
-  * [ISteamHTTP](https://partner.steamgames.com/doc/api/ISteamHTTP) (use http.request instead)
-  * [ISteamMatchmakingServers](https://partner.steamgames.com/doc/api/ISteamMatchmakingServers)
-  * [ISteamMusicRemote](https://partner.steamgames.com/doc/api/ISteamMusicRemote)
-  * [ISteamScreenshots](https://partner.steamgames.com/doc/api/ISteamScreenshots)
-  * [ISteamUnifiedMessages](https://partner.steamgames.com/doc/api/ISteamUnifiedMessages)
-  * [ISteamVideo](https://partner.steamgames.com/doc/api/ISteamVideo)
+	* ISteamUser
+	* ISteamFriends
+	* ISteamUtils
+	* ISteamMatchmaking
+	* ISteamGameSearch
+	* ISteamParties
+	* ISteamRemoteStorage
+	* ISteamUserStats
+	* ISteamApps
+	* ISteamNetworking
+	* ISteamMusic
+	* ISteamUGC
+	* ISteamInventory
 
 NOTE: Please [create a ticket](https://github.com/britzl/steamworks-defold/issues/new) if there's an unsupported API that you need!
 

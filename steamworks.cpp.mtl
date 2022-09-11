@@ -43,7 +43,7 @@ static ISteamUGC *ugc;
 static ISteamParties *parties;
 static ISteamInput *input;
 static ISteamGameSearch *game_search;
-
+static ISteamNetworking *networking;
 
 /*****************************
 * PUSH numbers and other primitive types
@@ -818,6 +818,7 @@ static int Init(lua_State* L) {
 	parties = SteamParties();
 	input = SteamInput();
 	game_search = SteamGameSearch();
+	networking = SteamNetworking();
 	return 0;
 }
 

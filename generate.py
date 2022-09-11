@@ -7,7 +7,9 @@ import codecs
 import html
 
 INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
-INCLUDED_CLASSES = ["ISteamUser", "ISteamFriends", "ISteamUtils", "ISteamUserStats", "ISteamMatchmaking", "ISteamNetworking", "ISteamApps", "ISteamMusic", "ISteamRemoteStorage", "ISteamInventory", "ISteamUGC", "ISteamGameSearch", "ISteamParties", "ISteamInput"]
+
+SKIP_CLASSES = ["ISteamClient", "ISteamMatchmakingServerListResponse", "ISteamMatchmakingPingResponse", "ISteamMatchmakingPlayersResponse", "ISteamMatchmakingRulesResponse", "ISteamMatchmakingServers", "ISteamScreenshots", "ISteamMusicRemote", "ISteamHTTP", "ISteamController", "ISteamAppList", "ISteamHTMLSurface", "ISteamVideo", "ISteamParentalSettings", "ISteamRemotePlay", "ISteamNetworkingMessages", "ISteamNetworkingSockets", "ISteamNetworkingUtils", "ISteamGameServer", "ISteamGameServerStats", "ISteamNetworkingFakeUDPPort", "ISteamInput" ]
+
 
 def to_snake_case(name):
     s1 = re.sub(r'(.)([A-Z][a-z]+)', r'\1_\2', str(name))
@@ -31,29 +33,32 @@ def paramtype_to_lua(type):
         return type.replace(" *", "")
 
 
+
+
 def parse_interfaces(interfaces):
     i = []
+    skipped = []
     for interface in interfaces:
         classname = interface["classname"]
-        if classname in INCLUDED_CLASSES:
-            i.append(interface)
+        if classname in SKIP_CLASSES:
+            # print("Skipping interface " + classname)
+            skipped.append(classname)
+            continue
         else:
-            print("Skipping class " + classname)
+            i.append(interface)
+            print("Including interface " + classname)
+
+    for classname in skipped:
+        print("Skipped interface " + classname)
     return i
 
 
 def parse_methods(interfaces):
-    # DEPRECATED_METHODS = ["TrackAppUsageEvent", "GetUserDataFolder", "InitiateGameConnection", "CommitPublishedFileUpdate", "CreatePublishedFileUpdateRequest", "DeletePublishedFile", "EnumeratePublishedFilesByUserAction", "EnumeratePublishedWorkshopFiles", "EnumerateUserPublishedFiles", "EnumerateUserSharedWorkshopFiles", "EnumerateUserSubscribedFiles", "FileFetch", "FilePersist", "GetFileListFromServer", "GetPublishedFileDetails", "GetPublishedItemVoteDetails", "GetUserPublishedItemVoteDetails", "PublishVideo", "PublishWorkshopFile", "ResetFileRequestState", "SetUserPublishedFileAction", "SubscribePublishedFile", "SynchronizeToClient", "SynchronizeToServer", "UnsubscribePublishedFile", "UpdatePublishedFileDescription", "UpdatePublishedFileFile", "UpdatePublishedFilePreviewFile", "UpdatePublishedFileSetChangeDescription", "UpdatePublishedFileTags", "UpdatePublishedFileTitle", "UpdatePublishedFileVisibility", "UpdateUserPublishedItemVote"]
     SKIP_METHODS = ["GetVoice", "DecompressVoice", "StartVoiceRecording", "StopVoiceRecording", "GetAvailableVoice", "GetVoiceOptimalSampleRate", "SetWarningMessageHook"]
-    SKIP_CLASSES = ["ISteamNetworking", "ISteamNetworkingSockets", "ISteamInput"]
     m = []
     for interface in interfaces:
         classname = interface["classname"]
         for method in interface["methods"]:
-            if classname in SKIP_CLASSES:
-                print("Ignoring methods for class " + classname)
-                continue;
-
             # methodname = method.get("methodname_flat").replace("SteamAPI_", "").replace(classname + "_", "")
             methodname = method.get("methodname")
             methodname_flat = method.get("methodname_flat").replace("SteamAPI_", "").replace(classname + "_", "")

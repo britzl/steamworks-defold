@@ -43,7 +43,7 @@ static ISteamUGC *ugc;
 static ISteamParties *parties;
 static ISteamInput *input;
 static ISteamGameSearch *game_search;
-
+static ISteamNetworking *networking;
 
 /*****************************
 * PUSH numbers and other primitive types
@@ -22338,6 +22338,316 @@ static int ISteamApps_SetDlcContext(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamNetworking_SendP2PPacket(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 5); /*normal*/
+	EP2PSend eP2PSendType = check_EP2PSend(L, 4); /*normal*/
+	uint32 cubData = check_uint32(L, 3); /*normal*/
+	const void * pubData = check_const_void_ptr(L, 2); /*normal*/
+	CSteamID steamIDRemote = check_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->SendP2PPacket(steamIDRemote, pubData, cubData, eP2PSendType, nChannel);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_IsP2PPacketAvailable(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 2); /*normal*/
+	uint32 pcubMsgSize = check_uint32(L, 1); /*out_param*/
+
+	bool r = networking->IsP2PPacketAvailable(&pcubMsgSize, nChannel);
+	push_bool(L, r);
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_ReadP2PPacket(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 5); /*normal*/
+	CSteamID psteamIDRemote = check_CSteamID(L, 4); /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 3); /*out_param*/
+	uint32 cubDest = check_uint32(L, 2); /*normal*/
+	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 1); /*buffer_param*/
+	void * pubDest = 0x0;
+	uint32_t pubDest_buffersize = 0;
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
+
+	bool r = networking->ReadP2PPacket(pubDest, cubDest, &pcubMsgSize, &psteamIDRemote, nChannel);
+	push_bool(L, r);
+	push_CSteamID(L, psteamIDRemote); /*out_param*/
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_AcceptP2PSessionWithUser(lua_State* L) {
+	int top = lua_gettop(L);
+	CSteamID steamIDRemote = check_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->AcceptP2PSessionWithUser(steamIDRemote);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CloseP2PSessionWithUser(lua_State* L) {
+	int top = lua_gettop(L);
+	CSteamID steamIDRemote = check_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->CloseP2PSessionWithUser(steamIDRemote);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CloseP2PChannelWithUser(lua_State* L) {
+	int top = lua_gettop(L);
+	int nChannel = check_int(L, 2); /*normal*/
+	CSteamID steamIDRemote = check_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->CloseP2PChannelWithUser(steamIDRemote, nChannel);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_GetP2PSessionState(lua_State* L) {
+	int top = lua_gettop(L);
+	P2PSessionState_t pConnectionState = check_P2PSessionState_t(L, 2); /*out_param*/
+	CSteamID steamIDRemote = check_CSteamID(L, 1); /*normal*/
+
+	bool r = networking->GetP2PSessionState(steamIDRemote, &pConnectionState);
+	push_bool(L, r);
+	push_P2PSessionState_t(L, pConnectionState); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_AllowP2PPacketRelay(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAllow = check_bool(L, 1); /*normal*/
+
+	bool r = networking->AllowP2PPacketRelay(bAllow);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CreateListenSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAllowUseOfPacketRelay = check_bool(L, 4); /*normal*/
+	uint16 nPort = check_uint16(L, 3); /*normal*/
+	SteamIPAddress_t nIP = check_SteamIPAddress_t(L, 2); /*normal*/
+	int nVirtualP2PPort = check_int(L, 1); /*normal*/
+
+	SNetListenSocket_t r = networking->CreateListenSocket(nVirtualP2PPort, nIP, nPort, bAllowUseOfPacketRelay);
+	push_SNetListenSocket_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CreateP2PConnectionSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bAllowUseOfPacketRelay = check_bool(L, 4); /*normal*/
+	int nTimeoutSec = check_int(L, 3); /*normal*/
+	int nVirtualPort = check_int(L, 2); /*normal*/
+	CSteamID steamIDTarget = check_CSteamID(L, 1); /*normal*/
+
+	SNetSocket_t r = networking->CreateP2PConnectionSocket(steamIDTarget, nVirtualPort, nTimeoutSec, bAllowUseOfPacketRelay);
+	push_SNetSocket_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_CreateConnectionSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	int nTimeoutSec = check_int(L, 3); /*normal*/
+	uint16 nPort = check_uint16(L, 2); /*normal*/
+	SteamIPAddress_t nIP = check_SteamIPAddress_t(L, 1); /*normal*/
+
+	SNetSocket_t r = networking->CreateConnectionSocket(nIP, nPort, nTimeoutSec);
+	push_SNetSocket_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_DestroySocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->DestroySocket(hSocket, bNotifyRemoteEnd);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_DestroyListenSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bNotifyRemoteEnd = check_bool(L, 2); /*normal*/
+	SNetListenSocket_t hSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->DestroyListenSocket(hSocket, bNotifyRemoteEnd);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_SendDataOnSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bReliable = check_bool(L, 4); /*normal*/
+	uint32 cubData = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubData_buffer = check_buffer(L, 2); /*buffer_param*/
+	void * pubData = 0x0;
+	uint32_t pubData_buffersize = 0;
+	dmBuffer::Result pubData_buffer_result = dmBuffer::GetBytes(pubData_buffer->m_Buffer, (void**)&pubData, &pubData_buffersize);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->SendDataOnSocket(hSocket, pubData, cubData, bReliable);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_IsDataAvailableOnSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 pcubMsgSize = check_uint32(L, 2); /*out_param*/
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->IsDataAvailableOnSocket(hSocket, &pcubMsgSize);
+	push_bool(L, r);
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_RetrieveDataFromSocket(lua_State* L) {
+	int top = lua_gettop(L);
+	uint32 pcubMsgSize = check_uint32(L, 4); /*out_param*/
+	uint32 cubDest = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
+	void * pubDest = 0x0;
+	uint32_t pubDest_buffersize = 0;
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->RetrieveDataFromSocket(hSocket, pubDest, cubDest, &pcubMsgSize);
+	push_bool(L, r);
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamNetworking_IsDataAvailable(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t phSocket = check_SNetSocket_t(L, 3); /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 2); /*out_param*/
+	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->IsDataAvailable(hListenSocket, &pcubMsgSize, &phSocket);
+	push_bool(L, r);
+	push_SNetSocket_t(L, phSocket); /*out_param*/
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_RetrieveData(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t phSocket = check_SNetSocket_t(L, 5); /*out_param*/
+	uint32 pcubMsgSize = check_uint32(L, 4); /*out_param*/
+	uint32 cubDest = check_uint32(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pubDest_buffer = check_buffer(L, 2); /*buffer_param*/
+	void * pubDest = 0x0;
+	uint32_t pubDest_buffersize = 0;
+	dmBuffer::Result pubDest_buffer_result = dmBuffer::GetBytes(pubDest_buffer->m_Buffer, (void**)&pubDest, &pubDest_buffersize);
+	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->RetrieveData(hListenSocket, pubDest, cubDest, &pcubMsgSize, &phSocket);
+	push_bool(L, r);
+	push_SNetSocket_t(L, phSocket); /*out_param*/
+	push_uint32(L, pcubMsgSize); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_GetSocketInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	uint16 punPortRemote = check_uint16(L, 5); /*out_param*/
+	SteamIPAddress_t punIPRemote = check_SteamIPAddress_t(L, 4); /*out_param*/
+	int peSocketStatus = check_int(L, 3); /*out_param*/
+	CSteamID pSteamIDRemote = check_CSteamID(L, 2); /*out_param*/
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	bool r = networking->GetSocketInfo(hSocket, &pSteamIDRemote, &peSocketStatus, &punIPRemote, &punPortRemote);
+	push_bool(L, r);
+	push_uint16(L, punPortRemote); /*out_param*/
+	push_SteamIPAddress_t(L, punIPRemote); /*out_param*/
+	push_int(L, peSocketStatus); /*out_param*/
+	push_CSteamID(L, pSteamIDRemote); /*out_param*/
+	
+	assert(top + 1 + 4 == lua_gettop(L));
+	return 1 + 4;
+}
+
+static int ISteamNetworking_GetListenSocketInfo(lua_State* L) {
+	int top = lua_gettop(L);
+	uint16 pnPort = check_uint16(L, 3); /*out_param*/
+	SteamIPAddress_t pnIP = check_SteamIPAddress_t(L, 2); /*out_param*/
+	SNetListenSocket_t hListenSocket = check_SNetListenSocket_t(L, 1); /*normal*/
+
+	bool r = networking->GetListenSocketInfo(hListenSocket, &pnIP, &pnPort);
+	push_bool(L, r);
+	push_uint16(L, pnPort); /*out_param*/
+	push_SteamIPAddress_t(L, pnIP); /*out_param*/
+	
+	assert(top + 1 + 2 == lua_gettop(L));
+	return 1 + 2;
+}
+
+static int ISteamNetworking_GetSocketConnectionType(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	ESNetSocketConnectionType r = networking->GetSocketConnectionType(hSocket);
+	push_ESNetSocketConnectionType(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamNetworking_GetMaxPacketSize(lua_State* L) {
+	int top = lua_gettop(L);
+	SNetSocket_t hSocket = check_SNetSocket_t(L, 1); /*normal*/
+
+	int r = networking->GetMaxPacketSize(hSocket);
+	push_int(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamMusic_BIsEnabled(lua_State* L) {
 	int top = lua_gettop(L);
 
@@ -24157,6 +24467,7 @@ static int Init(lua_State* L) {
 	parties = SteamParties();
 	input = SteamInput();
 	game_search = SteamGameSearch();
+	networking = SteamNetworking();
 	return 0;
 }
 
@@ -24528,6 +24839,28 @@ static const luaL_reg Module_methods[] = {
 	{ "apps_is_subscribed_from_family_sharing", ISteamApps_BIsSubscribedFromFamilySharing },
 	{ "apps_is_timed_trial", ISteamApps_BIsTimedTrial },
 	{ "apps_set_dlc_context", ISteamApps_SetDlcContext },
+	{ "networking_send_p2p_packet", ISteamNetworking_SendP2PPacket },
+	{ "networking_is_p2p_packet_available", ISteamNetworking_IsP2PPacketAvailable },
+	{ "networking_read_p2p_packet", ISteamNetworking_ReadP2PPacket },
+	{ "networking_accept_p2p_session_with_user", ISteamNetworking_AcceptP2PSessionWithUser },
+	{ "networking_close_p2p_session_with_user", ISteamNetworking_CloseP2PSessionWithUser },
+	{ "networking_close_p2p_channel_with_user", ISteamNetworking_CloseP2PChannelWithUser },
+	{ "networking_get_p2p_session_state", ISteamNetworking_GetP2PSessionState },
+	{ "networking_allow_p2p_packet_relay", ISteamNetworking_AllowP2PPacketRelay },
+	{ "networking_create_listen_socket", ISteamNetworking_CreateListenSocket },
+	{ "networking_create_p2p_connection_socket", ISteamNetworking_CreateP2PConnectionSocket },
+	{ "networking_create_connection_socket", ISteamNetworking_CreateConnectionSocket },
+	{ "networking_destroy_socket", ISteamNetworking_DestroySocket },
+	{ "networking_destroy_listen_socket", ISteamNetworking_DestroyListenSocket },
+	{ "networking_send_data_on_socket", ISteamNetworking_SendDataOnSocket },
+	{ "networking_is_data_available_on_socket", ISteamNetworking_IsDataAvailableOnSocket },
+	{ "networking_retrieve_data_from_socket", ISteamNetworking_RetrieveDataFromSocket },
+	{ "networking_is_data_available", ISteamNetworking_IsDataAvailable },
+	{ "networking_retrieve_data", ISteamNetworking_RetrieveData },
+	{ "networking_get_socket_info", ISteamNetworking_GetSocketInfo },
+	{ "networking_get_listen_socket_info", ISteamNetworking_GetListenSocketInfo },
+	{ "networking_get_socket_connection_type", ISteamNetworking_GetSocketConnectionType },
+	{ "networking_get_max_packet_size", ISteamNetworking_GetMaxPacketSize },
 	{ "music_is_enabled", ISteamMusic_BIsEnabled },
 	{ "music_is_playing", ISteamMusic_BIsPlaying },
 	{ "music_get_playback_status", ISteamMusic_GetPlaybackStatus },

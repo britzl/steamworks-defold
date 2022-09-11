@@ -4329,6 +4329,382 @@
         type: bool
 #***********************************
 
+    - name: networking_send_p2p_packet
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#SendP2PPacket
+      parameters:
+      - name: steamIDRemote
+        type: string
+      - name: pubData
+        type: string
+      - name: cubData
+        type: number
+      - name: eP2PSendType
+        type: EP2PSend
+      - name: nChannel
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_is_p2p_packet_available
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsP2PPacketAvailable
+      parameters:
+      - name: pcubMsgSize
+        type: number
+      - name: nChannel
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pcubMsgSize
+        type: number
+#***********************************
+
+    - name: networking_read_p2p_packet
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#ReadP2PPacket
+      parameters:
+      - name: pubDest
+        type: buffer
+      - name: cubDest
+        type: number
+      - name: pcubMsgSize
+        type: number
+      - name: psteamIDRemote
+        type: string
+      - name: nChannel
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pcubMsgSize
+        type: number
+      - name: psteamIDRemote
+        type: string
+#***********************************
+
+    - name: networking_accept_p2p_session_with_user
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#AcceptP2PSessionWithUser
+      parameters:
+      - name: steamIDRemote
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_close_p2p_session_with_user
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PSessionWithUser
+      parameters:
+      - name: steamIDRemote
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_close_p2p_channel_with_user
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CloseP2PChannelWithUser
+      parameters:
+      - name: steamIDRemote
+        type: string
+      - name: nChannel
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_get_p2p_session_state
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetP2PSessionState
+      parameters:
+      - name: steamIDRemote
+        type: string
+      - name: pConnectionState
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pConnectionState
+        type: number
+#***********************************
+
+    - name: networking_allow_p2p_packet_relay
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#AllowP2PPacketRelay
+      parameters:
+      - name: bAllow
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_create_listen_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateListenSocket
+      parameters:
+      - name: nVirtualP2PPort
+        type: number
+      - name: nIP
+        type: number
+      - name: nPort
+        type: number
+      - name: bAllowUseOfPacketRelay
+        type: boolean
+      
+      returns:
+      - name: r
+        type: SNetListenSocket_t
+#***********************************
+
+    - name: networking_create_p2p_connection_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateP2PConnectionSocket
+      parameters:
+      - name: steamIDTarget
+        type: string
+      - name: nVirtualPort
+        type: number
+      - name: nTimeoutSec
+        type: number
+      - name: bAllowUseOfPacketRelay
+        type: boolean
+      
+      returns:
+      - name: r
+        type: SNetSocket_t
+#***********************************
+
+    - name: networking_create_connection_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#CreateConnectionSocket
+      parameters:
+      - name: nIP
+        type: number
+      - name: nPort
+        type: number
+      - name: nTimeoutSec
+        type: number
+      
+      returns:
+      - name: r
+        type: SNetSocket_t
+#***********************************
+
+    - name: networking_destroy_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#DestroySocket
+      parameters:
+      - name: hSocket
+        type: number
+      - name: bNotifyRemoteEnd
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_destroy_listen_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#DestroyListenSocket
+      parameters:
+      - name: hSocket
+        type: number
+      - name: bNotifyRemoteEnd
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_send_data_on_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#SendDataOnSocket
+      parameters:
+      - name: hSocket
+        type: number
+      - name: pubData
+        type: buffer
+      - name: cubData
+        type: number
+      - name: bReliable
+        type: boolean
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: networking_is_data_available_on_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailableOnSocket
+      parameters:
+      - name: hSocket
+        type: number
+      - name: pcubMsgSize
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pcubMsgSize
+        type: number
+#***********************************
+
+    - name: networking_retrieve_data_from_socket
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveDataFromSocket
+      parameters:
+      - name: hSocket
+        type: number
+      - name: pubDest
+        type: buffer
+      - name: cubDest
+        type: number
+      - name: pcubMsgSize
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pcubMsgSize
+        type: number
+#***********************************
+
+    - name: networking_is_data_available
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#IsDataAvailable
+      parameters:
+      - name: hListenSocket
+        type: number
+      - name: pcubMsgSize
+        type: number
+      - name: phSocket
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pcubMsgSize
+        type: number
+      - name: phSocket
+        type: number
+#***********************************
+
+    - name: networking_retrieve_data
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#RetrieveData
+      parameters:
+      - name: hListenSocket
+        type: number
+      - name: pubDest
+        type: buffer
+      - name: cubDest
+        type: number
+      - name: pcubMsgSize
+        type: number
+      - name: phSocket
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pcubMsgSize
+        type: number
+      - name: phSocket
+        type: number
+#***********************************
+
+    - name: networking_get_socket_info
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketInfo
+      parameters:
+      - name: hSocket
+        type: number
+      - name: pSteamIDRemote
+        type: string
+      - name: peSocketStatus
+        type: number
+      - name: punIPRemote
+        type: number
+      - name: punPortRemote
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pSteamIDRemote
+        type: string
+      - name: peSocketStatus
+        type: number
+      - name: punIPRemote
+        type: number
+      - name: punPortRemote
+        type: number
+#***********************************
+
+    - name: networking_get_listen_socket_info
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetListenSocketInfo
+      parameters:
+      - name: hListenSocket
+        type: number
+      - name: pnIP
+        type: number
+      - name: pnPort
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pnIP
+        type: number
+      - name: pnPort
+        type: number
+#***********************************
+
+    - name: networking_get_socket_connection_type
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetSocketConnectionType
+      parameters:
+      - name: hSocket
+        type: number
+      
+      returns:
+      - name: r
+        type: ESNetSocketConnectionType
+#***********************************
+
+    - name: networking_get_max_packet_size
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamNetworking#GetMaxPacketSize
+      parameters:
+      - name: hSocket
+        type: number
+      
+      returns:
+      - name: r
+        type: int
+#***********************************
+
     - name: music_is_enabled
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled
