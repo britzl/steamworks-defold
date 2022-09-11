@@ -4705,6 +4705,126 @@
         type: int
 #***********************************
 
+    - name: screenshots_write_screenshot
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#WriteScreenshot
+      parameters:
+      - name: pubRGB
+        type: buffer
+      - name: cubRGB
+        type: number
+      - name: nWidth
+        type: number
+      - name: nHeight
+        type: number
+      
+      returns:
+      - name: r
+        type: ScreenshotHandle
+#***********************************
+
+    - name: screenshots_add_screenshot_to_library
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#AddScreenshotToLibrary
+      parameters:
+      - name: pchFilename
+        type: string
+      - name: pchThumbnailFilename
+        type: string
+      - name: nWidth
+        type: number
+      - name: nHeight
+        type: number
+      
+      returns:
+      - name: r
+        type: ScreenshotHandle
+#***********************************
+
+    - name: screenshots_trigger_screenshot
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#TriggerScreenshot
+      parameters:
+      
+#***********************************
+
+    - name: screenshots_hook_screenshots
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#HookScreenshots
+      parameters:
+      - name: bHook
+        type: boolean
+      
+#***********************************
+
+    - name: screenshots_set_location
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#SetLocation
+      parameters:
+      - name: hScreenshot
+        type: ScreenshotHandle
+      - name: pchLocation
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: screenshots_tag_user
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#TagUser
+      parameters:
+      - name: hScreenshot
+        type: ScreenshotHandle
+      - name: steamID
+        type: string
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: screenshots_tag_published_file
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#TagPublishedFile
+      parameters:
+      - name: hScreenshot
+        type: ScreenshotHandle
+      - name: unPublishedFileID
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: screenshots_is_screenshots_hooked
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#IsScreenshotsHooked
+      parameters:
+      
+      returns:
+      - name: r
+        type: bool
+#***********************************
+
+    - name: screenshots_add_vr_screenshot_to_library
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamScreenshots#AddVRScreenshotToLibrary
+      parameters:
+      - name: eType
+        type: EVRScreenshotType
+      - name: pchFilename
+        type: string
+      - name: pchVRFilename
+        type: string
+      
+      returns:
+      - name: r
+        type: ScreenshotHandle
+#***********************************
+
     - name: music_is_enabled
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled

@@ -363,6 +363,15 @@
   * [steamworks.networking_get_listen_socket_info](#networking_get_listen_socket_info)
   * [steamworks.networking_get_socket_connection_type](#networking_get_socket_connection_type)
   * [steamworks.networking_get_max_packet_size](#networking_get_max_packet_size)
+  * [steamworks.screenshots_write_screenshot](#screenshots_write_screenshot)
+  * [steamworks.screenshots_add_screenshot_to_library](#screenshots_add_screenshot_to_library)
+  * [steamworks.screenshots_trigger_screenshot](#screenshots_trigger_screenshot)
+  * [steamworks.screenshots_hook_screenshots](#screenshots_hook_screenshots)
+  * [steamworks.screenshots_set_location](#screenshots_set_location)
+  * [steamworks.screenshots_tag_user](#screenshots_tag_user)
+  * [steamworks.screenshots_tag_published_file](#screenshots_tag_published_file)
+  * [steamworks.screenshots_is_screenshots_hooked](#screenshots_is_screenshots_hooked)
+  * [steamworks.screenshots_add_vr_screenshot_to_library](#screenshots_add_vr_screenshot_to_library)
   * [steamworks.music_is_enabled](#music_is_enabled)
   * [steamworks.music_is_playing](#music_is_playing)
   * [steamworks.music_get_playback_status](#music_get_playback_status)
@@ -3860,6 +3869,88 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` (int)
+
+
+### <a name="screenshots_write_screenshot"></a>steamworks.screenshots_write_screenshot(pubRGB, cubRGB, nWidth, nHeight) - [ISteamScreenshots#WriteScreenshot](https://partner.steamgames.com/doc/api/ISteamScreenshots#WriteScreenshot)
+
+**PARAMS**
+* `pubRGB` (buffer)
+* `cubRGB` (number)
+* `nWidth` (number)
+* `nHeight` (number)
+
+**RETURN**
+* `r` (ScreenshotHandle)
+
+
+### <a name="screenshots_add_screenshot_to_library"></a>steamworks.screenshots_add_screenshot_to_library(pchFilename, pchThumbnailFilename, nWidth, nHeight) - [ISteamScreenshots#AddScreenshotToLibrary](https://partner.steamgames.com/doc/api/ISteamScreenshots#AddScreenshotToLibrary)
+
+**PARAMS**
+* `pchFilename` (string)
+* `pchThumbnailFilename` (string)
+* `nWidth` (number)
+* `nHeight` (number)
+
+**RETURN**
+* `r` (ScreenshotHandle)
+
+
+### <a name="screenshots_trigger_screenshot"></a>steamworks.screenshots_trigger_screenshot() - [ISteamScreenshots#TriggerScreenshot](https://partner.steamgames.com/doc/api/ISteamScreenshots#TriggerScreenshot)
+
+**PARAMS**
+
+### <a name="screenshots_hook_screenshots"></a>steamworks.screenshots_hook_screenshots(bHook) - [ISteamScreenshots#HookScreenshots](https://partner.steamgames.com/doc/api/ISteamScreenshots#HookScreenshots)
+
+**PARAMS**
+* `bHook` (boolean)
+
+### <a name="screenshots_set_location"></a>steamworks.screenshots_set_location(hScreenshot, pchLocation) - [ISteamScreenshots#SetLocation](https://partner.steamgames.com/doc/api/ISteamScreenshots#SetLocation)
+
+**PARAMS**
+* `hScreenshot` (ScreenshotHandle)
+* `pchLocation` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="screenshots_tag_user"></a>steamworks.screenshots_tag_user(hScreenshot, steamID) - [ISteamScreenshots#TagUser](https://partner.steamgames.com/doc/api/ISteamScreenshots#TagUser)
+
+**PARAMS**
+* `hScreenshot` (ScreenshotHandle)
+* `steamID` (string)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="screenshots_tag_published_file"></a>steamworks.screenshots_tag_published_file(hScreenshot, unPublishedFileID) - [ISteamScreenshots#TagPublishedFile](https://partner.steamgames.com/doc/api/ISteamScreenshots#TagPublishedFile)
+
+**PARAMS**
+* `hScreenshot` (ScreenshotHandle)
+* `unPublishedFileID` (number)
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="screenshots_is_screenshots_hooked"></a>steamworks.screenshots_is_screenshots_hooked() - [ISteamScreenshots#IsScreenshotsHooked](https://partner.steamgames.com/doc/api/ISteamScreenshots#IsScreenshotsHooked)
+
+**PARAMS**
+
+**RETURN**
+* `r` (bool)
+
+
+### <a name="screenshots_add_vr_screenshot_to_library"></a>steamworks.screenshots_add_vr_screenshot_to_library(eType, pchFilename, pchVRFilename) - [ISteamScreenshots#AddVRScreenshotToLibrary](https://partner.steamgames.com/doc/api/ISteamScreenshots#AddVRScreenshotToLibrary)
+
+**PARAMS**
+* `eType` (EVRScreenshotType)
+* `pchFilename` (string)
+* `pchVRFilename` (string)
+
+**RETURN**
+* `r` (ScreenshotHandle)
 
 
 ### <a name="music_is_enabled"></a>steamworks.music_is_enabled() - [ISteamMusic#BIsEnabled](https://partner.steamgames.com/doc/api/ISteamMusic#BIsEnabled)

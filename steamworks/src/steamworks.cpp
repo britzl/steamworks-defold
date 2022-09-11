@@ -45,6 +45,7 @@ static ISteamInput *input;
 static ISteamGameSearch *game_search;
 static ISteamNetworking *networking;
 static ISteamVideo *video;
+static ISteamScreenshots *screenshots;
 
 /*****************************
 * PUSH numbers and other primitive types
@@ -22670,6 +22671,113 @@ static int ISteamNetworking_GetMaxPacketSize(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamScreenshots_WriteScreenshot(lua_State* L) {
+	int top = lua_gettop(L);
+	int nHeight = check_int(L, 4); /*normal*/
+	int nWidth = check_int(L, 3); /*normal*/
+	uint32 cubRGB = check_uint32(L, 2); /*normal*/
+	dmScript::LuaHBuffer * pubRGB_buffer = check_buffer(L, 1); /*buffer_param*/
+	void * pubRGB = 0x0;
+	uint32_t pubRGB_buffersize = 0;
+	dmBuffer::Result pubRGB_buffer_result = dmBuffer::GetBytes(pubRGB_buffer->m_Buffer, (void**)&pubRGB, &pubRGB_buffersize);
+
+	ScreenshotHandle r = screenshots->WriteScreenshot(pubRGB, cubRGB, nWidth, nHeight);
+	push_ScreenshotHandle(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamScreenshots_AddScreenshotToLibrary(lua_State* L) {
+	int top = lua_gettop(L);
+	int nHeight = check_int(L, 4); /*normal*/
+	int nWidth = check_int(L, 3); /*normal*/
+	const char * pchThumbnailFilename = check_const_char_ptr(L, 2); /*normal*/
+	const char * pchFilename = check_const_char_ptr(L, 1); /*normal*/
+
+	ScreenshotHandle r = screenshots->AddScreenshotToLibrary(pchFilename, pchThumbnailFilename, nWidth, nHeight);
+	push_ScreenshotHandle(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamScreenshots_TriggerScreenshot(lua_State* L) {
+	int top = lua_gettop(L);
+
+	screenshots->TriggerScreenshot();
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamScreenshots_HookScreenshots(lua_State* L) {
+	int top = lua_gettop(L);
+	bool bHook = check_bool(L, 1); /*normal*/
+
+	screenshots->HookScreenshots(bHook);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamScreenshots_SetLocation(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchLocation = check_const_char_ptr(L, 2); /*normal*/
+	ScreenshotHandle hScreenshot = check_ScreenshotHandle(L, 1); /*normal*/
+
+	bool r = screenshots->SetLocation(hScreenshot, pchLocation);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamScreenshots_TagUser(lua_State* L) {
+	int top = lua_gettop(L);
+	CSteamID steamID = check_CSteamID(L, 2); /*normal*/
+	ScreenshotHandle hScreenshot = check_ScreenshotHandle(L, 1); /*normal*/
+
+	bool r = screenshots->TagUser(hScreenshot, steamID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamScreenshots_TagPublishedFile(lua_State* L) {
+	int top = lua_gettop(L);
+	PublishedFileId_t unPublishedFileID = check_PublishedFileId_t(L, 2); /*normal*/
+	ScreenshotHandle hScreenshot = check_ScreenshotHandle(L, 1); /*normal*/
+
+	bool r = screenshots->TagPublishedFile(hScreenshot, unPublishedFileID);
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamScreenshots_IsScreenshotsHooked(lua_State* L) {
+	int top = lua_gettop(L);
+
+	bool r = screenshots->IsScreenshotsHooked();
+	push_bool(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamScreenshots_AddVRScreenshotToLibrary(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchVRFilename = check_const_char_ptr(L, 3); /*normal*/
+	const char * pchFilename = check_const_char_ptr(L, 2); /*normal*/
+	EVRScreenshotType eType = check_EVRScreenshotType(L, 1); /*normal*/
+
+	ScreenshotHandle r = screenshots->AddVRScreenshotToLibrary(eType, pchFilename, pchVRFilename);
+	push_ScreenshotHandle(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamMusic_BIsEnabled(lua_State* L) {
 	int top = lua_gettop(L);
 
@@ -24538,6 +24646,7 @@ static int Init(lua_State* L) {
 	game_search = SteamGameSearch();
 	networking = SteamNetworking();
 	video = SteamVideo();
+	screenshots = SteamScreenshots();
 	return 0;
 }
 
@@ -24931,6 +25040,15 @@ static const luaL_reg Module_methods[] = {
 	{ "networking_get_listen_socket_info", ISteamNetworking_GetListenSocketInfo },
 	{ "networking_get_socket_connection_type", ISteamNetworking_GetSocketConnectionType },
 	{ "networking_get_max_packet_size", ISteamNetworking_GetMaxPacketSize },
+	{ "screenshots_write_screenshot", ISteamScreenshots_WriteScreenshot },
+	{ "screenshots_add_screenshot_to_library", ISteamScreenshots_AddScreenshotToLibrary },
+	{ "screenshots_trigger_screenshot", ISteamScreenshots_TriggerScreenshot },
+	{ "screenshots_hook_screenshots", ISteamScreenshots_HookScreenshots },
+	{ "screenshots_set_location", ISteamScreenshots_SetLocation },
+	{ "screenshots_tag_user", ISteamScreenshots_TagUser },
+	{ "screenshots_tag_published_file", ISteamScreenshots_TagPublishedFile },
+	{ "screenshots_is_screenshots_hooked", ISteamScreenshots_IsScreenshotsHooked },
+	{ "screenshots_add_vr_screenshot_to_library", ISteamScreenshots_AddVRScreenshotToLibrary },
 	{ "music_is_enabled", ISteamMusic_BIsEnabled },
 	{ "music_is_playing", ISteamMusic_BIsPlaying },
 	{ "music_get_playback_status", ISteamMusic_GetPlaybackStatus },
