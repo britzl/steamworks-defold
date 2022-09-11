@@ -1901,6 +1901,10 @@ static int ISteamInventory_SetPropertyInt64(lua_State* L);
 static int ISteamInventory_SetPropertyFloat(lua_State* L);
 static int ISteamInventory_SubmitUpdateProperties(lua_State* L);
 static int ISteamInventory_InspectItem(lua_State* L);
+static int ISteamVideo_GetVideoURL(lua_State* L);
+static int ISteamVideo_IsBroadcasting(lua_State* L);
+static int ISteamVideo_GetOPFSettings(lua_State* L);
+static int ISteamVideo_GetOPFStringForApp(lua_State* L);
 
 #endif // platforms
 

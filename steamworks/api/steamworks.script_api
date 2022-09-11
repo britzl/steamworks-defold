@@ -6650,12 +6650,64 @@
         type: number
 #***********************************
 
+    - name: video_get_video_url
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamVideo#GetVideoURL
+      parameters:
+      - name: unVideoAppID
+        type: number
+      
+#***********************************
+
+    - name: video_is_broadcasting
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamVideo#IsBroadcasting
+      parameters:
+      - name: pnNumViewers
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pnNumViewers
+        type: number
+#***********************************
+
+    - name: video_get_opf_settings
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamVideo#GetOPFSettings
+      parameters:
+      - name: unVideoAppID
+        type: number
+      
+#***********************************
+
+    - name: video_get_opf_string_for_app
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamVideo#GetOPFStringForApp
+      parameters:
+      - name: unVideoAppID
+        type: number
+      - name: pchBuffer
+        type: buffer
+      - name: pnBufferSize
+        type: number
+      
+      returns:
+      - name: r
+        type: bool
+      - name: pnBufferSize
+        type: number
+#***********************************
+
 
     - name: PersonaStateChange_t
       type: callback
     - name: GameOverlayActivated_t
       type: callback
     - name: UserStatsReceived_t
+      type: callback
+    - name: GetOPFSettingsResult_t
       type: callback
 
 

@@ -44,6 +44,7 @@ static ISteamParties *parties;
 static ISteamInput *input;
 static ISteamGameSearch *game_search;
 static ISteamNetworking *networking;
+static ISteamVideo *video;
 
 /*****************************
 * PUSH numbers and other primitive types
@@ -16746,6 +16747,7 @@ class SteamCallbackWrapper {
 		STEAM_CALLBACK(SteamCallbackWrapper, OnPersonaStateChange_t, PersonaStateChange_t, m_CallbackPersonaStateChange_t);
 		STEAM_CALLBACK(SteamCallbackWrapper, OnGameOverlayActivated_t, GameOverlayActivated_t, m_CallbackGameOverlayActivated_t);
 		STEAM_CALLBACK(SteamCallbackWrapper, OnUserStatsReceived_t, UserStatsReceived_t, m_CallbackUserStatsReceived_t);
+		STEAM_CALLBACK(SteamCallbackWrapper, OnGetOPFSettingsResult_t, GetOPFSettingsResult_t, m_CallbackGetOPFSettingsResult_t);
 
 
 		
@@ -18293,6 +18295,7 @@ SteamCallbackWrapper::SteamCallbackWrapper() :
 	m_CallbackPersonaStateChange_t(this, &SteamCallbackWrapper::OnPersonaStateChange_t),
 	m_CallbackGameOverlayActivated_t(this, &SteamCallbackWrapper::OnGameOverlayActivated_t),
 	m_CallbackUserStatsReceived_t(this, &SteamCallbackWrapper::OnUserStatsReceived_t),
+	m_CallbackGetOPFSettingsResult_t(this, &SteamCallbackWrapper::OnGetOPFSettingsResult_t),
 	m_iAppID( 0 )
 {
 	//m_iAppID = SteamUtils()->GetAppID();
@@ -18350,6 +18353,25 @@ void SteamCallbackWrapper::OnUserStatsReceived_t(UserStatsReceived_t *pCallback)
 	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
 	if (ret != 0) {
 		dmLogInfo("SteamCallbackWrapper::OnUserStatsReceived_t error: %s\n", lua_tostring(L, -1));
+		lua_pop(L, 1);
+	}
+	assert(top == lua_gettop(L));
+
+}
+void SteamCallbackWrapper::OnGetOPFSettingsResult_t(GetOPFSettingsResult_t *pCallback) {
+	dmLogInfo("SteamCallbackWrapper::OnGetOPFSettingsResult_t\n");
+	lua_State* L = steamworksListener.m_L;
+	if (!L) {
+		// no listener set
+		return;
+	}
+	int top = lua_gettop(L);
+	lua_pushlistener(L, steamworksListener);
+	lua_pushstring(L, "GetOPFSettingsResult_t");
+	push_GetOPFSettingsResult_t(L, *pCallback);
+	int ret = lua_pcall(L, 3, LUA_MULTRET, 0);
+	if (ret != 0) {
+		dmLogInfo("SteamCallbackWrapper::OnGetOPFSettingsResult_t error: %s\n", lua_tostring(L, -1));
 		lua_pop(L, 1);
 	}
 	assert(top == lua_gettop(L));
@@ -24431,6 +24453,53 @@ static int ISteamInventory_InspectItem(lua_State* L) {
 	return 1 + 1;
 }
 
+static int ISteamVideo_GetVideoURL(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t unVideoAppID = check_AppId_t(L, 1); /*normal*/
+
+	video->GetVideoURL(unVideoAppID);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamVideo_IsBroadcasting(lua_State* L) {
+	int top = lua_gettop(L);
+	int pnNumViewers = check_int(L, 1); /*out_param*/
+
+	bool r = video->IsBroadcasting(&pnNumViewers);
+	push_bool(L, r);
+	push_int(L, pnNumViewers); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
+static int ISteamVideo_GetOPFSettings(lua_State* L) {
+	int top = lua_gettop(L);
+	AppId_t unVideoAppID = check_AppId_t(L, 1); /*normal*/
+
+	video->GetOPFSettings(unVideoAppID);
+	assert(top + 0 == lua_gettop(L));
+	return 0;
+}
+
+static int ISteamVideo_GetOPFStringForApp(lua_State* L) {
+	int top = lua_gettop(L);
+	int32 pnBufferSize = check_int32(L, 3); /*out_param*/
+	dmScript::LuaHBuffer * pchBuffer_buffer = check_buffer(L, 2); /*buffer_param*/
+	char * pchBuffer = 0x0;
+	uint32_t pchBuffer_buffersize = 0;
+	dmBuffer::Result pchBuffer_buffer_result = dmBuffer::GetBytes(pchBuffer_buffer->m_Buffer, (void**)&pchBuffer, &pchBuffer_buffersize);
+	AppId_t unVideoAppID = check_AppId_t(L, 1); /*normal*/
+
+	bool r = video->GetOPFStringForApp(unVideoAppID, pchBuffer, &pnBufferSize);
+	push_bool(L, r);
+	push_int32(L, pnBufferSize); /*out_param*/
+	
+	assert(top + 1 + 1 == lua_gettop(L));
+	return 1 + 1;
+}
+
 
 
 
@@ -24468,6 +24537,7 @@ static int Init(lua_State* L) {
 	input = SteamInput();
 	game_search = SteamGameSearch();
 	networking = SteamNetworking();
+	video = SteamVideo();
 	return 0;
 }
 
@@ -24994,6 +25064,10 @@ static const luaL_reg Module_methods[] = {
 	{ "inventory_set_property", ISteamInventory_SetPropertyFloat },
 	{ "inventory_submit_update_properties", ISteamInventory_SubmitUpdateProperties },
 	{ "inventory_inspect_item", ISteamInventory_InspectItem },
+	{ "video_get_video_url", ISteamVideo_GetVideoURL },
+	{ "video_is_broadcasting", ISteamVideo_IsBroadcasting },
+	{ "video_get_opf_settings", ISteamVideo_GetOPFSettings },
+	{ "video_get_opf_string_for_app", ISteamVideo_GetOPFStringForApp },
 	{ 0, 0 }
 };
 

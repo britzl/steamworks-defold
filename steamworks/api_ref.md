@@ -496,6 +496,10 @@
   * [steamworks.inventory_set_property](#inventory_set_property)
   * [steamworks.inventory_submit_update_properties](#inventory_submit_update_properties)
   * [steamworks.inventory_inspect_item](#inventory_inspect_item)
+  * [steamworks.video_get_video_url](#video_get_video_url)
+  * [steamworks.video_is_broadcasting](#video_is_broadcasting)
+  * [steamworks.video_get_opf_settings](#video_get_opf_settings)
+  * [steamworks.video_get_opf_string_for_app](#video_get_opf_string_for_app)
 
 ## <a name="functions"></a>Functions
 The extension exports the following functions:
@@ -5218,6 +5222,38 @@ The extension exports the following functions:
 * `pResultHandle` (SteamInventoryResult_t)
 
 
+### <a name="video_get_video_url"></a>steamworks.video_get_video_url(unVideoAppID) - [ISteamVideo#GetVideoURL](https://partner.steamgames.com/doc/api/ISteamVideo#GetVideoURL)
+
+**PARAMS**
+* `unVideoAppID` (number)
+
+### <a name="video_is_broadcasting"></a>steamworks.video_is_broadcasting(pnNumViewers) - [ISteamVideo#IsBroadcasting](https://partner.steamgames.com/doc/api/ISteamVideo#IsBroadcasting)
+
+**PARAMS**
+* `pnNumViewers` (number)
+
+**RETURN**
+* `r` (bool)
+* `pnNumViewers` (int)
+
+
+### <a name="video_get_opf_settings"></a>steamworks.video_get_opf_settings(unVideoAppID) - [ISteamVideo#GetOPFSettings](https://partner.steamgames.com/doc/api/ISteamVideo#GetOPFSettings)
+
+**PARAMS**
+* `unVideoAppID` (number)
+
+### <a name="video_get_opf_string_for_app"></a>steamworks.video_get_opf_string_for_app(unVideoAppID, pchBuffer, pnBufferSize) - [ISteamVideo#GetOPFStringForApp](https://partner.steamgames.com/doc/api/ISteamVideo#GetOPFStringForApp)
+
+**PARAMS**
+* `unVideoAppID` (number)
+* `pchBuffer` (buffer)
+* `pnBufferSize` (number)
+
+**RETURN**
+* `r` (bool)
+* `pnBufferSize` (int32)
+
+
 
 ## <a name="callresults">Call results
 The extension will pass all call results to the listener function:
@@ -5304,6 +5340,7 @@ The extension will pass all callbacks to the listener function:
 * PersonaStateChange_t (callback)
 * GameOverlayActivated_t (callback)
 * UserStatsReceived_t (callback)
+* GetOPFSettingsResult_t (callback)
 
 ## <a name="enums">Enums
 The extension exports the following enums:

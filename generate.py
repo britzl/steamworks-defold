@@ -8,7 +8,7 @@ import html
 
 INTEGERS = ["int", "unsigned int", "short", "unsigned short", "unsigned char", "signed char", "uint8", "int8", "int16", "uint16", "int32", "uint32"]
 
-SKIP_CLASSES = ["ISteamClient", "ISteamMatchmakingServerListResponse", "ISteamMatchmakingPingResponse", "ISteamMatchmakingPlayersResponse", "ISteamMatchmakingRulesResponse", "ISteamMatchmakingServers", "ISteamScreenshots", "ISteamMusicRemote", "ISteamHTTP", "ISteamController", "ISteamAppList", "ISteamHTMLSurface", "ISteamVideo", "ISteamParentalSettings", "ISteamRemotePlay", "ISteamNetworkingMessages", "ISteamNetworkingSockets", "ISteamNetworkingUtils", "ISteamGameServer", "ISteamGameServerStats", "ISteamNetworkingFakeUDPPort", "ISteamInput" ]
+SKIP_CLASSES = ["ISteamClient", "ISteamMatchmakingServerListResponse", "ISteamMatchmakingPingResponse", "ISteamMatchmakingPlayersResponse", "ISteamMatchmakingRulesResponse", "ISteamMatchmakingServers", "ISteamScreenshots", "ISteamMusicRemote", "ISteamHTTP", "ISteamController", "ISteamAppList", "ISteamHTMLSurface", "ISteamParentalSettings", "ISteamRemotePlay", "ISteamNetworkingMessages", "ISteamNetworkingSockets", "ISteamNetworkingUtils", "ISteamGameServer", "ISteamGameServerStats", "ISteamNetworkingFakeUDPPort", "ISteamInput" ]
 
 
 def to_snake_case(name):
