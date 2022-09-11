@@ -181,6 +181,20 @@
   * [steamworks.matchmaking_get_lobby_owner](#matchmaking_get_lobby_owner)
   * [steamworks.matchmaking_set_lobby_owner](#matchmaking_set_lobby_owner)
   * [steamworks.matchmaking_set_linked_lobby](#matchmaking_set_linked_lobby)
+  * [steamworks.game_search_add_game_search_params](#game_search_add_game_search_params)
+  * [steamworks.game_search_search_for_game_with_lobby](#game_search_search_for_game_with_lobby)
+  * [steamworks.game_search_search_for_game_solo](#game_search_search_for_game_solo)
+  * [steamworks.game_search_accept_game](#game_search_accept_game)
+  * [steamworks.game_search_decline_game](#game_search_decline_game)
+  * [steamworks.game_search_retrieve_connection_details](#game_search_retrieve_connection_details)
+  * [steamworks.game_search_end_game_search](#game_search_end_game_search)
+  * [steamworks.game_search_set_game_host_params](#game_search_set_game_host_params)
+  * [steamworks.game_search_set_connection_details](#game_search_set_connection_details)
+  * [steamworks.game_search_request_players_for_game](#game_search_request_players_for_game)
+  * [steamworks.game_search_host_confirm_game_start](#game_search_host_confirm_game_start)
+  * [steamworks.game_search_cancel_request_players_for_game](#game_search_cancel_request_players_for_game)
+  * [steamworks.game_search_submit_player_result](#game_search_submit_player_result)
+  * [steamworks.game_search_end_game](#game_search_end_game)
   * [steamworks.parties_get_num_active_beacons](#parties_get_num_active_beacons)
   * [steamworks.parties_get_beacon_by_index](#parties_get_beacon_by_index)
   * [steamworks.parties_get_beacon_details](#parties_get_beacon_details)
@@ -2020,6 +2034,140 @@ The extension exports the following functions:
 
 **RETURN**
 * `r` (bool)
+
+
+### <a name="game_search_add_game_search_params"></a>steamworks.game_search_add_game_search_params(pchKeyToFind, pchValuesToFind) - [ISteamGameSearch#AddGameSearchParams](https://partner.steamgames.com/doc/api/ISteamGameSearch#AddGameSearchParams)
+
+**PARAMS**
+* `pchKeyToFind` (string)
+* `pchValuesToFind` (string)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_search_for_game_with_lobby"></a>steamworks.game_search_search_for_game_with_lobby(steamIDLobby, nPlayerMin, nPlayerMax) - [ISteamGameSearch#SearchForGameWithLobby](https://partner.steamgames.com/doc/api/ISteamGameSearch#SearchForGameWithLobby)
+
+**PARAMS**
+* `steamIDLobby` (string)
+* `nPlayerMin` (number)
+* `nPlayerMax` (number)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_search_for_game_solo"></a>steamworks.game_search_search_for_game_solo(nPlayerMin, nPlayerMax) - [ISteamGameSearch#SearchForGameSolo](https://partner.steamgames.com/doc/api/ISteamGameSearch#SearchForGameSolo)
+
+**PARAMS**
+* `nPlayerMin` (number)
+* `nPlayerMax` (number)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_accept_game"></a>steamworks.game_search_accept_game() - [ISteamGameSearch#AcceptGame](https://partner.steamgames.com/doc/api/ISteamGameSearch#AcceptGame)
+
+**PARAMS**
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_decline_game"></a>steamworks.game_search_decline_game() - [ISteamGameSearch#DeclineGame](https://partner.steamgames.com/doc/api/ISteamGameSearch#DeclineGame)
+
+**PARAMS**
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_retrieve_connection_details"></a>steamworks.game_search_retrieve_connection_details(steamIDHost, pchConnectionDetails, cubConnectionDetails) - [ISteamGameSearch#RetrieveConnectionDetails](https://partner.steamgames.com/doc/api/ISteamGameSearch#RetrieveConnectionDetails)
+
+**PARAMS**
+* `steamIDHost` (string)
+* `pchConnectionDetails` (buffer)
+* `cubConnectionDetails` (number)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_end_game_search"></a>steamworks.game_search_end_game_search() - [ISteamGameSearch#EndGameSearch](https://partner.steamgames.com/doc/api/ISteamGameSearch#EndGameSearch)
+
+**PARAMS**
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_set_game_host_params"></a>steamworks.game_search_set_game_host_params(pchKey, pchValue) - [ISteamGameSearch#SetGameHostParams](https://partner.steamgames.com/doc/api/ISteamGameSearch#SetGameHostParams)
+
+**PARAMS**
+* `pchKey` (string)
+* `pchValue` (string)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_set_connection_details"></a>steamworks.game_search_set_connection_details(pchConnectionDetails, cubConnectionDetails) - [ISteamGameSearch#SetConnectionDetails](https://partner.steamgames.com/doc/api/ISteamGameSearch#SetConnectionDetails)
+
+**PARAMS**
+* `pchConnectionDetails` (string)
+* `cubConnectionDetails` (number)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_request_players_for_game"></a>steamworks.game_search_request_players_for_game(nPlayerMin, nPlayerMax, nMaxTeamSize) - [ISteamGameSearch#RequestPlayersForGame](https://partner.steamgames.com/doc/api/ISteamGameSearch#RequestPlayersForGame)
+
+**PARAMS**
+* `nPlayerMin` (number)
+* `nPlayerMax` (number)
+* `nMaxTeamSize` (number)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_host_confirm_game_start"></a>steamworks.game_search_host_confirm_game_start(ullUniqueGameID) - [ISteamGameSearch#HostConfirmGameStart](https://partner.steamgames.com/doc/api/ISteamGameSearch#HostConfirmGameStart)
+
+**PARAMS**
+* `ullUniqueGameID` (string)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_cancel_request_players_for_game"></a>steamworks.game_search_cancel_request_players_for_game() - [ISteamGameSearch#CancelRequestPlayersForGame](https://partner.steamgames.com/doc/api/ISteamGameSearch#CancelRequestPlayersForGame)
+
+**PARAMS**
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_submit_player_result"></a>steamworks.game_search_submit_player_result(ullUniqueGameID, steamIDPlayer, EPlayerResult) - [ISteamGameSearch#SubmitPlayerResult](https://partner.steamgames.com/doc/api/ISteamGameSearch#SubmitPlayerResult)
+
+**PARAMS**
+* `ullUniqueGameID` (string)
+* `steamIDPlayer` (string)
+* `EPlayerResult` (number)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
+
+
+### <a name="game_search_end_game"></a>steamworks.game_search_end_game(ullUniqueGameID) - [ISteamGameSearch#EndGame](https://partner.steamgames.com/doc/api/ISteamGameSearch#EndGame)
+
+**PARAMS**
+* `ullUniqueGameID` (string)
+
+**RETURN**
+* `r` (EGameSearchErrorCode_t)
 
 
 ### <a name="parties_get_num_active_beacons"></a>steamworks.parties_get_num_active_beacons() - [ISteamParties#GetNumActiveBeacons](https://partner.steamgames.com/doc/api/ISteamParties#GetNumActiveBeacons)

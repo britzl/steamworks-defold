@@ -42,6 +42,7 @@ static ISteamInventory *inventory;
 static ISteamUGC *ugc;
 static ISteamParties *parties;
 static ISteamInput *input;
+static ISteamGameSearch *game_search;
 
 
 /*****************************
@@ -20388,6 +20389,171 @@ static int ISteamMatchmaking_SetLinkedLobby(lua_State* L) {
 	return 1 + 0;
 }
 
+static int ISteamGameSearch_AddGameSearchParams(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchValuesToFind = check_const_char_ptr(L, 2); /*normal*/
+	const char * pchKeyToFind = check_const_char_ptr(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->AddGameSearchParams(pchKeyToFind, pchValuesToFind);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_SearchForGameWithLobby(lua_State* L) {
+	int top = lua_gettop(L);
+	int nPlayerMax = check_int(L, 3); /*normal*/
+	int nPlayerMin = check_int(L, 2); /*normal*/
+	CSteamID steamIDLobby = check_CSteamID(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->SearchForGameWithLobby(steamIDLobby, nPlayerMin, nPlayerMax);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_SearchForGameSolo(lua_State* L) {
+	int top = lua_gettop(L);
+	int nPlayerMax = check_int(L, 2); /*normal*/
+	int nPlayerMin = check_int(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->SearchForGameSolo(nPlayerMin, nPlayerMax);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_AcceptGame(lua_State* L) {
+	int top = lua_gettop(L);
+
+	EGameSearchErrorCode_t r = game_search->AcceptGame();
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_DeclineGame(lua_State* L) {
+	int top = lua_gettop(L);
+
+	EGameSearchErrorCode_t r = game_search->DeclineGame();
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_RetrieveConnectionDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	int cubConnectionDetails = check_int(L, 3); /*normal*/
+	dmScript::LuaHBuffer * pchConnectionDetails_buffer = check_buffer(L, 2); /*buffer_param*/
+	char * pchConnectionDetails = 0x0;
+	uint32_t pchConnectionDetails_buffersize = 0;
+	dmBuffer::Result pchConnectionDetails_buffer_result = dmBuffer::GetBytes(pchConnectionDetails_buffer->m_Buffer, (void**)&pchConnectionDetails, &pchConnectionDetails_buffersize);
+	CSteamID steamIDHost = check_CSteamID(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->RetrieveConnectionDetails(steamIDHost, pchConnectionDetails, cubConnectionDetails);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_EndGameSearch(lua_State* L) {
+	int top = lua_gettop(L);
+
+	EGameSearchErrorCode_t r = game_search->EndGameSearch();
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_SetGameHostParams(lua_State* L) {
+	int top = lua_gettop(L);
+	const char * pchValue = check_const_char_ptr(L, 2); /*normal*/
+	const char * pchKey = check_const_char_ptr(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->SetGameHostParams(pchKey, pchValue);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_SetConnectionDetails(lua_State* L) {
+	int top = lua_gettop(L);
+	int cubConnectionDetails = check_int(L, 2); /*normal*/
+	const char * pchConnectionDetails = check_const_char_ptr(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->SetConnectionDetails(pchConnectionDetails, cubConnectionDetails);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_RequestPlayersForGame(lua_State* L) {
+	int top = lua_gettop(L);
+	int nMaxTeamSize = check_int(L, 3); /*normal*/
+	int nPlayerMax = check_int(L, 2); /*normal*/
+	int nPlayerMin = check_int(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->RequestPlayersForGame(nPlayerMin, nPlayerMax, nMaxTeamSize);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_HostConfirmGameStart(lua_State* L) {
+	int top = lua_gettop(L);
+	uint64 ullUniqueGameID = check_uint64(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->HostConfirmGameStart(ullUniqueGameID);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_CancelRequestPlayersForGame(lua_State* L) {
+	int top = lua_gettop(L);
+
+	EGameSearchErrorCode_t r = game_search->CancelRequestPlayersForGame();
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_SubmitPlayerResult(lua_State* L) {
+	int top = lua_gettop(L);
+	EPlayerResult_t EPlayerResult = check_EPlayerResult_t(L, 3); /*normal*/
+	CSteamID steamIDPlayer = check_CSteamID(L, 2); /*normal*/
+	uint64 ullUniqueGameID = check_uint64(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->SubmitPlayerResult(ullUniqueGameID, steamIDPlayer, EPlayerResult);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
+static int ISteamGameSearch_EndGame(lua_State* L) {
+	int top = lua_gettop(L);
+	uint64 ullUniqueGameID = check_uint64(L, 1); /*normal*/
+
+	EGameSearchErrorCode_t r = game_search->EndGame(ullUniqueGameID);
+	push_EGameSearchErrorCode_t(L, r);
+	
+	assert(top + 1 + 0 == lua_gettop(L));
+	return 1 + 0;
+}
+
 static int ISteamParties_GetNumActiveBeacons(lua_State* L) {
 	int top = lua_gettop(L);
 
@@ -23990,6 +24156,7 @@ static int Init(lua_State* L) {
 	ugc = SteamUGC();
 	parties = SteamParties();
 	input = SteamInput();
+	game_search = SteamGameSearch();
 	return 0;
 }
 
@@ -24201,6 +24368,20 @@ static const luaL_reg Module_methods[] = {
 	{ "matchmaking_get_lobby_owner", ISteamMatchmaking_GetLobbyOwner },
 	{ "matchmaking_set_lobby_owner", ISteamMatchmaking_SetLobbyOwner },
 	{ "matchmaking_set_linked_lobby", ISteamMatchmaking_SetLinkedLobby },
+	{ "game_search_add_game_search_params", ISteamGameSearch_AddGameSearchParams },
+	{ "game_search_search_for_game_with_lobby", ISteamGameSearch_SearchForGameWithLobby },
+	{ "game_search_search_for_game_solo", ISteamGameSearch_SearchForGameSolo },
+	{ "game_search_accept_game", ISteamGameSearch_AcceptGame },
+	{ "game_search_decline_game", ISteamGameSearch_DeclineGame },
+	{ "game_search_retrieve_connection_details", ISteamGameSearch_RetrieveConnectionDetails },
+	{ "game_search_end_game_search", ISteamGameSearch_EndGameSearch },
+	{ "game_search_set_game_host_params", ISteamGameSearch_SetGameHostParams },
+	{ "game_search_set_connection_details", ISteamGameSearch_SetConnectionDetails },
+	{ "game_search_request_players_for_game", ISteamGameSearch_RequestPlayersForGame },
+	{ "game_search_host_confirm_game_start", ISteamGameSearch_HostConfirmGameStart },
+	{ "game_search_cancel_request_players_for_game", ISteamGameSearch_CancelRequestPlayersForGame },
+	{ "game_search_submit_player_result", ISteamGameSearch_SubmitPlayerResult },
+	{ "game_search_end_game", ISteamGameSearch_EndGame },
 	{ "parties_get_num_active_beacons", ISteamParties_GetNumActiveBeacons },
 	{ "parties_get_beacon_by_index", ISteamParties_GetBeaconByIndex },
 	{ "parties_get_beacon_details", ISteamParties_GetBeaconDetails },

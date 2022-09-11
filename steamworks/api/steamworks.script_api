@@ -2197,6 +2197,190 @@
         type: bool
 #***********************************
 
+    - name: game_search_add_game_search_params
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#AddGameSearchParams
+      parameters:
+      - name: pchKeyToFind
+        type: string
+      - name: pchValuesToFind
+        type: string
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_search_for_game_with_lobby
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#SearchForGameWithLobby
+      parameters:
+      - name: steamIDLobby
+        type: string
+      - name: nPlayerMin
+        type: number
+      - name: nPlayerMax
+        type: number
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_search_for_game_solo
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#SearchForGameSolo
+      parameters:
+      - name: nPlayerMin
+        type: number
+      - name: nPlayerMax
+        type: number
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_accept_game
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#AcceptGame
+      parameters:
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_decline_game
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#DeclineGame
+      parameters:
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_retrieve_connection_details
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#RetrieveConnectionDetails
+      parameters:
+      - name: steamIDHost
+        type: string
+      - name: pchConnectionDetails
+        type: buffer
+      - name: cubConnectionDetails
+        type: number
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_end_game_search
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#EndGameSearch
+      parameters:
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_set_game_host_params
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#SetGameHostParams
+      parameters:
+      - name: pchKey
+        type: string
+      - name: pchValue
+        type: string
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_set_connection_details
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#SetConnectionDetails
+      parameters:
+      - name: pchConnectionDetails
+        type: string
+      - name: cubConnectionDetails
+        type: number
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_request_players_for_game
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#RequestPlayersForGame
+      parameters:
+      - name: nPlayerMin
+        type: number
+      - name: nPlayerMax
+        type: number
+      - name: nMaxTeamSize
+        type: number
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_host_confirm_game_start
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#HostConfirmGameStart
+      parameters:
+      - name: ullUniqueGameID
+        type: string
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_cancel_request_players_for_game
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#CancelRequestPlayersForGame
+      parameters:
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_submit_player_result
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#SubmitPlayerResult
+      parameters:
+      - name: ullUniqueGameID
+        type: string
+      - name: steamIDPlayer
+        type: string
+      - name: EPlayerResult
+        type: number
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
+    - name: game_search_end_game
+      type: function
+      desc: https://partner.steamgames.com/doc/api/ISteamGameSearch#EndGame
+      parameters:
+      - name: ullUniqueGameID
+        type: string
+      
+      returns:
+      - name: r
+        type: EGameSearchErrorCode_t
+#***********************************
+
     - name: parties_get_num_active_beacons
       type: function
       desc: https://partner.steamgames.com/doc/api/ISteamParties#GetNumActiveBeacons

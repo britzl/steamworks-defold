@@ -42,6 +42,7 @@ static ISteamInventory *inventory;
 static ISteamUGC *ugc;
 static ISteamParties *parties;
 static ISteamInput *input;
+static ISteamGameSearch *game_search;
 
 
 /*****************************
@@ -816,6 +817,7 @@ static int Init(lua_State* L) {
 	ugc = SteamUGC();
 	parties = SteamParties();
 	input = SteamInput();
+	game_search = SteamGameSearch();
 	return 0;
 }
 
