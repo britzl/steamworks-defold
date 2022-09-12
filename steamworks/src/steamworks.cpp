@@ -416,12 +416,12 @@ static void push_SteamNetworkingPOPID_array(lua_State* L, unsigned int arr[], un
 ******************************/
 static void push_int64_t(lua_State* L, int64_t n) {
 	char buf[22];
-	snprintf(buf, sizeof(buf), "%lld", n);
+	snprintf(buf, sizeof(buf), "%lld", (long long int)n);
 	lua_pushstring(L, buf);
 }
 static void push_int64(lua_State* L, int64 n) {
 	char buf[22];
-	snprintf(buf, sizeof(buf), "%lld", n);
+	snprintf(buf, sizeof(buf), "%lld", (long long int)n);
 	lua_pushstring(L, buf);
 }
 static void push_int64_array(lua_State* L, int64 arr[], unsigned int size) {
