@@ -1,4 +1,10 @@
-![](https://img.shields.io/badge/steamworks-1.42-brightgreen.svg?logo=steam)
+
+
+# THIS EXTENSION IS DEPRECATED
+Please use https://github.com/defold/extension-steam.
+
+<details>
+<summary>Documentation</summary>
 
 # steamworks-defold
 [Steamworks](https://partner.steamgames.com/home) support for Defold using the Defold extension system
@@ -83,3 +89,4 @@ The API is generated from the `steam_api.json` which is part of the Steamworks S
 
 ## Example app
 Refer to the `examples` folder for an Defold application that showcases the use of many parts of the API. Build the example app from Defold and run it from the command line using one of `run_osx.sh`, `run_x86_64-linux.sh` and `run_x86_64-win32.bat`.
+</details>
